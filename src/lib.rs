@@ -15,7 +15,7 @@ impl Config {
 
         let path = match args.next() {
             Some(arg) => arg,
-            None => return Err("not enough arguments"),
+            None => return Err("Missing argument 'FILENAME'."),
         };
 
         Ok(Config {
