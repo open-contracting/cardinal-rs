@@ -84,7 +84,7 @@ impl Coverage {
 }
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let coverage = Coverage::build(config).unwrap();
+    let coverage = Coverage::build(config)?;
 
     println!("{:?}", coverage.counts);
 
