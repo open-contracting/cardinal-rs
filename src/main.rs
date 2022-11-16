@@ -1,7 +1,7 @@
 use std::env;
 use std::process;
 
-use ocdscardinallib::Config;
+use libocdscardinal::Config;
 
 fn main() {
     let config = Config::build(env::args()).unwrap_or_else(|e| {
@@ -9,7 +9,7 @@ fn main() {
         process::exit(1);
     });
 
-    if let Err(e) = ocdscardinallib::run(config) {
+    if let Err(e) = libocdscardinal::run(config) {
         eprintln!("Application error: {e}");
         process::exit(1);
     }
