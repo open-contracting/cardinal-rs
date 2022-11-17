@@ -1,17 +1,38 @@
-use std::env;
 use std::process;
+use std::path::PathBuf;
 
-use libocdscardinal::Config;
+use clap::{Parser, Subcommand};
+
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// The number of threads to spawn (0 for one thread per CPU)
+    #[arg(short, long, default_value_t = 0)]
+    threads: usize,
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Count the number of times each field is set
+    Coverage {
+        /// The path to the file containing OCDS data, in which each line is a contracting process as JSON text
+        file: PathBuf,
+    }
+}
 
 fn main() {
-    let config = Config::build(env::args()).unwrap_or_else(|e| {
-        eprintln!("Error: {e}");
-        process::exit(1);
-    });
+    let cli = Cli::parse();
 
-    if let Err(e) = libocdscardinal::run(config) {
-        eprintln!("Application error: {e}");
-        process::exit(1);
+    match &cli.command {
+        Commands::Coverage { file } => {
+            let num_threads = if cli.threads == 0 { num_cpus::get() } else { cli.threads };
+            if let Err(e) = libocdscardinal::run(file.to_path_buf(), num_threads) {
+                eprintln!("Application error: {e}");
+                process::exit(1);
+            }
+        },
     }
 
     // TODO handle errors returned by the ? in lib.rs (file I/O, JSON parsing)

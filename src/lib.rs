@@ -2,34 +2,11 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::path::PathBuf;
 use std::{panic, thread};
 
 use crossbeam::channel::{bounded, Receiver};
 use serde_json::Value;
-
-pub struct Config {
-    pub path: String,
-    pub threads: usize,
-}
-
-impl Config {
-    pub fn build(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
-        args.next();
-
-        let path = match args.next() {
-            Some(arg) => arg,
-            None => return Err("Missing argument 'FILENAME'."),
-        };
-
-        // TODO Make configurable.
-        let threads = num_cpus::get();
-
-        Ok(Config {
-            path,
-            threads,
-        })
-    }
-}
 
 pub struct Coverage {
     pub counts: HashMap<String, u32>,
@@ -42,12 +19,12 @@ impl Coverage {
         }
     }
 
-    pub fn build(config: Config) -> Result<Coverage, Box<dyn Error>> {
+    pub fn build(filename: PathBuf, num_threads: usize) -> Result<Coverage, Box<dyn Error>> {
         // TODO Understand why this annotation is required.
         let mut threads: Vec<thread::JoinHandle<Result<Coverage, serde_json::Error>>> = vec![];
         let (sender, receiver_) = bounded(1024);
 
-        for _ in 0..config.threads {
+        for _ in 0..num_threads {
             let receiver: Receiver<String> = receiver_.clone();
 
             threads.push(thread::spawn(|| {
@@ -66,7 +43,7 @@ impl Coverage {
             }));
         }
 
-        let file = File::open(config.path)?;
+        let file = File::open(filename)?;
         let reader = BufReader::new(file);
 
         for line in reader.lines() {
@@ -118,8 +95,8 @@ impl Coverage {
     }
 }
 
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let coverage = Coverage::build(config)?;
+pub fn run(filename: PathBuf, num_threads: usize) -> Result<(), Box<dyn Error>> {
+    let coverage = Coverage::build(filename, num_threads)?;
 
     println!("{:?}", coverage.counts);
 

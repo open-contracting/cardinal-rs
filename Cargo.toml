@@ -2,12 +2,12 @@
 name = "libocdscardinal"
 version = "0.1.0"
 edition = "2021"
+author = "Open Contracting Partnership <data@open-contracting.org>"
 description = "Measures red flags and procurement indicators using OCDS data."
 license = "MIT"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+clap = { version = "4.0", features = ["derive"] }
 crossbeam = "0.8"
 num_cpus = "1.0"
 serde = "1.0"
