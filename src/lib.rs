@@ -24,8 +24,7 @@ impl Coverage {
         let reader = BufReader::new(file);
         // Use bounded() to prevent loading the entire file into memory. Memory usage looks okay with 1024.
         let (sender, receiver_) = bounded(1024);
-        // TODO Understand why this annotation is required.
-        let mut handles: Vec<thread::JoinHandle<Result<Coverage, serde_json::Error>>> = vec![];
+        let mut handles = vec![];
 
         for _ in 0..threads {
             let receiver: Receiver<String> = receiver_.clone();
@@ -35,14 +34,10 @@ impl Coverage {
 
                 for line in receiver {
                     let value: Value = serde_json::from_str(&line)?;
-                    if value.is_object() {
-                        coverage.add(value, &mut Vec::with_capacity(16));
-                    } else {
-                        // TODO return Err() feedback about format
-                    }
+                    coverage.add(value, &mut Vec::with_capacity(16));
                 }
 
-                Ok(coverage)
+                Ok::<Coverage, serde_json::Error>(coverage)
             }));
         }
 
@@ -60,7 +55,7 @@ impl Coverage {
                 Ok(result) => {
                     if let Ok(coverage) = result {
                         for (k, v) in coverage.counts {
-                            total_coverage.counts.entry(k).and_modify(|count| { *count += v }).or_insert(v);
+                            total_coverage.increment(k, v);
                         }
                     }
                 },
@@ -75,11 +70,17 @@ impl Coverage {
     // The longest pointer has 10 parts (contracts/0/amendments/0/unstructuredChanges/0/oldValue/classifications/0/id).
     fn add(&mut self, value: Value, path: &mut Vec<String>) {
         match value {
+            Value::Null => {},
             Value::Array(vec) => {
+                path.push(String::from("-"));
                 for i in vec {
                     self.add(i, path);
                 }
+                path.pop();
             },
+            // Note:
+            // - "" keys and literal values yield the same path.
+            // - If a member is repeated, the last is measured.
             Value::Object(map) => {
                 for (k, v) in map {
                     path.push(k);
@@ -87,19 +88,19 @@ impl Coverage {
                     path.pop();
                 }
             },
-            _ => { // string, number, boolean, null
-                // String as key with `join("/")` is faster than Vec<String> as key with `to_vec()`.
-                self.counts.entry(path.join("/")).and_modify(|count| { *count += 1 }).or_insert(1);
+            Value::String(string) => {
+                if !string.is_empty() {
+                    self.increment(path.join("/"), 1);
+                }
+            },
+            _ => { // number, boolean
+                // Using a String as the key with `join("/")` is faster than Vec<String> as the key with `to_vec()`.
+                self.increment(path.join("/"), 1);
             },
         }
     }
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn t() {
+    fn increment(&mut self, path: String, delta: u32) {
+        self.counts.entry(path).and_modify(|count| { *count += delta }).or_insert(delta);
     }
 }
