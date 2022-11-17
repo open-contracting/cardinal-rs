@@ -4,6 +4,7 @@ use std::io::BufReader;
 use std::path::Path;
 
 use serde_json;
+use pretty_assertions::assert_eq;
 
 fn check(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
     let fixtures = Path::new("tests/fixtures");
