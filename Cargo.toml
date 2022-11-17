@@ -1,10 +1,13 @@
 [package]
 name = "libocdscardinal"
 version = "0.1.0"
+authors = ["Open Contracting Partnership <data@open-contracting.org>"]
 edition = "2021"
-author = "Open Contracting Partnership <data@open-contracting.org>"
 description = "Measures red flags and procurement indicators using OCDS data."
+repository = "http://github.com/open-contracting/cardinal-lib"
 license = "MIT"
+build = "build.rs"
+categories = ["command-line-utilities"]
 
 [dependencies]
 clap = { version = "4.0", features = ["derive"] }
@@ -12,3 +15,6 @@ crossbeam = "0.8"
 num_cpus = "1.0"
 serde = "1.0"
 serde_json = "1.0"
+
+[build-dependencies]
+glob = "0.3"
