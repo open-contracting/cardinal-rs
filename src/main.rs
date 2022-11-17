@@ -27,10 +27,20 @@ fn main() {
 
     match &cli.command {
         Commands::Coverage { file } => {
-            let num_threads = if cli.threads == 0 { num_cpus::get() } else { cli.threads };
-            if let Err(e) = libocdscardinal::run(file.to_path_buf(), num_threads) {
-                eprintln!("Application error: {e}");
-                process::exit(1);
+            let threads = if cli.threads == 0 {
+                num_cpus::get()
+            } else {
+                cli.threads
+            };
+
+            match libocdscardinal::Coverage::run(file.to_path_buf(), threads) {
+                Ok(coverage) => {
+                    println!("{:?}", coverage.counts);
+                }
+                Err(e) => {
+                    eprintln!("Application error: {e}");
+                    process::exit(1);
+                }
             }
         },
     }

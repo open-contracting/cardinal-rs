@@ -19,15 +19,18 @@ impl Coverage {
         }
     }
 
-    pub fn build(filename: PathBuf, num_threads: usize) -> Result<Coverage, Box<dyn Error>> {
-        // TODO Understand why this annotation is required.
-        let mut threads: Vec<thread::JoinHandle<Result<Coverage, serde_json::Error>>> = vec![];
+    pub fn run(filename: PathBuf, threads: usize) -> Result<Coverage, Box<dyn Error>> {
+        let file = File::open(filename)?;
+        let reader = BufReader::new(file);
+        // Use bounded() to prevent loading the entire file into memory. Memory usage looks okay with 1024.
         let (sender, receiver_) = bounded(1024);
+        // TODO Understand why this annotation is required.
+        let mut handles: Vec<thread::JoinHandle<Result<Coverage, serde_json::Error>>> = vec![];
 
-        for _ in 0..num_threads {
+        for _ in 0..threads {
             let receiver: Receiver<String> = receiver_.clone();
 
-            threads.push(thread::spawn(|| {
+            handles.push(thread::spawn(|| {
                 let mut coverage = Coverage::new();
 
                 for line in receiver {
@@ -43,9 +46,6 @@ impl Coverage {
             }));
         }
 
-        let file = File::open(filename)?;
-        let reader = BufReader::new(file);
-
         for line in reader.lines() {
             sender.send(line?)?;
         }
@@ -55,8 +55,8 @@ impl Coverage {
 
         let mut total_coverage = Coverage::new();
 
-        for thread in threads {
-            match thread.join() {
+        for handle in handles {
+            match handle.join() {
                 Ok(result) => {
                     if let Ok(coverage) = result {
                         for (k, v) in coverage.counts {
@@ -93,14 +93,6 @@ impl Coverage {
             },
         }
     }
-}
-
-pub fn run(filename: PathBuf, num_threads: usize) -> Result<(), Box<dyn Error>> {
-    let coverage = Coverage::build(filename, num_threads)?;
-
-    println!("{:?}", coverage.counts);
-
-    Ok(())
 }
 
 #[cfg(test)]
