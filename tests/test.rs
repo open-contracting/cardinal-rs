@@ -9,18 +9,18 @@ use pretty_assertions::assert_eq;
 fn check(input: &str, output: &str) -> Result<(), Box<dyn Error>> {
     let fixtures = Path::new("tests/fixtures");
 
+    let inpath = fixtures.join(input);
+    let result = libocdscardinal::Coverage::run(inpath, 2);
+
     if output.starts_with("invalid_") {
-        // TODO
+        assert!(result.is_err());
     } else {
         let outpath = fixtures.join(output);
         let file = File::open(outpath)?;
         let reader = BufReader::new(file);
         let expected = serde_json::from_reader(reader)?;
 
-        let inpath = fixtures.join(input);
-        let coverage = libocdscardinal::Coverage::run(inpath, 2)?;
-
-        assert_eq!(coverage.counts, expected);
+        assert_eq!(result.unwrap().counts, expected);
     }
 
     Ok(())

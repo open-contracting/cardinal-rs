@@ -10,6 +10,7 @@ build = "build.rs"
 categories = ["command-line-utilities"]
 
 [dependencies]
+anyhow = "1.0"
 clap = { version = "4.0", features = ["derive"] }
 crossbeam = "0.8"
 num_cpus = "1.0"

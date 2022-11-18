@@ -1,10 +1,10 @@
 use std::collections::HashMap;
-use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 use std::{panic, thread};
 
+use anyhow::Result;
 use crossbeam::channel::{bounded, Receiver};
 use serde_json::Value;
 
@@ -19,7 +19,7 @@ impl Coverage {
         }
     }
 
-    pub fn run(filename: PathBuf, threads: usize) -> Result<Coverage, Box<dyn Error>> {
+    pub fn run(filename: PathBuf, threads: usize) -> Result<Coverage> {
         let file = File::open(filename)?;
         let reader = BufReader::new(file);
         // Use bounded() to prevent loading the entire file into memory. Memory usage looks okay with 1024.
@@ -37,12 +37,16 @@ impl Coverage {
                     coverage.add(value, &mut Vec::with_capacity(16));
                 }
 
-                Ok::<Coverage, serde_json::Error>(coverage)
+                Ok(coverage)
             }));
         }
 
         for line in reader.lines() {
-            sender.send(line?)?;
+            let string = line?;
+            // https://stackoverflow.com/a/64361042/244258
+            if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
+                sender.send(string)?;
+            }
         }
 
         // Drop the sender, to close the channel.
@@ -53,10 +57,14 @@ impl Coverage {
         for handle in handles {
             match handle.join() {
                 Ok(result) => {
-                    if let Ok(coverage) = result {
-                        for (k, v) in coverage.counts {
-                            total_coverage.increment(k, v);
-                        }
+                    match result {
+                        // TODO Can try to update entry across threads, using DashMap, Arc, etc.
+                        Ok(coverage) => {
+                            for (k, v) in coverage.counts {
+                                total_coverage.increment(k, v);
+                            }
+                        },
+                        Err(_) => return result,
                     }
                 },
                 Err(e) => panic::resume_unwind(e),
