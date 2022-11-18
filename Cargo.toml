@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Open Contracting Partnership <data@open-contracting.org>"]
 edition = "2021"
 description = "Measures red flags and procurement indicators using OCDS data."
+homepage = "http://github.com/open-contracting/cardinal-lib"
 repository = "http://github.com/open-contracting/cardinal-lib"
 license = "MIT"
 build = "build.rs"
@@ -13,6 +14,7 @@ categories = ["command-line-utilities"]
 anyhow = "1.0"
 clap = { version = "4.0", features = ["derive"] }
 crossbeam = "0.8"
+human-panic = "1.0"
 log = "0.4"
 num_cpus = "1.0"
 pretty_env_logger = "0.4"

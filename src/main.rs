@@ -2,6 +2,7 @@ use std::process;
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
+use human_panic::setup_panic;
 use log::LevelFilter;
 
 #[derive(Parser)]
@@ -10,7 +11,7 @@ struct Cli {
     /// The number of threads to spawn (0 for one thread per CPU)
     #[arg(short, long, global = true, default_value_t = 0)]
     threads: usize,
-    #[arg(short, long, global = true, action = clap::ArgAction::Count)]
+    #[arg(short, long, global = true, default_value_t = 1, action = clap::ArgAction::Count)]
     verbose: u8,
     #[command(subcommand)]
     command: Commands,
@@ -26,10 +27,11 @@ enum Commands {
 }
 
 fn main() {
+    setup_panic!();
+
     let cli = Cli::parse();
 
     let level = match cli.verbose {
-        0 => LevelFilter::Error,
         1 => LevelFilter::Warn,
         2 => LevelFilter::Info,
         3 => LevelFilter::Debug,
