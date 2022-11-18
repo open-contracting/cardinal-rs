@@ -2,13 +2,16 @@ use std::process;
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
+use log::LevelFilter;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
     /// The number of threads to spawn (0 for one thread per CPU)
-    #[arg(short, long, default_value_t = 0)]
+    #[arg(short, long, global = true, default_value_t = 0)]
     threads: usize,
+    #[arg(short, long, global = true, action = clap::ArgAction::Count)]
+    verbose: u8,
     #[command(subcommand)]
     command: Commands,
 }
@@ -24,6 +27,16 @@ enum Commands {
 
 fn main() {
     let cli = Cli::parse();
+
+    let level = match cli.verbose {
+        0 => LevelFilter::Error,
+        1 => LevelFilter::Warn,
+        2 => LevelFilter::Info,
+        3 => LevelFilter::Debug,
+        _ => LevelFilter::Trace,
+    };
+
+    pretty_env_logger::formatted_builder().filter_level(level).init();
 
     match &cli.command {
         Commands::Coverage { file } => {
