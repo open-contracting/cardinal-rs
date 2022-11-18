@@ -122,3 +122,41 @@ impl Coverage {
         self.counts.entry(path).and_modify(|count| { *count += delta }).or_insert(delta);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use std::io::ErrorKind;
+    use std::path::Path;
+
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn test_nonexistent() {
+        let result = Coverage::run(PathBuf::from("nonexistent"), 1);
+        let error = result.unwrap_err();
+
+        // https://docs.rs/anyhow/latest/anyhow/struct.Error.html#display-representations
+        assert_eq!(format!("{:#}", error), "No such file 'nonexistent': No such file or directory (os error 2)");
+        // https://github.com/dtolnay/anyhow/blob/1.0.66/tests/test_downcast.rs#L66-L69
+        assert_eq!(error.downcast::<std::io::Error>().unwrap().kind(), ErrorKind::NotFound);
+    }
+
+
+    fn check(input: &str, output: &str) {
+        let fixtures = Path::new("tests/fixtures");
+
+        let inpath = fixtures.join(input);
+        let result = Coverage::run(inpath, 2);
+
+        let outpath = fixtures.join(output);
+        let file = File::open(outpath).unwrap();
+        let reader = BufReader::new(file);
+        let expected = serde_json::from_reader(reader).unwrap();
+
+        assert_eq!(result.unwrap().counts, expected);
+    }
+
+    include!(concat!(env!("OUT_DIR"), "/tests.rs"));
+}

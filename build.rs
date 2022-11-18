@@ -19,7 +19,7 @@ fn main() {
 
         write!(file, r#"
 #[test]
-fn test_{name}() -> Result<(), Box<dyn Error>> {{
+fn test_{name}() {{
     check("{input}", "{output}")
 }}
 "#, name=stem, input=input, output=output).unwrap()
