@@ -59,7 +59,4 @@ fn main() {
             }
         },
     }
-
-    // TODO handle errors returned by the ? in lib.rs (file I/O, JSON parsing)
-    // https://doc.rust-lang.org/book/ch09-02-recoverable-errors-with-result.html#matching-on-different-errors
 }

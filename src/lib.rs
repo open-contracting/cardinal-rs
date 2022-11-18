@@ -4,10 +4,12 @@ use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
 use std::{panic, thread};
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use crossbeam::channel::{bounded, Receiver};
+use log::warn;
 use serde_json::Value;
 
+#[derive(Debug)]
 pub struct Coverage {
     pub counts: HashMap<String, u32>,
 }
@@ -20,32 +22,43 @@ impl Coverage {
     }
 
     pub fn run(filename: PathBuf, threads: usize) -> Result<Coverage> {
-        let file = File::open(filename)?;
+        let file = File::open(&filename).context(format!("No such file '{}'", filename.display()))?;
         let reader = BufReader::new(file);
         // Use bounded() to prevent loading the entire file into memory. Memory usage looks okay with 1024.
         let (sender, receiver_) = bounded(1024);
         let mut handles = vec![];
 
         for _ in 0..threads {
-            let receiver: Receiver<String> = receiver_.clone();
+            let receiver: Receiver<(usize, String)> = receiver_.clone();
 
             handles.push(thread::spawn(|| {
                 let mut coverage = Coverage::new();
 
-                for line in receiver {
-                    let value: Value = serde_json::from_str(&line)?;
-                    coverage.add(value, &mut Vec::with_capacity(16));
+                for (i, string) in receiver {
+                    match serde_json::from_str(&string) {
+                        Ok(value) => coverage.add(value, &mut Vec::with_capacity(16)),
+                        Err(e) => {
+                            // Skip empty lines silently.
+                            // https://stackoverflow.com/a/64361042/244258
+                            if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
+                                warn!("Line {} is invalid JSON, skipping. [{e}]", i + 1)
+                            }
+                        }
+                    }
                 }
 
-                Ok(coverage)
+                coverage
             }));
         }
 
-        for line in reader.lines() {
-            let string = line?;
-            // https://stackoverflow.com/a/64361042/244258
-            if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
-                sender.send(string)?;
+        for (i, result) in reader.lines().enumerate() {
+            match result {
+                // Err: Channel disconnect or timeout.
+                // https://docs.rs/crossbeam/latest/crossbeam/channel/struct.Sender.html#method.send
+                Ok(string) => sender.send((i, string))?,
+                // Err: https://doc.rust-lang.org/std/io/enum.ErrorKind.html
+                // https://github.com/rust-lang/rust/blob/1.65.0/library/std/src/io/buffered/bufreader.rs#L362-L365
+                Err(e) => warn!("Line {} caused an I/O error, skipping. [{e}]", i + 1),
             }
         }
 
@@ -56,17 +69,14 @@ impl Coverage {
 
         for handle in handles {
             match handle.join() {
-                Ok(result) => {
-                    match result {
-                        // TODO Can try to update entry across threads, using DashMap, Arc, etc.
-                        Ok(coverage) => {
-                            for (k, v) in coverage.counts {
-                                total_coverage.increment(k, v);
-                            }
-                        },
-                        Err(_) => return result,
+                // TODO Can try to update entry across threads, using DashMap, Arc, etc.
+                Ok(coverage) => {
+                    for (k, v) in coverage.counts {
+                        total_coverage.increment(k, v);
                     }
                 },
+                // Err: Associated thread panic.
+                // https://doc.rust-lang.org/stable/std/thread/type.Result.html
                 Err(e) => panic::resume_unwind(e),
             }
         }
