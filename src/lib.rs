@@ -43,7 +43,7 @@ impl Coverage {
                                 // Skip empty lines silently.
                                 // https://stackoverflow.com/a/64361042/244258
                                 if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
-                                    warn!("Line {} is invalid JSON, skipping. [{e}]", i + 1)
+                                    warn!("Line {} is invalid JSON, skipping. [{e}]", i + 1);
                                 }
                             }
                         }
@@ -68,46 +68,48 @@ impl Coverage {
 
     // The longest path has 6 parts (as below or contracts/implementation/transactions/payer/identifier/id).
     // The longest pointer has 10 parts (contracts/0/amendments/0/unstructuredChanges/0/oldValue/classifications/0/id).
-    fn add(&mut self, value: Value, path: &mut Vec<String>) {
-        // Note:
-        // - Within an object, a "" key and the object itself share the same path.
-        // - Within an array, literal values, non-empty objects and non-empty arrays share the same path.
-        // - At the top-level, literal values, non-empty objects and non-empty arrays share the same path.
-        // - If a member is repeated, the last is measured.
-        //
+    fn add(&mut self, value: Value, path: &mut Vec<String>) -> bool {
+        let mut increment = false;
+
         // Using a String as the key with `join("/")` is faster than Vec<String> as the key with `to_vec()`.
         match value {
             Value::Null => {}
             Value::Array(vec) => {
                 if !vec.is_empty() {
-                    self.increment(path.join("/"), 1);
+                    path.push(String::from("[]"));
+                    for i in vec {
+                        increment |= self.add(i, path);
+                    }
+                    path.pop();
                 }
-                path.push(String::from("-"));
-                for i in vec {
-                    self.add(i, path);
-                }
-                path.pop();
             }
             Value::Object(map) => {
                 if !map.is_empty() {
-                    self.increment(path.join("/"), 1);
-                }
-                for (k, v) in map {
-                    path.push(k);
-                    self.add(v, path);
+                    path.push(String::from("/"));
+                    for (k, v) in map {
+                        path.push(k);
+                        increment |= self.add(v, path);
+                        path.pop();
+                    }
+                    if increment {
+                        self.increment(path.join(""), 1);
+                    }
                     path.pop();
                 }
             }
             Value::String(string) => {
-                if !string.is_empty() {
-                    self.increment(path.join("/"), 1);
-                }
+                increment = !string.is_empty();
             }
             // number, boolean
             _ => {
-                self.increment(path.join("/"), 1);
+                increment = true;
             }
         }
+
+        if increment {
+            self.increment(path.join(""), 1);
+        }
+        increment
     }
 
     fn increment(&mut self, path: String, delta: u32) {
@@ -134,9 +136,7 @@ mod tests {
         let result = Coverage::run(PathBuf::from("notfound"));
         let error = result.unwrap_err();
         let message = format!("{:#}", error);
-        // macos-latest, ubuntu-latest: "No such file or directory"
-        // windows-latest: "The system cannot find the file specified."
-        let re = Regex::new(r"Failed to read '\S+': [A-Za-z. ]+ \(os error 2\)").unwrap();
+        let re = Regex::new(r"Failed to read '\S+': (No such file or directory|The system cannot find the file specified\.) \(os error 2\)").unwrap();
 
         assert!(re.is_match(&message), "Error did not match '{message}'");
         assert_eq!(

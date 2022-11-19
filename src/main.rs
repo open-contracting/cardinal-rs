@@ -16,7 +16,33 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Count the number of times each field is set
+    /// Count the number of times each field is non-empty in a line-delimited JSON file
+    ///
+    /// The command walks the JSON tree, counting non-empty nodes. Empty nodes are "", [], {} and null, and any nodes
+    /// containing only empty nodes.
+    ///
+    /// The result is a JSON object, in which keys are paths and values are counts.
+    ///
+    /// The "" path corresponds to a line. A path ending with / corresponds to an object node. A path ending with []
+    /// corresponds to an array element. Other paths correspond to object members.
+    ///
+    /// Caveats:
+    /// - If a member name is duplicated, only the last duplicate is considered.
+    ///
+    ///       $ echo '{"a": 0, "a": null}' | libocdscardinal coverage
+    ///       {}
+    ///
+    /// - If a member name is empty, its path is the same as its parent object's path:
+    ///
+    ///       $ echo '{"": 0}' | libocdscardinal coverage
+    ///       {"": 1, "/": 2}
+    ///
+    /// - If a member name ends with [], its path can be the same as a matching sibling's path:
+    ///
+    ///       $ echo '{"a[]": 0, "a": [0]}' | libocdscardinal coverage
+    ///       {"": 1, "/": 1, "/a": 1, "/a[]": 2}
+    // https://github.com/clap-rs/clap/issues/2389
+    #[clap(verbatim_doc_comment)]
     Coverage {
         /// The path to the file containing OCDS data, in which each line is a contracting process as JSON text
         file: PathBuf,
