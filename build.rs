@@ -15,16 +15,17 @@ fn main() {
         let path = entry.unwrap();
         let name = path.file_stem().unwrap().to_str().unwrap();
 
-        if name == "permissiondenied" {
-            continue;
-        }
-
-        write!(file, r#"
+        write!(
+            file,
+            r#"
 #[test]
 fn test_{name}() {{
     check("{name}")
 }}
-"#, name=name).unwrap()
+"#,
+            name = name,
+        )
+        .unwrap()
     }
 
     let path = Path::new(&env::var("OUT_DIR").unwrap()).join("test.include");
@@ -40,11 +41,19 @@ fn test_{name}() {{
     ];
 
     for (name, infix, line, column) in params {
-        write!(file, r#"
+        write!(
+            file,
+            r#"
 #[test]
 fn test_error_{name}() {{
     check("{name}", "{infix}", {line}, {column})
 }}
-"#, name=name, infix=infix, line=line, column=column).unwrap()
+"#,
+            name = name,
+            infix = infix,
+            line = line,
+            column = column,
+        )
+        .unwrap()
     }
 }

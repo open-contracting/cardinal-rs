@@ -1,5 +1,5 @@
-use std::process;
 use std::path::PathBuf;
+use std::process;
 
 use clap::{Parser, Subcommand};
 use human_panic::setup_panic;
@@ -23,7 +23,7 @@ enum Commands {
     Coverage {
         /// The path to the file containing OCDS data, in which each line is a contracting process as JSON text
         file: PathBuf,
-    }
+    },
 }
 
 fn main() {
@@ -38,7 +38,9 @@ fn main() {
         _ => LevelFilter::Trace,
     };
 
-    pretty_env_logger::formatted_builder().filter_level(level).init();
+    pretty_env_logger::formatted_builder()
+        .filter_level(level)
+        .init();
 
     match &cli.command {
         Commands::Coverage { file } => {
@@ -57,6 +59,6 @@ fn main() {
                     process::exit(1);
                 }
             }
-        },
+        }
     }
 }

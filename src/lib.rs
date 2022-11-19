@@ -17,12 +17,13 @@ pub struct Coverage {
 impl Coverage {
     fn new() -> Self {
         Coverage {
-            counts: HashMap::new()
+            counts: HashMap::new(),
         }
     }
 
     pub fn run(filename: PathBuf, threads: usize) -> Result<Coverage> {
-        let file = File::open(&filename).context(format!("Failed to read '{}'", filename.display()))?;
+        let file = File::open(&filename)
+            .with_context(|| format!("Failed to read '{}'", filename.display()))?;
         let reader = BufReader::new(file);
         // Use bounded() to prevent loading the entire file into memory. Memory usage looks okay with 1024.
         let (sender, receiver_) = bounded(1024);
@@ -73,7 +74,7 @@ impl Coverage {
                     for (k, v) in coverage.counts {
                         total_coverage.increment(k, v);
                     }
-                },
+                }
                 // Err: Associated thread panic.
                 // https://doc.rust-lang.org/stable/std/thread/type.Result.html
                 Err(e) => panic::resume_unwind(e),
@@ -87,14 +88,14 @@ impl Coverage {
     // The longest pointer has 10 parts (contracts/0/amendments/0/unstructuredChanges/0/oldValue/classifications/0/id).
     fn add(&mut self, value: Value, path: &mut Vec<String>) {
         match value {
-            Value::Null => {},
+            Value::Null => {}
             Value::Array(vec) => {
                 path.push(String::from("-"));
                 for i in vec {
                     self.add(i, path);
                 }
                 path.pop();
-            },
+            }
             // Note:
             // - "" keys and literal values yield the same path.
             // - If a member is repeated, the last is measured.
@@ -104,21 +105,25 @@ impl Coverage {
                     self.add(v, path);
                     path.pop();
                 }
-            },
+            }
             Value::String(string) => {
                 if !string.is_empty() {
                     self.increment(path.join("/"), 1);
                 }
-            },
-            _ => { // number, boolean
+            }
+            // number, boolean
+            _ => {
                 // Using a String as the key with `join("/")` is faster than Vec<String> as the key with `to_vec()`.
                 self.increment(path.join("/"), 1);
-            },
+            }
         }
     }
 
     fn increment(&mut self, path: String, delta: u32) {
-        self.counts.entry(path).and_modify(|count| { *count += delta }).or_insert(delta);
+        self.counts
+            .entry(path)
+            .and_modify(|count| *count += delta)
+            .or_insert(delta);
     }
 }
 
@@ -130,8 +135,8 @@ mod tests {
     use std::os::unix::fs::PermissionsExt;
     use std::path::Path;
 
-    use regex::Regex;
     use pretty_assertions::assert_eq;
+    use regex::Regex;
     use tempfile::NamedTempFile;
 
     #[test]
@@ -140,9 +145,15 @@ mod tests {
         let error = result.unwrap_err();
 
         // https://docs.rs/anyhow/latest/anyhow/struct.Error.html#display-representations
-        assert_eq!(format!("{:#}", error), "Failed to read 'notfound': No such file or directory (os error 2)");
+        assert_eq!(
+            format!("{:#}", error),
+            "Failed to read 'notfound': No such file or directory (os error 2)"
+        );
         // https://github.com/dtolnay/anyhow/blob/1.0.66/tests/test_downcast.rs#L66-L69
-        assert_eq!(error.downcast::<std::io::Error>().unwrap().kind(), ErrorKind::NotFound);
+        assert_eq!(
+            error.downcast::<std::io::Error>().unwrap().kind(),
+            ErrorKind::NotFound
+        );
     }
 
     #[test]
@@ -162,7 +173,10 @@ mod tests {
         // https://docs.rs/anyhow/latest/anyhow/struct.Error.html#display-representations
         assert!(re.is_match(&message), "Error did not match '{message}'");
         // https://github.com/dtolnay/anyhow/blob/1.0.66/tests/test_downcast.rs#L66-L69
-        assert_eq!(error.downcast::<std::io::Error>().unwrap().kind(), ErrorKind::PermissionDenied);
+        assert_eq!(
+            error.downcast::<std::io::Error>().unwrap().kind(),
+            ErrorKind::PermissionDenied
+        );
     }
 
     fn check(name: &str) {

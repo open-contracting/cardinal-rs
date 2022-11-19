@@ -1,15 +1,20 @@
-use assert_cmd::Command;
 use assert_cmd::assert::Assert;
+use assert_cmd::Command;
 
 fn coverage(args: &[&str]) -> Assert {
-    Command::cargo_bin(env!("CARGO_PKG_NAME")).unwrap().args(&["coverage", "--threads", "1"]).args(args).assert()
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))
+        .unwrap()
+        .args(&["coverage", "--threads", "1"])
+        .args(args)
+        .assert()
 }
 
 #[test]
 fn test_success() {
-    coverage(&["tests/fixtures/coverage/base_object.jsonl"]).success().stdout("{\"a\": 1}\n");
+    coverage(&["tests/fixtures/coverage/base_object.jsonl"])
+        .success()
+        .stdout("{\"a\": 1}\n");
 }
-
 
 #[test]
 fn test_error_invalid_multiline() {
