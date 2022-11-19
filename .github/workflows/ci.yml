@@ -7,7 +7,7 @@ jobs:
     # https://github.com/rust-lang/log/blob/master/.github/workflows/main.yml
     strategy:
       matrix:
-        build: ubuntu
+        build: [ubuntu]
         # build: [ubuntu, macos, windows]
         include:
           # - build: macos
