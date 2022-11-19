@@ -142,13 +142,12 @@ mod tests {
     fn test_notfound() {
         let result = Coverage::run(PathBuf::from("notfound"), 1);
         let error = result.unwrap_err();
+        let message = format!("{:#}", error);
+        // macos-latest, ubuntu-latest: "No such file or directory"
+        // windows-latest: "The system cannot find the file specified."
+        let re = Regex::new(r"Failed to read '\S+': [A-Za-z. ]+ \(os error 2\)").unwrap();
 
-        // https://docs.rs/anyhow/latest/anyhow/struct.Error.html#display-representations
-        assert_eq!(
-            format!("{:#}", error),
-            "Failed to read 'notfound': No such file or directory (os error 2)"
-        );
-        // https://github.com/dtolnay/anyhow/blob/1.0.66/tests/test_downcast.rs#L66-L69
+        assert!(re.is_match(&message), "Error did not match '{message}'");
         assert_eq!(
             error.downcast::<std::io::Error>().unwrap().kind(),
             ErrorKind::NotFound
@@ -172,9 +171,7 @@ mod tests {
         let message = format!("{:#}", error);
         let re = Regex::new(r"Failed to read '\S+': Permission denied \(os error 13\)").unwrap();
 
-        // https://docs.rs/anyhow/latest/anyhow/struct.Error.html#display-representations
         assert!(re.is_match(&message), "Error did not match '{message}'");
-        // https://github.com/dtolnay/anyhow/blob/1.0.66/tests/test_downcast.rs#L66-L69
         assert_eq!(
             error.downcast::<std::io::Error>().unwrap().kind(),
             ErrorKind::PermissionDenied

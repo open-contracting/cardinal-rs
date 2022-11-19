@@ -19,7 +19,8 @@ jobs:
       # https://github.com/taiki-e/cargo-llvm-cov#on-github-actions
       - uses: taiki-e/install-action@cargo-llvm-cov
       - run: cargo llvm-cov --lcov --output-path lcov.info
-      - uses: coverallsapp/github-action@master
+      - if: matrix.os == 'ubuntu-latest'
+        uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: lcov.info
