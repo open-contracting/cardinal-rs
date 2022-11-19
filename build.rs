@@ -11,7 +11,7 @@ fn main() {
     let path = Path::new(&env::var("OUT_DIR").unwrap()).join("lib.include");
     let mut file = File::create(path).unwrap();
 
-    for entry in glob("tests/fixtures/*.jsonl").expect("Failed to read glob pattern") {
+    for entry in glob("tests/fixtures/coverage/*.jsonl").expect("Failed to read glob pattern") {
         let path = entry.unwrap();
         let name = path.file_stem().unwrap().to_str().unwrap();
 

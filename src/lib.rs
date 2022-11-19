@@ -166,7 +166,7 @@ mod tests {
     }
 
     fn check(name: &str) {
-        let fixtures = Path::new("tests/fixtures");
+        let fixtures = Path::new("tests/fixtures/coverage");
 
         let inpath = fixtures.join(format!("{name}.jsonl"));
         let result = Coverage::run(inpath, 2);
