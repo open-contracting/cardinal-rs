@@ -1,5 +1,5 @@
 # libcardinal
 
 ```bash
-cargo run -- file.jsonl
+cargo run -- help
 ```
