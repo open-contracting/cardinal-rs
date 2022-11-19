@@ -4,36 +4,22 @@ jobs:
   build:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ${{ matrix.os }}
-    # https://github.com/rust-lang/log/blob/master/.github/workflows/main.yml
     strategy:
       matrix:
-        build: [ubuntu]
-        # build: [ubuntu, macos, windows]
-        include:
-          # - build: macos
-          #   os: macos-latest
-          #   rust: stable
-          # - build: windows
-          #   os: windows-latest
-          #   rust: stable-x86_64-pc-windows-msvc
-          - build: ubuntu
-            os: ubuntu-latest
-            rust: stable
+        os: [macos-latest, windows-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v3
-      - run: |
-          rustup update ${{ matrix.rust }} --no-self-update
-          rustup default ${{ matrix.rust }}
-          rustup component add llvm-tools-preview
-      - env:
-          RUSTFLAGS: -Cinstrument-coverage
-          LLVM_PROFILE_FILE: report-%p-%m.profraw
-        run: cargo test
-      # https://github.com/actions-rs/grcov/issues/105
-      - run: |
-          cargo install grcov
-          grcov . -s src --binary-path target/debug -t lcov -o coveralls.lcov
+      - uses: dtolnay/rust-toolchain@stable
+      # "Generate lockfile for caching to avoid build problems with cached deps"
+      # https://github.com/rust-lang/rust-clippy/blob/master/.github/workflows/deploy.yml
+      - run: cargo generate-lockfile
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.os }}
+      # https://github.com/taiki-e/cargo-llvm-cov#on-github-actions
+      - uses: taiki-e/install-action@cargo-llvm-cov
+      - run: cargo llvm-cov --lcov --output-path lcov.info
       - uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: coveralls.lcov
+          path-to-lcov: lcov.info

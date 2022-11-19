@@ -132,7 +132,6 @@ mod tests {
     use super::*;
 
     use std::io::ErrorKind;
-    use std::os::unix::fs::PermissionsExt;
     use std::path::Path;
 
     use pretty_assertions::assert_eq;
@@ -156,8 +155,11 @@ mod tests {
         );
     }
 
+    #[cfg(unix)]
     #[test]
     fn test_permissiondenied() {
+        use std::os::unix::fs::PermissionsExt;
+
         let mut tempfile = NamedTempFile::new().unwrap();
 
         let file = tempfile.as_file_mut();
