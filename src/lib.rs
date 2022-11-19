@@ -2,11 +2,10 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::PathBuf;
-use std::{panic, thread};
 
 use anyhow::{Context, Result};
-use crossbeam::channel::{bounded, Receiver};
 use log::warn;
+use rayon::prelude::*;
 use serde_json::Value;
 
 #[derive(Debug)]
@@ -21,67 +20,46 @@ impl Coverage {
         }
     }
 
-    pub fn run(filename: PathBuf, threads: usize) -> Result<Coverage> {
+    pub fn run(filename: PathBuf) -> Result<Coverage> {
         let file = File::open(&filename)
             .with_context(|| format!("Failed to read '{}'", filename.display()))?;
-        let reader = BufReader::new(file);
-        // Use bounded() to prevent loading the entire file into memory. Memory usage looks okay with 1024.
-        let (sender, receiver_) = bounded(1024);
-        let mut handles = vec![];
 
-        for _ in 0..threads {
-            let receiver: Receiver<(usize, String)> = receiver_.clone();
-
-            handles.push(thread::spawn(|| {
-                let mut coverage = Coverage::new();
-
-                for (i, string) in receiver {
-                    match serde_json::from_str(&string) {
-                        Ok(value) => coverage.add(value, &mut Vec::with_capacity(16)),
-                        Err(e) => {
-                            // Skip empty lines silently.
-                            // https://stackoverflow.com/a/64361042/244258
-                            if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
-                                warn!("Line {} is invalid JSON, skipping. [{e}]", i + 1)
+        let coverage = BufReader::new(file)
+            .lines()
+            .enumerate()
+            .par_bridge()
+            .fold(Coverage::new, |mut coverage, (i, result)| {
+                match result {
+                    Ok(string) => {
+                        match serde_json::from_str(&string) {
+                            Ok(value) => {
+                                coverage.add(value, &mut Vec::with_capacity(16));
+                            }
+                            Err(e) => {
+                                // Skip empty lines silently.
+                                // https://stackoverflow.com/a/64361042/244258
+                                if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
+                                    warn!("Line {} is invalid JSON, skipping. [{e}]", i + 1)
+                                }
                             }
                         }
                     }
+                    // Err: https://doc.rust-lang.org/std/io/enum.ErrorKind.html
+                    // https://github.com/rust-lang/rust/blob/1.65.0/library/std/src/io/buffered/bufreader.rs#L362-L365
+                    Err(e) => warn!("Line {} caused an I/O error, skipping. [{e}]", i + 1),
                 }
 
                 coverage
-            }));
-        }
-
-        for (i, result) in reader.lines().enumerate() {
-            match result {
-                // Err: Channel disconnect or timeout.
-                // https://docs.rs/crossbeam/latest/crossbeam/channel/struct.Sender.html#method.send
-                Ok(string) => sender.send((i, string))?,
-                // Err: https://doc.rust-lang.org/std/io/enum.ErrorKind.html
-                // https://github.com/rust-lang/rust/blob/1.65.0/library/std/src/io/buffered/bufreader.rs#L362-L365
-                Err(e) => warn!("Line {} caused an I/O error, skipping. [{e}]", i + 1),
-            }
-        }
-
-        // Drop the sender, to close the channel.
-        drop(sender);
-
-        let mut total_coverage = Coverage::new();
-
-        for handle in handles {
-            match handle.join() {
-                Ok(coverage) => {
-                    for (k, v) in coverage.counts {
-                        total_coverage.increment(k, v);
-                    }
+            })
+            .reduce(Coverage::new, |mut coverage, other| {
+                for (k, v) in other.counts {
+                    coverage.increment(k, v);
                 }
-                // Err: Associated thread panic.
-                // https://doc.rust-lang.org/stable/std/thread/type.Result.html
-                Err(e) => panic::resume_unwind(e),
-            }
-        }
 
-        Ok(total_coverage)
+                coverage
+            });
+
+        Ok(coverage)
     }
 
     // The longest path has 6 parts (as below or contracts/implementation/transactions/payer/identifier/id).
@@ -140,7 +118,7 @@ mod tests {
 
     #[test]
     fn test_notfound() {
-        let result = Coverage::run(PathBuf::from("notfound"), 1);
+        let result = Coverage::run(PathBuf::from("notfound"));
         let error = result.unwrap_err();
         let message = format!("{:#}", error);
         // macos-latest, ubuntu-latest: "No such file or directory"
@@ -166,7 +144,7 @@ mod tests {
         permissions.set_mode(0o000);
         file.set_permissions(permissions).unwrap();
 
-        let result = Coverage::run(tempfile.path().to_path_buf(), 1);
+        let result = Coverage::run(tempfile.path().to_path_buf());
         let error = result.unwrap_err();
         let message = format!("{:#}", error);
         let re = Regex::new(r"Failed to read '\S+': Permission denied \(os error 13\)").unwrap();
@@ -182,7 +160,7 @@ mod tests {
         let fixtures = Path::new("tests/fixtures/coverage");
 
         let inpath = fixtures.join(format!("{name}.jsonl"));
-        let result = Coverage::run(inpath, 2);
+        let result = Coverage::run(inpath);
 
         let outpath = fixtures.join(format!("{name}.expected"));
         let file = File::open(outpath).unwrap();

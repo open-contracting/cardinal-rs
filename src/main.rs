@@ -8,9 +8,6 @@ use log::LevelFilter;
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
-    /// The number of threads to spawn (0 for one thread per CPU)
-    #[arg(short, long, global = true, default_value_t = 0)]
-    threads: usize,
     #[arg(short, long, global = true, default_value_t = 1, action = clap::ArgAction::Count)]
     verbose: u8,
     #[command(subcommand)]
@@ -43,22 +40,14 @@ fn main() {
         .init();
 
     match &cli.command {
-        Commands::Coverage { file } => {
-            let threads = if cli.threads == 0 {
-                num_cpus::get()
-            } else {
-                cli.threads
-            };
-
-            match libocdscardinal::Coverage::run(file.to_path_buf(), threads) {
-                Ok(coverage) => {
-                    println!("{:?}", coverage.counts);
-                }
-                Err(e) => {
-                    eprintln!("Application error: {e:#}");
-                    process::exit(1);
-                }
+        Commands::Coverage { file } => match libocdscardinal::Coverage::run(file.to_path_buf()) {
+            Ok(coverage) => {
+                println!("{:?}", coverage.counts);
             }
-        }
+            Err(e) => {
+                eprintln!("Application error: {e:#}");
+                process::exit(1);
+            }
+        },
     }
 }

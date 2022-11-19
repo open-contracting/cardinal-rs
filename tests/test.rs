@@ -4,7 +4,7 @@ use assert_cmd::Command;
 fn coverage(args: &[&str]) -> Assert {
     Command::cargo_bin(env!("CARGO_PKG_NAME"))
         .unwrap()
-        .args(&["coverage", "--threads", "1"])
+        .arg("coverage")
         .args(args)
         .assert()
 }
