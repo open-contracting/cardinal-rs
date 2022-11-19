@@ -7,14 +7,15 @@ jobs:
     # https://github.com/rust-lang/log/blob/master/.github/workflows/main.yml
     strategy:
       matrix:
-        build: [ubuntu, macos, windows]
+        build: ubuntu
+        # build: [ubuntu, macos, windows]
         include:
-          - build: macos
-            os: macos-latest
-            rust: stable
-          - build: windows
-            os: windows-latest
-            rust: stable-x86_64-pc-windows-msvc
+          # - build: macos
+          #   os: macos-latest
+          #   rust: stable
+          # - build: windows
+          #   os: windows-latest
+          #   rust: stable-x86_64-pc-windows-msvc
           - build: ubuntu
             os: ubuntu-latest
             rust: stable
