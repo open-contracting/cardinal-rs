@@ -8,20 +8,43 @@ use glob::glob;
 // Rust has no built-in parametrize feature.
 // https://stackoverflow.com/a/49056967/244258
 fn main() {
-    let path = Path::new(&env::var("OUT_DIR").unwrap()).join("tests.rs");
+    let path = Path::new(&env::var("OUT_DIR").unwrap()).join("lib.include");
     let mut file = File::create(path).unwrap();
 
     for entry in glob("tests/fixtures/*.jsonl").expect("Failed to read glob pattern") {
         let path = entry.unwrap();
-        let input = path.file_name().unwrap().to_str().unwrap();
-        let stem = path.file_stem().unwrap().to_str().unwrap();
-        let output = format!("{stem}.expected");
+        let name = path.file_stem().unwrap().to_str().unwrap();
+
+        if name == "permissiondenied" {
+            continue;
+        }
 
         write!(file, r#"
 #[test]
 fn test_{name}() {{
-    check("{input}", "{output}")
+    check("{name}")
 }}
-"#, name=stem, input=input, output=output).unwrap()
+"#, name=name).unwrap()
+    }
+
+    let path = Path::new(&env::var("OUT_DIR").unwrap()).join("test.include");
+    let mut file = File::create(path).unwrap();
+
+    let params = [
+        ("invalid_array_quote_first", ":", 1, 5),
+        ("invalid_array_quote_last", ":", 1, 13),
+        ("invalid_object_quote_first", ":", 1, 4),
+        ("invalid_object_quote_last", ":", 2, 4),
+        ("invalid_brace_first", "EOF", 1, 1),
+        ("invalid_brace_last", "EOF", 2, 1),
+    ];
+
+    for (name, infix, line, column) in params {
+        write!(file, r#"
+#[test]
+fn test_error_{name}() {{
+    check("{name}", "{infix}", {line}, {column})
+}}
+"#, name=name, infix=infix, line=line, column=column).unwrap()
     }
 }

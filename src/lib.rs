@@ -22,7 +22,7 @@ impl Coverage {
     }
 
     pub fn run(filename: PathBuf, threads: usize) -> Result<Coverage> {
-        let file = File::open(&filename).context(format!("No such file '{}'", filename.display()))?;
+        let file = File::open(&filename).context(format!("Failed to read '{}'", filename.display()))?;
         let reader = BufReader::new(file);
         // Use bounded() to prevent loading the entire file into memory. Memory usage looks okay with 1024.
         let (sender, receiver_) = bounded(1024);
@@ -69,7 +69,6 @@ impl Coverage {
 
         for handle in handles {
             match handle.join() {
-                // TODO Can try to update entry across threads, using DashMap, Arc, etc.
                 Ok(coverage) => {
                     for (k, v) in coverage.counts {
                         total_coverage.increment(k, v);
@@ -128,29 +127,51 @@ mod tests {
     use super::*;
 
     use std::io::ErrorKind;
+    use std::os::unix::fs::PermissionsExt;
     use std::path::Path;
 
+    use regex::Regex;
     use pretty_assertions::assert_eq;
+    use tempfile::NamedTempFile;
 
     #[test]
-    fn test_nonexistent() {
-        let result = Coverage::run(PathBuf::from("nonexistent"), 1);
+    fn test_notfound() {
+        let result = Coverage::run(PathBuf::from("notfound"), 1);
         let error = result.unwrap_err();
 
         // https://docs.rs/anyhow/latest/anyhow/struct.Error.html#display-representations
-        assert_eq!(format!("{:#}", error), "No such file 'nonexistent': No such file or directory (os error 2)");
+        assert_eq!(format!("{:#}", error), "Failed to read 'notfound': No such file or directory (os error 2)");
         // https://github.com/dtolnay/anyhow/blob/1.0.66/tests/test_downcast.rs#L66-L69
         assert_eq!(error.downcast::<std::io::Error>().unwrap().kind(), ErrorKind::NotFound);
     }
 
+    #[test]
+    fn test_permissiondenied() {
+        let mut tempfile = NamedTempFile::new().unwrap();
 
-    fn check(input: &str, output: &str) {
+        let file = tempfile.as_file_mut();
+        let mut permissions = file.metadata().unwrap().permissions();
+        permissions.set_mode(0o000);
+        file.set_permissions(permissions).unwrap();
+
+        let result = Coverage::run(tempfile.path().to_path_buf(), 1);
+        let error = result.unwrap_err();
+        let message = format!("{:#}", error);
+        let re = Regex::new(r"Failed to read '\S+': Permission denied \(os error 13\)").unwrap();
+
+        // https://docs.rs/anyhow/latest/anyhow/struct.Error.html#display-representations
+        assert!(re.is_match(&message), "Error did not match '{message}'");
+        // https://github.com/dtolnay/anyhow/blob/1.0.66/tests/test_downcast.rs#L66-L69
+        assert_eq!(error.downcast::<std::io::Error>().unwrap().kind(), ErrorKind::PermissionDenied);
+    }
+
+    fn check(name: &str) {
         let fixtures = Path::new("tests/fixtures");
 
-        let inpath = fixtures.join(input);
+        let inpath = fixtures.join(format!("{name}.jsonl"));
         let result = Coverage::run(inpath, 2);
 
-        let outpath = fixtures.join(output);
+        let outpath = fixtures.join(format!("{name}.expected"));
         let file = File::open(outpath).unwrap();
         let reader = BufReader::new(file);
         let expected = serde_json::from_reader(reader).unwrap();
@@ -158,5 +179,5 @@ mod tests {
         assert_eq!(result.unwrap().counts, expected);
     }
 
-    include!(concat!(env!("OUT_DIR"), "/tests.rs"));
+    include!(concat!(env!("OUT_DIR"), "/lib.include"));
 }
