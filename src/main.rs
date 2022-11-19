@@ -26,6 +26,11 @@ enum Commands {
     /// The "" path corresponds to a line. A path ending with / corresponds to an object node. A path ending with []
     /// corresponds to an array element. Other paths correspond to object members.
     ///
+    /// Example:
+    ///
+    ///     $ echo '{"phoneNumbers":[{"type": "home","number": "212 555-1234"},{"type": "office","number": "646 555-4567"}]}' | libocdscardinal
+    ///     {"": 1, "/": 1, "/phoneNumbers": 1, "/phoneNumbers[]": 2, "/phoneNumbers[]/": 2, "/phoneNumbers[]/type": 2, "/phoneNumbers[]/number": 2}
+    ///
     /// Caveats:
     /// - If a member name is duplicated, only the last duplicate is considered.
     ///
