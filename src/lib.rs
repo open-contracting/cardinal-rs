@@ -10,7 +10,7 @@ use serde_json::Value;
 
 #[derive(Debug)]
 pub struct Coverage {
-    pub counts: HashMap<String, u32>,
+    counts: HashMap<String, u32>,
 }
 
 impl Coverage {
@@ -18,6 +18,10 @@ impl Coverage {
         Coverage {
             counts: HashMap::new(),
         }
+    }
+
+    pub fn counts(&self) -> &HashMap<String, u32> {
+        &self.counts
     }
 
     pub fn run(filename: PathBuf) -> Result<Coverage> {

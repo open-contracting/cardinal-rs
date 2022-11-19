@@ -42,7 +42,7 @@ fn main() {
     match &cli.command {
         Commands::Coverage { file } => match libocdscardinal::Coverage::run(file.to_path_buf()) {
             Ok(coverage) => {
-                println!("{:?}", coverage.counts);
+                println!("{:?}", coverage.counts());
             }
             Err(e) => {
                 eprintln!("Application error: {e:#}");
