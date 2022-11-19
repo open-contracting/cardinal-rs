@@ -28,10 +28,11 @@ jobs:
           RUSTFLAGS: -Cinstrument-coverage
           LLVM_PROFILE_FILE: report-%p-%m.profraw
         run: cargo test
+      # https://github.com/actions-rs/grcov/issues/105
       - run: |
           cargo install grcov
           grcov . -s src --binary-path target/debug -t lcov -o coveralls.lcov
-      - uses: coverallsapp/github-action@v1
+      - uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: coverage.lcov
