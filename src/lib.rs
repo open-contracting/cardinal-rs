@@ -65,19 +65,29 @@ impl Coverage {
     // The longest path has 6 parts (as below or contracts/implementation/transactions/payer/identifier/id).
     // The longest pointer has 10 parts (contracts/0/amendments/0/unstructuredChanges/0/oldValue/classifications/0/id).
     fn add(&mut self, value: Value, path: &mut Vec<String>) {
+        // Note:
+        // - Within an object, a "" key and the object itself share the same path.
+        // - Within an array, literal values, non-empty objects and non-empty arrays share the same path.
+        // - At the top-level, literal values, non-empty objects and non-empty arrays share the same path.
+        // - If a member is repeated, the last is measured.
+        //
+        // Using a String as the key with `join("/")` is faster than Vec<String> as the key with `to_vec()`.
         match value {
             Value::Null => {}
             Value::Array(vec) => {
+                if !vec.is_empty() {
+                    self.increment(path.join("/"), 1);
+                }
                 path.push(String::from("-"));
                 for i in vec {
                     self.add(i, path);
                 }
                 path.pop();
             }
-            // Note:
-            // - "" keys and literal values yield the same path.
-            // - If a member is repeated, the last is measured.
             Value::Object(map) => {
+                if !map.is_empty() {
+                    self.increment(path.join("/"), 1);
+                }
                 for (k, v) in map {
                     path.push(k);
                     self.add(v, path);
@@ -91,7 +101,6 @@ impl Coverage {
             }
             // number, boolean
             _ => {
-                // Using a String as the key with `join("/")` is faster than Vec<String> as the key with `to_vec()`.
                 self.increment(path.join("/"), 1);
             }
         }
