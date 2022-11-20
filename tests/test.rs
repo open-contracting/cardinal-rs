@@ -19,10 +19,12 @@ fn test_success() {
 
 #[test]
 fn test_error_invalid_multiline() {
-    coverage(&["tests/fixtures/coverage/invalid_multiline.jsonl"]).success().stderr(
-        " WARN  libocdscardinal > Line 1 is invalid JSON, skipping. [EOF while parsing an object at line 1 column 1]\
-       \n WARN  libocdscardinal > Line 2 is invalid JSON, skipping. [expected value at line 1 column 1]\n"
-    );
+    coverage(&["tests/fixtures/coverage/invalid_multiline.jsonl"])
+        .success()
+        .stderr(
+            predicate::str::contains(" WARN  libocdscardinal > Line 1 is invalid JSON, skipping. [EOF while parsing an object at line 1 column 1]\n").and(
+            predicate::str::contains(" WARN  libocdscardinal > Line 2 is invalid JSON, skipping. [expected value at line 1 column 1]\n"))
+        );
 }
 
 #[test]
