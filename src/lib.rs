@@ -1,9 +1,7 @@
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::{BufRead, BufReader};
-use std::path::PathBuf;
+use std::io::BufRead;
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use log::warn;
 use rayon::prelude::*;
 use serde_json::Value;
@@ -24,11 +22,8 @@ impl Coverage {
         &self.counts
     }
 
-    pub fn run(filename: PathBuf) -> Result<Coverage> {
-        let file = File::open(&filename)
-            .with_context(|| format!("Failed to read '{}'", filename.display()))?;
-
-        let coverage = BufReader::new(file)
+    pub fn run(buffer: impl BufRead + Send) -> Result<Coverage> {
+        Ok(buffer
             .lines()
             .enumerate()
             .par_bridge()
@@ -61,9 +56,7 @@ impl Coverage {
                 }
 
                 coverage
-            });
-
-        Ok(coverage)
+            }))
     }
 
     // The longest path has 6 parts (as below or contracts/implementation/transactions/payer/identifier/id).
@@ -124,61 +117,21 @@ impl Coverage {
 mod tests {
     use super::*;
 
-    use std::io::ErrorKind;
-    use std::path::Path;
+    use std::fs::File;
+    use std::io::BufReader;
 
     use pretty_assertions::assert_eq;
-    use regex::Regex;
-    use tempfile::NamedTempFile;
 
-    #[test]
-    fn test_notfound() {
-        let result = Coverage::run(PathBuf::from("notfound"));
-        let error = result.unwrap_err();
-        let message = format!("{:#}", error);
-        let re = Regex::new(r"Failed to read '\S+': (No such file or directory|The system cannot find the file specified\.) \(os error 2\)").unwrap();
+    fn reader(stem: &str, extension: &str) -> BufReader<File> {
+        let path = format!("tests/fixtures/coverage/{stem}.{extension}");
+        let file = File::open(path).unwrap();
 
-        assert!(re.is_match(&message), "Error did not match '{message}'");
-        assert_eq!(
-            error.downcast::<std::io::Error>().unwrap().kind(),
-            ErrorKind::NotFound
-        );
-    }
-
-    #[cfg(unix)]
-    #[test]
-    fn test_permissiondenied() {
-        use std::os::unix::fs::PermissionsExt;
-
-        let mut tempfile = NamedTempFile::new().unwrap();
-
-        let file = tempfile.as_file_mut();
-        let mut permissions = file.metadata().unwrap().permissions();
-        permissions.set_mode(0o000);
-        file.set_permissions(permissions).unwrap();
-
-        let result = Coverage::run(tempfile.path().to_path_buf());
-        let error = result.unwrap_err();
-        let message = format!("{:#}", error);
-        let re = Regex::new(r"Failed to read '\S+': Permission denied \(os error 13\)").unwrap();
-
-        assert!(re.is_match(&message), "Error did not match '{message}'");
-        assert_eq!(
-            error.downcast::<std::io::Error>().unwrap().kind(),
-            ErrorKind::PermissionDenied
-        );
+        BufReader::new(file)
     }
 
     fn check(name: &str) {
-        let fixtures = Path::new("tests/fixtures/coverage");
-
-        let inpath = fixtures.join(format!("{name}.jsonl"));
-        let result = Coverage::run(inpath);
-
-        let outpath = fixtures.join(format!("{name}.expected"));
-        let file = File::open(outpath).unwrap();
-        let reader = BufReader::new(file);
-        let expected = serde_json::from_reader(reader).unwrap();
+        let result = Coverage::run(reader(name, "jsonl"));
+        let expected = serde_json::from_reader(reader(name, "expected")).unwrap();
 
         assert_eq!(result.unwrap().counts, expected);
     }

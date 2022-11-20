@@ -1,7 +1,10 @@
+use std::fs::File;
+use std::io::BufReader;
 use std::path::PathBuf;
 use std::process;
 
-use clap::{Parser, Subcommand};
+use clap::error::ErrorKind;
+use clap::{CommandFactory, Parser, Subcommand};
 use human_panic::setup_panic;
 use log::LevelFilter;
 
@@ -71,14 +74,36 @@ fn main() {
         .init();
 
     match &cli.command {
-        Commands::Coverage { file } => match libocdscardinal::Coverage::run(file.to_path_buf()) {
-            Ok(coverage) => {
-                println!("{:?}", coverage.counts());
+        Commands::Coverage { file } => {
+            // If the file is replaced with a directory after this check, the loop won't terminate.
+            if file.is_dir() {
+                let mut cmd = Cli::command();
+                cmd.error(
+                    ErrorKind::ValueValidation,
+                    format!("{}: Is a directory, not a file", file.display()),
+                )
+                .exit();
             }
-            Err(e) => {
-                eprintln!("Application error: {e:#}");
-                process::exit(1);
+
+            match File::open(file) {
+                Ok(file) => match libocdscardinal::Coverage::run(BufReader::new(file)) {
+                    Ok(coverage) => {
+                        println!("{:?}", coverage.counts());
+                    }
+                    Err(e) => {
+                        eprintln!("Application error: {e:#}");
+                        process::exit(1);
+                    }
+                },
+                Err(e) => {
+                    let mut cmd = Cli::command();
+                    cmd.error(
+                        ErrorKind::ValueValidation,
+                        format!("{}: {e}", file.display()),
+                    )
+                    .exit();
+                }
             }
-        },
+        }
     }
 }
