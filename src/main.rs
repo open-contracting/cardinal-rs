@@ -1,6 +1,6 @@
 use std::fs::File;
-use std::io::BufReader;
-use std::path::PathBuf;
+use std::io::{self, BufReader, Read};
+use std::path::{Path, PathBuf};
 use std::process;
 
 use clap::error::ErrorKind;
@@ -31,30 +31,37 @@ enum Commands {
     ///
     /// Example:
     ///
-    ///     $ echo '{"phoneNumbers":[{"type": "home","number": "212 555-1234"},{"type": "office","number": "646 555-4567"}]}' | libocdscardinal
+    ///     $ echo '{"phoneNumbers":[{"type": "home","number": "212 555-1234"},{"type": "office","number": "646 555-4567"}]}' | libocdscardinal coverage -
     ///     {"": 1, "/": 1, "/phoneNumbers": 1, "/phoneNumbers[]": 2, "/phoneNumbers[]/": 2, "/phoneNumbers[]/type": 2, "/phoneNumbers[]/number": 2}
     ///
     /// Caveats:
     /// - If a member name is duplicated, only the last duplicate is considered.
     ///
-    ///       $ echo '{"a": 0, "a": null}' | libocdscardinal coverage
+    ///       $ echo '{"a": 0, "a": null}' | libocdscardinal coverage -
     ///       {}
     ///
     /// - If a member name is empty, its path is the same as its parent object's path:
     ///
-    ///       $ echo '{"": 0}' | libocdscardinal coverage
+    ///       $ echo '{"": 0}' | libocdscardinal coverage -
     ///       {"": 1, "/": 2}
     ///
     /// - If a member name ends with [], its path can be the same as a matching sibling's path:
     ///
-    ///       $ echo '{"a[]": 0, "a": [0]}' | libocdscardinal coverage
+    ///       $ echo '{"a[]": 0, "a": [0]}' | libocdscardinal coverage -
     ///       {"": 1, "/": 1, "/a": 1, "/a[]": 2}
     // https://github.com/clap-rs/clap/issues/2389
     #[clap(verbatim_doc_comment)]
     Coverage {
-        /// The path to the file containing OCDS data, in which each line is a contracting process as JSON text
+        /// The path to the file containing OCDS data (or "-" for standard input), in which each line is a contracting process as JSON text
         file: PathBuf,
     },
+}
+
+fn error(file: &Path, message: &str) -> clap::error::Error {
+    Cli::command().error(
+        ErrorKind::ValueValidation,
+        format!("{}: {message}", file.display()),
+    )
 }
 
 fn main() {
@@ -75,33 +82,27 @@ fn main() {
 
     match &cli.command {
         Commands::Coverage { file } => {
-            // If the file is replaced with a directory after this check, the loop won't terminate.
-            if file.is_dir() {
-                let mut cmd = Cli::command();
-                cmd.error(
-                    ErrorKind::ValueValidation,
-                    format!("{}: Is a directory, not a file", file.display()),
-                )
-                .exit();
-            }
+            let file: Box<dyn Read + Send> = if file == &PathBuf::from("-") {
+                Box::new(io::stdin())
+            } else {
+                // If the file is replaced with a directory after this check, the loop won't terminate.
+                if file.is_dir() {
+                    error(file, "Is a directory, not a file").exit();
+                }
+                match File::open(file) {
+                    Ok(file) => Box::new(file),
+                    // Putting .exit() in error() causes "error[E0308]: mismatched types".
+                    Err(e) => error(file, &e.to_string()).exit(),
+                }
+            };
 
-            match File::open(file) {
-                Ok(file) => match libocdscardinal::Coverage::run(BufReader::new(file)) {
-                    Ok(coverage) => {
-                        println!("{:?}", coverage.counts());
-                    }
-                    Err(e) => {
-                        eprintln!("Application error: {e:#}");
-                        process::exit(1);
-                    }
-                },
+            match libocdscardinal::Coverage::run(BufReader::new(file)) {
+                Ok(coverage) => {
+                    println!("{:?}", coverage.counts());
+                }
                 Err(e) => {
-                    let mut cmd = Cli::command();
-                    cmd.error(
-                        ErrorKind::ValueValidation,
-                        format!("{}: {e}", file.display()),
-                    )
-                    .exit();
+                    eprintln!("Application error: {e:#}");
+                    process::exit(1);
                 }
             }
         }

@@ -12,7 +12,20 @@ fn coverage(args: &[&str]) -> Assert {
 }
 
 #[test]
-fn test_success() {
+fn test_success_stdin() {
+    let alt1 = predicate::eq("{\"\": 1, \"[]\": 1}\n");
+    let alt2 = predicate::eq("{\"[]\": 1, \"\": 1}\n");
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))
+        .unwrap()
+        .args(&["coverage", "-"])
+        .write_stdin("[0]")
+        .assert()
+        .success()
+        .stdout(alt1.or(alt2));
+}
+
+#[test]
+fn test_success_file() {
     let alt1 = predicate::eq("{\"\": 1, \"[]\": 1}\n");
     let alt2 = predicate::eq("{\"[]\": 1, \"\": 1}\n");
     coverage(&["tests/fixtures/coverage/base_array.jsonl"])
