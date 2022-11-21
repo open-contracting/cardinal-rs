@@ -19,7 +19,7 @@ fn main() {
             file,
             r#"
 #[test]
-fn test_{name}() {{
+fn {name}() {{
     check("{name}")
 }}
 "#,
@@ -45,7 +45,7 @@ fn test_{name}() {{
             file,
             r#"
 #[test]
-fn test_error_{name}() {{
+fn error_{name}() {{
     check("{name}", "{infix}", {line}, {column})
 }}
 "#,

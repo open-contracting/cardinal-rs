@@ -2,6 +2,7 @@ use assert_cmd::assert::Assert;
 use assert_cmd::Command;
 use predicates::prelude::*;
 use tempfile::NamedTempFile;
+use trycmd;
 
 fn coverage(args: &[&str]) -> Assert {
     Command::cargo_bin(env!("CARGO_PKG_NAME"))
@@ -12,20 +13,25 @@ fn coverage(args: &[&str]) -> Assert {
 }
 
 #[test]
-fn test_success_stdin() {
+fn documentation() {
+    trycmd::TestCases::new().case("README.md");
+}
+
+#[test]
+fn success_stdin() {
     let alt1 = predicate::eq("{\"\": 1, \"[]\": 1}\n");
     let alt2 = predicate::eq("{\"[]\": 1, \"\": 1}\n");
     Command::cargo_bin(env!("CARGO_PKG_NAME"))
         .unwrap()
         .args(&["coverage", "-"])
-        .write_stdin("[0]")
+        .write_stdin("[0]") // coverage/base_array.jsonl
         .assert()
         .success()
         .stdout(alt1.or(alt2));
 }
 
 #[test]
-fn test_success_file() {
+fn success_file() {
     let alt1 = predicate::eq("{\"\": 1, \"[]\": 1}\n");
     let alt2 = predicate::eq("{\"[]\": 1, \"\": 1}\n");
     coverage(&["tests/fixtures/coverage/base_array.jsonl"])
@@ -34,15 +40,15 @@ fn test_success_file() {
 }
 
 #[test]
-fn test_failure_directory() {
+fn failure_directory() {
     let message = "error: tests: Is a directory, not a file\n";
     coverage(&["tests"])
         .failure()
-        .stderr(predicate::str::contains(message));
+        .stderr(predicate::str::starts_with(message));
 }
 
 #[test]
-fn test_failure_notfound() {
+fn failure_notfound() {
     let pattern = r"^error: notfound: (No such file or directory|The system cannot find the file specified\.) \(os error 2\)\n";
     coverage(&["notfound"])
         .failure()
@@ -51,7 +57,7 @@ fn test_failure_notfound() {
 
 #[cfg(unix)]
 #[test]
-fn test_failure_permissiondenied() {
+fn failure_permissiondenied() {
     use std::os::unix::fs::PermissionsExt;
 
     let mut tempfile = NamedTempFile::new().unwrap();
@@ -68,7 +74,7 @@ fn test_failure_permissiondenied() {
 }
 
 #[test]
-fn test_error_invalid_multiline() {
+fn error_invalid_multiline() {
     let msg1 = " WARN  libocdscardinal > Line 1 is invalid JSON, skipping. [EOF while parsing an object at line 1 column 1]\n";
     let msg2 = " WARN  libocdscardinal > Line 2 is invalid JSON, skipping. [expected value at line 1 column 1]\n";
     coverage(&["tests/fixtures/coverage/invalid_multiline.jsonl"])
@@ -77,7 +83,7 @@ fn test_error_invalid_multiline() {
 }
 
 #[test]
-fn test_error_invalid_utf8() {
+fn error_invalid_utf8() {
     let msg = " WARN  libocdscardinal > Line 1 caused an I/O error, skipping. [stream did not contain valid UTF-8]\n";
     coverage(&["tests/fixtures/coverage/invalid_utf8.jsonl"])
         .success()
@@ -88,7 +94,7 @@ fn check(name: &str, infix: &str, line: u8, column: u8) {
     let infix = match infix {
         ":" => "expected `:`",
         "EOF" => "EOF while parsing an object",
-        &_ => todo!(),
+        &_ => unreachable!(),
     };
 
     let msg = format!(" WARN  libocdscardinal > Line {line} is invalid JSON, skipping. [{infix} at line 1 column {column}]\n");
