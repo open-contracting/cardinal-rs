@@ -10,12 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
-      # "Generate lockfile for caching to avoid build problems with cached deps"
-      # https://github.com/rust-lang/rust-clippy/blob/master/.github/workflows/deploy.yml
-      - run: cargo generate-lockfile
       - uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.os }}
+      # https://github.com/Swatinem/rust-cache#93#issuecomment-1321064841
+      - run: cargo update
       # https://github.com/taiki-e/cargo-llvm-cov#on-github-actions
       - uses: taiki-e/install-action@cargo-llvm-cov
       - run: cargo llvm-cov --lcov --output-path lcov.info
