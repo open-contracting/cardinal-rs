@@ -57,11 +57,13 @@ enum Commands {
     },
 }
 
-fn error(file: &Path, message: &str) -> clap::error::Error {
-    Cli::command().error(
-        ErrorKind::ValueValidation,
-        format!("{}: {message}", file.display()),
-    )
+fn error(file: &Path, message: &str) -> ! {
+    Cli::command()
+        .error(
+            ErrorKind::ValueValidation,
+            format!("{}: {message}", file.display()),
+        )
+        .exit()
 }
 
 fn main() {
@@ -85,14 +87,13 @@ fn main() {
             let file: Box<dyn Read + Send> = if file == &PathBuf::from("-") {
                 Box::new(io::stdin())
             } else {
-                // If the file is replaced with a directory after this check, the loop won't terminate.
+                // If the file is replaced with a directory after this check, run() won't terminate.
                 if file.is_dir() {
-                    error(file, "Is a directory, not a file").exit();
+                    error(file, "Is a directory, not a file");
                 }
                 match File::open(file) {
                     Ok(file) => Box::new(file),
-                    // Putting .exit() in error() causes "error[E0308]: mismatched types".
-                    Err(e) => error(file, &e.to_string()).exit(),
+                    Err(e) => error(file, &e.to_string()),
                 }
             };
 
