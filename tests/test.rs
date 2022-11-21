@@ -12,8 +12,10 @@ fn coverage(args: &[&str]) -> Assert {
         .assert()
 }
 
+#[cfg(unix)]
 #[test]
 fn documentation() {
+    // Help message contains "libocdscardinal[EXE]" on Windows.
     trycmd::TestCases::new().case("README.md");
 }
 
