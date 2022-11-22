@@ -8,20 +8,20 @@ Measure red flags and procurement indicators using OCDS data.
 $ libocdscardinal help coverage
 Count the number of times each field is non-empty in a line-delimited JSON file
 
-The command walks the JSON tree, counting non-empty nodes. Empty nodes are "", [], {} and null,
-and any nodes containing only empty nodes.
+The command walks the JSON tree, counting non-empty nodes. Empty nodes are "", [], {} and null, and
+any nodes containing only empty nodes.
 
 The result is a JSON object, in which keys are paths and values are counts.
 
-The "" path corresponds to a line. A path ending with / corresponds to an object. A path ending
-with [] corresponds to an array element. Other paths correspond to object members.
+The "" path corresponds to a line. A path ending with / corresponds to an object. A path ending with
+[] corresponds to an array element. Other paths correspond to object members.
 
 Usage: libocdscardinal[EXE] coverage [OPTIONS] <FILE>
 
 Arguments:
   <FILE>
-          The path to the file containing OCDS data (or "-" for standard input), in which each
-          line is a contracting process as JSON text
+          The path to the file containing OCDS data (or "-" for standard input), in which each line
+          is a contracting process as JSON text
 
 Options:
   -v, --verbose...
