@@ -16,7 +16,7 @@ The result is a JSON object, in which keys are paths and values are counts.
 The "" path corresponds to a line. A path ending with / corresponds to an object. A path ending with []
 corresponds to an array element. Other paths correspond to object members.
 
-Usage: libocdscardinal coverage [OPTIONS] <FILE>
+Usage: libocdscardinal[EXE] coverage [OPTIONS] <FILE>
 
 Arguments:
   <FILE>
