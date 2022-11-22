@@ -29,7 +29,6 @@ enum Commands {
     ///
     /// The "" path corresponds to a line. A path ending with / corresponds to an object. A path ending with []
     /// corresponds to an array element. Other paths correspond to object members.
-    // https://github.com/clap-rs/clap/issues/2389
     Coverage {
         /// The path to the file containing OCDS data (or "-" for standard input), in which each line is a contracting
         /// process as JSON text
