@@ -9,6 +9,7 @@ repository = "http://github.com/open-contracting/cardinal-lib"
 license = "MIT"
 build = "build.rs"
 categories = ["command-line-utilities"]
+keywords = ["cli", "json"]
 
 [dependencies]
 anyhow = "1.0"

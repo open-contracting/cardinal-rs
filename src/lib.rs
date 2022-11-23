@@ -13,21 +13,24 @@ pub struct Coverage {
 
 impl Coverage {
     fn new() -> Self {
-        Coverage {
+        Self {
             counts: HashMap::new(),
         }
     }
 
-    pub fn counts(&self) -> &HashMap<String, u32> {
+    pub const fn counts(&self) -> &HashMap<String, u32> {
         &self.counts
     }
 
-    pub fn run(buffer: impl BufRead + Send) -> Result<Coverage> {
+    ///
+    /// # Errors
+    ///
+    pub fn run(buffer: impl BufRead + Send) -> Result<Self> {
         Ok(buffer
             .lines()
             .enumerate()
             .par_bridge()
-            .fold(Coverage::new, |mut coverage, (i, result)| {
+            .fold(Self::new, |mut coverage, (i, result)| {
                 match result {
                     Ok(string) => {
                         match serde_json::from_str(&string) {
@@ -50,7 +53,7 @@ impl Coverage {
 
                 coverage
             })
-            .reduce(Coverage::new, |mut coverage, other| {
+            .reduce(Self::new, |mut coverage, other| {
                 for (k, v) in other.counts {
                     coverage.increment(k, v);
                 }

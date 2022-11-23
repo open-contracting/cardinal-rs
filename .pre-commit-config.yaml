@@ -1,9 +1,26 @@
 ci:
   autoupdate_schedule: quarterly
 repos:
-  - repo: https://github.com/doublify/pre-commit-rust
-    rev: v1.0
+  - repo: local
     hooks:
-      - id: fmt
+      - id: cargo-fmt
+        name: cargo fmt
+        entry: cargo fmt
+        language: system
+        types: [rust]
+        args: ["--all", "--"]
       - id: cargo-check
-      - id: clippy
+        name: cargo check
+        entry: cargo check
+        language: system
+        types: [rust]
+        args: ["--workspace"]
+        pass_filenames: false
+      - id: cargo-clippy
+        name: cargo clippy
+        entry: cargo clippy
+        language: system
+        types: [rust]
+        # https://doc.rust-lang.org/stable/clippy/
+        args: ["--workspace", "--", "-Dwarnings", "-Dclippy::pedantic", "-Dclippy::nursery", "-Dclippy::cargo", "-Aclippy::must_use_candidate"]
+        pass_filenames: false

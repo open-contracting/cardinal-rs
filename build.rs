@@ -25,7 +25,7 @@ fn {name}() {{
 "#,
             name = name,
         )
-        .unwrap()
+        .unwrap();
     }
 
     let path = Path::new(&env::var("OUT_DIR").unwrap()).join("test.include");
@@ -54,6 +54,6 @@ fn error_{name}() {{
             line = line,
             column = column,
         )
-        .unwrap()
+        .unwrap();
     }
 }
