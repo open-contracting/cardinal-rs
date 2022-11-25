@@ -75,8 +75,8 @@ fn failure_permissiondenied() {
 
 #[test]
 fn error_invalid_multiline() {
-    let msg1 = " WARN  libocdscardinal > Line 1 is invalid JSON, skipping. [EOF while parsing an object at line 1 column 1]\n";
-    let msg2 = " WARN  libocdscardinal > Line 2 is invalid JSON, skipping. [expected value at line 1 column 1]\n";
+    let msg1 = " WARN  ocdscardinal > Line 1 is invalid JSON, skipping. [EOF while parsing an object at line 1 column 1]\n";
+    let msg2 = " WARN  ocdscardinal > Line 2 is invalid JSON, skipping. [expected value at line 1 column 1]\n";
     coverage(&["tests/fixtures/coverage/invalid_multiline.jsonl"])
         .success()
         .stderr(predicate::str::contains(msg1).and(predicate::str::contains(msg2)));
@@ -84,7 +84,7 @@ fn error_invalid_multiline() {
 
 #[test]
 fn error_invalid_utf8() {
-    let msg = " WARN  libocdscardinal > Line 1 caused an I/O error, skipping. [stream did not contain valid UTF-8]\n";
+    let msg = " WARN  ocdscardinal > Line 1 caused an I/O error, skipping. [stream did not contain valid UTF-8]\n";
     coverage(&["tests/fixtures/coverage/invalid_utf8.jsonl"])
         .success()
         .stderr(msg);
@@ -97,7 +97,7 @@ fn check(name: &str, infix: &str, line: u8, column: u8) {
         &_ => unreachable!(),
     };
 
-    let msg = format!(" WARN  libocdscardinal > Line {line} is invalid JSON, skipping. [{infix} at line 1 column {column}]\n");
+    let msg = format!(" WARN  ocdscardinal > Line {line} is invalid JSON, skipping. [{infix} at line 1 column {column}]\n");
     coverage(&[&format!("tests/fixtures/coverage/{name}.jsonl")])
         .success()
         .stderr(msg);

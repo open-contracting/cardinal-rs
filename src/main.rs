@@ -77,7 +77,7 @@ fn main() {
                 }
             };
 
-            match libocdscardinal::Coverage::run(BufReader::new(file)) {
+            match ocdscardinal::Coverage::run(BufReader::new(file)) {
                 Ok(coverage) => {
                     println!("{:?}", coverage.counts());
                 }
