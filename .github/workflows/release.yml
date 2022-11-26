@@ -68,6 +68,7 @@ jobs:
         run: |
           echo "${{ steps.cross.outputs.stderr }}"
           exit 1
+      - run: ls -R .
       # 7z is available on all runners.
       # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#preinstalled-software
       - name: Create archive
