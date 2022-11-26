@@ -65,9 +65,9 @@ jobs:
       - run: cargo install cross --git https://github.com/cross-rs/cross
       - name: Build package
         run: |
-          stderr="$(cross build --release --target ${{ matrix.target }} 2>&1 > /dev/null)"
+          cross build --release --target ${{ matrix.target }} 2> stderr.txt
           status=$?
-          if [[ "$stderr" != "" ]]; then echo "$stderr"; status=1; fi
+          if [[ -s stderr.txt ]]; then cat stderr.txt; status=1; fi
           exit $status
       # 7z is available on all runners.
       # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#preinstalled-software
