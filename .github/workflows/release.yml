@@ -64,7 +64,6 @@ jobs:
           targets: ${{ matrix.target }}
       - run: cargo install cross --git https://github.com/cross-rs/cross
       - name: Build package
-        shell: bash
         run: |
           stderr="$(cross build --release --target ${{ matrix.target }} 2>&1 > /dev/null)"
           status=$?
@@ -74,7 +73,6 @@ jobs:
       # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#preinstalled-software
       - name: Create archive
         id: archive
-        shell: bash
         run: |
           DIRECTORY="ocdscardinal-${{ github.ref_name }}-${{ matrix.target }}"
           if [[ "${{ matrix.target }}" =~ "-pc-windows-" ]]; then
