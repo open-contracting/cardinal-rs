@@ -19,32 +19,22 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        build:
-          - linux-32
-          # i686-apple-darwin is Tier 3.
-          - windows-32-gnu
-          - windows-32-msvc
-          - linux-64
-          - macos-64
-          - windows-64-gnu
-          - windows-64-msvc
-          - linux-arm
-          - macos-arm
-          # aarch64-pc-windows-gnullvm is Tier 3.
-          - windows-arm-msvc
         # https://github.com/cross-rs/cross#supported-targets
         include:
           # Include all "Tier 1" targets.
           # https://doc.rust-lang.org/rustc/platform-support.html#tier-1-with-host-tools
+          # 32-bit (i686)
           - build: linux-32
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
+          # i686-apple-darwin is Tier 3.
           - build: windows-32-gnu
             os: windows-latest
             target: i686-pc-windows-gnu
           - build: windows-32-msvc
             os: windows-latest
             target: i686-pc-windows-msvc
+          # 64-bit (x86)
           - build: linux-64
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -57,6 +47,7 @@ jobs:
           - build: windows-64-msvc
             os: windows-latest
             target: x86_64-pc-windows-msvc
+          # 64-bit (ARM)
           - build: linux-arm
             os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
@@ -65,6 +56,7 @@ jobs:
           - build: macos-arm
             os: macos-latest
             target: aarch64-apple-darwin
+          # aarch64-pc-windows-gnullvm is Tier 3.
           - build: windows-arm
             os: windows-latest
             target: aarch64-pc-windows-msvc
