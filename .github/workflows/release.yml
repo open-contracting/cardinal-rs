@@ -18,13 +18,14 @@ jobs:
       matrix:
         # https://github.com/cross-rs/cross#supported-targets
         include:
-          # Include all "Tier 1" targets.
+          # Include all "Tier 1" targets and the "Tier 2 with Host Tools" targets for the top 2 desktop operating systems.
           # https://doc.rust-lang.org/rustc/platform-support.html#tier-1-with-host-tools
+          # https://doc.rust-lang.org/rustc/platform-support.html#tier-2-with-host-tools
           # 32-bit (i686)
+          # i686-apple-darwin is Tier 3.
           - build: linux-32
             os: ubuntu-latest
             target: i686-unknown-linux-gnu
-          # i686-apple-darwin is Tier 3.
           - build: windows-32-gnu
             os: ubuntu-latest
             target: i686-pc-windows-gnu
@@ -45,15 +46,13 @@ jobs:
             os: ubuntu-latest
             target: x86_64-pc-windows-msvc
           # 64-bit (ARM)
-          - build: linux-arm
-            os: ubuntu-latest
-            target: aarch64-unknown-linux-gnu
-          # Include "Tier 2 with Host Tools" targets for the top 2 desktop operating systems.
-          # https://doc.rust-lang.org/rustc/platform-support.html#tier-2-with-host-tools
+          # aarch64-pc-windows-gnullvm is Tier 3.
           # aarch64-apple-darwin is not available as a cross target or GitHub-hosted runner.
           # https://github.com/cross-rs/cross-toolchains#apple-targets
           # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-          # aarch64-pc-windows-gnullvm is Tier 3.
+          - build: linux-arm
+            os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
           - build: windows-arm
             os: ubuntu-latest
             target: aarch64-pc-windows-msvc
