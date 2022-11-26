@@ -18,9 +18,8 @@ jobs:
       matrix:
         # https://github.com/cross-rs/cross#supported-targets
         include:
-          # Include all "Tier 1" targets and the "Tier 2 with Host Tools" targets for the top 2 desktop operating systems.
-          # https://doc.rust-lang.org/rustc/platform-support.html#tier-1-with-host-tools
-          # https://doc.rust-lang.org/rustc/platform-support.html#tier-2-with-host-tools
+          # Include all "Tier 1" targets and the "Tier 2 with Host Tools" targets for Windows and macOS.
+          # https://doc.rust-lang.org/rustc/platform-support.html
           # 32-bit (i686)
           # i686-apple-darwin is Tier 3.
           - build: linux-32
@@ -36,6 +35,8 @@ jobs:
           - build: linux-64
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+          # macos-latest is x86_64.
+          # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
           - build: macos-64
             os: macos-latest
             target: x86_64-apple-darwin
@@ -62,13 +63,13 @@ jobs:
         with:
           targets: ${{ matrix.target }}
       - run: cargo install cross --git https://github.com/cross-rs/cross
-      - id: cross
-        run: echo "stderr=$(cross build --release --target ${{ matrix.target }})" 2>> $GITHUB_OUTPUT
-      - if: steps.cross.outputs.stderr != ''
+      - name: Build package
+        shell: bash
         run: |
-          echo "${{ steps.cross.outputs.stderr }}"
-          exit 1
-      - run: ls -R .
+          stderr="$(cross build --release --target ${{ matrix.target }} 2>&1 > /dev/null)"
+          status=$?
+          if [[ "$stderr" != "" ]]; then echo "$stderr"; status=1; fi
+          exit $status
       # 7z is available on all runners.
       # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#preinstalled-software
       - name: Create archive
