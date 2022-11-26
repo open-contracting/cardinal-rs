@@ -2,7 +2,15 @@
 
 Measure red flags and procurement indicators using OCDS data.
 
-## coverage
+## Installation
+
+The executable (a.k.a. binary or program) is `ocdscardinal`.
+
+[ZIP archives of precompiled binaries for OCDS Cardinal are available for Windows, macOS and Linux.](http://github.com/open-contracting/cardinal-rs/issues/8/releases)
+
+## Commands
+
+### coverage
 
 ```console
 $ ocdscardinal help coverage
@@ -39,7 +47,7 @@ $ echo '{"phoneNumbers":[{"type": "home","number": "212 555-1234"},{"type": "off
 {"": 1, "/": 1, "/phoneNumbers": 1, "/phoneNumbers[]": 2, "/phoneNumbers[]/": 2, "/phoneNumbers[]/type": 2, "/phoneNumbers[]/number": 2}
 ```
 
-### Caveats
+#### Caveats
 
 If a member name is duplicated, only the last duplicate is considered.
 
