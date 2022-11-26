@@ -9,6 +9,7 @@ jobs:
     outputs:
       upload_url: ${{ steps.release.outputs.upload_url }}
     steps:
+      - uses: actions/checkout@v3
       - id: release
         env:
           GH_TOKEN: ${{ github.token }}
