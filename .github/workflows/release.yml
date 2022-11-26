@@ -1,0 +1,104 @@
+name: Release
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.release.outputs.upload_url }}
+    steps:
+      # actions/create-release is archived, but popular alternatives are not well maintained.
+      - id: release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+  assets:
+    needs: release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build:
+          - linux-32
+          # i686-apple-darwin is Tier 3.
+          - windows-32-gnu
+          - windows-32-msvc
+          - linux-64
+          - macos-64
+          - windows-64-gnu
+          - windows-64-msvc
+          - linux-arm
+          - macos-arm
+          # aarch64-pc-windows-gnullvm is Tier 3.
+          - windows-arm-msvc
+        # https://github.com/cross-rs/cross#supported-targets
+        include:
+          # Include all "Tier 1" targets.
+          # https://doc.rust-lang.org/rustc/platform-support.html#tier-1-with-host-tools
+          - build: linux-32
+            os: ubuntu-latest
+            target: i686-unknown-linux-gnu
+          - build: windows-32-gnu
+            os: windows-latest
+            target: i686-pc-windows-gnu
+          - build: windows-32-msvc
+            os: windows-latest
+            target: i686-pc-windows-msvc
+          - build: linux-64
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - build: macos-64
+            os: macos-latest
+            target: x86_64-apple-darwin
+          - build: windows-64-gnu
+            os: windows-latest
+            target: x86_64-pc-windows-gnu
+          - build: windows-64-msvc
+            os: windows-latest
+            target: x86_64-pc-windows-msvc
+          - build: linux-arm
+            os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+          # Include "Tier 2 with Host Tools" targets for the top 2 desktop operating systems.
+          # https://doc.rust-lang.org/rustc/platform-support.html#tier-2-with-host-tools
+          - build: macos-arm
+            os: macos-latest
+            target: aarch64-apple-darwin
+          - build: windows-arm
+            os: windows-latest
+            target: aarch64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - run: cargo install cross
+      - run: cross build --release --target ${{ matrix.target }}
+      # 7z is available on all runners.
+      # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#preinstalled-software
+      - name: Create archive
+        id: archive
+        run: |
+          DIRECTORY="ocdscardinal-${{ github.ref_name }}-${{ matrix.target }}"
+          if [[ "${{ matrix.os }}" = "windows-latest" ]]; then
+            SUFFIX=".exe"
+          else
+            SUFFIX=""
+          fi
+          mkdir "$DIRECTORY"
+          cp CHANGELOG.md LICENSE README.md "target/${{ matrix.target }}/release/ocdscardinal$SUFFIX" "$DIRECTORY"
+          7z a "$DIRECTORY.zip" "$DIRECTORY"
+          echo "path=$DIRECTORY.zip" >> $GITHUB_OUTPUT
+      # actions/upload-release-asset is archived, but popular alternatives are not well maintained.
+      - uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ${{ steps.archive.outputs.path }}
+          asset_name: ${{ steps.archive.outputs.path }}
+          asset_content_type: application/octet-stream
