@@ -13,7 +13,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.os }}
-      # https://github.com/Swatinem/rust-cache#93#issuecomment-1321064841
+      # https://github.com/Swatinem/rust-cache/issues/93#issuecomment-1321064841
       - run: cargo update
       # https://github.com/taiki-e/cargo-llvm-cov#on-github-actions
       - uses: taiki-e/install-action@cargo-llvm-cov

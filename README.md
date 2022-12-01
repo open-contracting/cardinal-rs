@@ -6,7 +6,7 @@ Measure red flags and procurement indicators using OCDS data.
 
 The executable (a.k.a. binary or program) is `ocdscardinal`.
 
-[ZIP archives of precompiled binaries for OCDS Cardinal are available for Windows, macOS and Linux.](http://github.com/open-contracting/cardinal-rs/issues/8/releases)
+[ZIP archives of precompiled binaries for OCDS Cardinal are available for Windows, macOS and Linux.](http://github.com/open-contracting/cardinal-rs/releases)
 
 ## Commands
 
