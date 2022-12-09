@@ -16,11 +16,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        # Include all "Tier 1 with Host Tools" targets and "Tier 2 with Host Tools" targets for Windows and macOS,
+        # excluding *-pc-windows-msvc, which requires cross-toolchains. Goal is one option per OS per architecture.
+        # https://doc.rust-lang.org/rustc/platform-support.html
         # https://github.com/cross-rs/cross#supported-targets
+        # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         include:
-          # Include all "Tier 1 with Host Tools" targets and "Tier 2 with Host Tools" targets for Windows and macOS,
-          # excluding *-pc-windows-msvc, which requires cross-toolchains. Goal is one option per OS per architecture.
-          # https://doc.rust-lang.org/rustc/platform-support.html
           # 32-bit (i686)
           # i686-apple-darwin is Tier 3.
           - build: linux-32-bit
@@ -32,8 +33,6 @@ jobs:
             target: i686-pc-windows-gnu
             command: cross
           # 64-bit (x86)
-          # macos-latest is x86_64.
-          # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
           - build: linux-64-bit
             os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
@@ -47,10 +46,11 @@ jobs:
             target: x86_64-pc-windows-gnu
             command: cross
           # 64-bit (ARM)
-          # aarch64-apple-darwin is not available as a cross target or GitHub-hosted runner.
-          # https://github.com/cross-rs/cross-toolchains#apple-targets
-          # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
           # aarch64-pc-windows-gnullvm is Tier 3.
+          - build: macos-64-bit
+            os: macos-latest
+            target: aarch64-apple-darwin
+            command: cargo
           - build: linux-arm
             os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
@@ -80,3 +80,37 @@ jobs:
       - env:
           GH_TOKEN: ${{ github.token }}
         run: gh release upload ${{ github.ref_name }} ${{ steps.archive.outputs.path }}
+  bottle:
+    needs: release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # macos-13 is not available. https://github.com/actions/runner-images/issues/6426
+        include:
+          - name: arm64_monterey
+            os: macos-12
+            target: aarch64-apple-darwin
+          - name: arm64_big_sur
+            os: macos-11
+            target: aarch64-apple-darwin
+          - name: monterey
+            os: macos-12
+            target: x86_64-apple-darwin
+          - name: big_sur
+            os: macos-11
+            target: x86_64-apple-darwin
+          - name: catalina
+            os: macos-10.15
+            target: x86_64-apple-darwin
+          - name: x86_64_linux
+            os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+    steps:
+      - run: brew tap open-contracting/tap
+      - env:
+          CARGO_TARGET: ${{ matrix.target }}
+        run: brew install --build-bottle --verbose ocdscardinal
+      - run: brew bottle --no-rebuild --verbose ocdscardinal
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload ${{ github.ref_name }} ocdscardinal--${{ github.ref_name }}.${{ matrix.name }}.bottle.tar.gz
