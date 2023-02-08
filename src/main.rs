@@ -36,7 +36,7 @@ enum Commands {
     },
 }
 
-fn error(file: &Path, message: &str) -> ! {
+fn file_argument_error(file: &Path, message: &str) -> ! {
     Cli::command()
         .error(
             ErrorKind::ValueValidation,
@@ -45,17 +45,22 @@ fn error(file: &Path, message: &str) -> ! {
         .exit()
 }
 
+fn application_error(e: &anyhow::Error) -> ! {
+    eprintln!("Application error: {e:#}");
+    process::exit(1);
+}
+
 fn reader(file: &PathBuf) -> BufReader<Box<dyn Read + Send>> {
     if file == &PathBuf::from("-") {
         BufReader::new(Box::new(io::stdin()))
     } else {
         // If the file is replaced with a directory after this check, run() won't terminate.
         if file.is_dir() {
-            error(file, "Is a directory, not a file");
+            file_argument_error(file, "Is a directory, not a file");
         }
         match File::open(file) {
             Ok(file) => BufReader::new(Box::new(file)),
-            Err(e) => error(file, &e.to_string()),
+            Err(e) => file_argument_error(file, &e.to_string()),
         }
     }
 }
@@ -83,8 +88,7 @@ fn main() {
                 println!("{:?}", coverage.counts());
             }
             Err(e) => {
-                eprintln!("Application error: {e:#}");
-                process::exit(1);
+                application_error(&e);
             }
         },
     }
