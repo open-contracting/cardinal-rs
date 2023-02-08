@@ -45,6 +45,21 @@ fn error(file: &Path, message: &str) -> ! {
         .exit()
 }
 
+fn reader(file: &PathBuf) -> BufReader<Box<dyn Read + Send>> {
+    if file == &PathBuf::from("-") {
+        BufReader::new(Box::new(io::stdin()))
+    } else {
+        // If the file is replaced with a directory after this check, run() won't terminate.
+        if file.is_dir() {
+            error(file, "Is a directory, not a file");
+        }
+        match File::open(file) {
+            Ok(file) => BufReader::new(Box::new(file)),
+            Err(e) => error(file, &e.to_string()),
+        }
+    }
+}
+
 fn main() {
     setup_panic!();
 
@@ -63,29 +78,14 @@ fn main() {
         .init();
 
     match &cli.command {
-        Commands::Coverage { file } => {
-            let file: Box<dyn Read + Send> = if file == &PathBuf::from("-") {
-                Box::new(io::stdin())
-            } else {
-                // If the file is replaced with a directory after this check, run() won't terminate.
-                if file.is_dir() {
-                    error(file, "Is a directory, not a file");
-                }
-                match File::open(file) {
-                    Ok(file) => Box::new(file),
-                    Err(e) => error(file, &e.to_string()),
-                }
-            };
-
-            match ocdscardinal::Coverage::run(BufReader::new(file)) {
-                Ok(coverage) => {
-                    println!("{:?}", coverage.counts());
-                }
-                Err(e) => {
-                    eprintln!("Application error: {e:#}");
-                    process::exit(1);
-                }
+        Commands::Coverage { file } => match ocdscardinal::Coverage::run(reader(file)) {
+            Ok(coverage) => {
+                println!("{:?}", coverage.counts());
             }
-        }
+            Err(e) => {
+                eprintln!("Application error: {e:#}");
+                process::exit(1);
+            }
+        },
     }
 }
