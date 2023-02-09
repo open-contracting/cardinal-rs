@@ -6,6 +6,44 @@ use log::warn;
 use rayon::prelude::*;
 use serde_json::Value;
 
+fn fold_reduce<T: Send>(
+    buffer: impl BufRead + Send,
+    new: fn() -> T,
+    fold: fn(T, Value) -> T,
+    reduce: fn(T, T) -> T,
+    finalize: fn(T) -> Result<T>,
+) -> Result<T> {
+    let item = buffer
+        .lines()
+        .enumerate()
+        .par_bridge()
+        .fold(new, |mut item, (i, lines_result)| {
+            match lines_result {
+                Ok(string) => {
+                    match serde_json::from_str(&string) {
+                        Ok(value) => {
+                            item = fold(item, value);
+                        }
+                        Err(e) => {
+                            // Skip empty lines silently.
+                            // https://stackoverflow.com/a/64361042/244258
+                            if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
+                                warn!("Line {} is invalid JSON, skipping. [{e}]", i + 1);
+                            }
+                        }
+                    }
+                }
+                // Err: https://doc.rust-lang.org/std/io/enum.ErrorKind.html
+                // https://github.com/rust-lang/rust/blob/1.65.0/library/std/src/io/buffered/bufreader.rs#L362-L365
+                Err(e) => warn!("Line {} caused an I/O error, skipping. [{e}]", i + 1),
+            }
+            item
+        })
+        .reduce(new, reduce);
+
+    finalize(item)
+}
+
 #[derive(Debug)]
 pub struct Coverage {
     counts: HashMap<String, u32>,
@@ -26,40 +64,21 @@ impl Coverage {
     /// # Errors
     ///
     pub fn run(buffer: impl BufRead + Send) -> Result<Self> {
-        Ok(buffer
-            .lines()
-            .enumerate()
-            .par_bridge()
-            .fold(Self::new, |mut coverage, (i, result)| {
-                match result {
-                    Ok(string) => {
-                        match serde_json::from_str(&string) {
-                            Ok(value) => {
-                                coverage.add(value, &mut Vec::with_capacity(16));
-                            }
-                            Err(e) => {
-                                // Skip empty lines silently.
-                                // https://stackoverflow.com/a/64361042/244258
-                                if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
-                                    warn!("Line {} is invalid JSON, skipping. [{e}]", i + 1);
-                                }
-                            }
-                        }
-                    }
-                    // Err: https://doc.rust-lang.org/std/io/enum.ErrorKind.html
-                    // https://github.com/rust-lang/rust/blob/1.65.0/library/std/src/io/buffered/bufreader.rs#L362-L365
-                    Err(e) => warn!("Line {} caused an I/O error, skipping. [{e}]", i + 1),
-                }
-
-                coverage
-            })
-            .reduce(Self::new, |mut coverage, other| {
+        fold_reduce(
+            buffer,
+            Self::new,
+            |mut item, value| {
+                item.add(value, &mut Vec::with_capacity(16));
+                item
+            },
+            |mut item, other| {
                 for (k, v) in other.counts {
-                    coverage.increment(k, v);
+                    item.increment(k, v);
                 }
-
-                coverage
-            }))
+                item
+            },
+            Ok,
+        )
     }
 
     // The longest path has 6 parts (as below or contracts/implementation/transactions/payer/identifier/id).

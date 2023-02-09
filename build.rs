@@ -22,8 +22,7 @@ fn main() {
 fn {name}() {{
     check("{name}")
 }}
-"#,
-            name = name,
+"#
         )
         .unwrap();
     }
@@ -48,11 +47,7 @@ fn {name}() {{
 fn error_{name}() {{
     check("{name}", "{infix}", {line}, {column})
 }}
-"#,
-            name = name,
-            infix = infix,
-            line = line,
-            column = column,
+"#
         )
         .unwrap();
     }
