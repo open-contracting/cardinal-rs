@@ -34,6 +34,12 @@ enum Commands {
         /// process as JSON text
         file: PathBuf,
     },
+    ///
+    Indicators {
+        /// The path to the file containing OCDS data (or "-" for standard input), in which each line is a contracting
+        /// process as JSON text
+        file: PathBuf,
+    },
 }
 
 fn file_argument_error(file: &Path, message: &str) -> ! {
@@ -84,8 +90,17 @@ fn main() {
 
     match &cli.command {
         Commands::Coverage { file } => match ocdscardinal::Coverage::run(reader(file)) {
-            Ok(coverage) => {
-                println!("{:?}", coverage.counts());
+            Ok(item) => {
+                println!("{:?}", item.counts());
+            }
+            Err(e) => {
+                application_error(&e);
+            }
+        },
+        Commands::Indicators { file } => match ocdscardinal::Indicators::run(reader(file)) {
+            Ok(item) => {
+                println!("{:?}", item.results);
+                println!("{:?}", item.results.len());
             }
             Err(e) => {
                 application_error(&e);

@@ -1,3 +1,5 @@
+#![feature(let_chains)]
+
 use std::collections::HashMap;
 use std::io::BufRead;
 
@@ -5,6 +7,8 @@ use anyhow::Result;
 use log::warn;
 use rayon::prelude::*;
 use serde_json::Value;
+use statrs::statistics::Data;
+use statrs::statistics::OrderStatistics;
 
 fn fold_reduce<T: Send>(
     buffer: impl BufRead + Send,
@@ -42,6 +46,138 @@ fn fold_reduce<T: Send>(
         .reduce(new, reduce);
 
     finalize(item)
+}
+
+#[derive(Debug, Eq, Hash, PartialEq)]
+pub enum Indicator {
+    NF024,
+}
+
+#[derive(Debug)]
+pub struct Indicators {
+    pub results: HashMap<String, HashMap<Indicator, f64>>,
+    bid_ratios: HashMap<String, f64>,
+    currency: Option<String>,
+}
+
+impl Indicators {
+    fn new() -> Self {
+        Self {
+            results: HashMap::new(),
+            bid_ratios: HashMap::new(),
+            currency: None,
+        }
+    }
+
+    ///
+    /// # Errors
+    ///
+    pub fn run(buffer: impl BufRead + Send) -> Result<Self> {
+        fold_reduce(
+            buffer,
+            Self::new,
+            |mut item, json| {
+                let mut ocid = None;
+                let mut lowest_non_winner_amount = None;
+                let mut winner_amount = None;
+
+                if let Value::Object(release) = json {
+                    if let Some(Value::String(ocid_ref)) = release.get("ocid") {
+                        ocid = Some(ocid_ref.to_string());
+                        if let Some(Value::Array(awards)) = release.get("awards")
+                            // If there is a single award, we assume that all bids compete for all items.
+                            // If not, the dataset must describe lots, to know which bids compete with each other.
+                            && awards.len() == 1
+                            && let Some(Value::String(status)) = awards[0].get("status")
+                            // Award must be active (not pending, cancelled or unsuccessful).
+                            && status == "active"
+                            && let Some(Value::Array(suppliers)) = awards[0].get("suppliers")
+                            // The tenderers on the bid must match the suppliers on the award. For now, we only support the
+                            // simple case of a single supplier. https://github.com/open-contracting/cardinal-rs/issues/17
+                            && suppliers.len() == 1
+                            && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
+                            && let Some(Value::Object(bids)) = release.get("bids")
+                            && let Some(Value::Array(details)) = bids.get("details")
+                        {
+                            for detail in details {
+                                if let Some(Value::String(status)) = detail.get("status")
+                                    // https://github.com/open-contracting/cardinal-rs/issues/18
+                                    && status == "Qualified"
+                                    && let Some(Value::Object(value)) = detail.get("value")
+                                    && let Some(Value::Number(amount)) = value.get("amount")
+                                    && let Some(amount) = amount.as_f64()
+                                    && let Some(Value::String(currency)) = value.get("currency")
+                                    && let Some(Value::Array(tenderers)) = detail.get("tenderers")
+                                    // The tenderers on the bid must match the suppliers on the award. For now, we only
+                                    // support the simple case of a single supplier.
+                                    && tenderers.len() == 1
+                                    && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
+                                {
+                                    if currency == item.currency.get_or_insert_with(|| currency.to_string()) {
+                                        if supplier_id == tenderer_id {
+                                            winner_amount = Some(amount);
+                                        }
+                                        else if let Some(other) = lowest_non_winner_amount {
+                                            if amount < other {
+                                                lowest_non_winner_amount = Some(amount);
+                                            }
+                                        }
+                                        else {
+                                            lowest_non_winner_amount = Some(amount);
+                                        }
+                                    }
+                                    else {
+                                        warn!("{} is not {:?}, skipping.", currency, item.currency);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if let Some(ocid) = ocid
+                    && let Some(winner_amount) = winner_amount
+                    && let Some(lowest_non_winner_amount) = lowest_non_winner_amount
+                    // The award criteria must be price only. If the lowest bid didn't win, they aren't price only.
+                    && lowest_non_winner_amount >= winner_amount
+                {
+                    item.bid_ratios.insert(ocid, (lowest_non_winner_amount - winner_amount) / winner_amount);
+                }
+
+                item
+            },
+            |mut item, other| {
+                if item.currency.is_none()
+                    || other.currency.is_none()
+                    || item.currency == other.currency
+                {
+                    item.bid_ratios.extend(other.bid_ratios);
+                } else {
+                    warn!("{:?} is not {:?}, skipping.", other.currency, item.currency);
+                }
+                item
+            },
+            |mut item| {
+                let mut data = Data::new(item.bid_ratios.clone().into_values().collect::<Vec<_>>());
+
+                let q1 = data.lower_quartile();
+                let q3 = data.upper_quartile();
+                // q1 - IQR * 1.5
+                let lower_bound = (q3 - q1).mul_add(1.5, q1);
+
+                for (ocid, ratio) in &item.bid_ratios {
+                    if *ratio < lower_bound {
+                        item.results.insert(
+                            ocid.to_string(),
+                            HashMap::from([(Indicator::NF024, *ratio)]),
+                        );
+                    }
+                }
+
+                Ok(item)
+            },
+        )
+    }
 }
 
 #[derive(Debug)]
