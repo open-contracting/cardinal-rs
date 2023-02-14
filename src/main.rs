@@ -30,14 +30,14 @@ enum Commands {
     /// The "" path corresponds to a line. A path ending with / corresponds to an object. A path ending with []
     /// corresponds to an array element. Other paths correspond to object members.
     Coverage {
-        /// The path to the file containing OCDS data (or "-" for standard input), in which each line is a contracting
-        /// process as JSON text
+        /// The path to the file (or "-" for standard input), in which each line is JSON text
         file: PathBuf,
     },
+    /// Calculate procurement indicators from OCDS compiled releases in a line-delimited JSON file
     ///
+    /// The result is a JSON object, in which keys are OCIDs and values are results.
     Indicators {
-        /// The path to the file containing OCDS data (or "-" for standard input), in which each line is a contracting
-        /// process as JSON text
+        /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
         file: PathBuf,
     },
 }

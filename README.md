@@ -40,8 +40,7 @@ Usage: ocdscardinal[EXE] coverage [OPTIONS] <FILE>
 
 Arguments:
   <FILE>
-          The path to the file containing OCDS data (or "-" for standard input), in which each line
-          is a contracting process as JSON text
+          The path to the file (or "-" for standard input), in which each line is JSON text
 
 Options:
   -v, --verbose...
@@ -81,3 +80,44 @@ If a member name ends with `[]`, its path can be the same as a matching sibling'
 $ echo '{"a[]": 0, "a": [0]}' | ocdscardinal coverage -
 {"": 1, "/": 1, "/a": 1, "/a[]": 2}
 ```
+
+### indicators
+
+```console
+$ ocdscardinal help indicators
+Calculate procurement indicators from OCDS compiled releases in a line-delimited JSON file
+
+The result is a JSON object, in which keys are OCIDs and values are results.
+
+Usage: ocdscardinal indicators [OPTIONS] <FILE>
+
+Arguments:
+  <FILE>
+          The path to the file (or "-" for standard input), in which each line is a contracting
+          process as JSON text
+
+Options:
+  -v, --verbose...
+          Increase verbosity
+
+  -h, --help
+          Print help (see a summary with '-h')
+
+```
+
+For a given compiled release, an indicator is skipped if:
+
+- The ``ocid`` isn't a string.
+- The relevant fields aren't of the correct type. [#10](https://github.com/open-contracting/cardinal-rs/issues/10) [#13](https://github.com/open-contracting/cardinal-rs/issues/13)
+- Monetary values, where relevant, use different currencies. [#11](https://github.com/open-contracting/cardinal-rs/issues/11)
+
+#### NF024 The percentage difference between the winning bid and the second-lowest valid bid is an outlier
+
+The difference for a compiled release is calculated as $x = (secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount$. A compiled release is flagged if the difference is less than the lower fence – i.e. $x < Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of differences.
+
+This indicator is skipped if:
+
+- An award's status is pending or invalid.
+- A bid is submitted by multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
+- An award is made to multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
+- The winning bid is not the lowest bid. (This indicator requires the award criteria to be price-only.)
