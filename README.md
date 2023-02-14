@@ -122,3 +122,9 @@ This indicator is skipped if:
 - A bid is submitted by multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
 - An award is made to multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
 - The winning bid is not the lowest bid. (This indicator requires the award criteria to be price-only.)
+
+#### NF035 All non-winning bids are disqualified
+
+This indicator is skipped if:
+
+- An award's status is pending or invalid.
