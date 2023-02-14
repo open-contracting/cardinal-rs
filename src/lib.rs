@@ -77,102 +77,101 @@ impl Indicators {
             buffer,
             Self::new,
             |mut item, json| {
-                if let Value::Object(release) = json {
-                    if let Some(Value::String(ocid)) = release.get("ocid") {
-                        let mut lowest_non_winner_amount = None;
-                        let mut winner_amount = None;
+                if let Value::Object(release) = json
+                    && let Some(Value::String(ocid)) = release.get("ocid")
+                {
+                    let mut lowest_non_winner_amount = None;
+                    let mut winner_amount = None;
 
-                        if let Some(Value::Array(awards)) = release.get("awards") {
-                            let mut pending_awards = vec![];
-                            let mut complete_awards = vec![];
-                            let mut invalid_status_awards = vec![];
+                    if let Some(Value::Array(awards)) = release.get("awards") {
+                        let mut complete_awards = vec![];
+                        let mut all_awards_final = true;
 
-                            for award in awards {
-                                if let Some(Value::String(status)) = award.get("status") {
-                                    match status.as_str() {
-                                        "pending" => pending_awards.push(award),
-                                        "active" => complete_awards.push(award),
-                                        "cancelled" | "unsuccessful" => (),
-                                        _ => invalid_status_awards.push(award),
-                                    }
+                        for award in awards {
+                            if let Some(Value::String(status)) = award.get("status") {
+                                match status.as_str() {
+                                    "active" => complete_awards.push(award),
+                                    "cancelled" | "unsuccessful" => (),
+                                    _ => all_awards_final = false,
                                 }
                             }
+                        }
 
-                            // An award must be in a final state, in order for indicator results to be stable.
-                            // Note: OCDS 1.1 uses 'active' to mean "in force". OCDS 1.2 might use 'complete'.
-                            // https://github.com/open-contracting/standard/issues/1160#issuecomment-1139793598
-                            if pending_awards.is_empty() && invalid_status_awards.is_empty() {
-                                if let Some(Value::Object(bids)) = release.get("bids")
-                                    && let Some(Value::Array(details)) = bids.get("details")
-                                {
-                                    let mut valid_bids = vec![];
+                        // An award must be in a final state, in order for indicator results to be stable.
+                        // Note: OCDS 1.1 uses 'active' to mean "in force". OCDS 1.2 might use 'complete'.
+                        // https://github.com/open-contracting/standard/issues/1160#issuecomment-1139793598
+                        if all_awards_final {
 
-                                    for bid in details {
-                                        if let Some(Value::String(status)) = bid.get("status")
-                                            // https://github.com/open-contracting/cardinal-rs/issues/18
-                                            && status == "Qualified"
-                                        {
-                                            valid_bids.push(bid);
-                                        }
+                            if let Some(Value::Object(bids)) = release.get("bids")
+                                && let Some(Value::Array(details)) = bids.get("details")
+                            {
+                                let mut valid_bids = vec![];
+
+                                for bid in details {
+                                    if let Some(Value::String(status)) = bid.get("status")
+                                        // https://github.com/open-contracting/cardinal-rs/issues/18
+                                        && status == "Qualified"
+                                    {
+                                        valid_bids.push(bid);
                                     }
+                                }
 
-                                    for bid in valid_bids {
-                                        if let Some(Value::Array(tenderers)) = bid.get("tenderers") {
+                                for bid in valid_bids {
+                                    if let Some(Value::Array(tenderers)) = bid.get("tenderers") {
 
-                                            if let Some(Value::Object(value)) = bid.get("value")
-                                                && let Some(Value::Number(amount)) = value.get("amount")
-                                                && let Some(amount) = amount.as_f64()
-                                                && let Some(Value::String(currency)) = value.get("currency")
-                                                // If the only award is active, we assume that all bids compete for all items. If there
-                                                // are cancelled or unsuccessful awards, we assume that they were previous attempts to
-                                                // award all items. If there are multiple active awards, the dataset must describe lots,
-                                                // to know which bids compete with each other.
-                                                && complete_awards.len() == 1
-                                                && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
-                                                // The tenderers on the bid must match the suppliers on the award. For now, we only
-                                                // support the simple case of a single supplier.
-                                                // https://github.com/open-contracting/cardinal-rs/issues/17
-                                                && suppliers.len() == 1
-                                                && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
-                                                // The tenderers on the bid must match the suppliers on the award. For now, we
-                                                // only support the simple case of a single supplier.
-                                                // https://github.com/open-contracting/cardinal-rs/issues/17
-                                                && tenderers.len() == 1
-                                                && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
-                                            {
-                                                if currency == item.currency.get_or_insert_with(|| currency.to_string()) {
-                                                    if supplier_id == tenderer_id {
-                                                        winner_amount = Some(amount);
-                                                    }
-                                                    else if let Some(other) = lowest_non_winner_amount {
-                                                        if amount < other {
-                                                            lowest_non_winner_amount = Some(amount);
-                                                        }
-                                                    }
-                                                    else {
+                                        if let Some(Value::Object(value)) = bid.get("value")
+                                            && let Some(Value::Number(amount)) = value.get("amount")
+                                            && let Some(amount) = amount.as_f64()
+                                            && let Some(Value::String(currency)) = value.get("currency")
+                                            // If the only award is active, we assume that all bids compete for all items. If there
+                                            // are cancelled or unsuccessful awards, we assume that they were previous attempts to
+                                            // award all items. If there are multiple active awards, the dataset must describe lots,
+                                            // to know which bids compete with each other.
+                                            && complete_awards.len() == 1
+                                            && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
+                                            // The tenderers on the bid must match the suppliers on the award. For now, we only
+                                            // support the simple case of a single supplier.
+                                            // https://github.com/open-contracting/cardinal-rs/issues/17
+                                            && suppliers.len() == 1
+                                            && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
+                                            // The tenderers on the bid must match the suppliers on the award. For now, we
+                                            // only support the simple case of a single supplier.
+                                            // https://github.com/open-contracting/cardinal-rs/issues/17
+                                            && tenderers.len() == 1
+                                            && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
+                                        {
+                                            if currency == item.currency.get_or_insert_with(|| currency.to_string()) {
+                                                if supplier_id == tenderer_id {
+                                                    winner_amount = Some(amount);
+                                                }
+                                                else if let Some(other) = lowest_non_winner_amount {
+                                                    if amount < other {
                                                         lowest_non_winner_amount = Some(amount);
                                                     }
                                                 }
                                                 else {
-                                                    warn!("{} is not {:?}, skipping.", currency, item.currency);
+                                                    lowest_non_winner_amount = Some(amount);
                                                 }
+                                            }
+                                            else {
+                                                warn!("{} is not {:?}, skipping.", currency, item.currency);
                                             }
                                         }
                                     }
                                 }
                             }
                         }
+                    }
 
-                        if let Some(winner_amount) = winner_amount
-                            && let Some(lowest_non_winner_amount) = lowest_non_winner_amount
-                            // If the lowest bid didn't win, the award criteria aren't price only, as otherwise assumed.
-                            && lowest_non_winner_amount >= winner_amount
-                        {
-                            item.bid_ratios.insert(
-                                ocid.to_string(),
-                                (lowest_non_winner_amount - winner_amount) / winner_amount,
-                            );
-                        }
+                    if let Some(winner_amount) = winner_amount
+                        && let Some(lowest_non_winner_amount) = lowest_non_winner_amount
+                        // If the lowest bid didn't win, the award criteria aren't price only, as otherwise assumed.
+                        && lowest_non_winner_amount >= winner_amount
+                    {
+                        item.bid_ratios.insert(
+                            ocid.to_string(),
+                            (lowest_non_winner_amount - winner_amount) / winner_amount,
+                        );
                     }
                 }
 
