@@ -113,7 +113,7 @@ For a given compiled release, an indicator is skipped if:
 
 #### NF024 The percentage difference between the winning bid and the second-lowest valid bid is an outlier
 
-The difference for a compiled release is calculated as $x = (secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount$. A compiled release is flagged if the difference is less than the lower fence – i.e. $x < Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of differences.
+The difference for a compiled release is calculated as $x = {(secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount}$. A compiled release is flagged if the difference is less than the lower fence – i.e. $x < Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of differences.
 
 This indicator is skipped if:
 
