@@ -86,23 +86,32 @@ impl Indicators {
                         ocid = Some(ocid_ref.to_string());
 
                         if let Some(Value::Array(awards)) = release.get("awards") {
+                            let mut pending_awards = vec![];
                             let mut active_awards = vec![];
+                            let mut invalid_status_awards = vec![];
 
                             for award in awards {
-                                if let Some(Value::String(status)) = award.get("status")
-                                    // Award must be active (not pending, cancelled or unsuccessful).
-                                    && status == "active"
-                                {
-                                    active_awards.push(award);
+                                if let Some(Value::String(status)) = award.get("status") {
+                                    match status.as_str() {
+                                        "pending" => pending_awards.push(award),
+                                        "active" => active_awards.push(award),
+                                        "cancelled" | "unsuccessful" => (),
+                                        _ => invalid_status_awards.push(award),
+                                    }
                                 }
                             }
 
-                            // If there is a single active award, we assume that all bids compete for all items.
-                            // If not, the dataset must describe lots, to know which bids compete with each other.
-                            if active_awards.len() == 1
+                            // If the only award is active, we assume that all bids compete for all items. If there
+                            // are cancelled or unsuccessful awards, we assume that they were previous attempts to
+                            // award all items. If there are many remaining awards, the dataset must describe lots,
+                            // to know which bids compete with each other.
+                            if pending_awards.is_empty()
+                                && active_awards.len() == 1
+                                && invalid_status_awards.is_empty()
                                 && let Some(Value::Array(suppliers)) = active_awards[0].get("suppliers")
-                                // The tenderers on the bid must match the suppliers on the award. For now, we only support the
-                                // simple case of a single supplier. https://github.com/open-contracting/cardinal-rs/issues/17
+                                // The tenderers on the bid must match the suppliers on the award. For now, we only
+                                // support the simple case of a single supplier.
+                                // https://github.com/open-contracting/cardinal-rs/issues/17
                                 && suppliers.len() == 1
                                 && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
                                 && let Some(Value::Object(bids)) = release.get("bids")
