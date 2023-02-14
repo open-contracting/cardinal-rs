@@ -84,6 +84,7 @@ impl Indicators {
                 if let Value::Object(release) = json {
                     if let Some(Value::String(ocid_ref)) = release.get("ocid") {
                         ocid = Some(ocid_ref.to_string());
+
                         if let Some(Value::Array(awards)) = release.get("awards") {
                             let mut active_awards = vec![];
 
@@ -107,19 +108,27 @@ impl Indicators {
                                 && let Some(Value::Object(bids)) = release.get("bids")
                                 && let Some(Value::Array(details)) = bids.get("details")
                             {
-                                for detail in details {
-                                    if let Some(Value::String(status)) = detail.get("status")
+                                let mut valid_bids = vec![];
+
+                                for bid in details {
+                                    if let Some(Value::String(status)) = bid.get("status")
                                         // https://github.com/open-contracting/cardinal-rs/issues/18
                                         && status == "Qualified"
-                                        && let Some(Value::Object(value)) = detail.get("value")
-                                        && let Some(Value::Number(amount)) = value.get("amount")
-                                        && let Some(amount) = amount.as_f64()
-                                        && let Some(Value::String(currency)) = value.get("currency")
-                                        && let Some(Value::Array(tenderers)) = detail.get("tenderers")
+                                    {
+                                        valid_bids.push(bid);
+                                    }
+                                }
+
+                                for bid in valid_bids {
+                                    if let Some(Value::Array(tenderers)) = bid.get("tenderers")
                                         // The tenderers on the bid must match the suppliers on the award. For now, we only
                                         // support the simple case of a single supplier.
                                         && tenderers.len() == 1
                                         && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
+                                        && let Some(Value::Object(value)) = bid.get("value")
+                                        && let Some(Value::Number(amount)) = value.get("amount")
+                                        && let Some(amount) = amount.as_f64()
+                                        && let Some(Value::String(currency)) = value.get("currency")
                                     {
                                         if currency == item.currency.get_or_insert_with(|| currency.to_string()) {
                                             if supplier_id == tenderer_id {
