@@ -103,8 +103,8 @@ impl Indicators {
 
                             // If the only award is active, we assume that all bids compete for all items. If there
                             // are cancelled or unsuccessful awards, we assume that they were previous attempts to
-                            // award all items. If there are many remaining awards, the dataset must describe lots,
-                            // to know which bids compete with each other.
+                            // award all items. If there are multiple non-cancelled and non-unsuccessful awards, the
+                            // dataset must describe lots, to know which bids compete with each other.
                             if pending_awards.is_empty()
                                 && active_awards.len() == 1
                                 && invalid_status_awards.is_empty()
@@ -132,6 +132,7 @@ impl Indicators {
                                     if let Some(Value::Array(tenderers)) = bid.get("tenderers")
                                         // The tenderers on the bid must match the suppliers on the award. For now, we only
                                         // support the simple case of a single supplier.
+                                        // https://github.com/open-contracting/cardinal-rs/issues/17
                                         && tenderers.len() == 1
                                         && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
                                         && let Some(Value::Object(value)) = bid.get("value")

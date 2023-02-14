@@ -118,6 +118,7 @@ The difference for a compiled release is calculated as $x = {(secondLowestValidB
 This indicator is skipped if:
 
 - An award's status is pending or invalid.
+- There are multiple active awards (winning bids).
 - A bid is submitted by multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
 - An award is made to multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
 - The winning bid is not the lowest bid. (This indicator requires the award criteria to be price-only.)
