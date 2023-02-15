@@ -92,7 +92,7 @@ Calculate procurement indicators from OCDS compiled releases in a line-delimited
 
 The result is a JSON object, in which keys are OCIDs and values are results.
 
-Usage: ocdscardinal indicators [OPTIONS] <FILE>
+Usage: ocdscardinal[EXE] indicators [OPTIONS] <FILE>
 
 Arguments:
   <FILE>
