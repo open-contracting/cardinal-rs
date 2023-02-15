@@ -12,10 +12,10 @@ use log::LevelFilter;
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
-    /// The path to the settings file.
+    /// The path to the settings file
     #[arg(long, short, global = true, value_parser = settings_parser)]
     settings: Option<ocdscardinal::Settings>,
-    /// Increase verbosity.
+    /// Increase verbosity
     #[arg(long, short, global = true, default_value_t = 1, action = clap::ArgAction::Count)]
     verbose: u8,
     #[command(subcommand)]
@@ -43,6 +43,9 @@ enum Commands {
     Indicators {
         /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
         file: PathBuf,
+        /// Print the number of OCIDs with results
+        #[arg(long, default_value_t = false)]
+        count: bool,
     },
 }
 
@@ -108,11 +111,13 @@ fn main() {
                 application_error(&e);
             }
         },
-        Commands::Indicators { file } => {
+        Commands::Indicators { file, count } => {
             match ocdscardinal::Indicators::run(reader(file), cli.settings) {
                 Ok(item) => {
                     println!("{}", serde_json::to_string(&item.results).unwrap());
-                    println!("{:?}", item.results.len());
+                    if *count {
+                        println!("{:?}", item.results.len());
+                    }
                 }
                 Err(e) => {
                     application_error(&e);
