@@ -190,13 +190,14 @@ impl Indicators {
                         );
                     }
 
-                    // Why 1? A buyer can aggregate multiple bids into one award, and then sign multiple contracts.
-                    // That behavior is not a red flag.
+                    // NF035 is not applicable to multiple tenderers/winners. A buyer can aggregate multiple bids
+                    // into one award, and then sign multiple contracts. That behavior is not a red flag.
                     if valid_tenderer_ids.len() == 1
                         // The tenderer's bids were awarded.
                         && valid_tenderer_ids == winner_ids
                         // Others' bids were disqualified.
                         && let difference = disqualified_tenderer_ids.difference(&valid_tenderer_ids).count()
+                        // At least this many tenderers have disqualified bids.
                         && difference > 0
                     {
                         let result = item.results.entry(ocid.to_string()).or_default();
@@ -207,10 +208,8 @@ impl Indicators {
                 item
             },
             |mut item, other| {
-                for (ocid, other_result) in other.results {
-                    let result = item.results.entry(ocid.to_string()).or_default();
-                    result.extend(other_result);
-                }
+                // If each OCID appears on one line only, no overwriting will occur.
+                item.results.extend(other.results);
 
                 if item.currency.is_none()
                     || other.currency.is_none()
@@ -220,6 +219,7 @@ impl Indicators {
                 } else {
                     warn!("{:?} is not {:?}, skipping.", other.currency, item.currency);
                 }
+
                 item
             },
             |mut item| {
