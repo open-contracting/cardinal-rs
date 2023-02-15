@@ -1,5 +1,6 @@
 #![feature(let_chains)]
 
+use std::cmp;
 use std::collections::{HashMap, HashSet};
 use std::io::BufRead;
 
@@ -89,12 +90,13 @@ impl Indicators {
     /// # Errors
     ///
     pub fn run(buffer: impl BufRead + Send, settings: Option<Settings>) -> Result<Self> {
-        let mut nf035_threshold = 0;
+        let nf035_threshold;
 
-        if let Some(settings) = settings
-            && let Some(nf035) = settings.NF035
-        {
-            nf035_threshold = nf035.threshold;
+        if let Some(settings) = settings && let Some(nf035) = settings.NF035 {
+            nf035_threshold = cmp::max(nf035.threshold, 1);
+        }
+        else {
+            nf035_threshold = 1;
         }
 
         fold_reduce(
@@ -221,7 +223,7 @@ impl Indicators {
                         // Others' bids were disqualified.
                         && let difference = disqualified_tenderer_ids.difference(&valid_tenderer_ids).count()
                         // At least this many tenderers have disqualified bids.
-                        && difference > nf035_threshold
+                        && difference >= nf035_threshold
                     {
                         let result = item.results.entry(ocid.to_string()).or_default();
                         result.insert(Indicator::NF035, difference as f64);

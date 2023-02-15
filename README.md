@@ -140,7 +140,14 @@ A contracting process is flagged if:
 
 - Exactly one tenderer submitted at least one bid that is valid (qualified).
 - The tenderer of the valid bids and the suppliers of all active awards are the same.
-- At least one other tenderer submitted a bid that was disqualified.
+- At least 1 other tenderer submitted a bid that was disqualified.
+
+  To configure this threshold, add to your settings file:
+
+  ```ini
+  [NF035]
+  threshold = 1 # default
+  ```
 
 The indicator's value is the number of unique tenderers with disqualified bids.
 
