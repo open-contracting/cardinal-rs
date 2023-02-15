@@ -31,6 +31,8 @@ repos:
           "-Dclippy::cargo",
           # "Expect many false positives" https://rust-lang.github.io/rust-clippy/master/index.html#must_use_candidate
           "-Aclippy::must_use_candidate",
+          # "It’s not bad at all." https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+          "-Aclippy::cast-precision-loss",
           # Indicators::run() is long.
           "-Aclippy::too-many-lines",
           # https://github.com/seanmonstar/num_cpus/pull/128

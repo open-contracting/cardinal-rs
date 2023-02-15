@@ -105,25 +105,35 @@ Options:
 
 ```
 
-For a given compiled release, an indicator is skipped if:
+For a given contracting process, an indicator is skipped if:
 
 - The ``ocid`` isn't a string.
 - The relevant fields aren't of the correct type. [#10](https://github.com/open-contracting/cardinal-rs/issues/10) [#13](https://github.com/open-contracting/cardinal-rs/issues/13)
 - Monetary values, where relevant, use different currencies. [#11](https://github.com/open-contracting/cardinal-rs/issues/11)
 
-#### NF024 The percentage difference between the winning bid and the second-lowest valid bid is an outlier
+#### NF024 The percentage difference between the winning bid and the second-lowest valid bid is a low outlier
 
-The difference for a compiled release is calculated as $x = {(secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount}$. A compiled release is flagged if the difference is less than the lower fence – i.e. $x < Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of differences.
+For each contracting process, the difference is calculated as $x = {(secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount}$. A contracting process is flagged if the difference is less than the lower fence of $Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of differences.
+
+The indicator's value is the percentage difference.
 
 This indicator is skipped if:
 
 - An award's status is pending or invalid.
-- There are multiple active awards (winning bids).
-- A bid is submitted by multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
+- There are multiple active awards (a.k.a. winning bids).
+- A bid is submitted by multiple tenderers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
 - An award is made to multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
 - The winning bid is not the lowest bid. (This indicator requires the award criteria to be price-only.)
 
-#### NF035 All non-winning bids are disqualified
+#### NF035 Bids are disqualified if not submitted by the single tenderer of the winning bid
+
+A contracting process is flagged if:
+
+- Exactly one tenderer submitted at least one bid that is valid (qualified).
+- The tenderer of the valid bids and the suppliers of all active awards are the same.
+- At least one other tenderer submitted a bid that was disqualified.
+
+The indicator's value is the number of unique tenderers with disqualified bids.
 
 This indicator is skipped if:
 

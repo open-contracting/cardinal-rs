@@ -1,6 +1,6 @@
 #![feature(let_chains)]
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::io::BufRead;
 
 use anyhow::Result;
@@ -51,6 +51,7 @@ fn fold_reduce<T: Send>(
 #[derive(Debug, Eq, Hash, PartialEq)]
 pub enum Indicator {
     NF024,
+    NF035,
 }
 
 #[derive(Debug)]
@@ -82,6 +83,9 @@ impl Indicators {
                 {
                     let mut lowest_non_winner_amount = None;
                     let mut winner_amount = None;
+                    let mut winner_ids = HashSet::new();
+                    let mut valid_tenderer_ids = HashSet::new();
+                    let mut disqualified_tenderer_ids = HashSet::new();
 
                     if let Some(Value::Array(awards)) = release.get("awards") {
                         let mut complete_awards = vec![];
@@ -92,7 +96,7 @@ impl Indicators {
                                 match status.as_str() {
                                     "active" => complete_awards.push(award),
                                     "cancelled" | "unsuccessful" => (),
-                                    _ => all_awards_final = false,
+                                    _ => all_awards_final = false, // "pending"
                                 }
                             }
                         }
@@ -101,25 +105,37 @@ impl Indicators {
                         // Note: OCDS 1.1 uses 'active' to mean "in force". OCDS 1.2 might use 'complete'.
                         // https://github.com/open-contracting/standard/issues/1160#issuecomment-1139793598
                         if all_awards_final {
+                            for award in &complete_awards {
+                                if let Some(Value::Array(suppliers)) = award.get("suppliers") {
+                                    for supplier in suppliers {
+                                        if let Some(Value::String(id)) = supplier.get("id") {
+                                            winner_ids.insert(id);
+                                        }
+                                    }
+                                }
+                            }
 
                             if let Some(Value::Object(bids)) = release.get("bids")
                                 && let Some(Value::Array(details)) = bids.get("details")
                             {
-                                let mut valid_bids = vec![];
-
                                 for bid in details {
                                     if let Some(Value::String(status)) = bid.get("status")
-                                        // https://github.com/open-contracting/cardinal-rs/issues/18
-                                        && status == "Qualified"
+                                        && let Some(Value::Array(tenderers)) = bid.get("tenderers")
                                     {
-                                        valid_bids.push(bid);
-                                    }
-                                }
+                                        for tenderer in tenderers {
+                                            if let Some(Value::String(id)) = tenderer.get("id") {
+                                                match status.to_ascii_lowercase().as_str() {
+                                                    // https://github.com/open-contracting/cardinal-rs/issues/18
+                                                    "valid" | "qualified" => valid_tenderer_ids.insert(id),
+                                                    "disqualified" => disqualified_tenderer_ids.insert(id),
+                                                    _ => false, // "invited", "pending", "withdrawn"
+                                                };
+                                            }
+                                        }
 
-                                for bid in valid_bids {
-                                    if let Some(Value::Array(tenderers)) = bid.get("tenderers") {
-
-                                        if let Some(Value::Object(value)) = bid.get("value")
+                                        // https://github.com/open-contracting/cardinal-rs/issues/18
+                                        if ["valid", "qualified"].contains(&status.to_ascii_lowercase().as_str())
+                                            && let Some(Value::Object(value)) = bid.get("value")
                                             && let Some(Value::Number(amount)) = value.get("amount")
                                             && let Some(amount) = amount.as_f64()
                                             && let Some(Value::String(currency)) = value.get("currency")
@@ -173,11 +189,29 @@ impl Indicators {
                             (lowest_non_winner_amount - winner_amount) / winner_amount,
                         );
                     }
+
+                    // Why 1? A buyer can aggregate multiple bids into one award, and then sign multiple contracts.
+                    // That behavior is not a red flag.
+                    if valid_tenderer_ids.len() == 1
+                        // The tenderer's bids were awarded.
+                        && valid_tenderer_ids == winner_ids
+                        // Others' bids were disqualified.
+                        && let difference = disqualified_tenderer_ids.difference(&valid_tenderer_ids).count()
+                        && difference > 0
+                    {
+                        let result = item.results.entry(ocid.to_string()).or_default();
+                        result.insert(Indicator::NF035, difference as f64);
+                    }
                 }
 
                 item
             },
             |mut item, other| {
+                for (ocid, other_result) in other.results {
+                    let result = item.results.entry(ocid.to_string()).or_default();
+                    result.extend(other_result);
+                }
+
                 if item.currency.is_none()
                     || other.currency.is_none()
                     || item.currency == other.currency
@@ -194,14 +228,12 @@ impl Indicators {
                 let q1 = data.lower_quartile();
                 let q3 = data.upper_quartile();
                 // q1 - IQR * 1.5
-                let lower_bound = (q3 - q1).mul_add(1.5, q1);
+                let lower_bound = (q3 - q1).mul_add(-1.5, q1);
 
                 for (ocid, ratio) in &item.bid_ratios {
                     if *ratio < lower_bound {
-                        item.results.insert(
-                            ocid.to_string(),
-                            HashMap::from([(Indicator::NF024, *ratio)]),
-                        );
+                        let result = item.results.entry(ocid.to_string()).or_default();
+                        result.insert(Indicator::NF024, *ratio);
                     }
                 }
 
