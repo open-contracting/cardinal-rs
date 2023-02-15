@@ -5,12 +5,16 @@ use std::process;
 
 use clap::error::ErrorKind;
 use clap::{CommandFactory, Parser, Subcommand};
+use config::{Config, ConfigError};
 use human_panic::setup_panic;
 use log::LevelFilter;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
+    /// The path to the settings file.
+    #[arg(long, short, global = true, value_parser = settings_parser)]
+    settings: Option<ocdscardinal::Settings>,
     /// Increase verbosity.
     #[arg(long, short, global = true, default_value_t = 1, action = clap::ArgAction::Count)]
     verbose: u8,
@@ -49,6 +53,13 @@ fn file_argument_error(file: &Path, message: &str) -> ! {
             format!("{}: {message}", file.display()),
         )
         .exit()
+}
+
+fn settings_parser(s: &str) -> Result<ocdscardinal::Settings, ConfigError> {
+    Config::builder()
+        .add_source(config::File::with_name(s))
+        .build()?
+        .try_deserialize::<ocdscardinal::Settings>()
 }
 
 fn application_error(e: &anyhow::Error) -> ! {
@@ -97,14 +108,16 @@ fn main() {
                 application_error(&e);
             }
         },
-        Commands::Indicators { file } => match ocdscardinal::Indicators::run(reader(file)) {
-            Ok(item) => {
-                println!("{:?}", item.results);
-                println!("{:?}", item.results.len());
+        Commands::Indicators { file } => {
+            match ocdscardinal::Indicators::run(reader(file), cli.settings) {
+                Ok(item) => {
+                    println!("{:?}", item.results);
+                    println!("{:?}", item.results.len());
+                }
+                Err(e) => {
+                    application_error(&e);
+                }
             }
-            Err(e) => {
-                application_error(&e);
-            }
-        },
+        }
     }
 }

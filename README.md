@@ -43,6 +43,9 @@ Arguments:
           The path to the file (or "-" for standard input), in which each line is JSON text
 
 Options:
+  -s, --settings <SETTINGS>
+          The path to the settings file
+
   -v, --verbose...
           Increase verbosity
 
@@ -97,6 +100,9 @@ Arguments:
           process as JSON text
 
 Options:
+  -s, --settings <SETTINGS>
+          The path to the settings file
+
   -v, --verbose...
           Increase verbosity
 
@@ -120,10 +126,10 @@ The indicator's value is the percentage difference.
 This indicator is skipped if:
 
 - An award's status is pending or invalid.
-- There are multiple active awards (a.k.a. winning bids).
+- The winning bid is not the lowest bid. (This indicator requires the award criteria to be price-only.)
+- There are multiple active awards (a.k.a. winning bids). [#14](https://github.com/open-contracting/cardinal-rs/issues/14)
 - A bid is submitted by multiple tenderers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
 - An award is made to multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
-- The winning bid is not the lowest bid. (This indicator requires the award criteria to be price-only.)
 
 #### NF035 Bids are disqualified if not submitted by the single tenderer of the winning bid
 

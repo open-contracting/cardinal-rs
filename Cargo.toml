@@ -14,6 +14,7 @@ keywords = ["cli", "json"]
 [dependencies]
 anyhow = "1.0"
 clap = { version = "4.0", features = ["derive", "wrap_help"] }
+config = {version = "0.13", features = ["ini"] }
 human-panic = "1.0"
 log = "0.4"
 num_cpus = "1.0"

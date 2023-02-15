@@ -6,17 +6,21 @@ use std::io::BufRead;
 use anyhow::Result;
 use log::warn;
 use rayon::prelude::*;
+use serde::Deserialize;
 use serde_json::Value;
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-fn fold_reduce<T: Send>(
+fn fold_reduce<T: Send, F>(
     buffer: impl BufRead + Send,
     new: fn() -> T,
-    fold: fn(T, Value) -> T,
+    fold: F,
     reduce: fn(T, T) -> T,
     finalize: fn(T) -> Result<T>,
-) -> Result<T> {
+) -> Result<T>
+where
+    F: Fn(T, Value) -> T + Sync,
+{
     let item = buffer
         .lines()
         .enumerate()
@@ -48,6 +52,17 @@ fn fold_reduce<T: Send>(
     finalize(item)
 }
 
+#[derive(Clone, Debug, Deserialize)]
+struct NF035 {
+    threshold: usize,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[allow(non_snake_case)]
+pub struct Settings {
+    NF035: Option<NF035>,
+}
+
 #[derive(Debug, Eq, Hash, PartialEq)]
 pub enum Indicator {
     NF024,
@@ -73,7 +88,15 @@ impl Indicators {
     ///
     /// # Errors
     ///
-    pub fn run(buffer: impl BufRead + Send) -> Result<Self> {
+    pub fn run(buffer: impl BufRead + Send, settings: Option<Settings>) -> Result<Self> {
+        let mut nf035_threshold = 0;
+
+        if let Some(settings) = settings
+            && let Some(nf035) = settings.NF035
+        {
+            nf035_threshold = nf035.threshold;
+        }
+
         fold_reduce(
             buffer,
             Self::new,
@@ -198,7 +221,7 @@ impl Indicators {
                         // Others' bids were disqualified.
                         && let difference = disqualified_tenderer_ids.difference(&valid_tenderer_ids).count()
                         // At least this many tenderers have disqualified bids.
-                        && difference > 0
+                        && difference > nf035_threshold
                     {
                         let result = item.results.entry(ocid.to_string()).or_default();
                         result.insert(Indicator::NF035, difference as f64);
