@@ -112,7 +112,7 @@ fn main() {
             }
         },
         Commands::Indicators { file, count } => {
-            match ocdscardinal::Indicators::run(reader(file), cli.settings) {
+            match ocdscardinal::Indicators::run(reader(file), cli.settings.unwrap_or_default()) {
                 Ok(item) => {
                     println!("{}", serde_json::to_string(&item.results).unwrap());
                     if *count {

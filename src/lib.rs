@@ -3,6 +3,7 @@
 use std::cmp;
 use std::collections::{HashMap, HashSet};
 use std::io::BufRead;
+use std::string::ToString;
 
 use anyhow::Result;
 use log::warn;
@@ -58,9 +59,10 @@ struct NF035 {
     threshold: usize,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 #[allow(non_snake_case)]
 pub struct Settings {
+    currency: Option<String>,
     NF035: Option<NF035>,
 }
 
@@ -89,13 +91,12 @@ impl Indicators {
     ///
     /// # Errors
     ///
-    pub fn run(buffer: impl BufRead + Send, settings: Option<Settings>) -> Result<Self> {
+    pub fn run(buffer: impl BufRead + Send, settings: Settings) -> Result<Self> {
         let nf035_threshold;
 
-        if let Some(settings) = settings && let Some(nf035) = settings.NF035 {
+        if let Some(nf035) = settings.NF035 {
             nf035_threshold = cmp::max(nf035.threshold, 1);
-        }
-        else {
+        } else {
             nf035_threshold = 1;
         }
 
@@ -181,20 +182,19 @@ impl Indicators {
                                             && tenderers.len() == 1
                                             && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
                                         {
-                                            if currency == item.currency.get_or_insert_with(|| currency.to_string()) {
+                                            if currency == item.currency.get_or_insert_with(||
+                                                settings.currency.as_ref().map_or_else(|| currency.to_string(), ToString::to_string)
+                                            ) {
                                                 if supplier_id == tenderer_id {
                                                     winner_amount = Some(amount);
-                                                }
-                                                else if let Some(other) = lowest_non_winner_amount {
+                                                } else if let Some(other) = lowest_non_winner_amount {
                                                     if amount < other {
                                                         lowest_non_winner_amount = Some(amount);
                                                     }
-                                                }
-                                                else {
+                                                } else {
                                                     lowest_non_winner_amount = Some(amount);
                                                 }
-                                            }
-                                            else {
+                                            } else {
                                                 warn!("{} is not {:?}, skipping.", currency, item.currency);
                                             }
                                         }

@@ -120,6 +120,14 @@ For a given contracting process, an indicator is skipped if:
 - The relevant fields aren't of the correct type. [#10](https://github.com/open-contracting/cardinal-rs/issues/10) [#13](https://github.com/open-contracting/cardinal-rs/issues/13)
 - Monetary values, where relevant, use different currencies. [#11](https://github.com/open-contracting/cardinal-rs/issues/11)
 
+  To configure the primary currency, add to your settings file:
+
+  ```ini
+  currency = USD
+  ```
+
+  Otherwise, the primary currency is set to the first observed currency.
+
 #### NF024 The percentage difference between the winning bid and the second-lowest valid bid is a low outlier
 
 For each contracting process, the difference is calculated as $x = {(secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount}$. A contracting process is flagged if the difference is less than the lower fence of $Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of differences.
