@@ -111,7 +111,7 @@ fn main() {
         Commands::Indicators { file } => {
             match ocdscardinal::Indicators::run(reader(file), cli.settings) {
                 Ok(item) => {
-                    println!("{:?}", item.results);
+                    println!("{}", serde_json::to_string(&item.results).unwrap());
                     println!("{:?}", item.results.len());
                 }
                 Err(e) => {

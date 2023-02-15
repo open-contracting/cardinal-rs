@@ -6,7 +6,7 @@ use std::io::BufRead;
 use anyhow::Result;
 use log::warn;
 use rayon::prelude::*;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
@@ -63,7 +63,7 @@ pub struct Settings {
     NF035: Option<NF035>,
 }
 
-#[derive(Debug, Eq, Hash, PartialEq)]
+#[derive(Debug, Eq, Hash, PartialEq, Serialize)]
 pub enum Indicator {
     NF024,
     NF035,
