@@ -100,6 +100,9 @@ Arguments:
           process as JSON text
 
 Options:
+      --count
+          Print the number of OCIDs with results
+
   -s, --settings <SETTINGS>
           The path to the settings file
 
