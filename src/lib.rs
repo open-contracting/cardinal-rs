@@ -144,7 +144,7 @@ impl Indicators {
         )
     }
 
-    // Note: Bids are returned even if there are no awards, because "all" awards are final.
+    // Bids are returned even if there are no awards, because "all" awards are final.
     fn get_complete_awards_and_bids_if_all_awards_final(
         release: &Map<String, Value>,
     ) -> Option<(Vec<&Value>, &Vec<Value>)> {
@@ -153,24 +153,21 @@ impl Indicators {
             && let Some(Value::Array(details)) = bids.get("details")
         {
             let mut complete_awards = vec![];
-            let mut all_awards_final = true;
 
+            // An award must be in a final state, in order for indicator results to be stable.
+            // Note: OCDS 1.1 uses 'active' to mean "in force". OCDS 1.2 might use 'complete'.
+            // https://github.com/open-contracting/standard/issues/1160#issuecomment-1139793598
             for award in awards {
                 if let Some(Value::String(status)) = award.get("status") {
                     match status.as_str() {
                         "active" => complete_awards.push(award),
                         "cancelled" | "unsuccessful" => (),
-                        _ => all_awards_final = false, // "pending"
+                        _ => return None, // "pending"
                     }
                 }
             }
 
-            // An award must be in a final state, in order for indicator results to be stable.
-            // Note: OCDS 1.1 uses 'active' to mean "in force". OCDS 1.2 might use 'complete'.
-            // https://github.com/open-contracting/standard/issues/1160#issuecomment-1139793598
-            if all_awards_final {
-                return Some((complete_awards, details));
-            }
+            return Some((complete_awards, details));
         }
 
         None
