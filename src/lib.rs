@@ -9,7 +9,7 @@ use anyhow::Result;
 use log::warn;
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{Map, Value};
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
@@ -100,133 +100,9 @@ impl Indicators {
             buffer,
             Self::default,
             |mut item, json| {
-                if let Value::Object(release) = json
-                    && let Some(Value::String(ocid)) = release.get("ocid")
-                {
-                    let mut lowest_non_winner_amount = None;
-                    let mut winner_amount = None;
-                    let mut award_supplier_ids = HashSet::new();
-                    let mut valid_tenderer_ids = HashSet::new();
-                    let mut disqualified_tenderer_ids = HashSet::new();
-
-                    if let Some(Value::Array(awards)) = release.get("awards") {
-                        let mut complete_awards = vec![];
-                        let mut all_awards_final = true;
-
-                        for award in awards {
-                            if let Some(Value::String(status)) = award.get("status") {
-                                match status.as_str() {
-                                    "active" => complete_awards.push(award),
-                                    "cancelled" | "unsuccessful" => (),
-                                    _ => all_awards_final = false, // "pending"
-                                }
-                            }
-                        }
-
-                        // An award must be in a final state, in order for indicator results to be stable.
-                        // Note: OCDS 1.1 uses 'active' to mean "in force". OCDS 1.2 might use 'complete'.
-                        // https://github.com/open-contracting/standard/issues/1160#issuecomment-1139793598
-                        if all_awards_final {
-                            for award in &complete_awards {
-                                if let Some(Value::Array(suppliers)) = award.get("suppliers") {
-                                    for supplier in suppliers {
-                                        if let Some(Value::String(id)) = supplier.get("id") {
-                                            award_supplier_ids.insert(id);
-                                        }
-                                    }
-                                }
-                            }
-
-                            if let Some(Value::Object(bids)) = release.get("bids")
-                                && let Some(Value::Array(details)) = bids.get("details")
-                            {
-                                for bid in details {
-                                    if let Some(Value::String(status)) = bid.get("status")
-                                        && let Some(Value::Array(tenderers)) = bid.get("tenderers")
-                                    {
-                                        for tenderer in tenderers {
-                                            if let Some(Value::String(id)) = tenderer.get("id") {
-                                                match status.to_ascii_lowercase().as_str() {
-                                                    // https://github.com/open-contracting/cardinal-rs/issues/18
-                                                    "valid" | "qualified" => valid_tenderer_ids.insert(id),
-                                                    "disqualified" => disqualified_tenderer_ids.insert(id),
-                                                    _ => false, // "invited", "pending", "withdrawn"
-                                                };
-                                            }
-                                        }
-
-                                        // https://github.com/open-contracting/cardinal-rs/issues/18
-                                        if ["valid", "qualified"].contains(&status.to_ascii_lowercase().as_str())
-                                            && let Some(Value::Object(value)) = bid.get("value")
-                                            && let Some(Value::Number(amount)) = value.get("amount")
-                                            && let Some(amount) = amount.as_f64()
-                                            && let Some(Value::String(currency)) = value.get("currency")
-                                            // If the only award is active, we assume all bids compete for all items.
-                                            // We assume any cancelled or unsuccessful awards were previous attempts to
-                                            // award all items. If there are many active awards, the dataset must
-                                            // describe lots, to know which bids compete with each other.
-                                            && complete_awards.len() == 1
-                                            && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
-                                            // The tenderers on the bid must match the suppliers on the award. For now,
-                                            // we only support the simple case of a single supplier.
-                                            // https://github.com/open-contracting/cardinal-rs/issues/17
-                                            && suppliers.len() == 1
-                                            && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
-                                            // The tenderers on the bid must match the suppliers on the award. For now,
-                                            // we only support the simple case of a single supplier.
-                                            // https://github.com/open-contracting/cardinal-rs/issues/17
-                                            && tenderers.len() == 1
-                                            && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
-                                        {
-                                            if currency == item.currency.get_or_insert_with(||
-                                                settings.currency.as_ref().map_or_else(||
-                                                    currency.to_string(), ToString::to_string
-                                                )
-                                            ) {
-                                                // We assume the winner submits one valid bid.
-                                                if supplier_id == tenderer_id {
-                                                    winner_amount = Some(amount);
-                                                } else if let Some(other) = lowest_non_winner_amount {
-                                                    if amount < other {
-                                                        lowest_non_winner_amount = Some(amount);
-                                                    }
-                                                } else {
-                                                    lowest_non_winner_amount = Some(amount);
-                                                }
-                                            } else {
-                                                warn!("{} is not {:?}, skipping.", currency, item.currency);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if let Some(winner_amount) = winner_amount
-                        && let Some(lowest_non_winner_amount) = lowest_non_winner_amount
-                        // If the lowest bid didn't win, the award criteria aren't price only, as otherwise assumed.
-                        && lowest_non_winner_amount >= winner_amount
-                    {
-                        item.bid_ratios.insert(
-                            ocid.to_string(),
-                            (lowest_non_winner_amount - winner_amount) / winner_amount,
-                        );
-                    }
-
-                    // NF035 is not applicable to multiple tenderers/winners. A buyer can aggregate multiple bids
-                    // into one award, and then sign multiple contracts. That behavior is not a red flag.
-                    if valid_tenderer_ids.len() == 1
-                        // The tenderer's bids were awarded.
-                        && valid_tenderer_ids == award_supplier_ids
-                        // Others' bids were disqualified.
-                        && let difference = disqualified_tenderer_ids.difference(&valid_tenderer_ids).count()
-                        // At least this many tenderers have disqualified bids.
-                        && difference >= nf035_threshold
-                    {
-                        let result = item.results.entry(ocid.to_string()).or_default();
-                        result.insert(Indicator::NF035, difference as f64);
-                    }
+                if let Value::Object(release) = json && let Some(Value::String(ocid)) = release.get("ocid") {
+                    item.nf024(&release, ocid, &settings.currency);
+                    item.nf035(&release, ocid, nf035_threshold);
                 }
 
                 item
@@ -264,6 +140,170 @@ impl Indicators {
                 Ok(item)
             },
         )
+    }
+
+    fn nf024(
+        &mut self,
+        release: &Map<String, Value>,
+        ocid: &String,
+        default_currency: &Option<String>,
+    ) {
+        let mut lowest_non_winner_amount = None;
+        let mut winner_amount = None;
+
+        if let Some(Value::Array(awards)) = release.get("awards") {
+            let mut complete_awards = vec![];
+            let mut all_awards_final = true;
+
+            for award in awards {
+                if let Some(Value::String(status)) = award.get("status") {
+                    match status.as_str() {
+                        "active" => complete_awards.push(award),
+                        "cancelled" | "unsuccessful" => (),
+                        _ => all_awards_final = false, // "pending"
+                    }
+                }
+            }
+
+            // An award must be in a final state, in order for indicator results to be stable.
+            // Note: OCDS 1.1 uses 'active' to mean "in force". OCDS 1.2 might use 'complete'.
+            // https://github.com/open-contracting/standard/issues/1160#issuecomment-1139793598
+            if all_awards_final
+                && let Some(Value::Object(bids)) = release.get("bids")
+                && let Some(Value::Array(details)) = bids.get("details")
+            {
+                for bid in details {
+                    if let Some(Value::String(status)) = bid.get("status")
+                        && let Some(Value::Array(tenderers)) = bid.get("tenderers")
+                    {
+                        // https://github.com/open-contracting/cardinal-rs/issues/18
+                        if ["valid", "qualified"].contains(&status.to_ascii_lowercase().as_str())
+                            && let Some(Value::Object(value)) = bid.get("value")
+                            && let Some(Value::Number(amount)) = value.get("amount")
+                            && let Some(amount) = amount.as_f64()
+                            && let Some(Value::String(currency)) = value.get("currency")
+                            // If the only award is active, we assume all bids compete for all items.
+                            // We assume any cancelled or unsuccessful awards were previous attempts to
+                            // award all items. If there are many active awards, the dataset must
+                            // describe lots, to know which bids compete with each other.
+                            && complete_awards.len() == 1
+                            && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
+                            // The tenderers on the bid must match the suppliers on the award. For now,
+                            // we only support the simple case of a single supplier.
+                            // https://github.com/open-contracting/cardinal-rs/issues/17
+                            && suppliers.len() == 1
+                            && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
+                            // The tenderers on the bid must match the suppliers on the award. For now,
+                            // we only support the simple case of a single supplier.
+                            // https://github.com/open-contracting/cardinal-rs/issues/17
+                            && tenderers.len() == 1
+                            && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
+                        {
+                            if currency == self.currency.get_or_insert_with(||
+                                default_currency.as_ref().map_or_else(||
+                                    currency.to_string(), ToString::to_string
+                                )
+                            ) {
+                                // We assume the winner submits one valid bid.
+                                if supplier_id == tenderer_id {
+                                    winner_amount = Some(amount);
+                                } else if let Some(other) = lowest_non_winner_amount {
+                                    if amount < other {
+                                        lowest_non_winner_amount = Some(amount);
+                                    }
+                                } else {
+                                    lowest_non_winner_amount = Some(amount);
+                                }
+                            } else {
+                                warn!("{} is not {:?}, skipping.", currency, self.currency);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if let Some(winner_amount) = winner_amount
+            && let Some(lowest_non_winner_amount) = lowest_non_winner_amount
+            // If the lowest bid didn't win, the award criteria aren't price only, as otherwise assumed.
+            && lowest_non_winner_amount >= winner_amount
+        {
+            self.bid_ratios.insert(
+                ocid.to_string(),
+                (lowest_non_winner_amount - winner_amount) / winner_amount,
+            );
+        }
+    }
+
+    fn nf035(&mut self, release: &Map<String, Value>, ocid: &String, threshold: usize) {
+        let mut award_supplier_ids = HashSet::new();
+        let mut valid_tenderer_ids = HashSet::new();
+        let mut disqualified_tenderer_ids = HashSet::new();
+
+        if let Some(Value::Array(awards)) = release.get("awards") {
+            let mut complete_awards = vec![];
+            let mut all_awards_final = true;
+
+            for award in awards {
+                if let Some(Value::String(status)) = award.get("status") {
+                    match status.as_str() {
+                        "active" => complete_awards.push(award),
+                        "cancelled" | "unsuccessful" => (),
+                        _ => all_awards_final = false, // "pending"
+                    }
+                }
+            }
+
+            // An award must be in a final state, in order for indicator results to be stable.
+            // Note: OCDS 1.1 uses 'active' to mean "in force". OCDS 1.2 might use 'complete'.
+            // https://github.com/open-contracting/standard/issues/1160#issuecomment-1139793598
+            if all_awards_final {
+                for award in &complete_awards {
+                    if let Some(Value::Array(suppliers)) = award.get("suppliers") {
+                        for supplier in suppliers {
+                            if let Some(Value::String(id)) = supplier.get("id") {
+                                award_supplier_ids.insert(id);
+                            }
+                        }
+                    }
+                }
+
+                if let Some(Value::Object(bids)) = release.get("bids")
+                    && let Some(Value::Array(details)) = bids.get("details")
+                {
+                    for bid in details {
+                        if let Some(Value::String(status)) = bid.get("status")
+                            && let Some(Value::Array(tenderers)) = bid.get("tenderers")
+                        {
+                            for tenderer in tenderers {
+                                if let Some(Value::String(id)) = tenderer.get("id") {
+                                    match status.to_ascii_lowercase().as_str() {
+                                        // https://github.com/open-contracting/cardinal-rs/issues/18
+                                        "valid" | "qualified" => valid_tenderer_ids.insert(id),
+                                        "disqualified" => disqualified_tenderer_ids.insert(id),
+                                        _ => false, // "invited", "pending", "withdrawn"
+                                    };
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // NF035 is not applicable to multiple tenderers/winners. A buyer can aggregate multiple bids
+        // into one award, and then sign multiple contracts. That behavior is not a red flag.
+        if valid_tenderer_ids.len() == 1
+            // The tenderer's bids were awarded.
+            && valid_tenderer_ids == award_supplier_ids
+            // Others' bids were disqualified.
+            && let difference = disqualified_tenderer_ids.difference(&valid_tenderer_ids).count()
+            // At least this many tenderers have disqualified bids.
+            && difference >= threshold
+        {
+            let result = self.results.entry(ocid.to_string()).or_default();
+            result.insert(Indicator::NF035, difference as f64);
+        }
     }
 }
 
