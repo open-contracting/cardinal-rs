@@ -104,9 +104,9 @@ impl Indicators {
                 if let Value::Object(release) = json
                     && let Some(Value::String(ocid)) = release.get("ocid")
                 {
-                    item.nf024(&release, ocid, &settings.currency);
-                    item.nf035(&release, ocid, nf035_threshold);
-                    item.nf036(&release, ocid, &settings.currency);
+                    item.fold_nf024(&release, ocid, &settings.currency);
+                    item.fold_nf035(&release, ocid, nf035_threshold);
+                    item.fold_nf036(&release, ocid, &settings.currency);
                 }
 
                 item
@@ -115,6 +115,7 @@ impl Indicators {
                 // If each OCID appears on one line only, no overwriting will occur.
                 item.results.extend(other.results);
 
+                // NF024
                 if item.currency.is_none()
                     || other.currency.is_none()
                     || item.currency == other.currency
@@ -127,6 +128,7 @@ impl Indicators {
                 item
             },
             |mut item| {
+                // NF024
                 let mut data = Data::new(item.bid_ratios.clone().into_values().collect::<Vec<_>>());
 
                 let q1 = data.lower_quartile();
@@ -175,7 +177,8 @@ impl Indicators {
         None
     }
 
-    fn nf024(
+    // The percentage difference between the winning bid and the second-lowest valid bid is a low outlier.
+    fn fold_nf024(
         &mut self,
         release: &Map<String, Value>,
         ocid: &String,
@@ -242,7 +245,8 @@ impl Indicators {
         }
     }
 
-    fn nf036(
+    // The lowest bid is disqualified, while the award criterion is price only.
+    fn fold_nf036(
         &mut self,
         release: &Map<String, Value>,
         ocid: &String,
@@ -293,7 +297,8 @@ impl Indicators {
         }
     }
 
-    fn nf035(&mut self, release: &Map<String, Value>, ocid: &String, threshold: usize) {
+    // Bids are disqualified if not submitted by the single tenderer of the winning bid.
+    fn fold_nf035(&mut self, release: &Map<String, Value>, ocid: &String, threshold: usize) {
         let mut award_supplier_ids = HashSet::new();
         let mut valid_tenderer_ids = HashSet::new();
         let mut disqualified_tenderer_ids = HashSet::new();
