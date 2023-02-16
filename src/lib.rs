@@ -66,7 +66,7 @@ pub struct Settings {
     NF035: Option<NF035>,
 }
 
-#[derive(Debug, Eq, Hash, PartialEq, Serialize)]
+#[derive(Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
 pub enum Indicator {
     NF024,
     NF035,
@@ -368,11 +368,18 @@ mod tests {
         BufReader::new(file)
     }
 
-    fn check(name: &str) {
+    fn check_coverage(name: &str) {
         let result = Coverage::run(reader(name, "jsonl"));
         let expected = serde_json::from_reader(reader(name, "expected")).unwrap();
 
         assert_eq!(result.unwrap().counts, expected);
+    }
+
+    fn check_indicators(name: &str) {
+        let result = Indicators::run(reader(name, "jsonl"), Settings::default());
+        let expected = serde_json::from_reader(reader(name, "expected")).unwrap();
+
+        assert_eq!(result.unwrap().results, expected);
     }
 
     include!(concat!(env!("OUT_DIR"), "/lib.include"));

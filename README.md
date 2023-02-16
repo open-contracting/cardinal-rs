@@ -131,7 +131,7 @@ For each contracting process, the difference is calculated as $x = {(secondLowes
 
 The indicator's value is the percentage difference.
 
-This indicator is skipped if:
+A contracting process is excluded if:
 
 - An award's status is pending or invalid.
 - The winning bid is not the lowest bid. (This indicator requires the award criteria to be price-only.)
@@ -156,6 +156,6 @@ A contracting process is flagged if:
 
 The indicator's value is the number of unique tenderers with disqualified bids.
 
-This indicator is skipped if:
+A contracting process is excluded if:
 
 - An award's status is pending or invalid.
