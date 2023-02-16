@@ -20,7 +20,7 @@ fn main() {
             r#"
 #[test]
 fn {name}() {{
-    check("{name}")
+    check("coverage/{name}")
 }}
 "#
         )

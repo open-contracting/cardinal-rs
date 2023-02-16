@@ -43,9 +43,6 @@ Arguments:
           The path to the file (or "-" for standard input), in which each line is JSON text
 
 Options:
-  -s, --settings <SETTINGS>
-          The path to the settings file
-
   -v, --verbose...
           Increase verbosity
 
@@ -100,14 +97,14 @@ Arguments:
           process as JSON text
 
 Options:
-      --count
+  -c, --count
           Print the number of OCIDs with results
-
-  -s, --settings <SETTINGS>
-          The path to the settings file
 
   -v, --verbose...
           Increase verbosity
+
+  -s, --settings <SETTINGS>
+          The path to the settings file
 
   -h, --help
           Print help (see a summary with '-h')
@@ -120,13 +117,13 @@ For a given contracting process, an indicator is skipped if:
 - The relevant fields aren't of the correct type. [#10](https://github.com/open-contracting/cardinal-rs/issues/10) [#13](https://github.com/open-contracting/cardinal-rs/issues/13)
 - Monetary values, where relevant, use different currencies. [#11](https://github.com/open-contracting/cardinal-rs/issues/11)
 
-  To configure the primary currency, add to your settings file:
+  To configure the main currency, add to the top of your settings file:
 
   ```ini
   currency = USD
   ```
 
-  Otherwise, the primary currency is set to the first observed currency.
+  Otherwise, the main currency is set to the first observed currency.
 
 #### NF024 The percentage difference between the winning bid and the second-lowest valid bid is a low outlier
 

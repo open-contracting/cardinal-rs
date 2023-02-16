@@ -15,7 +15,7 @@ use statrs::statistics::OrderStatistics;
 
 fn fold_reduce<T: Send, F>(
     buffer: impl BufRead + Send,
-    new: fn() -> T,
+    default: fn() -> T,
     fold: F,
     reduce: fn(T, T) -> T,
     finalize: fn(T) -> Result<T>,
@@ -27,7 +27,7 @@ where
         .lines()
         .enumerate()
         .par_bridge()
-        .fold(new, |mut item, (i, lines_result)| {
+        .fold(default, |mut item, (i, lines_result)| {
             match lines_result {
                 Ok(string) => {
                     match serde_json::from_str(&string) {
@@ -49,7 +49,7 @@ where
             }
             item
         })
-        .reduce(new, reduce);
+        .reduce(default, reduce);
 
     finalize(item)
 }
@@ -72,20 +72,16 @@ pub enum Indicator {
     NF035,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Indicators {
-    pub results: HashMap<String, HashMap<Indicator, f64>>,
+    results: HashMap<String, HashMap<Indicator, f64>>,
     bid_ratios: HashMap<String, f64>,
     currency: Option<String>,
 }
 
 impl Indicators {
-    fn new() -> Self {
-        Self {
-            results: HashMap::new(),
-            bid_ratios: HashMap::new(),
-            currency: None,
-        }
+    pub const fn results(&self) -> &HashMap<String, HashMap<Indicator, f64>> {
+        &self.results
     }
 
     ///
@@ -102,14 +98,14 @@ impl Indicators {
 
         fold_reduce(
             buffer,
-            Self::new,
+            Self::default,
             |mut item, json| {
                 if let Value::Object(release) = json
                     && let Some(Value::String(ocid)) = release.get("ocid")
                 {
                     let mut lowest_non_winner_amount = None;
                     let mut winner_amount = None;
-                    let mut winner_ids = HashSet::new();
+                    let mut award_supplier_ids = HashSet::new();
                     let mut valid_tenderer_ids = HashSet::new();
                     let mut disqualified_tenderer_ids = HashSet::new();
 
@@ -135,7 +131,7 @@ impl Indicators {
                                 if let Some(Value::Array(suppliers)) = award.get("suppliers") {
                                     for supplier in suppliers {
                                         if let Some(Value::String(id)) = supplier.get("id") {
-                                            winner_ids.insert(id);
+                                            award_supplier_ids.insert(id);
                                         }
                                     }
                                 }
@@ -165,26 +161,29 @@ impl Indicators {
                                             && let Some(Value::Number(amount)) = value.get("amount")
                                             && let Some(amount) = amount.as_f64()
                                             && let Some(Value::String(currency)) = value.get("currency")
-                                            // If the only award is active, we assume that all bids compete for all items. If there
-                                            // are cancelled or unsuccessful awards, we assume that they were previous attempts to
-                                            // award all items. If there are multiple active awards, the dataset must describe lots,
-                                            // to know which bids compete with each other.
+                                            // If the only award is active, we assume all bids compete for all items.
+                                            // We assume any cancelled or unsuccessful awards were previous attempts to
+                                            // award all items. If there are many active awards, the dataset must
+                                            // describe lots, to know which bids compete with each other.
                                             && complete_awards.len() == 1
                                             && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
-                                            // The tenderers on the bid must match the suppliers on the award. For now, we only
-                                            // support the simple case of a single supplier.
+                                            // The tenderers on the bid must match the suppliers on the award. For now,
+                                            // we only support the simple case of a single supplier.
                                             // https://github.com/open-contracting/cardinal-rs/issues/17
                                             && suppliers.len() == 1
                                             && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
-                                            // The tenderers on the bid must match the suppliers on the award. For now, we
-                                            // only support the simple case of a single supplier.
+                                            // The tenderers on the bid must match the suppliers on the award. For now,
+                                            // we only support the simple case of a single supplier.
                                             // https://github.com/open-contracting/cardinal-rs/issues/17
                                             && tenderers.len() == 1
                                             && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
                                         {
                                             if currency == item.currency.get_or_insert_with(||
-                                                settings.currency.as_ref().map_or_else(|| currency.to_string(), ToString::to_string)
+                                                settings.currency.as_ref().map_or_else(||
+                                                    currency.to_string(), ToString::to_string
+                                                )
                                             ) {
+                                                // We assume the winner submits one valid bid.
                                                 if supplier_id == tenderer_id {
                                                     winner_amount = Some(amount);
                                                 } else if let Some(other) = lowest_non_winner_amount {
@@ -219,7 +218,7 @@ impl Indicators {
                     // into one award, and then sign multiple contracts. That behavior is not a red flag.
                     if valid_tenderer_ids.len() == 1
                         // The tenderer's bids were awarded.
-                        && valid_tenderer_ids == winner_ids
+                        && valid_tenderer_ids == award_supplier_ids
                         // Others' bids were disqualified.
                         && let difference = disqualified_tenderer_ids.difference(&valid_tenderer_ids).count()
                         // At least this many tenderers have disqualified bids.
@@ -268,19 +267,13 @@ impl Indicators {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Coverage {
     counts: HashMap<String, u32>,
 }
 
 impl Coverage {
-    fn new() -> Self {
-        Self {
-            counts: HashMap::new(),
-        }
-    }
-
-    pub const fn counts(&self) -> &HashMap<String, u32> {
+    pub const fn results(&self) -> &HashMap<String, u32> {
         &self.counts
     }
 
@@ -290,7 +283,7 @@ impl Coverage {
     pub fn run(buffer: impl BufRead + Send) -> Result<Self> {
         fold_reduce(
             buffer,
-            Self::new,
+            Self::default,
             |mut item, value| {
                 item.add(value, &mut Vec::with_capacity(16));
                 item
@@ -369,7 +362,7 @@ mod tests {
     use pretty_assertions::assert_eq;
 
     fn reader(stem: &str, extension: &str) -> BufReader<File> {
-        let path = format!("tests/fixtures/coverage/{stem}.{extension}");
+        let path = format!("tests/fixtures/{stem}.{extension}");
         let file = File::open(path).unwrap();
 
         BufReader::new(file)

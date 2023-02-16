@@ -12,9 +12,6 @@ use log::LevelFilter;
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
-    /// The path to the settings file
-    #[arg(long, short, global = true, value_parser = settings_parser)]
-    settings: Option<ocdscardinal::Settings>,
     /// Increase verbosity
     #[arg(long, short, global = true, default_value_t = 1, action = clap::ArgAction::Count)]
     verbose: u8,
@@ -44,8 +41,11 @@ enum Commands {
         /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
         file: PathBuf,
         /// Print the number of OCIDs with results
-        #[arg(long, default_value_t = false)]
+        #[arg(long, short, default_value_t = false)]
         count: bool,
+        /// The path to the settings file
+        #[arg(long, short, value_parser = settings_parser)]
+        settings: Option<ocdscardinal::Settings>,
     },
 }
 
@@ -105,18 +105,23 @@ fn main() {
     match &cli.command {
         Commands::Coverage { file } => match ocdscardinal::Coverage::run(reader(file)) {
             Ok(item) => {
-                println!("{:?}", item.counts());
+                println!("{:?}", item.results());
             }
             Err(e) => {
                 application_error(&e);
             }
         },
-        Commands::Indicators { file, count } => {
-            match ocdscardinal::Indicators::run(reader(file), cli.settings.unwrap_or_default()) {
+        Commands::Indicators {
+            file,
+            count,
+            settings,
+        } => {
+            match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default())
+            {
                 Ok(item) => {
-                    println!("{}", serde_json::to_string(&item.results).unwrap());
+                    println!("{}", serde_json::to_string(&item.results()).unwrap());
                     if *count {
-                        println!("{:?}", item.results.len());
+                        println!("{:?}", item.results().len());
                     }
                 }
                 Err(e) => {
