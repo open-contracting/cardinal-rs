@@ -114,6 +114,7 @@ Options:
 For a given contracting process, an indicator is skipped if:
 
 - The ``ocid`` isn't a string.
+- The relevant organization references don't set an `id`.
 - The relevant fields aren't of the correct type. [#10](https://github.com/open-contracting/cardinal-rs/issues/10) [#13](https://github.com/open-contracting/cardinal-rs/issues/13)
 - Monetary values, where relevant, use different currencies. [#11](https://github.com/open-contracting/cardinal-rs/issues/11)
 

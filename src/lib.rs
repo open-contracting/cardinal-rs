@@ -188,48 +188,41 @@ impl Indicators {
             for bid in details {
                 if let Some(Value::String(status)) = bid.get("status")
                     && let Some(Value::Array(tenderers)) = bid.get("tenderers")
-                {
+                    && let Some(Value::Object(value)) = bid.get("value")
+                    && let Some(Value::Number(amount)) = value.get("amount")
+                    && let Some(Value::String(currency)) = value.get("currency")
+                    && let Some(amount) = amount.as_f64()
                     // https://github.com/open-contracting/cardinal-rs/issues/18
-                    if ["valid", "qualified"].contains(&status.to_ascii_lowercase().as_str())
-                        && let Some(Value::Object(value)) = bid.get("value")
-                        && let Some(Value::Number(amount)) = value.get("amount")
-                        && let Some(amount) = amount.as_f64()
-                        && let Some(Value::String(currency)) = value.get("currency")
-                        // If the only award is active, we assume all bids compete for all items.
-                        // We assume any cancelled or unsuccessful awards were previous attempts to
-                        // award all items. If there are many active awards, the dataset must
-                        // describe lots, to know which bids compete with each other.
-                        && complete_awards.len() == 1
-                        && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
-                        // The tenderers on the bid must match the suppliers on the award. For now,
-                        // we only support the simple case of a single supplier.
-                        // https://github.com/open-contracting/cardinal-rs/issues/17
-                        && suppliers.len() == 1
-                        && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
-                        // The tenderers on the bid must match the suppliers on the award. For now,
-                        // we only support the simple case of a single supplier.
-                        // https://github.com/open-contracting/cardinal-rs/issues/17
-                        && tenderers.len() == 1
-                        && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
-                    {
-                        if currency == self.currency.get_or_insert_with(||
-                            default_currency.as_ref().map_or_else(||
-                                currency.to_string(), ToString::to_string
-                            )
-                        ) {
-                            // We assume the winner submits one valid bid.
-                            if supplier_id == tenderer_id {
-                                winner_amount = Some(amount);
-                            } else if let Some(other) = lowest_non_winner_amount {
-                                if amount < other {
-                                    lowest_non_winner_amount = Some(amount);
-                                }
-                            } else {
+                    && ["valid", "qualified"].contains(&status.to_ascii_lowercase().as_str())
+                    // If the only award is active, we assume all bids compete for all items. We assume any cancelled
+                    // or unsuccessful awards were previous attempts to award all items. If there are many active
+                    // awards, the dataset must describe lots, to know which bids compete with each other.
+                    && complete_awards.len() == 1
+                    && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
+                    // The tenderers on the bid must match the suppliers on the award. For now, we only support the
+                    // simple case of a single supplier. https://github.com/open-contracting/cardinal-rs/issues/17
+                    && suppliers.len() == 1
+                    && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
+                    && tenderers.len() == 1
+                    && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
+                {
+                    if currency == self.currency.get_or_insert_with(||
+                        default_currency.as_ref().map_or_else(||
+                            currency.to_string(), ToString::to_string
+                        )
+                    ) {
+                        // We assume the winner submits one valid bid.
+                        if supplier_id == tenderer_id {
+                            winner_amount = Some(amount);
+                        } else if let Some(other) = lowest_non_winner_amount {
+                            if amount < other {
                                 lowest_non_winner_amount = Some(amount);
                             }
                         } else {
-                            warn!("{} is not {:?}, skipping.", currency, self.currency);
+                            lowest_non_winner_amount = Some(amount);
                         }
+                    } else {
+                        warn!("{} is not {:?}, skipping.", currency, self.currency);
                     }
                 }
             }
@@ -269,14 +262,16 @@ impl Indicators {
                 if let Some(Value::String(status)) = bid.get("status")
                     && let Some(Value::Array(tenderers)) = bid.get("tenderers")
                 {
+                    let set = match status.to_ascii_lowercase().as_str() {
+                        // https://github.com/open-contracting/cardinal-rs/issues/18
+                        "valid" | "qualified" => &mut valid_tenderer_ids,
+                        "disqualified" => &mut disqualified_tenderer_ids,
+                        _ => continue, // "invited", "pending", "withdrawn"
+                    };
+
                     for tenderer in tenderers {
                         if let Some(Value::String(id)) = tenderer.get("id") {
-                            match status.to_ascii_lowercase().as_str() {
-                                // https://github.com/open-contracting/cardinal-rs/issues/18
-                                "valid" | "qualified" => valid_tenderer_ids.insert(id),
-                                "disqualified" => disqualified_tenderer_ids.insert(id),
-                                _ => false, // "invited", "pending", "withdrawn"
-                            };
+                            set.insert(id);
                         }
                     }
                 }
