@@ -111,12 +111,12 @@ Options:
 
 ```
 
-For a given contracting process, an indicator is skipped if:
+For a given indicator, a contracting process is excluded if:
 
 - The ``ocid`` isn't a string.
 - The relevant organization references don't set an `id`.
 - The relevant fields aren't of the correct type. [#10](https://github.com/open-contracting/cardinal-rs/issues/10) [#13](https://github.com/open-contracting/cardinal-rs/issues/13)
-- Monetary values, where relevant, use different currencies. [#11](https://github.com/open-contracting/cardinal-rs/issues/11)
+- Monetary values, where relevant, don't use the main currency. [#11](https://github.com/open-contracting/cardinal-rs/issues/11)
 
   To configure the main currency, add to the top of your settings file:
 
@@ -144,7 +144,7 @@ A contracting process is excluded if:
 
 A contracting process is flagged if:
 
-- Exactly one tenderer submitted at least one bid that is valid (qualified).
+- Exactly one tenderer submitted one or more bids that are valid (i.e. qualified).
 - The tenderer of the valid bids and the suppliers of all active awards are the same.
 - At least 1 other tenderer submitted a bid that was disqualified.
 
@@ -160,3 +160,12 @@ The indicator's value is the number of unique tenderers with disqualified bids.
 A contracting process is excluded if:
 
 - An award's status is pending or invalid.
+
+### NF036 The lowest bid is disqualified, while the award criterion is price only
+
+A contracting process is flagged if:
+
+- There are one or more active awards.
+- The lowest bid (that is not is invited or withdrawn) is disqualified.
+
+The indicator's value is 1.0.

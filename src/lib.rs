@@ -70,6 +70,7 @@ pub struct Settings {
 pub enum Indicator {
     NF024,
     NF035,
+    NF036,
 }
 
 #[derive(Debug, Default)]
@@ -105,6 +106,7 @@ impl Indicators {
                 {
                     item.nf024(&release, ocid, &settings.currency);
                     item.nf035(&release, ocid, nf035_threshold);
+                    item.nf036(&release, ocid, &settings.currency);
                 }
 
                 item
@@ -237,6 +239,57 @@ impl Indicators {
                 ocid.to_string(),
                 (lowest_non_winner_amount - winner_amount) / winner_amount,
             );
+        }
+    }
+
+    fn nf036(
+        &mut self,
+        release: &Map<String, Value>,
+        ocid: &String,
+        default_currency: &Option<String>,
+    ) {
+        let mut lowest_amount = None;
+        let mut lowest_amount_is_disqualified = false;
+
+        if let Some(Value::Array(awards)) = release.get("awards")
+            && let Some(Value::Object(bids)) = release.get("bids")
+            && let Some(Value::Array(details)) = bids.get("details")
+            && awards.iter().any(
+                |award| award.get("status").map_or(false, |status| status.as_str() == Some("active"))
+            )
+        {
+            for bid in details {
+                if let Some(Value::String(status)) = bid.get("status")
+                    && let Some(Value::Object(value)) = bid.get("value")
+                    && let Some(Value::Number(amount)) = value.get("amount")
+                    && let Some(Value::String(currency)) = value.get("currency")
+                    && let Some(amount) = amount.as_f64()
+                {
+                    let status = status.to_ascii_lowercase();
+
+                    if status != "invited" && status != "withdrawn"
+                        && currency == self.currency.get_or_insert_with(||
+                        default_currency.as_ref().map_or_else(||
+                            currency.to_string(), ToString::to_string
+                        )
+                    ) {
+                        if let Some(other) = lowest_amount {
+                            if amount < other {
+                                lowest_amount = Some(amount);
+                                lowest_amount_is_disqualified = status == "disqualified";
+                            }
+                        } else {
+                            lowest_amount = Some(amount);
+                            lowest_amount_is_disqualified = status == "disqualified";
+                        }
+                    }
+                }
+            }
+        }
+
+        if lowest_amount_is_disqualified {
+            let result = self.results.entry(ocid.to_string()).or_default();
+            result.insert(Indicator::NF036, 1.0);
         }
     }
 
