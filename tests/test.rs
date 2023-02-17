@@ -1,6 +1,7 @@
 use assert_cmd::assert::Assert;
 use assert_cmd::Command;
 use predicates::prelude::*;
+use rstest::rstest;
 use tempfile::NamedTempFile;
 use trycmd;
 
@@ -90,7 +91,19 @@ fn error_invalid_utf8() {
         .stderr(msg);
 }
 
-fn check(name: &str, infix: &str, line: u8, column: u8) {
+#[rstest]
+#[case("invalid_array_quote_first", ":", 1, 5)]
+#[case("invalid_array_quote_last", ":", 1, 13)]
+#[case("invalid_object_quote_first", ":", 1, 4)]
+#[case("invalid_object_quote_last", ":", 2, 4)]
+#[case("invalid_brace_first", "EOF", 1, 1)]
+#[case("invalid_brace_last", "EOF", 2, 1)]
+fn error_invalid_jsoon(
+    #[case] name: &str,
+    #[case] infix: &str,
+    #[case] line: u8,
+    #[case] column: u8,
+) {
     let infix = match infix {
         ":" => "expected `:`",
         "EOF" => "EOF while parsing an object",
@@ -102,5 +115,3 @@ fn check(name: &str, infix: &str, line: u8, column: u8) {
         .success()
         .stderr(msg);
 }
-
-include!(concat!(env!("OUT_DIR"), "/test.include"));

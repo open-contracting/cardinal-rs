@@ -42,29 +42,4 @@ fn {name}() {{
         )
         .unwrap();
     }
-
-    let path = Path::new(&env::var("OUT_DIR").unwrap()).join("test.include");
-    let mut file = File::create(path).unwrap();
-
-    let params = [
-        ("invalid_array_quote_first", ":", 1, 5),
-        ("invalid_array_quote_last", ":", 1, 13),
-        ("invalid_object_quote_first", ":", 1, 4),
-        ("invalid_object_quote_last", ":", 2, 4),
-        ("invalid_brace_first", "EOF", 1, 1),
-        ("invalid_brace_last", "EOF", 2, 1),
-    ];
-
-    for (name, infix, line, column) in params {
-        write!(
-            file,
-            r#"
-#[test]
-fn error_{name}() {{
-    check("{name}", "{infix}", {line}, {column})
-}}
-"#
-        )
-        .unwrap();
-    }
 }
