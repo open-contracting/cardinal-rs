@@ -55,7 +55,7 @@ where
 }
 
 #[derive(Clone, Debug, Deserialize)]
-struct NF035 {
+struct Threshold {
     threshold: usize,
 }
 
@@ -63,7 +63,7 @@ struct NF035 {
 #[allow(non_snake_case)]
 pub struct Settings {
     currency: Option<String>,
-    NF035: Option<NF035>,
+    NF035: Option<Threshold>,
 }
 
 #[derive(Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
@@ -76,7 +76,7 @@ pub enum Indicator {
 #[derive(Debug, Default)]
 pub struct Indicators {
     results: HashMap<String, HashMap<Indicator, f64>>,
-    bid_ratios: HashMap<String, f64>,
+    nf024_ratios: HashMap<String, f64>,
     currency: Option<String>,
 }
 
@@ -120,7 +120,7 @@ impl Indicators {
                     || other.currency.is_none()
                     || item.currency == other.currency
                 {
-                    item.bid_ratios.extend(other.bid_ratios);
+                    item.nf024_ratios.extend(other.nf024_ratios);
                 } else {
                     warn!("{:?} is not {:?}, skipping.", other.currency, item.currency);
                 }
@@ -129,14 +129,15 @@ impl Indicators {
             },
             |mut item| {
                 // NF024
-                let mut data = Data::new(item.bid_ratios.clone().into_values().collect::<Vec<_>>());
+                let mut data =
+                    Data::new(item.nf024_ratios.clone().into_values().collect::<Vec<_>>());
 
                 let q1 = data.lower_quartile();
                 let q3 = data.upper_quartile();
                 // q1 - IQR * 1.5
                 let lower_bound = (q3 - q1).mul_add(-1.5, q1);
 
-                for (ocid, ratio) in &item.bid_ratios {
+                for (ocid, ratio) in &item.nf024_ratios {
                     if *ratio < lower_bound {
                         let result = item.results.entry(ocid.to_string()).or_default();
                         result.insert(Indicator::NF024, *ratio);
@@ -175,6 +176,26 @@ impl Indicators {
         }
 
         None
+    }
+
+    fn get_submitted_bids(release: &Map<String, Value>) -> Vec<&Value> {
+        let mut submitted_bids = vec![];
+
+        if let Some(Value::Object(bids)) = release.get("bids")
+            && let Some(Value::Array(details)) = bids.get("details")
+        {
+            for bid in details {
+                if let Some(Value::String(status)) = bid.get("status") {
+                    let status = status.to_ascii_lowercase();
+
+                    if status != "invited" && status != "withdrawn" {
+                        submitted_bids.push(bid);
+                    }
+                }
+            }
+        }
+
+        submitted_bids
     }
 
     // The percentage difference between the winning bid and the second-lowest valid bid is a low outlier.
@@ -238,14 +259,14 @@ impl Indicators {
             // If the lowest bid didn't win, the award criteria aren't price only, as otherwise assumed.
             && lowest_non_winner_amount >= winner_amount
         {
-            self.bid_ratios.insert(
+            self.nf024_ratios.insert(
                 ocid.to_string(),
                 (lowest_non_winner_amount - winner_amount) / winner_amount,
             );
         }
     }
 
-    // The lowest bid is disqualified, while the award criterion is price only.
+    // The lowest submitted bid is disqualified, while the award criterion is price only.
     fn fold_nf036(
         &mut self,
         release: &Map<String, Value>,
@@ -256,23 +277,19 @@ impl Indicators {
         let mut lowest_amount_is_disqualified = false;
 
         if let Some(Value::Array(awards)) = release.get("awards")
-            && let Some(Value::Object(bids)) = release.get("bids")
-            && let Some(Value::Array(details)) = bids.get("details")
+            // There are one or more complete awards.
             && awards.iter().any(
                 |award| award.get("status").map_or(false, |status| status.as_str() == Some("active"))
             )
         {
-            for bid in details {
+            for bid in Self::get_submitted_bids(release) {
                 if let Some(Value::String(status)) = bid.get("status")
                     && let Some(Value::Object(value)) = bid.get("value")
                     && let Some(Value::Number(amount)) = value.get("amount")
                     && let Some(Value::String(currency)) = value.get("currency")
                     && let Some(amount) = amount.as_f64()
                 {
-                    let status = status.to_ascii_lowercase();
-
-                    if status != "invited" && status != "withdrawn"
-                        && currency == self.currency.get_or_insert_with(||
+                    if currency == self.currency.get_or_insert_with(||
                         default_currency.as_ref().map_or_else(||
                             currency.to_string(), ToString::to_string
                         )
@@ -280,12 +297,14 @@ impl Indicators {
                         if let Some(other) = lowest_amount {
                             if amount < other {
                                 lowest_amount = Some(amount);
-                                lowest_amount_is_disqualified = status == "disqualified";
+                                lowest_amount_is_disqualified = status.to_ascii_lowercase() == "disqualified";
                             }
                         } else {
                             lowest_amount = Some(amount);
-                            lowest_amount_is_disqualified = status == "disqualified";
+                            lowest_amount_is_disqualified = status.to_ascii_lowercase() == "disqualified";
                         }
+                    } else {
+                        warn!("{} is not {:?}, skipping.", currency, self.currency);
                     }
                 }
             }

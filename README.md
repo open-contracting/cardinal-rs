@@ -126,9 +126,13 @@ For a given indicator, a contracting process is excluded if:
 
   Otherwise, the main currency is set to the first observed currency.
 
+#### Terminology
+
+A bid is "submitted" if its status is pending, valid (i.e. qualified) or disqualified. It is not submitted if its status is invited or withdrawn.
+
 #### NF024 The percentage difference between the winning bid and the second-lowest valid bid is a low outlier
 
-For each contracting process, the difference is calculated as $x = {(secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount}$. A contracting process is flagged if the difference is less than the lower fence of $Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of differences.
+For each contracting process, the difference is calculated as $(secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount$. A contracting process is flagged if the difference is less than the lower fence of $Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of differences.
 
 The indicator's value is the percentage difference.
 
@@ -161,11 +165,11 @@ A contracting process is excluded if:
 
 - An award's status is pending or invalid.
 
-### NF036 The lowest bid is disqualified, while the award criterion is price only
+### NF036 The lowest submitted bid is disqualified, while the award criterion is price only
 
 A contracting process is flagged if:
 
 - There are one or more active awards.
-- The lowest bid (that is not is invited or withdrawn) is disqualified.
+- The lowest submitted bid is disqualified.
 
 The indicator's value is 1.0.
