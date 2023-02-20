@@ -6,6 +6,7 @@ use std::path::Path;
 use glob::glob;
 
 // Rust has no built-in parametrize feature. We can't use snapshot crates, because key order is non-deterministic.
+// See https://github.com/la10736/rstest/issues/163
 // https://stackoverflow.com/a/49056967/244258
 fn main() {
     let path = Path::new(&env::var("OUT_DIR").unwrap()).join("lib.include");
