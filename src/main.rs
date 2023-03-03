@@ -121,7 +121,9 @@ fn main() {
                 Ok(item) => {
                     println!("{}", serde_json::to_string(&item.results()).unwrap());
                     if *count {
-                        println!("{:?}", item.results().len());
+                        for (group, subresults) in item.results() {
+                            println!("{:?}: {:?}", group, subresults.len());
+                        }
                     }
                 }
                 Err(e) => {
