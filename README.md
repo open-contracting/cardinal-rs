@@ -178,9 +178,7 @@ The indicator's value is always 1.0.
 
 For each buyer, the ratio is calculated as $numberOfBidsDisqualifiedByBuyer \over numberOfBidsSubmittedToBuyer$ across all contracting processes. A buyer is flagged if the ratio is greater than the upper fence of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third quartile and $IQR$ is the interquartile range for the set of ratios. The same calculation is performed for procuring entities.
 
-For each tenderer, the ratio is calculated as $numberOfBidsDisqualifiedForTenderer \over numberOfBidsSubmittedByTenderer$ across all contracting processes. A tenderer is *marked* if the ratio is greater than the upper fence of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third quartile and $IQR$ is the interquartile range for the set of ratios.
-
-A contracting process is flagged if there is a submitted bid by a *marked* tenderer.
+For each tenderer, the ratio is calculated as $numberOfBidsDisqualifiedForTenderer \over numberOfBidsSubmittedByTenderer$ across all contracting processes. A tenderer is flagged if the ratio is greater than the upper fence of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third quartile and $IQR$ is the interquartile range for the set of ratios.
 
 To configure the upper fence, add to your settings file:
 
@@ -189,6 +187,6 @@ To configure the upper fence, add to your settings file:
 threshold = 0.5
 ```
 
-The indicator's value is the ratio. (If the same contracting process has submitted bids from multiple marked tenderers, the ratio is an arbitrary tenderer's ratio.)
+The indicator's value is the ratio.
 
 This indicator assumes that ``buyer/id``, ``procuringEntity/id`` and ``bids/details/tenderers/id`` are stable across contracting processes. [#32](https://github.com/open-contracting/cardinal-rs/issues/32)

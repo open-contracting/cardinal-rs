@@ -4,7 +4,6 @@ use std::cmp;
 use std::collections::{HashMap, HashSet};
 use std::io::BufRead;
 use std::ops::AddAssign;
-use std::ops::Index;
 use std::string::ToString;
 
 use anyhow::Result;
@@ -44,7 +43,7 @@ macro_rules! mediant {
 }
 
 macro_rules! nf038_flag {
-    ( $item:ident , $field:ident , $threshold:ident, $closure:expr ) => {
+    ( $item:ident , $field:ident , $threshold:ident, $group:ident ) => {
         let values: HashMap<String, f64> = $item
             .$field
             .into_iter()
@@ -64,8 +63,7 @@ macro_rules! nf038_flag {
 
         for (id, ratio) in values {
             if ratio > upper_fence {
-                // Trick the linter. https://github.com/rust-lang/rust-clippy/issues/1553
-                ($closure)(id, ratio);
+                set_result!($item, $group, id, NF038, ratio);
             }
         }
     };
@@ -154,6 +152,7 @@ pub enum Group {
     OCID,
     Buyer,
     ProcuringEntity,
+    Tenderer,
 }
 
 #[derive(Clone, Copy, Debug, Default)]
@@ -174,8 +173,6 @@ pub struct Indicators {
     nf038_procuring_entity: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `bids/details/tenderers/id`.
     nf038_tenderer: HashMap<String, Fraction>,
-    /// The contracting processes (`ocid`) for each `bids/details/tenderers/id`.
-    nf038_tenderer_ocid: HashMap<String, Vec<String>>,
 }
 
 impl AddAssign for Fraction {
@@ -241,10 +238,6 @@ impl Indicators {
                 mediant!(item, other, nf038_buyer);
                 mediant!(item, other, nf038_procuring_entity);
                 mediant!(item, other, nf038_tenderer);
-                for (id, ocids) in other.nf038_tenderer_ocid {
-                    let value = item.nf038_tenderer_ocid.entry(id).or_default();
-                    value.extend(ocids);
-                }
 
                 item
             },
@@ -268,26 +261,14 @@ impl Indicators {
                 }
 
                 // NF038
-                nf038_flag!(
-                    item,
-                    nf038_buyer,
-                    nf038_threshold,
-                    (|id: String, ratio| set_result!(item, Buyer, id, NF038, ratio))
-                );
+                nf038_flag!(item, nf038_buyer, nf038_threshold, Buyer);
                 nf038_flag!(
                     item,
                     nf038_procuring_entity,
                     nf038_threshold,
-                    (|id: String, ratio| set_result!(item, ProcuringEntity, id, NF038, ratio))
+                    ProcuringEntity
                 );
-                nf038_flag!(
-                    item,
-                    nf038_tenderer,
-                    nf038_threshold,
-                    (|id: String, ratio| for ocid in item.nf038_tenderer_ocid.index(&id) {
-                        set_result!(item, OCID, ocid, NF038, ratio);
-                    })
-                );
+                nf038_flag!(item, nf038_tenderer, nf038_threshold, Tenderer);
 
                 // If we return `Ok(item)`, we can't consume temporary internal fields.
                 Ok(Self {
@@ -518,7 +499,7 @@ impl Indicators {
     }
 
     // The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer.
-    fn fold_nf038(&mut self, release: &Map<String, Value>, ocid: &str) {
+    fn fold_nf038(&mut self, release: &Map<String, Value>, _ocid: &str) {
         let submitted_bids = Self::get_submitted_bids(release);
 
         // Avoid NaN errors.
@@ -545,9 +526,6 @@ impl Indicators {
                     if let Some(Value::String(id)) = tenderer.get("id") {
                         let fraction = self.nf038_tenderer.entry(id.to_string()).or_default();
                         *fraction += fraction!(increment, 1);
-
-                        let agg = self.nf038_tenderer_ocid.entry(id.to_string()).or_default();
-                        agg.push(ocid.to_string());
                     }
                 }
             }
