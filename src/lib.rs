@@ -3,6 +3,8 @@
 use std::cmp;
 use std::collections::{HashMap, HashSet};
 use std::io::BufRead;
+use std::ops::AddAssign;
+use std::ops::Index;
 use std::string::ToString;
 
 use anyhow::Result;
@@ -13,15 +15,86 @@ use serde_json::{Map, Value};
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-fn fold_reduce<T: Send, F>(
+// vec!-style macros.
+
+macro_rules! data {
+    ( $hashmap:expr ) => {
+        Data::new($hashmap.values().cloned().collect::<Vec<_>>())
+    };
+}
+
+macro_rules! fraction {
+    ( $numerator:expr , $denominator:expr ) => {
+        Fraction {
+            numerator: $numerator,
+            denominator: $denominator,
+        }
+    };
+}
+
+// Macros to access struct fields dynamically.
+
+macro_rules! mediant {
+    ( $accumulator:ident , $current:ident , $field:ident ) => {
+        for (key, value) in $current.$field {
+            let fraction = $accumulator.$field.entry(key).or_default();
+            *fraction += value;
+        }
+    };
+}
+
+macro_rules! nf038_flag {
+    ( $item:ident , $field:ident , $threshold:ident, $closure:expr ) => {
+        let values: HashMap<String, f64> = $item
+            .$field
+            .into_iter()
+            .map(|(id, fraction)| (id, f64::from(fraction)))
+            .collect();
+
+        let upper_fence = $threshold.map_or_else(
+            || {
+                let mut data = data!(values);
+                let q1 = data.lower_quartile();
+                let q3 = data.upper_quartile();
+                // q3 + IQR * 1.5
+                (q3 - q1).mul_add(1.5, q3)
+            },
+            |v| v as f64,
+        );
+
+        for (id, ratio) in values {
+            if ratio > upper_fence {
+                // Trick the linter. https://github.com/rust-lang/rust-clippy/issues/1553
+                ($closure)(id, ratio);
+            }
+        }
+    };
+}
+
+// Other macros.
+
+macro_rules! set_result {
+    ( $item:ident , $group:ident , $key:ident , $indicator:ident , $value:expr ) => {
+        $item
+            .results
+            .entry(Group::$group)
+            .or_default()
+            .entry($key.to_string())
+            .or_default()
+            .insert(Indicator::$indicator, $value)
+    };
+}
+
+fn fold_reduce<T: Send, F, G>(
     buffer: impl BufRead + Send,
     default: fn() -> T,
     fold: F,
     reduce: fn(T, T) -> T,
-    finalize: fn(T) -> Result<T>,
+    finalize: G,
 ) -> Result<T>
 where
     F: Fn(T, Value) -> T + Sync,
+    G: Fn(T) -> Result<T> + Sync,
 {
     let item = buffer
         .lines()
@@ -63,25 +136,64 @@ struct Threshold {
 #[allow(non_snake_case)]
 pub struct Settings {
     currency: Option<String>,
+    NF024: Option<Threshold>,
     NF035: Option<Threshold>,
+    NF038: Option<Threshold>,
 }
 
-#[derive(Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
 pub enum Indicator {
     NF024,
     NF035,
     NF036,
+    NF038,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
+pub enum Group {
+    OCID,
+    Buyer,
+    ProcuringEntity,
+}
+
+#[derive(Clone, Copy, Debug, Default)]
+pub struct Fraction {
+    numerator: usize,
+    denominator: usize,
 }
 
 #[derive(Debug, Default)]
 pub struct Indicators {
-    results: HashMap<String, HashMap<Indicator, f64>>,
-    nf024_ratios: HashMap<String, f64>,
+    results: HashMap<Group, HashMap<String, HashMap<Indicator, f64>>>,
     currency: Option<String>,
+    /// The percentage difference between the winning bid and the second-lowest valid bid for each `ocid`.
+    nf024_ratios: HashMap<String, f64>,
+    /// The ratio of disqualified bids to submitted bids for each `buyer/id`.
+    nf038_buyer: HashMap<String, Fraction>,
+    /// The ratio of disqualified bids to submitted bids for each `tender/procuringEntity/id`.
+    nf038_procuring_entity: HashMap<String, Fraction>,
+    /// The ratio of disqualified bids to submitted bids for each `bids/details/tenderers/id`.
+    nf038_tenderer: HashMap<String, Fraction>,
+    /// The contracting processes (`ocid`) for each `bids/details/tenderers/id`.
+    nf038_tenderer_ocid: HashMap<String, Vec<String>>,
+}
+
+impl AddAssign for Fraction {
+    // https://en.wikipedia.org/wiki/Mediant_(mathematics)
+    fn add_assign(&mut self, other: Self) {
+        self.numerator += other.numerator;
+        self.denominator += other.denominator;
+    }
+}
+
+impl From<Fraction> for f64 {
+    fn from(fraction: Fraction) -> Self {
+        fraction.numerator as Self / fraction.denominator as Self
+    }
 }
 
 impl Indicators {
-    pub const fn results(&self) -> &HashMap<String, HashMap<Indicator, f64>> {
+    pub const fn results(&self) -> &HashMap<Group, HashMap<String, HashMap<Indicator, f64>>> {
         &self.results
     }
 
@@ -89,13 +201,9 @@ impl Indicators {
     /// # Errors
     ///
     pub fn run(buffer: impl BufRead + Send, settings: Settings) -> Result<Self> {
-        let nf035_threshold;
-
-        if let Some(nf035) = settings.NF035 {
-            nf035_threshold = cmp::max(nf035.threshold, 1);
-        } else {
-            nf035_threshold = 1;
-        }
+        let nf024_threshold = settings.NF024.map(|v| v.threshold);
+        let nf035_threshold = settings.NF035.map_or(1, |v| cmp::max(v.threshold, 1));
+        let nf038_threshold = settings.NF038.map(|v| v.threshold);
 
         fold_reduce(
             buffer,
@@ -107,13 +215,17 @@ impl Indicators {
                     item.fold_nf024(&release, ocid, &settings.currency);
                     item.fold_nf035(&release, ocid, nf035_threshold);
                     item.fold_nf036(&release, ocid, &settings.currency);
+                    item.fold_nf038(&release, ocid);
                 }
 
                 item
             },
-            |mut item, other| {
+            |mut item, mut other| {
                 // If each OCID appears on one line only, no overwriting will occur.
-                item.results.extend(other.results);
+                let group = item.results.entry(Group::OCID).or_default();
+                // Call remove() to avoid clone() (moving one entry would leave hashmap in invalid state).
+                group.extend(other.results.remove(&Group::OCID).unwrap_or_default());
+                // Note: Buyer and ProcuringEntity indicators are only calculated in finalize().
 
                 // NF024
                 if item.currency.is_none()
@@ -125,26 +237,63 @@ impl Indicators {
                     warn!("{:?} is not {:?}, skipping.", other.currency, item.currency);
                 }
 
+                // NF038
+                mediant!(item, other, nf038_buyer);
+                mediant!(item, other, nf038_procuring_entity);
+                mediant!(item, other, nf038_tenderer);
+                for (id, ocids) in other.nf038_tenderer_ocid {
+                    let value = item.nf038_tenderer_ocid.entry(id).or_default();
+                    value.extend(ocids);
+                }
+
                 item
             },
             |mut item| {
                 // NF024
-                let mut data =
-                    Data::new(item.nf024_ratios.clone().into_values().collect::<Vec<_>>());
-
-                let q1 = data.lower_quartile();
-                let q3 = data.upper_quartile();
-                // q1 - IQR * 1.5
-                let lower_bound = (q3 - q1).mul_add(-1.5, q1);
+                let lower_fence = nf024_threshold.map_or_else(
+                    || {
+                        let mut data = data!(item.nf024_ratios);
+                        let q1 = data.lower_quartile();
+                        let q3 = data.upper_quartile();
+                        // q1 - IQR * 1.5
+                        (q3 - q1).mul_add(-1.5, q1)
+                    },
+                    |v| v as f64,
+                );
 
                 for (ocid, ratio) in &item.nf024_ratios {
-                    if *ratio < lower_bound {
-                        let result = item.results.entry(ocid.to_string()).or_default();
-                        result.insert(Indicator::NF024, *ratio);
+                    if *ratio < lower_fence {
+                        set_result!(item, OCID, ocid, NF024, *ratio);
                     }
                 }
 
-                Ok(item)
+                // NF038
+                nf038_flag!(
+                    item,
+                    nf038_buyer,
+                    nf038_threshold,
+                    (|id: String, ratio| set_result!(item, Buyer, id, NF038, ratio))
+                );
+                nf038_flag!(
+                    item,
+                    nf038_procuring_entity,
+                    nf038_threshold,
+                    (|id: String, ratio| set_result!(item, ProcuringEntity, id, NF038, ratio))
+                );
+                nf038_flag!(
+                    item,
+                    nf038_tenderer,
+                    nf038_threshold,
+                    (|id: String, ratio| for ocid in item.nf038_tenderer_ocid.index(&id) {
+                        set_result!(item, OCID, ocid, NF038, ratio);
+                    })
+                );
+
+                // If we return `Ok(item)`, we can't consume temporary internal fields.
+                Ok(Self {
+                    results: item.results,
+                    ..Default::default()
+                })
             },
         )
     }
@@ -202,7 +351,7 @@ impl Indicators {
     fn fold_nf024(
         &mut self,
         release: &Map<String, Value>,
-        ocid: &String,
+        ocid: &str,
         default_currency: &Option<String>,
     ) {
         let mut lowest_non_winner_amount = None;
@@ -270,7 +419,7 @@ impl Indicators {
     fn fold_nf036(
         &mut self,
         release: &Map<String, Value>,
-        ocid: &String,
+        ocid: &str,
         default_currency: &Option<String>,
     ) {
         let mut lowest_amount = None;
@@ -311,13 +460,12 @@ impl Indicators {
         }
 
         if lowest_amount_is_disqualified {
-            let result = self.results.entry(ocid.to_string()).or_default();
-            result.insert(Indicator::NF036, 1.0);
+            set_result!(self, OCID, ocid, NF036, 1.0);
         }
     }
 
     // Bids are disqualified if not submitted by the single tenderer of the winning bid.
-    fn fold_nf035(&mut self, release: &Map<String, Value>, ocid: &String, threshold: usize) {
+    fn fold_nf035(&mut self, release: &Map<String, Value>, ocid: &str, threshold: usize) {
         let mut award_supplier_ids = HashSet::new();
         let mut valid_tenderer_ids = HashSet::new();
         let mut disqualified_tenderer_ids = HashSet::new();
@@ -365,8 +513,59 @@ impl Indicators {
             // At least this many tenderers have disqualified bids.
             && difference >= threshold
         {
-            let result = self.results.entry(ocid.to_string()).or_default();
-            result.insert(Indicator::NF035, difference as f64);
+            set_result!(self, OCID, ocid, NF035, difference as f64);
+        }
+    }
+
+    // The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer.
+    fn fold_nf038(&mut self, release: &Map<String, Value>, ocid: &str) {
+        let submitted_bids = Self::get_submitted_bids(release);
+
+        // Avoid NaN errors.
+        let submitted_bids_count = submitted_bids.len();
+        if submitted_bids_count == 0 {
+            return;
+        }
+
+        let mut disqualified_bids_count = 0;
+
+        for bid in submitted_bids {
+            let increment = if let Some(Value::String(status)) = bid.get("status")
+                && status.to_ascii_lowercase() == "disqualified"
+            {
+                1
+            } else {
+                0
+            };
+
+            disqualified_bids_count += increment;
+
+            if let Some(Value::Array(tenderers)) = bid.get("tenderers") {
+                for tenderer in tenderers {
+                    if let Some(Value::String(id)) = tenderer.get("id") {
+                        let fraction = self.nf038_tenderer.entry(id.to_string()).or_default();
+                        *fraction += fraction!(increment, 1);
+
+                        let agg = self.nf038_tenderer_ocid.entry(id.to_string()).or_default();
+                        agg.push(ocid.to_string());
+                    }
+                }
+            }
+        }
+
+        if let Some(Value::Object(buyer)) = release.get("buyer")
+            && let Some(Value::String(id)) = buyer.get("id")
+        {
+            let fraction = self.nf038_buyer.entry(id.to_string()).or_default();
+            *fraction += fraction!(disqualified_bids_count, submitted_bids_count);
+        }
+
+        if let Some(Value::Object(tender)) = release.get("tender")
+            && let Some(Value::Object(procuring_entity)) = tender.get("procuringEntity")
+            && let Some(Value::String(id)) = procuring_entity.get("id")
+        {
+            let fraction = self.nf038_procuring_entity.entry(id.to_string()).or_default();
+            *fraction += fraction!(disqualified_bids_count, submitted_bids_count);
         }
     }
 }

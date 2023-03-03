@@ -128,7 +128,7 @@ For a given indicator, a contracting process is excluded if:
 
 #### Terminology
 
-A bid is "submitted" if its status is pending, valid (i.e. qualified) or disqualified. It is not submitted if its status is invited or withdrawn.
+A bid is "submitted" if its status is pending, valid (i.e. qualified), or disqualified. It is not submitted if its status is invited or withdrawn.
 
 #### NF024 The percentage difference between the winning bid and the second-lowest valid bid is a low outlier
 
@@ -172,4 +172,23 @@ A contracting process is flagged if:
 - There are one or more active awards.
 - The lowest submitted bid is disqualified.
 
-The indicator's value is 1.0.
+The indicator's value is always 1.0.
+
+### NF038 The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer
+
+For each buyer, the ratio is calculated as $numberOfBidsDisqualifiedByBuyer \over numberOfBidsSubmittedToBuyer$ across all contracting processes. A buyer is flagged if the ratio is greater than the upper fence of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third quartile and $IQR$ is the interquartile range for the set of ratios. The same calculation is performed for procuring entities.
+
+For each tenderer, the ratio is calculated as $numberOfBidsDisqualifiedForTenderer \over numberOfBidsSubmittedByTenderer$ across all contracting processes. A tenderer is *marked* if the ratio is greater than the upper fence of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third quartile and $IQR$ is the interquartile range for the set of ratios.
+
+A contracting process is flagged if there is a submitted bid by a *marked* tenderer.
+
+To configure the upper fence, add to your settings file:
+
+```ini
+[NF038]
+threshold = 0.5
+```
+
+The indicator's value is the ratio. (If the same contracting process has submitted bids from multiple marked tenderers, the ratio is an arbitrary tenderer's ratio.)
+
+This indicator assumes that ``buyer/id``, ``procuringEntity/id`` and ``bids/details/tenderers/id`` are stable across contracting processes. [#32](https://github.com/open-contracting/cardinal-rs/issues/32)

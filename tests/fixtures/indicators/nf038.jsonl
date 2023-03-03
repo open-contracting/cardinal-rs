@@ -1,0 +1,5 @@
+{"ocid":"0","bids":{"details":[{"status":"valid","tenderers":[{"id":"W"}]},{"status":"disqualified","tenderers":[{"id":"D"}]}]},"buyer":{"id":"B"},"tender":{"procuringEntity":{"id":"P"}}}
+{"ocid":"1","bids":{"details":[{"status":"valid","tenderers":[{"id":"W"}]}]},"buyer":{"id":"1"},"tender":{"procuringEntity":{"id":"1"}}}
+{"ocid":"2","bids":{"details":[{"status":"valid","tenderers":[{"id":"W"}]}]},"buyer":{"id":"2"},"tender":{"procuringEntity":{"id":"2"}}}
+{"ocid":"3","bids":{"details":[{"status":"valid","tenderers":[{"id":"W"}]}]},"buyer":{"id":"3"},"tender":{"procuringEntity":{"id":"3"}}}
+{"ocid":"4","bids":{"details":[{"status":"valid","tenderers":[{"id":"W"}]}]},"buyer":{"id":"4"},"tender":{"procuringEntity":{"id":"4"}}}
