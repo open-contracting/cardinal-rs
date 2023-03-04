@@ -50,7 +50,8 @@ fn failure_directory() {
 
 #[test]
 fn failure_notfound() {
-    let pattern = r"^error: notfound: (No such file or directory|The system cannot find the file specified\.) \(os error 2\)\n";
+    let pattern =
+        r"^error: notfound: (No such file or directory|The system cannot find the file specified\.) \(os error 2\)\n";
     coverage(&["notfound"])
         .failure()
         .stderr(predicate::str::is_match(pattern).unwrap());
@@ -76,7 +77,8 @@ fn failure_permissiondenied() {
 
 #[test]
 fn error_invalid_multiline() {
-    let msg1 = " WARN  ocdscardinal > Line 1 is invalid JSON, skipping. [EOF while parsing an object at line 1 column 1]\n";
+    let msg1 =
+        " WARN  ocdscardinal > Line 1 is invalid JSON, skipping. [EOF while parsing an object at line 1 column 1]\n";
     let msg2 = " WARN  ocdscardinal > Line 2 is invalid JSON, skipping. [expected value at line 1 column 1]\n";
     coverage(&["tests/fixtures/coverage/invalid_multiline.jsonl"])
         .success()
@@ -98,19 +100,15 @@ fn error_invalid_utf8() {
 #[case("invalid_object_quote_last", ":", 2, 4)]
 #[case("invalid_brace_first", "EOF", 1, 1)]
 #[case("invalid_brace_last", "EOF", 2, 1)]
-fn error_invalid_jsoon(
-    #[case] name: &str,
-    #[case] infix: &str,
-    #[case] line: u8,
-    #[case] column: u8,
-) {
+fn error_invalid_jsoon(#[case] name: &str, #[case] infix: &str, #[case] line: u8, #[case] column: u8) {
     let infix = match infix {
         ":" => "expected `:`",
         "EOF" => "EOF while parsing an object",
         &_ => unreachable!(),
     };
 
-    let msg = format!(" WARN  ocdscardinal > Line {line} is invalid JSON, skipping. [{infix} at line 1 column {column}]\n");
+    let msg =
+        format!(" WARN  ocdscardinal > Line {line} is invalid JSON, skipping. [{infix} at line 1 column {column}]\n");
     coverage(&[&format!("tests/fixtures/coverage/{name}.jsonl")])
         .success()
         .stderr(msg);

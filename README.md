@@ -134,12 +134,46 @@ A bid is "submitted" if its status is pending, valid (i.e. qualified), or disqua
 
 For each contracting process, the difference is calculated as $(secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount$. A contracting process is flagged if the difference is less than the lower fence of $Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of differences.
 
+To configure the lower fence, add to your settings file:
+
+```ini
+[NF024]
+threshold = 0.05
+```
+
 The indicator's value is the percentage difference.
 
 A contracting process is excluded if:
 
 - An award's status is pending or invalid.
 - The winning bid is not the lowest bid. (This indicator requires the award criteria to be price-only.)
+- There are multiple active awards (a.k.a. winning bids). [#14](https://github.com/open-contracting/cardinal-rs/issues/14)
+- A bid is submitted by multiple tenderers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
+- An award is made to multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
+
+#### NF025 The ratio of winning bids to submitted bids for a top tenderer is a low outlier
+
+For each tenderer, the ratio is calculated as $numberOfWinningBids \over numberOfValidBids$ across all contracting processes. A tenderer is flagged if its number of valid bids is greater than the upper fence of the third quartile of the set of numbers of valid bids, and if its ratio is less than the lower fence of $Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of ratios.
+
+To configure the upper fence, add to your settings file:
+
+```ini
+[NF025]
+percentile = 75 # default
+```
+
+To configure the lower fence, add to your settings file:
+
+```ini
+[NF025]
+threshold = 0.05
+```
+
+The indicator's value is the ratio.
+
+A contracting process is excluded if:
+
+- An award's status is pending or invalid.
 - There are multiple active awards (a.k.a. winning bids). [#14](https://github.com/open-contracting/cardinal-rs/issues/14)
 - A bid is submitted by multiple tenderers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
 - An award is made to multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)
@@ -176,9 +210,9 @@ The indicator's value is always 1.0.
 
 ### NF038 The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer
 
-For each buyer, the ratio is calculated as $numberOfBidsDisqualifiedByBuyer \over numberOfBidsSubmittedToBuyer$ across all contracting processes. A buyer is flagged if the ratio is greater than the upper fence of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third quartile and $IQR$ is the interquartile range for the set of ratios. The same calculation is performed for procuring entities.
+For each buyer, the ratio is calculated as $numberOfBidsDisqualifiedByBuyer \over numberOfBidsSubmittedToBuyer$ across all contracting processes. A buyer is flagged if its ratio is greater than the upper fence of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third quartile and $IQR$ is the interquartile range for the set of ratios. The same calculation is performed for procuring entities.
 
-For each tenderer, the ratio is calculated as $numberOfBidsDisqualifiedForTenderer \over numberOfBidsSubmittedByTenderer$ across all contracting processes. A tenderer is flagged if the ratio is greater than the upper fence of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third quartile and $IQR$ is the interquartile range for the set of ratios.
+For each tenderer, the ratio is calculated as $numberOfBidsDisqualifiedForTenderer \over numberOfBidsSubmittedByTenderer$ across all contracting processes. A tenderer is flagged if its ratio is greater than the upper fence of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third quartile and $IQR$ is the interquartile range for the set of ratios.
 
 To configure the upper fence, add to your settings file:
 

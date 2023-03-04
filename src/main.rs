@@ -51,10 +51,7 @@ enum Commands {
 
 fn file_argument_error(file: &Path, message: &str) -> ! {
     Cli::command()
-        .error(
-            ErrorKind::ValueValidation,
-            format!("{}: {message}", file.display()),
-        )
+        .error(ErrorKind::ValueValidation, format!("{}: {message}", file.display()))
         .exit()
 }
 
@@ -98,9 +95,7 @@ fn main() {
         _ => LevelFilter::Trace,
     };
 
-    pretty_env_logger::formatted_builder()
-        .filter_level(level)
-        .init();
+    pretty_env_logger::formatted_builder().filter_level(level).init();
 
     match &cli.command {
         Commands::Coverage { file } => match ocdscardinal::Coverage::run(reader(file)) {
@@ -111,13 +106,8 @@ fn main() {
                 application_error(&e);
             }
         },
-        Commands::Indicators {
-            file,
-            count,
-            settings,
-        } => {
-            match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default())
-            {
+        Commands::Indicators { file, count, settings } => {
+            match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default()) {
                 Ok(item) => {
                     println!("{}", serde_json::to_string(&item.results()).unwrap());
                     if *count {

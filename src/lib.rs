@@ -14,13 +14,7 @@ use serde_json::{Map, Value};
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-// vec!-style macros.
-
-macro_rules! data {
-    ( $hashmap:expr ) => {
-        Data::new($hashmap.values().cloned().collect::<Vec<_>>())
-    };
-}
+// Initialization macros.
 
 macro_rules! fraction {
     ( $numerator:expr , $denominator:expr ) => {
@@ -44,24 +38,21 @@ macro_rules! mediant {
 
 macro_rules! nf038_flag {
     ( $item:ident , $field:ident , $threshold:ident, $group:ident ) => {
-        let values: HashMap<String, f64> = $item
+        let ratios: HashMap<String, f64> = $item
             .$field
             .into_iter()
             .map(|(id, fraction)| (id, f64::from(fraction)))
             .collect();
 
-        let upper_fence = $threshold.map_or_else(
-            || {
-                let mut data = data!(values);
-                let q1 = data.lower_quartile();
-                let q3 = data.upper_quartile();
-                // q3 + IQR * 1.5
-                (q3 - q1).mul_add(1.5, q3)
-            },
-            |v| v as f64,
-        );
+        let upper_fence = $threshold.unwrap_or_else(|| {
+            let mut data = Data::new(ratios.values().copied().collect::<Vec<_>>());
+            let q1 = data.lower_quartile();
+            let q3 = data.upper_quartile();
+            // q3 + IQR * 1.5
+            (q3 - q1).mul_add(1.5, q3)
+        });
 
-        for (id, ratio) in values {
+        for (id, ratio) in ratios {
             if ratio > upper_fence {
                 set_result!($item, $group, id, NF038, ratio);
             }
@@ -125,8 +116,19 @@ where
     finalize(item)
 }
 
+#[derive(Clone, Debug, Default, Deserialize)]
+struct NF025 {
+    percentile: Option<usize>,
+    threshold: Option<f64>,
+}
+
 #[derive(Clone, Debug, Deserialize)]
-struct Threshold {
+struct FloatThreshold {
+    threshold: f64,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+struct IntegerThreshold {
     threshold: usize,
 }
 
@@ -134,14 +136,16 @@ struct Threshold {
 #[allow(non_snake_case)]
 pub struct Settings {
     currency: Option<String>,
-    NF024: Option<Threshold>,
-    NF035: Option<Threshold>,
-    NF038: Option<Threshold>,
+    NF024: Option<FloatThreshold>,   // ratio
+    NF025: Option<NF025>,            // ratio
+    NF035: Option<IntegerThreshold>, // count
+    NF038: Option<FloatThreshold>,   // ratio
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
 pub enum Indicator {
     NF024,
+    NF025,
     NF035,
     NF036,
     NF038,
@@ -167,6 +171,8 @@ pub struct Indicators {
     currency: Option<String>,
     /// The percentage difference between the winning bid and the second-lowest valid bid for each `ocid`.
     nf024_ratios: HashMap<String, f64>,
+    // The ratio of winning bids to submitted bids for each `bids/details/tenderers/id`.
+    nf025_tenderer: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `buyer/id`.
     nf038_buyer: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `tender/procuringEntity/id`.
@@ -189,6 +195,12 @@ impl From<Fraction> for f64 {
     }
 }
 
+impl From<&Fraction> for f64 {
+    fn from(fraction: &Fraction) -> Self {
+        fraction.numerator as Self / fraction.denominator as Self
+    }
+}
+
 impl Indicators {
     pub const fn results(&self) -> &HashMap<Group, HashMap<String, HashMap<Indicator, f64>>> {
         &self.results
@@ -199,6 +211,9 @@ impl Indicators {
     ///
     pub fn run(buffer: impl BufRead + Send, settings: Settings) -> Result<Self> {
         let nf024_threshold = settings.NF024.map(|v| v.threshold);
+        let (nf025_percentile, nf025_threshold) = settings
+            .NF025
+            .map_or((75, None), |v| (v.percentile.unwrap_or(75), v.threshold));
         let nf035_threshold = settings.NF035.map_or(1, |v| cmp::max(v.threshold, 1));
         let nf038_threshold = settings.NF038.map(|v| v.threshold);
 
@@ -210,6 +225,7 @@ impl Indicators {
                     && let Some(Value::String(ocid)) = release.get("ocid")
                 {
                     item.fold_nf024(&release, ocid, &settings.currency);
+                    item.fold_nf025(&release, ocid);
                     item.fold_nf035(&release, ocid, nf035_threshold);
                     item.fold_nf036(&release, ocid, &settings.currency);
                     item.fold_nf038(&release, ocid);
@@ -225,14 +241,14 @@ impl Indicators {
                 // Note: Buyer and ProcuringEntity indicators are only calculated in finalize().
 
                 // NF024
-                if item.currency.is_none()
-                    || other.currency.is_none()
-                    || item.currency == other.currency
-                {
+                if item.currency.is_none() || other.currency.is_none() || item.currency == other.currency {
                     item.nf024_ratios.extend(other.nf024_ratios);
                 } else {
                     warn!("{:?} is not {:?}, skipping.", other.currency, item.currency);
                 }
+
+                // NF025
+                mediant!(item, other, nf025_tenderer);
 
                 // NF038
                 mediant!(item, other, nf038_buyer);
@@ -243,31 +259,47 @@ impl Indicators {
             },
             |mut item| {
                 // NF024
-                let lower_fence = nf024_threshold.map_or_else(
-                    || {
-                        let mut data = data!(item.nf024_ratios);
-                        let q1 = data.lower_quartile();
-                        let q3 = data.upper_quartile();
-                        // q1 - IQR * 1.5
-                        (q3 - q1).mul_add(-1.5, q1)
-                    },
-                    |v| v as f64,
-                );
+                let lower_fence = nf024_threshold.unwrap_or_else(|| {
+                    let mut data = Data::new(item.nf024_ratios.values().copied().collect::<Vec<_>>());
+                    let q1 = data.lower_quartile();
+                    let q3 = data.upper_quartile();
+                    // q1 - IQR * 1.5
+                    (q3 - q1).mul_add(-1.5, q1)
+                });
 
-                for (ocid, ratio) in &item.nf024_ratios {
-                    if *ratio < lower_fence {
-                        set_result!(item, OCID, ocid, NF024, *ratio);
+                for (ocid, ratio) in item.nf024_ratios {
+                    if ratio < lower_fence {
+                        set_result!(item, OCID, ocid, NF024, ratio);
+                    }
+                }
+
+                // NF025
+                let upper_fence = Data::new(
+                    item.nf025_tenderer
+                        .values()
+                        .map(|f| f.denominator as f64)
+                        .collect::<Vec<_>>(),
+                )
+                .percentile(nf025_percentile);
+
+                let lower_fence = nf025_threshold.unwrap_or_else(|| {
+                    let mut data = Data::new(item.nf025_tenderer.values().map(f64::from).collect::<Vec<_>>());
+                    let q1 = data.lower_quartile();
+                    let q3 = data.upper_quartile();
+                    // q1 - IQR * 1.5
+                    (q3 - q1).mul_add(-1.5, q1)
+                });
+
+                for (id, fraction) in item.nf025_tenderer {
+                    let ratio = f64::from(fraction);
+                    if fraction.denominator as f64 > upper_fence && ratio < lower_fence {
+                        set_result!(item, Tenderer, id, NF025, ratio);
                     }
                 }
 
                 // NF038
                 nf038_flag!(item, nf038_buyer, nf038_threshold, Buyer);
-                nf038_flag!(
-                    item,
-                    nf038_procuring_entity,
-                    nf038_threshold,
-                    ProcuringEntity
-                );
+                nf038_flag!(item, nf038_procuring_entity, nf038_threshold, ProcuringEntity);
                 nf038_flag!(item, nf038_tenderer, nf038_threshold, Tenderer);
 
                 // If we return `Ok(item)`, we can't consume temporary internal fields.
@@ -329,17 +361,21 @@ impl Indicators {
     }
 
     // The percentage difference between the winning bid and the second-lowest valid bid is a low outlier.
-    fn fold_nf024(
-        &mut self,
-        release: &Map<String, Value>,
-        ocid: &str,
-        default_currency: &Option<String>,
-    ) {
+    fn fold_nf024(&mut self, release: &Map<String, Value>, ocid: &str, default_currency: &Option<String>) {
         let mut lowest_non_winner_amount = None;
         let mut winner_amount = None;
 
         if let Some((complete_awards, details)) =
             Self::get_complete_awards_and_bids_if_all_awards_final(release)
+            // If the only award is active, we assume all bids compete for all items. We assume any cancelled
+            // or unsuccessful awards were previous attempts to award all items. If there are many active
+            // awards, the dataset must describe lots, to know which bids compete with each other.
+            && complete_awards.len() == 1
+            && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
+            // The tenderers on the bid must match the suppliers on the award. For now, we only support the
+            // simple case of a single supplier. https://github.com/open-contracting/cardinal-rs/issues/17
+            && suppliers.len() == 1
+            && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
         {
             for bid in details {
                 if let Some(Value::String(status)) = bid.get("status")
@@ -350,15 +386,6 @@ impl Indicators {
                     && let Some(amount) = amount.as_f64()
                     // https://github.com/open-contracting/cardinal-rs/issues/18
                     && ["valid", "qualified"].contains(&status.to_ascii_lowercase().as_str())
-                    // If the only award is active, we assume all bids compete for all items. We assume any cancelled
-                    // or unsuccessful awards were previous attempts to award all items. If there are many active
-                    // awards, the dataset must describe lots, to know which bids compete with each other.
-                    && complete_awards.len() == 1
-                    && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
-                    // The tenderers on the bid must match the suppliers on the award. For now, we only support the
-                    // simple case of a single supplier. https://github.com/open-contracting/cardinal-rs/issues/17
-                    && suppliers.len() == 1
-                    && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
                     && tenderers.len() == 1
                     && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
                 {
@@ -396,13 +423,33 @@ impl Indicators {
         }
     }
 
+    // The ratio of winning bids to submitted bids for a top tenderer is a low outlier.
+    fn fold_nf025(&mut self, release: &Map<String, Value>, _ocid: &str) {
+        if let Some((complete_awards, details)) =
+            Self::get_complete_awards_and_bids_if_all_awards_final(release)
+            // See comments for fold_nf024.
+            && complete_awards.len() == 1
+            && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
+            && suppliers.len() == 1
+            && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
+        {
+            for bid in details {
+                if let Some(Value::String(status)) = bid.get("status")
+                    && let Some(Value::Array(tenderers)) = bid.get("tenderers")
+                    // See comments for fold_nf024.
+                    && ["valid", "qualified"].contains(&status.to_ascii_lowercase().as_str())
+                    && tenderers.len() == 1
+                    && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
+                {
+                    let fraction = self.nf025_tenderer.entry(tenderer_id.to_string()).or_default();
+                    *fraction += fraction!(usize::from(supplier_id == tenderer_id), 1);
+                }
+            }
+        }
+    }
+
     // The lowest submitted bid is disqualified, while the award criterion is price only.
-    fn fold_nf036(
-        &mut self,
-        release: &Map<String, Value>,
-        ocid: &str,
-        default_currency: &Option<String>,
-    ) {
+    fn fold_nf036(&mut self, release: &Map<String, Value>, ocid: &str, default_currency: &Option<String>) {
         let mut lowest_amount = None;
         let mut lowest_amount_is_disqualified = false;
 
@@ -451,9 +498,7 @@ impl Indicators {
         let mut valid_tenderer_ids = HashSet::new();
         let mut disqualified_tenderer_ids = HashSet::new();
 
-        if let Some((complete_awards, details)) =
-            Self::get_complete_awards_and_bids_if_all_awards_final(release)
-        {
+        if let Some((complete_awards, details)) = Self::get_complete_awards_and_bids_if_all_awards_final(release) {
             for award in complete_awards {
                 if let Some(Value::Array(suppliers)) = award.get("suppliers") {
                     for supplier in suppliers {
