@@ -47,6 +47,15 @@ enum Commands {
         #[arg(long, short, value_parser = settings_parser)]
         settings: Option<ocdscardinal::Settings>,
     },
+    /// Count the number of times each value occurs, for the field identified by a JMESPath expression
+    ///
+    /// If the field is an array, or is within an array, each array entry is counted separately.
+    Distribution {
+        /// The path to the file (or "-" for standard input), in which each line is JSON text
+        file: PathBuf,
+        /// The JMESPath expression
+        path: String,
+    },
 }
 
 fn file_argument_error(file: &Path, message: &str) -> ! {
@@ -121,5 +130,13 @@ fn main() {
                 }
             }
         }
+        Commands::Distribution { file, path } => match ocdscardinal::Distribution::run(reader(file), path) {
+            Ok(item) => {
+                println!("{:?}", item.results());
+            }
+            Err(e) => {
+                application_error(&e);
+            }
+        },
     }
 }

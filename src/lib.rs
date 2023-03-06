@@ -685,6 +685,68 @@ impl Coverage {
     }
 }
 
+#[derive(Debug, Default)]
+pub struct Distribution {
+    counts: HashMap<String, u32>,
+}
+
+impl Distribution {
+    pub const fn results(&self) -> &HashMap<String, u32> {
+        &self.counts
+    }
+
+    ///
+    /// # Errors
+    ///
+    /// If the JMESPath expression is invalid.
+    ///
+    /// # Panics
+    ///
+    /// If the JMESPath search encounters errors.
+    pub fn run(buffer: impl BufRead + Send, path: &str) -> Result<Self> {
+        let expr = jmespath::compile(path)?;
+
+        fold_reduce(
+            buffer,
+            Self::default,
+            |mut item, value| {
+                item.count(&expr.search(value).unwrap());
+                item
+            },
+            |mut item, other| {
+                for (k, v) in other.counts {
+                    item.increment(k, v);
+                }
+                item
+            },
+            Ok,
+        )
+    }
+
+    fn count(&mut self, variable: &jmespath::Rcvar) {
+        match variable.as_ref() {
+            jmespath::Variable::Array(vec) => {
+                for i in vec {
+                    self.count(i);
+                }
+            }
+            jmespath::Variable::String(string) => {
+                self.increment(string.to_string(), 1);
+            }
+            _ => {
+                self.increment(serde_json::to_string(&variable).unwrap(), 1);
+            }
+        }
+    }
+
+    fn increment(&mut self, path: String, delta: u32) {
+        self.counts
+            .entry(path)
+            .and_modify(|count| *count += delta)
+            .or_insert(delta);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
