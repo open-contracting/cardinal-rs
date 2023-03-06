@@ -233,7 +233,7 @@ Count the number of times each value occurs, for the field identified by a JMESP
 
 If the field is an array, or is within an array, each array entry is counted separately.
 
-Usage: ocdscardinal distribution [OPTIONS] <FILE> <PATH>
+Usage: ocdscardinal[EXE] distribution [OPTIONS] <FILE> <PATH>
 
 Arguments:
   <FILE>
