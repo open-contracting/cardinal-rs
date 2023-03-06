@@ -642,8 +642,8 @@ impl Coverage {
             Value::Array(vec) => {
                 if !vec.is_empty() {
                     path.push(String::from("[]"));
-                    for i in vec {
-                        increment |= self.add(i, path);
+                    for item in vec {
+                        increment |= self.add(item, path);
                     }
                     path.pop();
                 }
@@ -710,7 +710,14 @@ impl Distribution {
             buffer,
             Self::default,
             |mut item, value| {
-                item.count(&expr.search(value).unwrap());
+                let variable = expr.search(value).unwrap();
+                if let Some(vec) = variable.as_array() {
+                    for i in vec {
+                        item.add(i);
+                    }
+                } else {
+                    item.add(&variable);
+                }
                 item
             },
             |mut item, other| {
@@ -723,20 +730,13 @@ impl Distribution {
         )
     }
 
-    fn count(&mut self, variable: &jmespath::Rcvar) {
-        match variable.as_ref() {
-            jmespath::Variable::Array(vec) => {
-                for i in vec {
-                    self.count(i);
-                }
-            }
-            jmespath::Variable::String(string) => {
-                self.increment(string.to_string(), 1);
-            }
-            _ => {
-                self.increment(serde_json::to_string(&variable).unwrap(), 1);
-            }
-        }
+    fn add(&mut self, variable: &jmespath::Rcvar) {
+        self.increment(
+            variable
+                .as_string()
+                .map_or_else(|| serde_json::to_string(&variable).unwrap(), ToString::to_string),
+            1,
+        );
     }
 
     fn increment(&mut self, path: String, delta: u32) {

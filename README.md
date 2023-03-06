@@ -231,22 +231,21 @@ This indicator assumes that ``buyer/id``, ``procuringEntity/id`` and ``bids/deta
 $ ocdscardinal help distribution
 Count the number of times each value occurs, for the field identified by a JMESPath expression
 
-If the field is an array, or is within an array, each array entry is counted separately.
-
 Usage: ocdscardinal[EXE] distribution [OPTIONS] <FILE> <PATH>
 
 Arguments:
-  <FILE>
-          The path to the file (or "-" for standard input), in which each line is JSON text
-
-  <PATH>
-          The JMESPath expression
+  <FILE>  The path to the file (or "-" for standard input), in which each line is JSON text
+  <PATH>  The JMESPath expression
 
 Options:
-  -v, --verbose...
-          Increase verbosity
+  -v, --verbose...  Increase verbosity
+  -h, --help        Print help
 
-  -h, --help
-          Print help (see a summary with '-h')
+```
 
+For example:
+
+```console
+$ echo '{"phoneNumbers":[{"type": "home","number": "212 555-1234"},{"type": "office","number": "646 555-4567"}]}' | ocdscardinal distribution - 'phoneNumbers[].type'
+{"office": 1, "home": 1}
 ```

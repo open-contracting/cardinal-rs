@@ -48,8 +48,6 @@ enum Commands {
         settings: Option<ocdscardinal::Settings>,
     },
     /// Count the number of times each value occurs, for the field identified by a JMESPath expression
-    ///
-    /// If the field is an array, or is within an array, each array entry is counted separately.
     Distribution {
         /// The path to the file (or "-" for standard input), in which each line is JSON text
         file: PathBuf,
