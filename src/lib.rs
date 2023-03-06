@@ -433,6 +433,8 @@ impl Indicators {
             && suppliers.len() == 1
             && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
         {
+            let mut valid_tenderer_ids = HashSet::new();
+
             for bid in details {
                 if let Some(Value::String(status)) = bid.get("status")
                     && let Some(Value::Array(tenderers)) = bid.get("tenderers")
@@ -441,9 +443,14 @@ impl Indicators {
                     && tenderers.len() == 1
                     && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
                 {
-                    let fraction = self.nf025_tenderer.entry(tenderer_id.to_string()).or_default();
-                    *fraction += fraction!(usize::from(supplier_id == tenderer_id), 1);
+                    valid_tenderer_ids.insert(tenderer_id);
                 }
+            }
+
+            // Count each tenderer once per contracting process, regardless of the number of bids.
+            for tenderer_id in valid_tenderer_ids {
+                let fraction = self.nf025_tenderer.entry(tenderer_id.to_string()).or_default();
+                *fraction += fraction!(usize::from(supplier_id == tenderer_id), 1);
             }
         }
     }

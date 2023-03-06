@@ -6,3 +6,5 @@
 {"ocid":"5","bids":{"details":[{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"5"}]}]},"awards":[{"status":"active","suppliers":[{"id":"5"}]}]}
 {"ocid":"6","bids":{"details":[{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"6"}]}]},"awards":[{"status":"active","suppliers":[{"id":"6"}]}]}
 {"ocid":"7","bids":{"details":[{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"7"}]}]},"awards":[{"status":"active","suppliers":[{"id":"7"}]}]}
+{"ocid":"8","bids":{"details":[{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"8"}]}]},"awards":[{"status":"active","suppliers":[{"id":"8"}]}]}
+{"ocid":"F","bids":{"details":[{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"F"}]}]},"awards":[{"status":"active","suppliers":[{"id":"F"}]}]}
