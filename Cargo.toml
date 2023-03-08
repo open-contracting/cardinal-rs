@@ -16,7 +16,6 @@ anyhow = "1.0"
 clap = { version = "4.0", features = ["derive", "wrap_help"] }
 config = {version = "0.13", features = ["ini"] }
 human-panic = "1.0"
-jmespath = {version = "0.3", features = ["sync"] }
 log = "0.4"
 num_cpus = "1.0"
 pretty_env_logger = "0.4"

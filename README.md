@@ -199,7 +199,7 @@ A contracting process is excluded if:
 
 - An award's status is pending or invalid.
 
-### NF036 The lowest submitted bid is disqualified, while the award criterion is price only
+#### NF036 The lowest submitted bid is disqualified, while the award criterion is price only
 
 A contracting process is flagged if:
 
@@ -208,7 +208,7 @@ A contracting process is flagged if:
 
 The indicator's value is always 1.0.
 
-### NF038 The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer
+#### NF038 The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer
 
 For each buyer, the ratio is calculated as $numberOfBidsDisqualifiedByBuyer \over numberOfBidsSubmittedToBuyer$ across all contracting processes. A buyer is flagged if its ratio is greater than the upper fence of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third quartile and $IQR$ is the interquartile range for the set of ratios. The same calculation is performed for procuring entities.
 
@@ -224,28 +224,3 @@ threshold = 0.5
 The indicator's value is the ratio.
 
 This indicator assumes that ``buyer/id``, ``procuringEntity/id`` and ``bids/details/tenderers/id`` are stable across contracting processes. [#32](https://github.com/open-contracting/cardinal-rs/issues/32)
-
-### distribution
-
-```console
-$ ocdscardinal help distribution
-Count the number of times each value occurs, for the field identified by a JMESPath expression
-
-Usage: ocdscardinal[EXE] distribution [OPTIONS] <FILE> <PATH>
-
-Arguments:
-  <FILE>  The path to the file (or "-" for standard input), in which each line is JSON text
-  <PATH>  The JMESPath expression
-
-Options:
-  -v, --verbose...  Increase verbosity
-  -h, --help        Print help
-
-```
-
-For example:
-
-```console
-$ echo '{"phoneNumbers":[{"type": "home","number": "212 555-1234"},{"type": "office","number": "646 555-4567"}]}' | ocdscardinal distribution - 'phoneNumbers[].type'
-{"office": 1, "home": 1}
-```
