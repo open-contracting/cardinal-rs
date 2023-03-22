@@ -4,7 +4,6 @@ use std::cmp;
 use std::collections::{HashMap, HashSet};
 use std::io::BufRead;
 use std::ops::AddAssign;
-use std::string::ToString;
 
 use anyhow::Result;
 use log::warn;
@@ -68,7 +67,7 @@ macro_rules! set_result {
             .results
             .entry(Group::$group)
             .or_default()
-            .entry($key.to_string())
+            .entry($key.to_owned())
             .or_default()
             .insert(Indicator::$indicator, $value)
     };
@@ -391,7 +390,7 @@ impl Indicators {
                 {
                     if currency == self.currency.get_or_insert_with(||
                         default_currency.as_ref().map_or_else(||
-                            currency.to_string(), ToString::to_string
+                            currency.clone(), Clone::clone
                         )
                     ) {
                         // We assume the winner submits one valid bid.
@@ -417,7 +416,7 @@ impl Indicators {
             && lowest_non_winner_amount >= winner_amount
         {
             self.nf024_ratios.insert(
-                ocid.to_string(),
+                ocid.to_owned(),
                 (lowest_non_winner_amount - winner_amount) / winner_amount,
             );
         }
@@ -449,7 +448,7 @@ impl Indicators {
 
             // Count each tenderer once per contracting process, regardless of the number of bids.
             for tenderer_id in valid_tenderer_ids {
-                let fraction = self.nf025_tenderer.entry(tenderer_id.to_string()).or_default();
+                let fraction = self.nf025_tenderer.entry(tenderer_id.clone()).or_default();
                 *fraction += fraction!(usize::from(supplier_id == tenderer_id), 1);
             }
         }
@@ -475,7 +474,7 @@ impl Indicators {
                 {
                     if currency == self.currency.get_or_insert_with(||
                         default_currency.as_ref().map_or_else(||
-                            currency.to_string(), ToString::to_string
+                            currency.clone(), Clone::clone
                         )
                     ) {
                         if let Some(other) = lowest_amount {
@@ -576,7 +575,7 @@ impl Indicators {
             if let Some(Value::Array(tenderers)) = bid.get("tenderers") {
                 for tenderer in tenderers {
                     if let Some(Value::String(id)) = tenderer.get("id") {
-                        let fraction = self.nf038_tenderer.entry(id.to_string()).or_default();
+                        let fraction = self.nf038_tenderer.entry(id.clone()).or_default();
                         *fraction += fraction!(increment, 1);
                     }
                 }
@@ -586,7 +585,7 @@ impl Indicators {
         if let Some(Value::Object(buyer)) = release.get("buyer")
             && let Some(Value::String(id)) = buyer.get("id")
         {
-            let fraction = self.nf038_buyer.entry(id.to_string()).or_default();
+            let fraction = self.nf038_buyer.entry(id.clone()).or_default();
             *fraction += fraction!(disqualified_bids_count, submitted_bids_count);
         }
 
@@ -594,7 +593,7 @@ impl Indicators {
             && let Some(Value::Object(procuring_entity)) = tender.get("procuringEntity")
             && let Some(Value::String(id)) = procuring_entity.get("id")
         {
-            let fraction = self.nf038_procuring_entity.entry(id.to_string()).or_default();
+            let fraction = self.nf038_procuring_entity.entry(id.clone()).or_default();
             *fraction += fraction!(disqualified_bids_count, submitted_bids_count);
         }
     }
