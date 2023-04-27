@@ -100,7 +100,7 @@ fn error_invalid_utf8() {
 #[case("invalid_object_quote_last", ":", 2, 4)]
 #[case("invalid_brace_first", "EOF", 1, 1)]
 #[case("invalid_brace_last", "EOF", 2, 1)]
-fn error_invalid_jsoon(#[case] name: &str, #[case] infix: &str, #[case] line: u8, #[case] column: u8) {
+fn error_invalid_json(#[case] name: &str, #[case] infix: &str, #[case] line: u8, #[case] column: u8) {
     let infix = match infix {
         ":" => "expected `:`",
         "EOF" => "EOF while parsing an object",
