@@ -1,3 +1,5 @@
+#![feature(unix_sigpipe)]
+
 use std::fs::File;
 use std::io::{self, BufReader, Read};
 use std::path::{Path, PathBuf};
@@ -82,6 +84,7 @@ fn reader(file: &PathBuf) -> BufReader<Box<dyn Read + Send>> {
     }
 }
 
+#[unix_sigpipe = "sig_dfl"]
 fn main() {
     setup_panic!();
 
