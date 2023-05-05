@@ -118,7 +118,7 @@ fn main() {
             }
         },
         Commands::Prepare { file, settings } => {
-            ocdscardinal::Prepare::run(reader(file), settings.clone());
+            ocdscardinal::Prepare::run(reader(file), settings);
         }
         Commands::Indicators { file, count, settings } => {
             match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default()) {

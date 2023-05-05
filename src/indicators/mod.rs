@@ -33,7 +33,7 @@ struct NF025 {
 pub struct Settings {
     currency: Option<String>,
     // Codelists.
-    pub bidStatus: HashMap<String, String>,
+    pub codelists: HashMap<String, HashMap<String, String>>,
     // Indicators.
     NF024: Option<FloatThreshold>, // ratio
     NF025: Option<NF025>,
