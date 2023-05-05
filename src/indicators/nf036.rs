@@ -42,11 +42,11 @@ impl Calculate for NF036 {
                         if let Some(other) = lowest_amount {
                             if amount < other {
                                 lowest_amount = Some(amount);
-                                lowest_amount_is_disqualified = status.to_ascii_lowercase() == "disqualified";
+                                lowest_amount_is_disqualified = status == "disqualified";
                             }
                         } else {
                             lowest_amount = Some(amount);
-                            lowest_amount_is_disqualified = status.to_ascii_lowercase() == "disqualified";
+                            lowest_amount_is_disqualified = status == "disqualified";
                         }
                     } else {
                         warn!("{} is not {:?}, skipping.", currency, item.currency);

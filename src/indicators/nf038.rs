@@ -56,7 +56,7 @@ impl Calculate for NF038 {
 
         for bid in submitted_bids {
             let increment = if let Some(Value::String(status)) = bid.get("status")
-                && status.to_ascii_lowercase() == "disqualified"
+                && status == "disqualified"
             {
                 1
             } else {

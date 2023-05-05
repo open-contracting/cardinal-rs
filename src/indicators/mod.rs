@@ -32,6 +32,9 @@ struct NF025 {
 #[allow(non_snake_case)]
 pub struct Settings {
     currency: Option<String>,
+    // Codelists.
+    pub bidStatus: HashMap<String, String>,
+    // Indicators.
     NF024: Option<FloatThreshold>, // ratio
     NF025: Option<NF025>,
     NF035: Option<IntegerThreshold>, // count

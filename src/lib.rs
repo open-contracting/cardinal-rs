@@ -1,6 +1,8 @@
 #![feature(let_chains)]
+#![feature(once_cell)]
 
 pub mod indicators;
+pub mod standard;
 
 use std::collections::HashMap;
 use std::io::BufRead;
@@ -16,6 +18,7 @@ use crate::indicators::nf035::NF035;
 use crate::indicators::nf036::NF036;
 use crate::indicators::nf038::NF038;
 pub use crate::indicators::{Calculate, Group, Indicator, Indicators, Settings};
+use crate::standard::BID_STATUS;
 
 fn fold_reduce<T: Send, Fold, Reduce, Finalize>(
     buffer: impl BufRead + Send,
@@ -80,8 +83,8 @@ impl Indicators {
         fold_reduce(
             buffer,
             Self::default,
-            |mut item, json| {
-                if let Value::Object(release) = json
+            |mut item, value| {
+                if let Value::Object(release) = value
                     && let Some(Value::String(ocid)) = release.get("ocid")
                 {
                     for indicator in &indicators {
@@ -154,17 +157,68 @@ impl Indicators {
             && let Some(Value::Array(details)) = bids.get("details")
         {
             for bid in details {
-                if let Some(Value::String(status)) = bid.get("status") {
-                    let status = status.to_ascii_lowercase();
-
-                    if status != "invited" && status != "withdrawn" {
-                        submitted_bids.push(bid);
-                    }
+                if let Some(Value::String(status)) = bid.get("status")
+                    && status != "invited"
+                    && status != "withdrawn"
+                {
+                    submitted_bids.push(bid);
                 }
             }
         }
 
         submitted_bids
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct Prepare {}
+
+impl Prepare {
+    ///
+    /// # Errors
+    ///
+    /// # Panics
+    ///
+    pub fn run(buffer: impl BufRead + Send, settings: Settings) {
+        let bid_status = settings.bidStatus;
+
+        buffer.lines().enumerate().par_bridge().for_each(|(i, lines_result)| {
+            match lines_result {
+                Ok(string) => {
+                    match serde_json::from_str(&string) {
+                        Ok(value) => {
+                            if let Value::Object(mut release) = value {
+                                if let Some(Value::Object(bids)) = release.get_mut("bids")
+                                    && let Some(Value::Array(details)) = bids.get_mut("details")
+                                {
+                                    for bid in details {
+                                        if let Some(Value::String(status)) = bid.get_mut("status") {
+                                            if bid_status.contains_key(status) {
+                                                *status = bid_status[status].clone();
+                                            }
+                                            if !BID_STATUS.contains(status.as_str()) {
+                                                warn!("Line {} /bid/details/status = \"{status}\" is invalid", i + 1);
+                                            }
+                                        }
+                                    }
+                                }
+                                println!("{}", serde_json::to_string(&release).unwrap());
+                            }
+                        }
+                        Err(e) => {
+                            // Skip empty lines silently.
+                            // https://stackoverflow.com/a/64361042/244258
+                            if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
+                                warn!("Line {} is invalid JSON, skipping. [{e}]", i + 1);
+                            }
+                        }
+                    }
+                }
+                // Err: https://doc.rust-lang.org/std/io/enum.ErrorKind.html
+                // https://github.com/rust-lang/rust/blob/1.65.0/library/std/src/io/buffered/bufreader.rs#L362-L365
+                Err(e) => warn!("Line {} caused an I/O error, skipping. [{e}]", i + 1),
+            }
+        });
     }
 }
 

@@ -36,6 +36,14 @@ enum Commands {
         /// The path to the file (or "-" for standard input), in which each line is JSON text
         file: PathBuf,
     },
+    ///
+    Prepare {
+        /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
+        file: PathBuf,
+        /// The path to the settings file
+        #[arg(long, short, value_parser = settings_parser)]
+        settings: ocdscardinal::Settings,
+    },
     /// Calculate procurement indicators from OCDS compiled releases in a line-delimited JSON file
     ///
     /// The result is a JSON object, in which keys are OCIDs and values are results.
@@ -109,6 +117,9 @@ fn main() {
                 application_error(&e);
             }
         },
+        Commands::Prepare { file, settings } => {
+            ocdscardinal::Prepare::run(reader(file), settings.clone());
+        }
         Commands::Indicators { file, count, settings } => {
             match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default()) {
                 Ok(item) => {

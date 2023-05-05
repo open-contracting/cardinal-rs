@@ -40,9 +40,8 @@ impl Calculate for NF035 {
                 if let Some(Value::String(status)) = bid.get("status")
                     && let Some(Value::Array(tenderers)) = bid.get("tenderers")
                 {
-                    let set = match status.to_ascii_lowercase().as_str() {
-                        // https://github.com/open-contracting/cardinal-rs/issues/18
-                        "valid" | "qualified" => &mut valid_tenderer_ids,
+                    let set = match status.as_str() {
+                        "valid" => &mut valid_tenderer_ids,
                         "disqualified" => &mut disqualified_tenderer_ids,
                         _ => continue, // "invited", "pending", "withdrawn"
                     };

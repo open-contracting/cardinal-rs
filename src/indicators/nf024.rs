@@ -45,8 +45,7 @@ impl Calculate for NF024 {
                     && let Some(Value::Number(amount)) = value.get("amount")
                     && let Some(Value::String(currency)) = value.get("currency")
                     && let Some(amount) = amount.as_f64()
-                    // https://github.com/open-contracting/cardinal-rs/issues/18
-                    && ["valid", "qualified"].contains(&status.to_ascii_lowercase().as_str())
+                    && status == "valid"
                     && tenderers.len() == 1
                     && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
                 {
