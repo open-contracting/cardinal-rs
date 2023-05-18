@@ -1,5 +1,5 @@
 #![feature(let_chains)]
-#![feature(once_cell)]
+#![feature(lazy_cell)]
 
 pub mod indicators;
 pub mod standard;
@@ -18,7 +18,7 @@ use crate::indicators::nf035::NF035;
 use crate::indicators::nf036::NF036;
 use crate::indicators::nf038::NF038;
 pub use crate::indicators::{Calculate, Group, Indicator, Indicators, Settings};
-use crate::standard::BID_STATUS;
+use crate::standard::{AWARD_STATUS, BID_STATUS};
 
 fn fold_reduce<T: Send, Fold, Reduce, Finalize>(
     buffer: impl BufRead + Send,
@@ -181,6 +181,14 @@ impl Prepare {
     ///
     pub fn run(buffer: impl BufRead + Send, settings: Settings) {
         let default = HashMap::new();
+
+        let defaults = settings.defaults.unwrap_or_default();
+        // Closed codelists.
+        let currency_default = defaults.currency.map(Value::String);
+        let item_classification_scheme_default = defaults.item_classification_scheme.map(Value::String);
+        let bid_status_default = defaults.bid_status.map(Value::String);
+        let award_status_default = defaults.award_status.map(Value::String);
+
         let codelists = settings.codelists.unwrap_or_default();
         let bid_status = codelists.get("bidStatus").unwrap_or(&default);
 
@@ -196,6 +204,20 @@ impl Prepare {
                                     && let Some(Value::Array(details)) = bids.get_mut("details")
                                 {
                                     for (j, bid) in details.iter_mut().enumerate() {
+                                        if let Some(Value::Object(value)) = bid.get_mut("value")
+                                            && !value.contains_key("currency")
+                                            && let Some(currency) = &currency_default
+                                        {
+                                            value.insert("currency".into(), currency.clone());
+                                        }
+
+                                        if let Some(Value::Object(classification)) = bid.get_mut("classification")
+                                            && !classification.contains_key("scheme")
+                                            && let Some(scheme) = &item_classification_scheme_default
+                                        {
+                                            classification.insert("scheme".into(), scheme.clone());
+                                        }
+
                                         if let Some(Value::String(status)) = bid.get_mut("status") {
                                             if bid_status.contains_key(status) {
                                                 *status = bid_status[status].clone();
@@ -203,9 +225,32 @@ impl Prepare {
                                             if !BID_STATUS.contains(status.as_str()) {
                                                 eprintln!("{},{ocid},/bids/details[]/status,{j},\"{status}\",invalid", i + 1);
                                             }
+                                        } else if bid.get("status").is_some() {
+                                            eprintln!("{},{ocid},/bids/details[]/status,{j},{},not string", i + 1, bid["status"]);
+                                        } else if let Some(status) = &bid_status_default {
+                                            bid["status"] = status.clone();
+                                        } else {
+                                            eprintln!("{},{ocid},/bids/details[]/status,{j},,not set", i + 1);
                                         }
                                     }
                                 }
+
+                                if let Some(Value::Array(awards)) = release.get_mut("awards") {
+                                    for (j, award) in awards.iter_mut().enumerate() {
+                                        if let Some(Value::String(status)) = award.get_mut("status") {
+                                            if !AWARD_STATUS.contains(status.as_str()) {
+                                                eprintln!("{},{ocid},/awards[]/status,{j},\"{status}\",invalid", i + 1);
+                                            }
+                                        } else if award.get("status").is_some() {
+                                            eprintln!("{},{ocid},/awards[]/status,{j},{},not string", i + 1, award["status"]);
+                                        } else if let Some(status) = &award_status_default {
+                                            award["status"] = status.clone();
+                                        } else {
+                                            eprintln!("{},{ocid},/awards[]/status,{j},,not set", i + 1);
+                                        }
+                                    }
+                                }
+
                                 println!("{}", serde_json::to_string(&release).unwrap());
                             }
                         }

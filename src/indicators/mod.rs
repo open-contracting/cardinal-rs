@@ -29,12 +29,21 @@ struct NF025 {
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
+pub struct Defaults {
+    pub currency: Option<String>,
+    pub item_classification_scheme: Option<String>,
+    pub bid_status: Option<String>,
+    pub award_status: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
 #[allow(non_snake_case)]
 pub struct Settings {
-    currency: Option<String>,
-    // Codelists.
+    // prepare command.
     pub codelists: Option<HashMap<String, HashMap<String, String>>>,
-    // Indicators.
+    pub defaults: Option<Defaults>,
+    // indicators command.
+    currency: Option<String>,
     NF024: Option<FloatThreshold>, // ratio
     NF025: Option<NF025>,
     NF035: Option<IntegerThreshold>, // count
