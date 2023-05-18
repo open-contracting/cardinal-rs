@@ -189,16 +189,18 @@ impl Prepare {
                     match serde_json::from_str(&string) {
                         Ok(value) => {
                             if let Value::Object(mut release) = value {
+                                let ocid = release["ocid"].clone();
+
                                 if let Some(Value::Object(bids)) = release.get_mut("bids")
                                     && let Some(Value::Array(details)) = bids.get_mut("details")
                                 {
-                                    for bid in details {
+                                    for (j, bid) in details.iter_mut().enumerate() {
                                         if let Some(Value::String(status)) = bid.get_mut("status") {
                                             if bid_status.contains_key(status) {
                                                 *status = bid_status[status].clone();
                                             }
                                             if !BID_STATUS.contains(status.as_str()) {
-                                                warn!("Line {} /bid/details/status = \"{status}\" is invalid", i + 1);
+                                                eprintln!("{},{ocid},/bids/details[]/status,{j},\"{status}\",invalid", i + 1);
                                             }
                                         }
                                     }
