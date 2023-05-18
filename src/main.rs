@@ -42,7 +42,7 @@ enum Commands {
         file: PathBuf,
         /// The path to the settings file
         #[arg(long, short, value_parser = settings_parser)]
-        settings: ocdscardinal::Settings,
+        settings: Option<ocdscardinal::Settings>,
     },
     /// Calculate procurement indicators from OCDS compiled releases in a line-delimited JSON file
     ///
@@ -118,7 +118,7 @@ fn main() {
             }
         },
         Commands::Prepare { file, settings } => {
-            ocdscardinal::Prepare::run(reader(file), settings);
+            ocdscardinal::Prepare::run(reader(file), settings.clone().unwrap_or_default());
         }
         Commands::Indicators { file, count, settings } => {
             match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default()) {

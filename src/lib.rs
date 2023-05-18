@@ -179,9 +179,10 @@ impl Prepare {
     ///
     /// # Panics
     ///
-    pub fn run(buffer: impl BufRead + Send, settings: &Settings) {
+    pub fn run(buffer: impl BufRead + Send, settings: Settings) {
         let default = HashMap::new();
-        let bid_status = settings.codelists.get("bidStatus").unwrap_or(&default);
+        let codelists = settings.codelists.unwrap_or_default();
+        let bid_status = codelists.get("bidStatus").unwrap_or(&default);
 
         buffer.lines().enumerate().par_bridge().for_each(|(i, lines_result)| {
             match lines_result {
