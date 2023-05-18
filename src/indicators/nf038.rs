@@ -11,7 +11,7 @@ macro_rules! flag {
     ( $item:ident , $field:ident , $threshold:expr , $group:ident ) => {
         let ratios: HashMap<String, f64> = mem::take(&mut $item.$field)
             .into_iter()
-            .map(|(id, fraction)| (id, f64::from(fraction)))
+            .map(|(id, fraction)| (id, fraction.into()))
             .collect();
 
         let upper_fence = $threshold.unwrap_or_else(|| {

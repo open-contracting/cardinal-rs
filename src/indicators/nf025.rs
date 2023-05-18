@@ -46,7 +46,7 @@ impl Calculate for NF025 {
             // Count each tenderer once per contracting process, regardless of the number of bids.
             for tenderer_id in valid_tenderer_ids {
                 let fraction = item.nf025_tenderer.entry(tenderer_id.clone()).or_default();
-                *fraction += fraction!(usize::from(supplier_id == tenderer_id), 1);
+                *fraction += fraction!((supplier_id == tenderer_id).into(), 1);
             }
         }
     }
@@ -73,7 +73,7 @@ impl Calculate for NF025 {
         });
 
         for (id, fraction) in &item.nf025_tenderer {
-            let ratio = f64::from(fraction);
+            let ratio = fraction.into();
             if fraction.denominator as f64 > upper_fence && ratio < lower_fence {
                 set_result!(item, Tenderer, id, NF025, ratio);
             }

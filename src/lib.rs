@@ -267,7 +267,7 @@ impl Coverage {
             Value::Null => {}
             Value::Array(vec) => {
                 if !vec.is_empty() {
-                    path.push(String::from("[]"));
+                    path.push("[]".into());
                     for item in vec {
                         increment |= self.add(item, path);
                     }
@@ -276,7 +276,7 @@ impl Coverage {
             }
             Value::Object(map) => {
                 if !map.is_empty() {
-                    path.push(String::from("/"));
+                    path.push("/".into());
                     for (k, v) in map {
                         path.push(k);
                         increment |= self.add(v, path);
