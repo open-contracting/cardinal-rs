@@ -206,16 +206,26 @@ impl Prepare {
                                     for (j, bid) in details.iter_mut().enumerate() {
                                         if let Some(Value::Object(value)) = bid.get_mut("value")
                                             && !value.contains_key("currency")
-                                            && let Some(currency) = &currency_default
                                         {
-                                            value.insert("currency".into(), currency.clone());
+                                            currency_default.as_ref().map_or_else(|| {
+                                                eprintln!("{},{ocid},/bids/details[]/value/currency,{j},,not set", i + 1);
+                                            }, |currency| {
+                                                value.insert("currency".into(), currency.clone());
+                                            });
                                         }
 
-                                        if let Some(Value::Object(classification)) = bid.get_mut("classification")
-                                            && !classification.contains_key("scheme")
-                                            && let Some(scheme) = &item_classification_scheme_default
-                                        {
-                                            classification.insert("scheme".into(), scheme.clone());
+                                        if let Some(Value::Array(items)) = bid.get_mut("items") {
+                                            for (k, item) in items.iter_mut().enumerate() {
+                                                if let Some(Value::Object(classification)) = item.get_mut("classification")
+                                                    && !classification.contains_key("scheme")
+                                                {
+                                                    item_classification_scheme_default.as_ref().map_or_else(|| {
+                                                        eprintln!("{},{ocid},/bids/details[]/items[]/classification/scheme,{j}-{k},,not set", i + 1);
+                                                    }, |scheme| {
+                                                        classification.insert("scheme".into(), scheme.clone());
+                                                    });
+                                                }
+                                            }
                                         }
 
                                         if let Some(Value::String(status)) = bid.get_mut("status") {
