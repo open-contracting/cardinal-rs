@@ -235,12 +235,12 @@ impl Prepare {
                                             if !BID_STATUS.contains(status.as_str()) {
                                                 eprintln!("{},{ocid},/bids/details[]/status,{j},\"{status}\",invalid", i + 1);
                                             }
-                                        } else if bid.get("status").is_some() {
-                                            eprintln!("{},{ocid},/bids/details[]/status,{j},{},not string", i + 1, bid["status"]);
-                                        } else if let Some(status) = &bid_status_default {
-                                            bid["status"] = status.clone();
-                                        } else {
-                                            eprintln!("{},{ocid},/bids/details[]/status,{j},,not set", i + 1);
+                                        } else if bid.get("status").is_none() {
+                                            bid_status_default.as_ref().map_or_else(|| {
+                                                eprintln!("{},{ocid},/bids/details[]/status,{j},,not set", i + 1);
+                                            }, |status| {
+                                                bid["status"] = status.clone();
+                                            });
                                         }
                                     }
                                 }
@@ -251,12 +251,12 @@ impl Prepare {
                                             if !AWARD_STATUS.contains(status.as_str()) {
                                                 eprintln!("{},{ocid},/awards[]/status,{j},\"{status}\",invalid", i + 1);
                                             }
-                                        } else if award.get("status").is_some() {
-                                            eprintln!("{},{ocid},/awards[]/status,{j},{},not string", i + 1, award["status"]);
-                                        } else if let Some(status) = &award_status_default {
-                                            award["status"] = status.clone();
-                                        } else {
-                                            eprintln!("{},{ocid},/awards[]/status,{j},,not set", i + 1);
+                                        } else if award.get("status").is_none() {
+                                            award_status_default.as_ref().map_or_else(|| {
+                                                eprintln!("{},{ocid},/awards[]/status,{j},,not set", i + 1);
+                                            }, |status| {
+                                                award["status"] = status.clone();
+                                            });
                                         }
                                     }
                                 }
