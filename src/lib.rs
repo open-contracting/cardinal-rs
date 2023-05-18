@@ -170,6 +170,28 @@ impl Indicators {
     }
 }
 
+macro_rules! prepare_id_object {
+    ( $field:ident , $key:expr ) => {
+        if let Some(Value::Object(object)) = $field.get_mut($key) {
+            if let Some(Value::Number(id)) = object.get_mut("id") {
+                object["id"] = Value::String(id.to_string());
+            }
+        }
+    };
+}
+
+macro_rules! prepare_id_array {
+    ( $field:ident , $key:expr ) => {
+        if let Some(Value::Array(array)) = $field.get_mut($key) {
+            for object in array {
+                if let Some(Value::Number(id)) = object.get_mut("id") {
+                    object["id"] = Value::String(id.to_string());
+                }
+            }
+        }
+    };
+}
+
 #[derive(Debug, Default)]
 pub struct Prepare {}
 
@@ -179,6 +201,7 @@ impl Prepare {
     ///
     /// # Panics
     ///
+    #[allow(clippy::cognitive_complexity)]
     pub fn run(buffer: impl BufRead + Send, settings: Settings) {
         let default = HashMap::new();
 
@@ -200,6 +223,14 @@ impl Prepare {
                             if let Value::Object(mut release) = value {
                                 let ocid = release["ocid"].clone();
 
+                                prepare_id_object!(release, "buyer");
+
+                                // /tender
+                                if let Some(Value::Object(tender)) = release.get_mut("tender") {
+                                    prepare_id_object!(tender, "procuringEntity");
+                                }
+
+                                // /bids
                                 if let Some(Value::Object(bids)) = release.get_mut("bids")
                                     && let Some(Value::Array(details)) = bids.get_mut("details")
                                 {
@@ -242,9 +273,12 @@ impl Prepare {
                                                 bid["status"] = status.clone();
                                             });
                                         }
+
+                                        prepare_id_array!(bid, "tenderers");
                                     }
                                 }
 
+                                // /awards
                                 if let Some(Value::Array(awards)) = release.get_mut("awards") {
                                     for (j, award) in awards.iter_mut().enumerate() {
                                         if let Some(Value::String(status)) = award.get_mut("status") {
@@ -258,6 +292,8 @@ impl Prepare {
                                                 award["status"] = status.clone();
                                             });
                                         }
+
+                                        prepare_id_array!(award, "suppliers");
                                     }
                                 }
 
