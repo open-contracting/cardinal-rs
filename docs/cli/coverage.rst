@@ -1,6 +1,8 @@
 coverage
 ========
 
+The ``coverage`` command counts the number of times each JSON field is non-empty.
+
 .. code:: console
 
    $ ocdscardinal help coverage
@@ -36,6 +38,10 @@ For example:
 
 Caveats
 -------
+
+.. note::
+
+   These edge cases are not expected to be encountered in real data.
 
 If a member name is duplicated, only the last duplicate is considered.
 

@@ -1,0 +1,7 @@
+Red flags
+=========
+
+.. toctree::
+   :glob:
+
+   *

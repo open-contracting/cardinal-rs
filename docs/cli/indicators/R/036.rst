@@ -1,0 +1,9 @@
+R036 The lowest submitted bid is disqualified, while the award criterion is price only
+--------------------------------------------------------------------------------------
+
+A contracting process is flagged if:
+
+-  There are one or more active awards.
+-  The lowest submitted bid is disqualified.
+
+The indicator’s value is always 1.0.

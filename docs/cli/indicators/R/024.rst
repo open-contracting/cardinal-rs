@@ -1,0 +1,21 @@
+R024 The percentage difference between the winning bid and the second-lowest valid bid is a low outlier
+-------------------------------------------------------------------------------------------------------
+
+For each contracting process, the difference is calculated as :math:`(secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount`. A contracting process is flagged if the difference is less than the lower fence of :math:`Q_1 - 1.5(IQR)`, where :math:`Q_1` is the first quartile and :math:`IQR` is the interquartile range for the set of differences.
+
+To configure the lower fence, add to your settings file:
+
+.. code:: ini
+
+   [R024]
+   threshold = 0.05
+
+The indicator’s value is the percentage difference.
+
+A contracting process is excluded if:
+
+-  An award’s status is pending or invalid.
+-  The winning bid is not the lowest bid. (This indicator requires the award criteria to be price-only.)
+-  There are multiple active awards (a.k.a. winning bids). `#14 <https://github.com/open-contracting/cardinal-rs/issues/14>`__
+-  A bid is submitted by multiple tenderers. `#17 <https://github.com/open-contracting/cardinal-rs/issues/17>`__
+-  An award is made to multiple suppliers. `#17 <https://github.com/open-contracting/cardinal-rs/issues/17>`__
