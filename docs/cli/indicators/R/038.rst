@@ -1,9 +1,20 @@
 R038 The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer
----------------------------------------------------------------------------------------------------------------
+===============================================================================================================
 
-For each buyer, the ratio is calculated as :math:`numberOfBidsDisqualifiedByBuyer \over numberOfBidsSubmittedToBuyer` across all contracting processes. A buyer is flagged if its ratio is greater than the upper fence of :math:`Q_3 + 1.5(IQR)`, where :math:`Q_3` is the third quartile and :math:`IQR` is the interquartile range for the set of ratios. The same calculation is performed for procuring entities.
+Methodology
+-----------
 
-For each tenderer, the ratio is calculated as :math:`numberOfBidsDisqualifiedForTenderer \over numberOfBidsSubmittedByTenderer` across all contracting processes. A tenderer is flagged if its ratio is greater than the upper fence of :math:`Q_3 + 1.5(IQR)`, where :math:`Q_3` is the third quartile and :math:`IQR` is the interquartile range for the set of ratios.
+For each buyer, the ratio is calculated as :math:`numberOfBidsDisqualifiedByBuyer \over numberOfBidsSubmittedToBuyer` across all contracting processes. A buyer is flagged if its ratio is greater than the **upper fence** of :math:`Q_3 + 1.5(IQR)`, where :math:`Q_3` is the third quartile and :math:`IQR` is the interquartile range for the set of ratios. The same calculation is performed for procuring entities.
+
+For each tenderer, the ratio is calculated as :math:`numberOfBidsDisqualifiedForTenderer \over numberOfBidsSubmittedByTenderer` across all contracting processes. A tenderer is flagged if its ratio is greater than the **upper fence** of :math:`Q_3 + 1.5(IQR)`, where :math:`Q_3` is the third quartile and :math:`IQR` is the interquartile range for the set of ratios.
+
+Interpretation
+--------------
+
+The indicator’s value is the ratio.
+
+Configuration
+-------------
 
 To configure the upper fence, add to your settings file:
 
@@ -12,6 +23,7 @@ To configure the upper fence, add to your settings file:
    [R038]
    threshold = 0.5
 
-The indicator’s value is the ratio.
+Assumptions
+-----------
 
 This indicator assumes that ``buyer/id``, ``procuringEntity/id`` and ``bids/details/tenderers/id`` are stable across contracting processes. `#32 <https://github.com/open-contracting/cardinal-rs/issues/32>`__

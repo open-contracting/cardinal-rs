@@ -1,7 +1,18 @@
 R025 The ratio of winning bids to submitted bids for a top tenderer is a low outlier
-------------------------------------------------------------------------------------
+====================================================================================
 
-For each tenderer, the ratio is calculated as :math:`numberOfWinningBids \over numberOfValidBids` across all contracting processes. A tenderer is flagged if its number of valid bids is greater than the upper fence of the third quartile of the set of numbers of valid bids, and if its ratio is less than the lower fence of :math:`Q_1 - 1.5(IQR)`, where :math:`Q_1` is the first quartile and :math:`IQR` is the interquartile range for the set of ratios.
+Methodology
+-----------
+
+For each tenderer, the ratio is calculated as :math:`numberOfWinningBids \over numberOfValidBids` across all contracting processes. A tenderer is flagged if its number of valid bids is greater than the **upper fence** of the third quartile of the set of numbers of valid bids, and if its ratio is less than the **lower fence** of :math:`Q_1 - 1.5(IQR)`, where :math:`Q_1` is the first quartile and :math:`IQR` is the interquartile range for the set of ratios.
+
+Interpretation
+--------------
+
+The indicator’s value is the ratio.
+
+Configuration
+-------------
 
 To configure the upper fence, add to your settings file:
 
@@ -17,7 +28,8 @@ To configure the lower fence, add to your settings file:
    [R025]
    threshold = 0.05
 
-The indicator’s value is the ratio.
+Exclusions
+----------
 
 A contracting process is excluded if:
 

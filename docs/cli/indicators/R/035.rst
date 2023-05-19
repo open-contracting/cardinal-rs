@@ -1,5 +1,8 @@
 R035 Bids are disqualified if not submitted by the single tenderer of the winning bid
--------------------------------------------------------------------------------------
+=====================================================================================
+
+Methodology
+-----------
 
 A contracting process is flagged if:
 
@@ -7,16 +10,25 @@ A contracting process is flagged if:
 
 -  The tenderer of the valid bids and the suppliers of all active awards are the same.
 
--  At least 1 other tenderer submitted a bid that was disqualified.
+-  At least 1 other tenderer submitted a bid that was disqualified. (1 is the **threshold**.)
 
-   To configure this threshold, add to your settings file:
-
-   .. code:: ini
-
-      [R035]
-      threshold = 1 # default
+Interpretation
+--------------
 
 The indicator’s value is the number of unique tenderers with disqualified bids.
+
+Configuration
+-------------
+
+To configure the threshold, add to your settings file:
+
+.. code:: ini
+
+   [R035]
+   threshold = 1 # default
+
+Exclusions
+----------
 
 A contracting process is excluded if:
 
