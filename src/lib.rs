@@ -20,6 +20,16 @@ use crate::indicators::nf038::NF038;
 pub use crate::indicators::{Calculate, Group, Indicator, Indicators, Settings};
 use crate::standard::{AWARD_STATUS, BID_STATUS};
 
+macro_rules! add_indicators {
+    ($indicators:ident , $settings:ident , $( $indicator:ident ) ,* ) => {
+        $(
+            if $settings.$indicator.is_some() {
+                $indicators.push(Box::new($indicator::new(&mut $settings)));
+            }
+        )*
+    }
+}
+
 fn fold_reduce<T: Send, Fold, Reduce, Finalize>(
     buffer: impl BufRead + Send,
     default: fn() -> T,
@@ -74,11 +84,7 @@ impl Indicators {
     pub fn run(buffer: impl BufRead + Send, mut settings: Settings) -> Result<Self> {
         let mut indicators: Vec<Box<dyn Calculate + Sync>> = vec![];
 
-        indicators.push(Box::new(NF024::new(&mut settings)));
-        indicators.push(Box::new(NF025::new(&mut settings)));
-        indicators.push(Box::new(NF035::new(&mut settings)));
-        indicators.push(Box::new(NF036::new(&mut settings)));
-        indicators.push(Box::new(NF038::new(&mut settings)));
+        add_indicators!(indicators, settings, NF024, NF025, NF035, NF036, NF038);
 
         fold_reduce(
             buffer,

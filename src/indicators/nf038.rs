@@ -38,7 +38,7 @@ pub struct NF038 {
 impl Calculate for NF038 {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            threshold: mem::take(&mut settings.NF038).map(|v| v.threshold),
+            threshold: mem::take(&mut settings.NF038).map(|v| v.threshold.unwrap_or_default()),
         }
     }
 

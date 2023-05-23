@@ -14,7 +14,7 @@ pub struct NF035 {
 impl Calculate for NF035 {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            threshold: mem::take(&mut settings.NF035).map_or(1, |v| cmp::max(v.threshold, 1)),
+            threshold: mem::take(&mut settings.NF035).map_or(1, |v| v.threshold.map_or(1, |t| cmp::max(t, 1))),
         }
     }
 
