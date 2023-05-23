@@ -12,12 +12,12 @@ use serde_json::{Map, Value};
 
 // Settings.
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 pub struct FloatThreshold {
     threshold: Option<f64>,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 pub struct IntegerThreshold {
     threshold: Option<usize>,
 }
@@ -43,7 +43,7 @@ pub struct Settings {
     pub codelists: Option<HashMap<String, HashMap<String, String>>>,
     pub defaults: Option<Defaults>,
     // indicators command.
-    currency: Option<String>,
+    pub currency: Option<String>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
     pub R035: Option<IntegerThreshold>, // count

@@ -31,13 +31,18 @@ fn {name}() {{
     for entry in glob("tests/fixtures/indicators/*.jsonl").expect("Failed to read glob pattern") {
         let path = entry.unwrap();
         let name = path.file_stem().unwrap().to_str().unwrap();
+        let function = name.to_ascii_lowercase();
+        let field = name.split('_').next().unwrap();
 
         write!(
             file,
             r#"
 #[test]
-fn {name}() {{
-    check_indicators("indicators/{name}")
+fn {function}() {{
+    check_indicators("indicators/{name}", Settings {{
+        {field}: Some(Default::default()),
+        ..Default::default()
+    }})
 }}
 "#
         )

@@ -17,7 +17,7 @@ impl Calculate for R024 {
     fn new(settings: &mut Settings) -> Self {
         Self {
             default_currency: settings.currency.clone(),
-            threshold: mem::take(&mut settings.R024).map(|v| v.threshold.unwrap_or_default()),
+            threshold: mem::take(&mut settings.R024).unwrap_or_default().threshold,
         }
     }
 

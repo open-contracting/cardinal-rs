@@ -21,7 +21,7 @@ pub use crate::indicators::{Calculate, Group, Indicator, Indicators, Settings};
 use crate::standard::{AWARD_STATUS, BID_STATUS};
 
 macro_rules! add_indicators {
-    ($indicators:ident , $settings:ident , $( $indicator:ident ) ,* ) => {
+    ( $indicators:ident , $settings:ident , $( $indicator:ident ) ,* ) => {
         $(
             if $settings.$indicator.is_some() {
                 $indicators.push(Box::new($indicator::new(&mut $settings)));
@@ -431,8 +431,8 @@ mod tests {
         assert_eq!(result.unwrap().counts, expected);
     }
 
-    fn check_indicators(name: &str) {
-        let result = Indicators::run(reader(name, "jsonl"), Settings::default());
+    fn check_indicators(name: &str, settings: Settings) {
+        let result = Indicators::run(reader(name, "jsonl"), settings);
         let expected = serde_json::from_reader(reader(name, "expected")).unwrap();
 
         assert_eq!(result.unwrap().results, expected);

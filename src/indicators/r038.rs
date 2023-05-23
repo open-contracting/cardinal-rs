@@ -38,7 +38,7 @@ pub struct R038 {
 impl Calculate for R038 {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            threshold: mem::take(&mut settings.R038).map(|v| v.threshold.unwrap_or_default()),
+            threshold: mem::take(&mut settings.R038).unwrap_or_default().threshold,
         }
     }
 
