@@ -10,9 +10,9 @@ Added
 -  :doc:`cli/prepare` command.
 -  :doc:`cli/indicators/index` command:
 
-   -  NF025 (*The ratio of winning bids to submitted bids for a top tenderer is a low outlier*).
-   -  NF036 (*The lowest submitted bid is disqualified, while the award criterion is price only*).
-   -  NF038 (*The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer*).
+   -  R025 (*The ratio of winning bids to submitted bids for a top tenderer is a low outlier*).
+   -  R036 (*The lowest submitted bid is disqualified, while the award criterion is price only*).
+   -  R038 (*The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer*).
 
 -  Expand documentation.
 
@@ -36,7 +36,7 @@ Added
 
 -  :doc:`cli/indicators/index` command:
 
-   -  NF035 (*Bids are disqualified if not submitted by the single tenderer of the winning bid*).
+   -  R035 (*Bids are disqualified if not submitted by the single tenderer of the winning bid*).
    -  Add ``--settings SETTINGS`` option for configuration file.
    -  Add documentation.
 

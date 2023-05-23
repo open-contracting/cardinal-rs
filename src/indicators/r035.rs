@@ -7,14 +7,14 @@ use serde_json::{Map, Value};
 use crate::indicators::{set_result, Calculate, Indicators, Settings};
 
 #[derive(Default)]
-pub struct NF035 {
+pub struct R035 {
     threshold: usize,
 }
 
-impl Calculate for NF035 {
+impl Calculate for R035 {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            threshold: mem::take(&mut settings.NF035).map_or(1, |v| v.threshold.map_or(1, |t| cmp::max(t, 1))),
+            threshold: mem::take(&mut settings.R035).map_or(1, |v| v.threshold.map_or(1, |t| cmp::max(t, 1))),
         }
     }
 
@@ -55,7 +55,7 @@ impl Calculate for NF035 {
             }
         }
 
-        // NF035 is not applicable to multiple tenderers/winners. A buyer can aggregate multiple bids
+        // R035 is not applicable to multiple tenderers/winners. A buyer can aggregate multiple bids
         // into one award, and then sign multiple contracts. That behavior is not a red flag.
         if valid_tenderer_ids.len() == 1
             // The tenderer's bids were awarded.
@@ -65,7 +65,7 @@ impl Calculate for NF035 {
             // At least this many tenderers have disqualified bids.
             && difference >= self.threshold
         {
-            set_result!(item, OCID, ocid, NF035, difference as f64);
+            set_result!(item, OCID, ocid, R035, difference as f64);
         }
     }
 }

@@ -8,16 +8,16 @@ use statrs::statistics::OrderStatistics;
 use crate::indicators::{set_result, Calculate, Indicators, Settings};
 
 #[derive(Default)]
-pub struct NF024 {
+pub struct R024 {
     default_currency: Option<String>,
     threshold: Option<f64>, // resolved in reduce()
 }
 
-impl Calculate for NF024 {
+impl Calculate for R024 {
     fn new(settings: &mut Settings) -> Self {
         Self {
             default_currency: settings.currency.clone(),
-            threshold: mem::take(&mut settings.NF024).map(|v| v.threshold.unwrap_or_default()),
+            threshold: mem::take(&mut settings.R024).map(|v| v.threshold.unwrap_or_default()),
         }
     }
 
@@ -76,7 +76,7 @@ impl Calculate for NF024 {
             // If the lowest bid didn't win, the award criteria aren't price only, as otherwise assumed.
             && lowest_non_winner_amount >= winner_amount
         {
-            item.nf024_ratios.insert(
+            item.r024_ratios.insert(
                 ocid.to_owned(),
                 (lowest_non_winner_amount - winner_amount) / winner_amount,
             );
@@ -85,7 +85,7 @@ impl Calculate for NF024 {
 
     fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
         if item.currency.is_none() || other.currency.is_none() || item.currency == other.currency {
-            item.nf024_ratios.extend(mem::take(&mut other.nf024_ratios));
+            item.r024_ratios.extend(mem::take(&mut other.r024_ratios));
         } else {
             warn!("{:?} is not {:?}, skipping.", other.currency, item.currency);
         }
@@ -93,16 +93,16 @@ impl Calculate for NF024 {
 
     fn finalize(&self, item: &mut Indicators) {
         let lower_fence = self.threshold.unwrap_or_else(|| {
-            let mut data = Data::new(item.nf024_ratios.values().copied().collect::<Vec<_>>());
+            let mut data = Data::new(item.r024_ratios.values().copied().collect::<Vec<_>>());
             let q1 = data.lower_quartile();
             let q3 = data.upper_quartile();
             // q1 - IQR * 1.5
             (q3 - q1).mul_add(-1.5, q1)
         });
 
-        for (ocid, ratio) in &item.nf024_ratios {
+        for (ocid, ratio) in &item.r024_ratios {
             if *ratio < lower_fence {
-                set_result!(item, OCID, ocid, NF024, *ratio);
+                set_result!(item, OCID, ocid, R024, *ratio);
             }
         }
     }

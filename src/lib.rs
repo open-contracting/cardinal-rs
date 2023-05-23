@@ -12,11 +12,11 @@ use log::warn;
 use rayon::prelude::*;
 use serde_json::{Map, Value};
 
-use crate::indicators::nf024::NF024;
-use crate::indicators::nf025::NF025;
-use crate::indicators::nf035::NF035;
-use crate::indicators::nf036::NF036;
-use crate::indicators::nf038::NF038;
+use crate::indicators::r024::R024;
+use crate::indicators::r025::R025;
+use crate::indicators::r035::R035;
+use crate::indicators::r036::R036;
+use crate::indicators::r038::R038;
 pub use crate::indicators::{Calculate, Group, Indicator, Indicators, Settings};
 use crate::standard::{AWARD_STATUS, BID_STATUS};
 
@@ -84,7 +84,7 @@ impl Indicators {
     pub fn run(buffer: impl BufRead + Send, mut settings: Settings) -> Result<Self> {
         let mut indicators: Vec<Box<dyn Calculate + Sync>> = vec![];
 
-        add_indicators!(indicators, settings, NF024, NF025, NF035, NF036, NF038);
+        add_indicators!(indicators, settings, R024, R025, R035, R036, R038);
 
         fold_reduce(
             buffer,

@@ -1,8 +1,8 @@
-pub mod nf024;
-pub mod nf025;
-pub mod nf035;
-pub mod nf036;
-pub mod nf038;
+pub mod r024;
+pub mod r025;
+pub mod r035;
+pub mod r036;
+pub mod r038;
 
 use std::collections::HashMap;
 use std::ops::AddAssign;
@@ -23,7 +23,7 @@ pub struct IntegerThreshold {
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
-pub struct NF025 {
+pub struct R025 {
     percentile: Option<usize>,
     threshold: Option<f64>, // ratio
 }
@@ -44,22 +44,22 @@ pub struct Settings {
     pub defaults: Option<Defaults>,
     // indicators command.
     currency: Option<String>,
-    pub NF024: Option<FloatThreshold>, // ratio
-    pub NF025: Option<NF025>,
-    pub NF035: Option<IntegerThreshold>, // count
-    pub NF036: Option<HashMap<String, String>>,
-    pub NF038: Option<FloatThreshold>, // ratio
+    pub R024: Option<FloatThreshold>, // ratio
+    pub R025: Option<R025>,
+    pub R035: Option<IntegerThreshold>, // count
+    pub R036: Option<HashMap<String, String>>,
+    pub R038: Option<FloatThreshold>, // ratio
 }
 
 // Final results.
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
 pub enum Indicator {
-    NF024,
-    NF025,
-    NF035,
-    NF036,
-    NF038,
+    R024,
+    R025,
+    R035,
+    R036,
+    R038,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
@@ -75,15 +75,15 @@ pub struct Indicators {
     pub results: HashMap<Group, HashMap<String, HashMap<Indicator, f64>>>,
     pub currency: Option<String>,
     /// The percentage difference between the winning bid and the second-lowest valid bid for each `ocid`.
-    pub nf024_ratios: HashMap<String, f64>,
+    pub r024_ratios: HashMap<String, f64>,
     // The ratio of winning bids to submitted bids for each `bids/details/tenderers/id`.
-    pub nf025_tenderer: HashMap<String, Fraction>,
+    pub r025_tenderer: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `buyer/id`.
-    pub nf038_buyer: HashMap<String, Fraction>,
+    pub r038_buyer: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `tender/procuringEntity/id`.
-    pub nf038_procuring_entity: HashMap<String, Fraction>,
+    pub r038_procuring_entity: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `bids/details/tenderers/id`.
-    pub nf038_tenderer: HashMap<String, Fraction>,
+    pub r038_tenderer: HashMap<String, Fraction>,
 }
 
 // Intermediate results.

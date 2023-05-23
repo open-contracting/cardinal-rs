@@ -5,11 +5,11 @@ use crate::indicators::{set_result, Calculate, Indicators, Settings};
 use serde_json::{Map, Value};
 
 #[derive(Default)]
-pub struct NF036 {
+pub struct R036 {
     default_currency: Option<String>,
 }
 
-impl Calculate for NF036 {
+impl Calculate for R036 {
     fn new(settings: &mut Settings) -> Self {
         Self {
             default_currency: settings.currency.clone(),
@@ -56,7 +56,7 @@ impl Calculate for NF036 {
         }
 
         if lowest_amount_is_disqualified {
-            set_result!(item, OCID, ocid, NF036, 1.0);
+            set_result!(item, OCID, ocid, R036, 1.0);
         }
     }
 }

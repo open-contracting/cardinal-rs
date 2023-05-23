@@ -24,21 +24,21 @@ macro_rules! flag {
 
         for (id, ratio) in ratios {
             if ratio > upper_fence {
-                set_result!($item, $group, id, NF038, ratio);
+                set_result!($item, $group, id, R038, ratio);
             }
         }
     };
 }
 
 #[derive(Default)]
-pub struct NF038 {
+pub struct R038 {
     threshold: Option<f64>, // resolved in reduce()
 }
 
-impl Calculate for NF038 {
+impl Calculate for R038 {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            threshold: mem::take(&mut settings.NF038).map(|v| v.threshold.unwrap_or_default()),
+            threshold: mem::take(&mut settings.R038).map(|v| v.threshold.unwrap_or_default()),
         }
     }
 
@@ -68,7 +68,7 @@ impl Calculate for NF038 {
             if let Some(Value::Array(tenderers)) = bid.get("tenderers") {
                 for tenderer in tenderers {
                     if let Some(Value::String(id)) = tenderer.get("id") {
-                        let fraction = item.nf038_tenderer.entry(id.clone()).or_default();
+                        let fraction = item.r038_tenderer.entry(id.clone()).or_default();
                         *fraction += fraction!(increment, 1);
                     }
                 }
@@ -78,7 +78,7 @@ impl Calculate for NF038 {
         if let Some(Value::Object(buyer)) = release.get("buyer")
             && let Some(Value::String(id)) = buyer.get("id")
         {
-            let fraction = item.nf038_buyer.entry(id.clone()).or_default();
+            let fraction = item.r038_buyer.entry(id.clone()).or_default();
             *fraction += fraction!(disqualified_bids_count, submitted_bids_count);
         }
 
@@ -86,20 +86,20 @@ impl Calculate for NF038 {
             && let Some(Value::Object(procuring_entity)) = tender.get("procuringEntity")
             && let Some(Value::String(id)) = procuring_entity.get("id")
         {
-            let fraction = item.nf038_procuring_entity.entry(id.clone()).or_default();
+            let fraction = item.r038_procuring_entity.entry(id.clone()).or_default();
             *fraction += fraction!(disqualified_bids_count, submitted_bids_count);
         }
     }
 
     fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
-        mediant!(item, other, nf038_buyer);
-        mediant!(item, other, nf038_procuring_entity);
-        mediant!(item, other, nf038_tenderer);
+        mediant!(item, other, r038_buyer);
+        mediant!(item, other, r038_procuring_entity);
+        mediant!(item, other, r038_tenderer);
     }
 
     fn finalize(&self, item: &mut Indicators) {
-        flag!(item, nf038_buyer, self.threshold, Buyer);
-        flag!(item, nf038_procuring_entity, self.threshold, ProcuringEntity);
-        flag!(item, nf038_tenderer, self.threshold, Tenderer);
+        flag!(item, r038_buyer, self.threshold, Buyer);
+        flag!(item, r038_procuring_entity, self.threshold, ProcuringEntity);
+        flag!(item, r038_tenderer, self.threshold, Tenderer);
     }
 }
