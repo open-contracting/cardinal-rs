@@ -1,5 +1,5 @@
-R036 The lowest submitted bid is disqualified, while the award criterion is price only
-======================================================================================
+The lowest submitted bid is disqualified, while the award criterion is price only (R036)
+========================================================================================
 
 Methodology
 -----------
@@ -9,7 +9,17 @@ A contracting process is flagged if:
 -  There are one or more active awards.
 -  The lowest submitted bid is disqualified.
 
-Interpretation
---------------
+.. admonition:: Example
+   :class: seealso
+
+   The Public Works Department set the award criterion as lowest price. FairDeal Inc. submitted a bid of $100,000. BribeCorp submitted a bid of $111,111. The Public Works Department disqualified the bid from FairDeal Inc.
+
+.. admonition:: Why is this a red flag?
+   :class: hint
+
+   A corrupt buyer can award the pre-determined bidder by disqualifying lower-priced bids.
+
+Output
+------
 
 The indicator’s value is always 1.0.

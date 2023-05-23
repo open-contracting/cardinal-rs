@@ -1,20 +1,34 @@
-R024 The percentage difference between the winning bid and the second-lowest valid bid is a low outlier
-=======================================================================================================
+The percentage difference between the winning bid and the second-lowest valid bid is a low outlier (R024)
+=========================================================================================================
 
 Methodology
 -----------
 
-For each contracting process, the difference is calculated as :math:`(secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount`. A contracting process is flagged if the difference is less than the **lower fence** of :math:`Q_1 - 1.5(IQR)`, where :math:`Q_1` is the first quartile and :math:`IQR` is the interquartile range for the set of differences.
+For each contracting process, the **difference** is calculated as :math:`(secondLowestValidBidAmount - winningBidAmount) \over winningBidAmount`.
 
-Interpretation
---------------
+A contracting process is flagged if the difference is less than the **lower fence** of :math:`Q_1 - 1.5(IQR)`, where :math:`Q_1` is the first quartile and :math:`IQR` is the interquartile range for the set of differences.
 
-The indicator’s value is the percentage difference.
+.. admonition:: Example
+   :class: seealso
+
+   In 25% (:math:`Q_1`) of contracting processes in Atlantis, the second-lowest valid bid is at most 5% greater than the winning bid. In 75% (:math:`Q_3`) of contracting processes, it is at most 7% greater. This yields a lower fence of 2% (``0.02``).
+
+   In a contracting process, CollusionCorp won with a bid of $100,000, and ProcureManipulate lost with a bid of $101,000. The difference is 1% (``0.01``). This is less than the lower fence of 2%. Therefore, the process is flagged.
+
+.. admonition:: Why is this a red flag?
+   :class: hint
+
+   A colluding bidder can mimic competition by submitting a bid that is similar in price (but different in quality, for example) from its colluding partner.
+
+Output
+------
+
+The indicator’s value is the **difference**, as a decimal.
 
 Configuration
 -------------
 
-To configure the lower fence, add to your settings file:
+To configure the **lower fence**, add to your settings file, as a decimal:
 
 .. code:: ini
 

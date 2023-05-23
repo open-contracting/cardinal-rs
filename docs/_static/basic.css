@@ -1,7 +1,12 @@
-section[id^=r0] h1 {
+section[id*=r0] h1 {
   font-size: 1.5rem;
 }
 
-section[id^=r0] h2 {
+section[id*=r0] h2 {
   font-size: 1.25rem;
+}
+
+section[id*=r0] h1,
+section[id*=r0] h2 {
+  font-weight: 500;
 }

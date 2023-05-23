@@ -51,11 +51,29 @@ For all indicators, a contracting process is excluded if:
 
    Otherwise, the main currency is set to the first observed currency.
 
-Terminology
------------
+Glossary
+--------
 
-Submitted
-  A bid is “submitted” if its status is pending (i.e. not evaluated yet), valid (i.e. qualified), or disqualified. It is not "submitted" if its status is invited or withdrawn.
+.. Do not add terms to the glossary that are not used in the documentation!
+
+.. glossary::
+
+   bid
+     An offer made by an :term:`economic operator` as part of a :term:`contracting process`. Also known as a *tender*.
+   bidder
+     An :term:`economic operator` that :term:`submitted` one or more :term:`bids<bid>` as part of a :term:`contracting process`.
+   buyer
+     The organization aiming to conclude a contract with an :term:`economic operator` or to use the goods, services or works resulting from the contract, as part of a :term:`contracting process`.
+   contracting process
+     All the actions aimed at implementing one or more contracts. This covers tendering, awarding, contracting and implementation. Also known as a *procedure*.
+   economic operator
+     A person or organization – or group of people or organizations – that offers goods, services or works. Also known as a *business*, *contractor*, *service provider*, *supplier* or *undertaking*.
+   procuring entity
+     The organization managing the :term:`contracting process`. An organization can be both a :term:`buyer` and a procuring entity (like in a simple contracting process).
+   submitted
+     A :term:`bid` is submitted if its status is pending (i.e. not evaluated yet), valid (i.e. qualified), or disqualified. It is not submitted if its status is invited or withdrawn.
+   tenderer
+     Synonym of :term:`bidder`.
 
 Indicators
 ----------
