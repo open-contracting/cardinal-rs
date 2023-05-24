@@ -21,7 +21,7 @@ pub use crate::indicators::{Calculate, Group, Indicator, Indicators, Settings};
 use crate::standard::{AWARD_STATUS, BID_STATUS};
 
 macro_rules! add_indicators {
-    ( $indicators:ident , $settings:ident , $( $indicator:ident ) ,* ) => {
+    ( $indicators:ident , $settings:ident , $( $indicator:ident ) ,* , ) => {
         $(
             if $settings.$indicator.is_some() {
                 $indicators.push(Box::new($indicator::new(&mut $settings)));
@@ -81,10 +81,19 @@ impl Indicators {
     ///
     /// # Errors
     ///
+    #[rustfmt::skip]
     pub fn run(buffer: impl BufRead + Send, mut settings: Settings) -> Result<Self> {
         let mut indicators: Vec<Box<dyn Calculate + Sync>> = vec![];
 
-        add_indicators!(indicators, settings, R024, R025, R035, R036, R038);
+        add_indicators!(
+            indicators,
+            settings,
+            R024,
+            R025,
+            R035,
+            R036,
+            R038,
+        );
 
         fold_reduce(
             buffer,

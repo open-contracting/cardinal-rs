@@ -36,4 +36,6 @@
 
 ## 0.0.1 (2023-02-13)
 
-First release.
+First release, including:
+
+- R024 (*The percentage difference between the winning bid and the second-lowest valid bid is a low outlier*).

@@ -36,7 +36,7 @@ Options:
 
 ## Methodology
 
-The page for each indicator describes its individual methodology.
+The page for each [indicator](#list) describes its individual methodology.
 
 For all indicators, a contracting process is excluded if:
 
@@ -53,6 +53,60 @@ For all indicators, a contracting process is excluded if:
   ```
 
   Otherwise, the main currency is set to the first observed currency.
+
+## Configuration
+
+The page for each [indicator](#list) describes its individual options.
+
+### INI format
+
+The settings file (indicated by the `--settings` option) is in INI format (don't worry: it's simple).
+
+The file is split into sections. A section starts with a name in square brackets, like this:
+
+```ini
+[R024]
+```
+
+A section can contain zero or more properties, like this:
+
+```ini
+[R024]
+threshold = 0.05
+```
+
+A property is a name and a value, with an equals sign (=) in between.
+
+You can document your configuration by starting a line with a number sign (#), like this:
+
+```ini
+[R035]
+# Increase the threshold to reduce the number of false positives.
+threshold = 3
+```
+
+These lines are known as *comments*. (You can also use a semi-colon (;) instead of a number sign.)
+
+### Enable indicators
+
+To enable an [indicator](#list), start a section with its code, for example:
+
+```ini
+[R024]
+```
+
+You don't need to set properties in this section. (Only if you want to!)
+
+### Disable indicators
+
+The disable an indicator, either delete its section and properties, or comment them out, for example:
+
+```ini
+# [R024]
+# threshold = 0.05
+```
+
+Now, the `indicators` command won't run this indicator.
 
 ## Glossary
 
@@ -92,6 +146,7 @@ tenderer
   Synonym of {term}`bidder`.
 ```
 
+(list)=
 ## Indicators
 
 ```{toctree}

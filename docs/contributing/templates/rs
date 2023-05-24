@@ -1,0 +1,24 @@
+use serde_json::{Map, Value};
+
+use crate::indicators::{set_result, Calculate, Indicators, Settings};
+
+#[derive(Default)]
+pub struct R999 {
+}
+
+impl Calculate for R999 {
+    fn new(settings: &mut Settings) -> Self {
+        Self {
+        }
+    }
+
+    // TODO-TITLE.
+    fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
+    }
+
+    fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
+    }
+
+    fn finalize(&self, item: &mut Indicators) {
+    }
+}

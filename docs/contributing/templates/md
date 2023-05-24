@@ -1,0 +1,38 @@
+# TODO-TITLE (R999)
+
+## Methodology
+
+TODO
+
+```{admonition} Example
+:class: seealso
+
+TODO
+```
+
+```{admonition} Why is this a red flag?
+:class: hint
+
+TODO
+```
+
+## Output
+
+The indicator's value is TODO.
+
+## Configuration
+
+To configure the TODO:
+
+```ini
+[R999]
+TODO
+```
+
+## Exclusions
+
+TODO
+
+## Assumptions
+
+TODO
