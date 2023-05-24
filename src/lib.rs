@@ -6,7 +6,7 @@ pub mod standard;
 
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{BufRead, Write};
+use std::io::{self, BufRead, Write};
 use std::path::PathBuf;
 
 use anyhow::Result;
@@ -35,48 +35,54 @@ macro_rules! add_indicators {
 ///
 /// # Errors
 ///
-pub fn init(path: &PathBuf) -> std::io::Result<()> {
-    let mut file = File::create(path)?;
-
-    file.write_all(
-        b"\
-# `prepare` command
-#
-# Read the documentation at:
-# https://cardinal.readthedocs.io/en/latest/cli/prepare.html
+pub fn init(path: &PathBuf) -> std::io::Result<bool> {
+    let content = b"\
+; `prepare` command
+;
+; Read the documentation at:
+; https://cardinal.readthedocs.io/en/latest/cli/prepare.html
 
 [defaults]
-# currency = USD
-# item_classification_scheme = UNSPSC
-# bid_status = valid
-# award_status = active
+; currency = USD
+; item_classification_scheme = UNSPSC
+; bid_status = valid
+; award_status = active
 
 [codelists.bidStatus]
-# qualified = valid
+; qualified = valid
 
-# `indicators` command
-#
-# Read the documentation at:
-# https://cardinal.readthedocs.io/en/latest/cli/indicators/
+; `indicators` command
+;
+; Read the documentation at:
+; https://cardinal.readthedocs.io/en/latest/cli/indicators/
 
 [R024]
-# threshold = 0.05
+; threshold = 0.05
 
 [R025]
-# percentile = 75
-# threshold = 0.05
+; percentile = 75
+; threshold = 0.05
 
 [R035]
-# threshold = 1
+; threshold = 1
 
 [R036]
 
 [R038]
-# threshold = 0.5
-",
-    )?;
+; threshold = 0.5
+";
 
-    Ok(())
+    let stdout = path == &PathBuf::from("-");
+
+    if stdout {
+        let mut file = io::stdout().lock();
+        file.write_all(content)?;
+    } else {
+        let mut file = File::create(path)?;
+        file.write_all(content)?;
+    };
+
+    Ok(stdout)
 }
 
 fn fold_reduce<T: Send, Fold, Reduce, Finalize>(

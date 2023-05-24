@@ -32,7 +32,7 @@
 - {doc}`cli/indicators/index` command:
 
   - R035 (*Bids are disqualified if not submitted by the single tenderer of the winning bid*).
-  - Add `--settings SETTINGS` option for configuration file.
+  - Add `--settings SETTINGS` option for the settings file.
   - Add documentation.
 
 ## 0.0.1 (2023-02-13)

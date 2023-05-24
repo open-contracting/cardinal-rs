@@ -59,7 +59,7 @@ enum Commands {
         #[arg(long, short, value_parser = settings_parser)]
         settings: Option<ocdscardinal::Settings>,
     },
-    /// Write a settings file for easy configuration.
+    /// Write a default settings file for configuration.
     Init {
         /// The path to the settings file to write
         file: PathBuf,
@@ -116,13 +116,15 @@ fn main() {
     pretty_env_logger::formatted_builder().filter_level(level).init();
 
     match &cli.command {
-        Commands::Init { file } => {
-            if let Err(err) = ocdscardinal::init(file) {
-                eprintln!("Error writing to {file:?}: {err}");
-            } else {
+        Commands::Init { file } => match ocdscardinal::init(file) {
+            Err(e) => {
+                eprintln!("Error writing to {file:?}: {e}");
+            }
+            Ok(false) => {
                 println!("Settings written to {file:?}.");
             }
-        }
+            _ => {}
+        },
         Commands::Coverage { file } => match ocdscardinal::Coverage::run(reader(file)) {
             Ok(item) => {
                 println!("{:?}", item.results());

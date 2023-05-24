@@ -19,3 +19,10 @@ coverage
 prepare
 indicators/index
 ```
+
+```{toctree}
+:caption: Topics
+:maxdepth: 1
+
+settings
+```
