@@ -15,7 +15,7 @@ fn coverage(args: &[&str]) -> Assert {
 
 #[test]
 fn documentation() {
-    trycmd::TestCases::new().case("README.md");
+    trycmd::TestCases::new().case("README.md").case("docs/**/*.md");
 }
 
 #[test]
