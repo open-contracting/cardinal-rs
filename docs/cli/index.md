@@ -14,6 +14,7 @@ cargo install ocdscardinal
 :caption: Commands
 :maxdepth: 1
 
+init
 coverage
 prepare
 indicators/index

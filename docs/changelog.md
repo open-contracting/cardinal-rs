@@ -4,8 +4,8 @@
 
 ### Added
 
+- {doc}`cli/init` command.
 - {doc}`cli/prepare` command.
-
 - {doc}`cli/indicators/index` command:
 
   - R025 (*The ratio of winning bids to submitted bids for a top tenderer is a low outlier*).
@@ -19,6 +19,7 @@
 - {doc}`cli/indicators/index` command:
 
   - Split indicators into trait objects.
+  - Rename indicators from `NF###` to `R###`.
 
 ### Fixed
 
