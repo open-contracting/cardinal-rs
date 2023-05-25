@@ -5,6 +5,7 @@
 :caption: Contents
 :maxdepth: 2
 
+topics/index
 cli/index
 contributing/index
 changelog

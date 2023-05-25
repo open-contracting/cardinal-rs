@@ -34,3 +34,4 @@ html_static_path = ["_static"]
 
 myst_enable_extensions = ["deflist", "tasklist"]
 myst_enable_checkboxes = True
+myst_heading_anchors = 3

@@ -1,12 +1,5 @@
 # Contributing
 
-```{toctree}
-:caption: Contents
-:maxdepth: 1
-
-indicators
-```
-
 ## Setup
 
 - Set up the git pre-commit hook:
@@ -24,4 +17,12 @@ indicators
 
 ```{note}
 If you are new to Rust, see the [Reference section](https://ocp-software-handbook.readthedocs.io/en/latest/rust/#reference) of the Rust page of the OCP Software Development Handbook.
+```
+
+## Tasks
+
+```{toctree}
+:maxdepth: 1
+
+indicators
 ```

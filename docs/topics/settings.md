@@ -1,8 +1,8 @@
 # Settings file
 
-A settings file can be used to configure the behavior of the {doc}`prepare` and {doc}`indicators/index` commands, using the `--settings` option to provide the path to the settings file.
+A settings file can be used to configure the behavior of the {doc}`../cli/prepare` and {doc}`../cli/indicators/index` commands, using the `--settings` option to provide the path to the settings file.
 
-### File format
+## File format
 
 The settings file is in INI format (don't worry: it's simple).
 

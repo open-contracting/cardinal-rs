@@ -20,7 +20,7 @@ Options:
 ```
 
 ```{seealso}
-An introduction to the {doc}`settings`.
+An introduction to the {doc}`../topics/settings`.
 ```
 
 ## Demonstration
