@@ -21,6 +21,10 @@
   - Split indicators into trait objects.
   - Rename indicators from `NF###` to `R###`.
 
+- {doc}`cli/coverage` command:
+
+  - Preserve key order.
+
 ### Fixed
 
 - Commands no longer error on `SIGPIPE` signal.

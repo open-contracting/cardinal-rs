@@ -36,7 +36,12 @@ enum Commands {
         /// The path to the file (or "-" for standard input), in which each line is JSON text
         file: PathBuf,
     },
+    /// Correct quality issues within OCDS compiled releases in a line-delimited JSON file
     ///
+    /// Corrected data is written to standard output as line-delimited JSON.
+    ///
+    /// Quality issues are written to standard error as CSV rows with the columns: line number, ocid, path,
+    /// array indexes, incorrect value, error description.
     Prepare {
         /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
         file: PathBuf,
