@@ -20,6 +20,7 @@
 
   - Split indicators into trait objects.
   - Rename indicators from `NF###` to `R###`.
+  - Remove "OCID" from output if no OCIDs reported.
   - Preserve top-level key order.
 
 - {doc}`cli/coverage` command:

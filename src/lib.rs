@@ -186,6 +186,10 @@ impl Indicators {
                     indicator.finalize(&mut item);
                 }
 
+                if item.results[&Group::OCID].is_empty() {
+                    item.results.remove(&Group::OCID);
+                }
+
                 // If we return `Ok(item)`, we can't consume temporary internal fields.
                 Ok(Self {
                     results: item.results,
