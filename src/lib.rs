@@ -10,6 +10,7 @@ use std::io::{self, BufRead, Write};
 use std::path::PathBuf;
 
 use anyhow::Result;
+use indexmap::IndexMap;
 use log::warn;
 use rayon::prelude::*;
 use serde_json::{Map, Value};
@@ -284,6 +285,7 @@ impl Prepare {
 
         let codelists = settings.codelists.unwrap_or_default();
         let bid_status = codelists.get("bidStatus").unwrap_or(&default);
+        let award_status = codelists.get("awardStatus").unwrap_or(&default);
 
         buffer.lines().enumerate().par_bridge().for_each(|(i, lines_result)| {
             match lines_result {
@@ -321,7 +323,7 @@ impl Prepare {
                                                     && !classification.contains_key("scheme")
                                                 {
                                                     item_classification_scheme_default.as_ref().map_or_else(|| {
-                                                        eprintln!("{},{ocid},/bids/details[]/items[]/classification/scheme,{j}-{k},,not set", i + 1);
+                                                        eprintln!("{},{ocid},/bids/details[]/items[]/classification/scheme,{j}.{k},,not set", i + 1);
                                                     }, |scheme| {
                                                         classification.insert("scheme".into(), scheme.clone());
                                                     });
@@ -352,6 +354,9 @@ impl Prepare {
                                 if let Some(Value::Array(awards)) = release.get_mut("awards") {
                                     for (j, award) in awards.iter_mut().enumerate() {
                                         if let Some(Value::String(status)) = award.get_mut("status") {
+                                            if award_status.contains_key(status) {
+                                                *status = award_status[status].clone();
+                                            }
                                             if !AWARD_STATUS.contains(status.as_str()) {
                                                 eprintln!("{},{ocid},/awards[]/status,{j},\"{status}\",invalid", i + 1);
                                             }
@@ -391,11 +396,11 @@ impl Prepare {
 
 #[derive(Debug, Default)]
 pub struct Coverage {
-    counts: HashMap<String, u32>,
+    counts: IndexMap<String, u32>,
 }
 
 impl Coverage {
-    pub const fn results(&self) -> &HashMap<String, u32> {
+    pub const fn results(&self) -> &IndexMap<String, u32> {
         &self.counts
     }
 
@@ -492,7 +497,7 @@ mod tests {
 
     fn check_coverage(name: &str) {
         let result = Coverage::run(reader(name, "jsonl"));
-        let expected = serde_json::from_reader(reader(name, "expected")).unwrap();
+        let expected: IndexMap<String, u32> = serde_json::from_reader(reader(name, "expected")).unwrap();
 
         assert_eq!(result.unwrap().counts, expected);
     }
