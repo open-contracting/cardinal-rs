@@ -33,34 +33,91 @@ Options:
 
 ## Demonstration
 
+Given this line-delimited JSON file:
+
+:::{literalinclude} ../examples/coverage.jsonl
+:language: json
+:::
+
+The `coverage` command outputs:
+
 ```console
-$ echo '{"phoneNumbers":[{"type": "home","number": "212 555-1234"},{"type": "office","number": "646 555-4567"}]}' | ocdscardinal coverage -
-{"": 1, "/": 1, "/phoneNumbers": 1, "/phoneNumbers[]": 2, "/phoneNumbers[]/": 2, "/phoneNumbers[]/type": 2, "/phoneNumbers[]/number": 2}
+$ ocdscardinal coverage docs/examples/coverage.jsonl
+{"/phoneNumbers[]/type": 2, "/phoneNumbers[]/number": 2, "/phoneNumbers[]/": 2, "/phoneNumbers[]": 2, "/phoneNumbers": 1, "/": 1, "": 1}
+
 ```
 
 ## Caveats
 
-```{note}
+:::{note}
 These edge cases are not expected to be encountered in real data.
+:::
+
+If a member name is duplicated, only the last duplicate is considered:
+
+::::{grid} 1 2 2 2
+:::{grid-item}
+:columns: 3
+:margin: 0
+:padding: 1
+```{literalinclude} ../examples/coverage-duplicate.jsonl
+:language: json
 ```
-
-If a member name is duplicated, only the last duplicate is considered.
-
+:::
+:::{grid-item}
+:columns: 9
+:margin: 0
+:padding: 1
 ```console
-$ echo '{"a": 0, "a": null}' | ocdscardinal coverage -
+$ ocdscardinal coverage docs/examples/coverage-duplicate.jsonl
 {}
+
 ```
+:::
+::::
 
 If a member name is empty, its path is the same as its parent object’s path:
 
-```console
-$ echo '{"": 0}' | ocdscardinal coverage -
-{"": 1, "/": 2}
+::::{grid} 1 2 2 2
+:::{grid-item}
+:columns: 3
+:margin: 0
+:padding: 1
+```{literalinclude} ../examples/coverage-empty.jsonl
+:language: json
 ```
+:::
+:::{grid-item}
+:columns: 9
+:margin: 0
+:padding: 1
+```console
+$ ocdscardinal coverage docs/examples/coverage-empty.jsonl
+{"/": 2, "": 1}
+
+```
+:::
+::::
 
 If a member name ends with `[]`, its path can be the same as a matching sibling’s path:
 
-```console
-$ echo '{"a[]": 0, "a": [0]}' | ocdscardinal coverage -
-{"": 1, "/": 1, "/a": 1, "/a[]": 2}
+::::{grid} 1 2 2 2
+:::{grid-item}
+:columns: 3
+:margin: 0
+:padding: 1
+```{literalinclude} ../examples/coverage-bracket.jsonl
+:language: json
 ```
+:::
+:::{grid-item}
+:columns: 9
+:margin: 0
+:padding: 1
+```console
+$ ocdscardinal coverage docs/examples/coverage-bracket.jsonl
+{"/a[]": 2, "/a": 1, "/": 1, "": 1}
+
+```
+:::
+::::
