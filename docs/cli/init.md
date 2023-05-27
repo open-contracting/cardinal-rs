@@ -55,6 +55,9 @@ $ ocdscardinal init -
 [codelists.bidStatus]
 ; qualified = valid
 
+[codelists.awardStatus]
+; Active = active
+
 ; `indicators` command
 ;
 ; Read the documentation at:

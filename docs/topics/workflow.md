@@ -28,7 +28,7 @@ You can use the {doc}`../cli/prepare` command to identify and correct quality is
 
 ## 3. Explore data
 
-To inform your [selection and configuration](../cli/indicators/index.md#workflow) of indicators, you can explore your data using [jaq](https://github.com/01mf02/jaq) (faster) or [jq](https://stedolan.github.io/jq/) (slower).
+To inform your [selection and configuration](../cli/indicators/index.md#workflow) of indicators, you can explore your data using JSON processors like [jaq](https://github.com/01mf02/jaq) (faster) or [jq](https://stedolan.github.io/jq/) (slower).
 
 For example, if the publisher uses `/tender/procurementMethodDetails` for the local name of the procurement method, you can count the occurrences of each procurement method with:
 
@@ -50,7 +50,7 @@ $ jaq 'reduce (inputs | .tender.procurementMethodDetails) as $s ({}; .[$s] += 1)
 If the publisher uses a classification system for products and services, like UNSPSC or CPV, you can count the occurrences of each segment/division of the classification with:
 
 ```console
-$ jaq 'reduce (inputs | .awards[]?.items[]?.classification.id | values | tostring | .[:2]) as $s ({}; .[$s] += 1)' file.jsonl
+$ jaq 'reduce (inputs | .awards[]?.items[]?.classification.id | values | tostring | .[:2]) as $s ({}; .[$s] += 1)' input.jsonl
 {
   "42": 26933,
   "43": 12549,
@@ -67,6 +67,9 @@ Additional information on this step is provided in the [command's documentation]
 
 ## 5. Analyze results
 
-:::{note}
-The Open Contracting Partnership is building business intelligence tools, using the indicator results from Cardinal. Are you interested? Contact OCP's [Data Support Team](mailto:data@open-contracting.org).
+:::{admonition} Coming soon
+:class: important
+The Open Contracting Partnership is building business intelligence tools, using the indicator results from Cardinal.
+
+Are you interested? Contact OCP's [Data Support Team](mailto:data@open-contracting.org).
 :::

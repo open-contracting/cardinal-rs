@@ -52,6 +52,9 @@ pub fn init(path: &PathBuf) -> std::io::Result<bool> {
 [codelists.bidStatus]
 ; qualified = valid
 
+[codelists.awardStatus]
+; Active = active
+
 ; `indicators` command
 ;
 ; Read the documentation at:

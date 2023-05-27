@@ -4,7 +4,7 @@ A settings file can be used to configure the behavior of the {doc}`../cli/prepar
 
 ## File format
 
-The settings file is in INI format (don't worry: it's simple).
+The settings file is in INI format (don't worry – it's simple).
 
 The file is split into sections. A section starts with a name in square brackets, like this:
 
