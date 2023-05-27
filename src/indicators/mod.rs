@@ -7,6 +7,7 @@ pub mod r038;
 use std::collections::HashMap;
 use std::ops::AddAssign;
 
+use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 
@@ -72,7 +73,7 @@ pub enum Group {
 
 #[derive(Debug, Default)]
 pub struct Indicators {
-    pub results: HashMap<Group, HashMap<String, HashMap<Indicator, f64>>>,
+    pub results: IndexMap<Group, HashMap<String, HashMap<Indicator, f64>>>,
     pub currency: Option<String>,
     /// The percentage difference between the winning bid and the second-lowest valid bid for each `ocid`.
     pub r024_ratios: HashMap<String, f64>,

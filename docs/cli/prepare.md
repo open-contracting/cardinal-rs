@@ -35,27 +35,23 @@ Options:
 ## Workflow
 
 :::{attention}
-Before following this command's workflow, follow the {doc}`../../topics/workflow`.
+Before following this command's workflow, follow the earlier steps in the {doc}`../../topics/workflow`.
 :::
 
-1. Initialize a `settings.ini` file, with the {doc}`init` command:
+1. Initialize a `settings.ini` file, using the {doc}`init` command:
 
    ```console
    $ ocdscardinal init settings.ini
    Settings written to "settings.ini".
    ```
 
-1. Write quality issues to an `issues.csv` file, with the `prepare` command. For example:
+1. Write quality issues to an `issues.csv` file, using the `prepare` command. For example:
 
    ```bash
    ocdscardinal prepare --settings settings.ini input.jsonl > prepared.jsonl 2> issues.csv
    ```
 
-1. Review the quality issues in the `issues.csv` file. You can open the file as a spreadsheet.
-
-   Don't worry if the file reports many issues: most are repetitive and can be fixed at once.
-
-   See the [demonstration](#demonstration) below for more information on interpreting results.
+1. Review the quality issues in the `issues.csv` file. Don't worry if many issues are reported: most are repetitive and can be fixed at once. Read the [demonstration](#demonstration) to learn how to interpret results.
 
 1. Adjust the [configuration](#configuration) in the `settings.ini` file to fix the quality issues.
 
@@ -104,6 +100,8 @@ Quality issues are reported as CSV rows. Adding a header and rendering the row a
 
 1,"ocds-213czf-1",/bids/details[]/status,0,,not set
 :::
+
+If you redirect the quality issues to a file, you can open the CSV as a spreadsheet.
 
 ::::
 

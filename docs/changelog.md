@@ -20,10 +20,11 @@
 
   - Split indicators into trait objects.
   - Rename indicators from `NF###` to `R###`.
+  - Preserve top-level key order.
 
 - {doc}`cli/coverage` command:
 
-  - Preserve key order.
+  - Preserve JSON path key order.
 
 ### Fixed
 
