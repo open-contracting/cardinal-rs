@@ -32,6 +32,6 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "furo"
 html_static_path = ["_static"]
 
-myst_enable_extensions = ["deflist", "tasklist"]
+myst_enable_extensions = ["colon_fence", "deflist", "tasklist"]
 myst_enable_checkboxes = True
 myst_heading_anchors = 3

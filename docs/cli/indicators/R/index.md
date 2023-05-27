@@ -1,8 +1,8 @@
 # Red flags
 
-```{toctree}
+:::{toctree}
 :glob: true
 :maxdepth: 1
 
 *
-```
+:::

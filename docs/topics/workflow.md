@@ -8,9 +8,9 @@ Collect the data you want to analyze in OCDS format.
 
 You can use the [OCP Data Registry](https://data.open-contracting.org) to download data from over 50 publishers. The Registry provides data as OCDS compiled releases in line-delimited JSON files (the same format expected by Cardinal).
 
-```{tip}
+:::{tip}
 Is the data you're interested in not in OCDS format? Contact OCP's [Data Support Team](mailto:data@open-contracting.org) to see how we can help.
-```
+:::
 
 ## 2. Prepare data
 
@@ -67,6 +67,6 @@ Additional information on this step is provided in the [command's documentation]
 
 ## 5. Analyze results
 
-```{note}
+:::{note}
 The Open Contracting Partnership is building business intelligence tools, using the indicator results from Cardinal. Are you interested? Contact OCP's [Data Support Team](mailto:data@open-contracting.org).
-```
+:::

@@ -19,9 +19,9 @@ Options:
 
 ```
 
-```{seealso}
+:::{seealso}
 An introduction to the {doc}`../topics/settings`.
-```
+:::
 
 ## Demonstration
 
@@ -33,9 +33,9 @@ Settings written to "settings.ini".
 
 ```
 
-```{warning}
+:::{warning}
 If `settings.ini` already exists, its contents are overwritten.
-```
+:::
 
 Preview the content of the settings file:
 

@@ -10,7 +10,7 @@ If you're a **Rust programmer**, ocdscardinal can be installed with `cargo`:
 cargo install ocdscardinal
 ```
 
-```{toctree}
+:::{toctree}
 :caption: Commands
 :maxdepth: 1
 
@@ -18,4 +18,4 @@ init
 coverage
 prepare
 indicators/index
-```
+:::

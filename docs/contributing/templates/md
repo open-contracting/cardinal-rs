@@ -4,17 +4,17 @@
 
 TODO
 
-```{admonition} Example
+:::{admonition} Example
 :class: seealso
 
 TODO
-```
+:::
 
-```{admonition} Why is this a red flag?
+:::{admonition} Why is this a red flag?
 :class: hint
 
 TODO
-```
+:::
 
 ## Output
 
