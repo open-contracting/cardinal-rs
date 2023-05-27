@@ -40,8 +40,8 @@ enum Commands {
     ///
     /// Corrected data is written to standard output as line-delimited JSON.
     ///
-    /// Quality issues are written to standard error as CSV rows with the columns: line number, ocid, path,
-    /// array indexes, incorrect value, error description.
+    /// Quality issues are written to standard error as CSV rows with the columns: line, ocid, path, array
+    /// indexes, incorrect value, error description.
     Prepare {
         /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
         file: PathBuf,

@@ -10,8 +10,8 @@ Correct quality issues within OCDS compiled releases in a line-delimited JSON fi
 
 Corrected data is written to standard output as line-delimited JSON.
 
-Quality issues are written to standard error as CSV rows with the columns: line number, ocid, path,
-array indexes, incorrect value, error description.
+Quality issues are written to standard error as CSV rows with the columns: line, ocid, path, array
+indexes, incorrect value, error description.
 
 Usage: ocdscardinal[EXE] prepare [OPTIONS] <FILE>
 
@@ -96,7 +96,7 @@ $ ocdscardinal prepare docs/examples/prepare.jsonl
 Quality issues are reported as CSV rows. Adding a header and rendering the row as a table produces:
 
 :::{csv-table}
-:header: line number,ocid,path,array indexes,incorrect value,error description
+:header: line,ocid,path,array indexes,incorrect value,error description
 
 1,"ocds-213czf-1",/bids/details[]/status,0,,not set
 :::
@@ -105,31 +105,31 @@ If you redirect the quality issues to a file, you can open the CSV as a spreadsh
 
 ::::
 
-Given the context of this example, the columns can be used as follows:
+Given the context of this example, the columns can be used as follows.
 
-line number
-: Find the problematic compiled release in the input file.
+:::{list-table}
+:header-rows: 1
 
-ocid
-: Find the problematic compiled release in another system, like the data source.
+* - Column
+  - Use
+* - line
+  - Find the problematic compiled release in the input file.
+* - ocid
+  - Find the problematic compiled release in another system, like the data source.
+* - path
+  - Consult the field that has an issue. This column can be used to sort and filter the issues.
+* - array indexes
+  - Find the problematic array entry in the compiled release. If the *path* contains multiple arrays (`[]`), the indexes are separated by periods.
+* - incorrect value
+  - Consult the value that caused the issue. If the issue is that the field isn't set, this is blank.
+* - error description
+  - Determine the potential solution to the issue. The possible values are:
 
-path
-: Consult the field that has an issue. This column can be used to sort and filter the issues.
-
-array indexes
-: Find the problematic array entry in the compiled release. If the *path* contains multiple arrays (`[]`), the indexes are separated by periods.
-
-incorrect value
-: Consult the value that caused the issue. If the issue is that the field isn't set, this is blank.
-
-error description
-: Determine the potential solution to the issue. The possible values are:
-
-  not set
-  : The field isn't set. To correct, [fill in missing values](#fill-in-missing-values).
-
-  invalid
-  : The code isn't valid. To correct, [re-map incorrect codes](#re-map-incorrect-codes).
+    | Value | Meaning |
+    | - | - |
+    | not set | The field isn't set. To correct, [fill in missing values](#fill-in-missing-values). |
+    | invalid | The code isn't valid. To correct, [re-map incorrect codes](#re-map-incorrect-codes). |
+:::
 
 ## Configuration
 
