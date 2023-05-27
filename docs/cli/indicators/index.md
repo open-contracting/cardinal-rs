@@ -34,62 +34,103 @@ Options:
 
 ```
 
-## Methodology
+## Workflow
 
-The page for each [indicator](#list) describes its individual methodology.
+:::{attention}
+Before following this command's workflow, follow the earlier steps in the {doc}`../../topics/workflow`.
+:::
 
-For all indicators, a contracting process is excluded if:
+1. **Select indicators**. If you ran the {doc}`../init` command when preparing your data, you already have a {doc}`../../topics/settings` that enables all indicators. [Enable](#enable-an-indicator) or [disable](#disable-an-indicator) indicators as you wish.
+1. **Run the command**. For example, if your settings are in `settings.ini` and your data is in `prepared.jsonl`, this command writes the output to `results.json`:
 
-- The `ocid` isn’t a string.
+   ```bash
+   ocdscardinal indicators --settings settings.ini prepared.jsonl > results.json
+   ```
 
-- The relevant organization references don’t set an `id`.
+1. **Review the results**. Read the [demonstration](#demonstration) to learn about the output format.
 
-- Monetary values, where relevant, don’t use the main currency. [#11](https://github.com/open-contracting/cardinal-rs/issues/11)
+   :::{admonition} To do
+   :class: caution
+   This section will expand on the interpretation of results. [#40](https://github.com/open-contracting/cardinal-rs/issues/40)
+   :::
 
-  To configure the main currency, add to the top of your settings file:
+1. **Edit the settings**. Adjust the configuration of the [indicators](#list) based on your review of the results, in order to reduce false positives.
 
-  ```ini
-  currency = USD
-  ```
+Repeat the last three steps until you are satisfied with the results.
 
-  Otherwise, the main currency is set to the first observed currency.
+:::{note}
+Have questions, concerns, or feedback? [Email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
+:::
+
+## Demonstration
+
+A procurement indicator or red flag can be about a contracting process, buyer, procuring entity or tenderer. For example, a contracting process might have a suspicious feature, like all bids except the winner's being disqualified. Or, a buyer might exhibit suspicious behavior, like disqualifying a large number of bids across its contracting processes.
+
+The JSON output is therefore organized as an object in which the key is a **group**: "OCID" (the unique identifier of a contracting process), "Buyer", "ProcuringEntity" or "Tenderer". For example:
+
+```json
+{
+  "OCID": {},
+  "Buyer": {},
+  "ProcuringEntity": {},
+  "Tenderer": {}
+}
+```
+
+Each value at the top level is an object representing the results within that **group**, in which the key is an **identifier** extracted from the input data:
+
+| Group | Identifier |
+| - | - |
+| OCID | `/ocid` |
+| Buyer | `/buyer/id` |
+| ProcuringEntity | `/tender/procuringEntity/id` |
+| Tenderer | `/bids/details[]/tenderers[]/id` |
+
+For example:
+
+```json
+{
+  "OCID": {
+    "ocds-6550wx-JRFPFA-DAF-CM-2021-0012": {}
+  },
+  "Buyer": {
+    "DO-RPE-55216": {}
+  }
+}
+```
+
+Each value at the second level is an object representing the results relating to that **identifier**, in which the key is the **code** for an indicator, and the value is the **output** of that indicator. For example:
+
+```json
+{
+  "OCID": {
+    "ocds-6550wx-JRFPFA-DAF-CM-2021-0012": {
+      "R036": 1.0
+    }
+  },
+  "Buyer": {
+    "DO-RPE-55216": {
+      "R038": 0.8
+    }
+  }
+}
+```
+
+The **output** of an indicator is always a decimal. If an indicator didn't produce an output – either because it couldn't be calculated, or because no red flag was raised – then its code won't appear.
+
+You can [consult](#list) the codes for all indicators, read the description of their outputs and see a demonstration of their calculation.
 
 ## Configuration
 
-The page for each [indicator](#list) describes its individual options.
+The page for each [indicator](#list) describes its individual settings.
 
-### INI format
+:::{seealso}
+An introduction to the {doc}`../../topics/settings`.
+:::
 
-The settings file (indicated by the `--settings` option) is in INI format (don't worry: it's simple).
+### Enable an indicator
 
-The file is split into sections. A section starts with a name in square brackets, like this:
-
-```ini
-[R024]
-```
-
-A section can contain zero or more properties, like this:
-
-```ini
-[R024]
-threshold = 0.05
-```
-
-A property is a name and a value, with an equals sign (=) in between.
-
-You can document your configuration by starting a line with a number sign (#), like this:
-
-```ini
-[R035]
-# Increase the threshold to reduce the number of false positives.
-threshold = 3
-```
-
-These lines are known as *comments*. (You can also use a semi-colon (;) instead of a number sign.)
-
-### Enable indicators
-
-To enable an [indicator](#list), start a section with its code, for example:
+To enable an indicator, start a section with its code, for example:
 
 ```ini
 [R024]
@@ -97,13 +138,13 @@ To enable an [indicator](#list), start a section with its code, for example:
 
 You don't need to set properties in this section. (Only if you want to!)
 
-### Disable indicators
+### Disable an indicator
 
 The disable an indicator, either delete its section and properties, or comment them out, for example:
 
 ```ini
-# [R024]
-# threshold = 0.05
+; [R024]
+; threshold = 0.05
 ```
 
 Now, the `indicators` command won't run this indicator.
@@ -112,7 +153,7 @@ Now, the `indicators` command won't run this indicator.
 
 % Do not add terms to the glossary that are not used in the documentation!
 
-```{glossary}
+:::{glossary}
 bid
 
   An offer made by an {term}`economic operator` as part of a {term}`contracting process`. Also known as a *tender*.
@@ -144,20 +185,36 @@ submitted
 tenderer
 
   Synonym of {term}`bidder`.
-```
+:::
 
 (list)=
 ## Indicators
 
-```{toctree}
+Indicators are assigned codes for easy reference: for example, `R001`. The first letter indicates the category: **R**ed flag or **U**se case.
+
+The page for each indicator describes its individual methodology. For all indicators, a contracting process is excluded if:
+
+- The `ocid` isn’t a string.
+- The relevant organization references don’t set an `id`.
+- Monetary values, where relevant, don’t use the main currency. [#11](https://github.com/open-contracting/cardinal-rs/issues/11)
+
+  To configure the main currency, add to the top of your settings file:
+
+  ```ini
+  currency = USD
+  ```
+
+  Otherwise, the main currency is set to the first observed currency.
+
+:::{toctree}
 :hidden: true
 
 R/index
-```
+:::
 
 ### Red flags
 
-```{list-table}
+:::{list-table}
 :header-rows: 1
 
 * - Code
@@ -172,4 +229,4 @@ R/index
   - [The lowest submitted bid is disqualified, while the award criterion is price only](R/036)
 * - [R038](R/038)
   - [The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer](R/038)
-```
+:::
