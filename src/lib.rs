@@ -291,7 +291,7 @@ impl Prepare {
                     match serde_json::from_str(&string) {
                         Ok(value) => {
                             if let Value::Object(mut release) = value {
-                                let ocid = release["ocid"].clone();
+                                let ocid = release.get("ocid").map_or_else(|| Value::Null, std::clone::Clone::clone);
 
                                 prepare_id_object!(release, "buyer");
 
@@ -368,6 +368,8 @@ impl Prepare {
                                 }
 
                                 println!("{}", serde_json::to_string(&release).unwrap());
+                            } else {
+                                warn!("Line {} is not a JSON object, skipping.", i + 1);
                             }
                         }
                         Err(e) => {
