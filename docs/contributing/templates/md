@@ -36,3 +36,19 @@ TODO
 ## Assumptions
 
 TODO
+
+### Demonstration
+
+*Input*
+
+:::{literalinclude} ../../../examples/R/999.jsonl
+:language: json
+:::
+
+*Output*
+
+```console
+$ ocdscardinal indicators --settings docs/examples/settings.ini docs/examples/R/999.jsonl
+{}
+
+```

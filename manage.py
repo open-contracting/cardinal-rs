@@ -30,11 +30,12 @@ def add_indicator(code):
         directory / "tests" / "fixtures" / "indicators" / f"{upper}.expected",
         directory / "src" / "indicators" / f"{lower}.rs",
         directory / "docs" / "cli" / "indicators" / letter / f"{number}.md",
+        directory / "docs" / "examples" / letter / f"{number}.jsonl",
     ):
         with (templates / path.suffix[1:]).open() as f:
             content = f.read()
         with path.open("w") as f:
-            f.write(content.replace("R999", upper))
+            f.write(content.replace("R999", upper).replace("R/999", f"{letter}/{number}"))
 
     for path, instructions in (
         (
@@ -52,6 +53,12 @@ def add_indicator(code):
                 (r"add_indicators!", r"\)", upper, f"            {upper},\n"),
             ],
         ),
+        (
+            directory / "docs" / "examples" / "settings.ini",
+            [
+                (r"\[[A-Z]\d{3}", r"", upper, f"[{upper}]\n"),
+            ],
+        )
     ):
         instructions.append(("🦀", r"", upper, ""))
 
