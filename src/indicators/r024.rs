@@ -21,7 +21,6 @@ impl Calculate for R024 {
         }
     }
 
-    // The percentage difference between the winning bid and the second-lowest valid bid is a low outlier.
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
         let mut lowest_non_winner_amount = None;
         let mut winner_amount = None;

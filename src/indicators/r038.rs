@@ -42,7 +42,6 @@ impl Calculate for R038 {
         }
     }
 
-    // The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer.
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, _ocid: &str) {
         let submitted_bids = Indicators::get_submitted_bids(release);
 

@@ -12,7 +12,6 @@ impl Calculate for R999 {
         }
     }
 
-    // TODO-TITLE.
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
     }
 

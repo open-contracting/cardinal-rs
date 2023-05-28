@@ -20,7 +20,6 @@ impl Calculate for R025 {
         Self { percentile, threshold }
     }
 
-    // The ratio of winning bids to submitted bids for a top tenderer is a low outlier.
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, _ocid: &str) {
         if let Some((complete_awards, details)) =
             Indicators::get_complete_awards_and_bids_if_all_awards_final(release)

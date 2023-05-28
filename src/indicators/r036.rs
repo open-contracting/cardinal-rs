@@ -16,7 +16,6 @@ impl Calculate for R036 {
         }
     }
 
-    // The lowest submitted bid is disqualified, while the award criterion is price only.
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
         let mut lowest_amount = None;
         let mut lowest_amount_is_disqualified = false;

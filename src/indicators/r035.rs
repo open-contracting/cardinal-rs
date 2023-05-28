@@ -18,7 +18,6 @@ impl Calculate for R035 {
         }
     }
 
-    // Bids are disqualified if not submitted by the single tenderer of the winning bid.
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
         let mut award_supplier_ids = HashSet::new();
         let mut valid_tenderer_ids = HashSet::new();
