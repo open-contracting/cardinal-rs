@@ -2,11 +2,13 @@
 
 You can use the check marks to track your progress (do not reload the page).
 
+In this tutorial, the example indicator is given the code R999. Its methodology is "A competition completed with few submitted bids," with the default for "few" being 1 bid.
+
 ## 1. Assign a code
 
-When adding an indicator that is not assigned a code among the [resources](https://www.open-contracting.org/resources/) of the Open Contracting Partnership (or if you don't know), [create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues) to be assigned a code.
+When adding an indicator that is not assigned a code among the [resources](https://www.open-contracting.org/resources/) of the Open Contracting Partnership (or if you don't know):
 
-In this tutorial, the example indicator is given the code R999. Its methodology is "A competition completed with few submitted bids," with the default for "few" being 1 bid.
+- [ ] [Create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues) to be assigned a code.
 
 (indicators-boilerplate)=
 ## 2. Add boilerplate content
@@ -143,7 +145,7 @@ If the indicator has no configuration, the `Empty` struct can be used, which has
 :end-at: "}"
 :::
 
-Otherwise, create a new struct named after the indicator. The [`#[serde(deny_unknown_fields)]`](https://serde.rs/container-attrs.html#deny_unknown_fields) attribute causes Cardinal to error if the user sets an unknown property. For example:
+Otherwise, create a new struct named after the indicator. For example:
 
 ```rust
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -154,6 +156,8 @@ pub struct R999 {
     my_text: Option<String>,
 }
 ```
+
+The [`#[serde(deny_unknown_fields)]`](https://serde.rs/container-attrs.html#deny_unknown_fields) attribute causes an error if the user sets an unknown property.
 
 :::{admonition} Example
 :class: seealso
@@ -226,7 +230,7 @@ If the indicator is not configurable, then the `new` method and the struct (`R99
 
 If the indicator is configurable, then the `new` method reads the `settings` arguments and returns an instance of the struct (the capitalized `Self` token refers to the struct).
 
-:::{tip}
+:::{hint}
 To avoid unnecessary memory allocation, you can [`std::mem::take()`](https://doc.rust-lang.org/std/mem/fn.take.html) the `Settings` field named after the indicator. Indicators should not use other indicators' settings.
 :::
 
@@ -249,7 +253,7 @@ You can now move the field's value into the `R999` struct in the new module, `sr
    }
    :::
 
-   If the field's default value couldn't be set at initialization, you would make it optional. For example, if the default value depended on order statistics, like quartiles.
+   If the field's default value couldn't be set at initialization, you would make it optional: for example, if the default value depended on order statistics, like quartiles.
 
    :::{code-block} rust
    :emphasize-lines: 3
@@ -308,7 +312,7 @@ With that in mind, while you implement the indicator, think about whether:
 
 - A new configuration should be added, to address a quality issue you encountered.
 
-[Create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues) to request changes to the `prepare` command.
+[Create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues) to request any changes to the `prepare` command.
 
 ### How data is processed
 
