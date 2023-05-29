@@ -16,16 +16,15 @@
 
 ### Changed
 
+- Error on unknown configurations in the settings file.
 - {doc}`cli/indicators/index` command:
-
-  - Split indicators into trait objects.
+  - [Enable](cli/indicators/index.md#enable-an-indicator) indicators in the settings file.
   - Rename indicators from `NF###` to `R###`.
   - Remove "OCID" from output if no OCIDs reported.
-  - Preserve top-level key order.
-
+  - Split indicators into trait objects.
+  - Preserve top-level key order in the JSON output.
 - {doc}`cli/coverage` command:
-
-  - Preserve JSON path key order.
+  - Preserve JSON path key order in the JSON output.
 
 ### Fixed
 
@@ -36,7 +35,6 @@
 ### Added
 
 - {doc}`cli/indicators/index` command:
-
   - R035 (*Bids are disqualified if not submitted by the single tenderer of the winning bid*).
   - Add `--settings SETTINGS` option for the settings file.
   - Add documentation.

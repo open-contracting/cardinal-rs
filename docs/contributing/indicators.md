@@ -553,7 +553,6 @@ Demonstration
   ### Added
 
   - {doc}`cli/indicators/index` command:
-
     - R999 (*The title of the indicator*).
   ```
 
