@@ -20,7 +20,7 @@ use crate::indicators::r025::R025;
 use crate::indicators::r035::R035;
 use crate::indicators::r036::R036;
 use crate::indicators::r038::R038;
-pub use crate::indicators::{Calculate, Group, Indicator, Indicators, Settings};
+pub use crate::indicators::{Calculate, Codelist, Group, Indicator, Indicators, Settings};
 use crate::standard::{AWARD_STATUS, BID_STATUS};
 
 macro_rules! add_indicators {
@@ -49,10 +49,10 @@ pub fn init(path: &PathBuf) -> std::io::Result<bool> {
 ; bid_status = valid
 ; award_status = active
 
-[codelists.bidStatus]
+[codelists.BidStatus]
 ; qualified = valid
 
-[codelists.awardStatus]
+[codelists.AwardStatus]
 ; Active = active
 
 ; `indicators` command
@@ -291,8 +291,8 @@ impl Prepare {
         let award_status_default = defaults.award_status.map(Value::String);
 
         let codelists = settings.codelists.unwrap_or_default();
-        let bid_status = codelists.get("bidStatus").unwrap_or(&default);
-        let award_status = codelists.get("awardStatus").unwrap_or(&default);
+        let bid_status = codelists.get(&Codelist::BidStatus).unwrap_or(&default);
+        let award_status = codelists.get(&Codelist::AwardStatus).unwrap_or(&default);
 
         buffer.lines().enumerate().par_bridge().for_each(|(i, lines_result)| {
             match lines_result {

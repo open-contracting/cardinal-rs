@@ -8,8 +8,7 @@ pub struct R999 {
 
 impl Calculate for R999 {
     fn new(settings: &mut Settings) -> Self {
-        Self {
-        }
+        Self::default()
     }
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {

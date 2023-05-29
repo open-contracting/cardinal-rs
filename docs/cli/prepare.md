@@ -180,13 +180,13 @@ Need to fill in other values? [Create an issue on GitHub](http://github.com/open
 
 The command supports substituting codes in these codelist fields:
 
-- `/bids/details[]/status`, by adding a `[codelists.bidStatus]` section
-- `/awards[]/status`, by adding a `[codelists.awardStatus]` section
+- `/bids/details[]/status`, by adding a `[codelists.BidStatus]` section
+- `/awards[]/status`, by adding a `[codelists.AwardStatus]` section
 
 To replace a code, add a property under the relevant section, in which the code to replace is the name, and its replacement is the value. For example:
 
 ```ini
-[codelists.bidStatus]
+[codelists.BidStatus]
 Qualified = valid
 Disqualified = disqualified
 InTreatment = pending

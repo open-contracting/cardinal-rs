@@ -42,7 +42,7 @@ def add_indicator(code):
             directory / "src" / "indicators" / "mod.rs",
             [
                 (r"mod [a-z]\d{3}", r"", lower, f"pub mod {lower};\n"),
-                (r"struct Settings {", r"^}\n", upper, f"    pub {upper}: Option<HashMap<String, String>>,\n"),
+                (r"struct Settings {", r"^}\n", upper, f"    pub {upper}: Option<Empty>,\n"),
                 (r"enum Indicator {", r"^}\n", upper, f"    {upper},\n"),
             ],
         ),

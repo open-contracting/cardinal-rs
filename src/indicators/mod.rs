@@ -14,22 +14,30 @@ use serde_json::{Map, Value};
 // Settings.
 
 #[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Empty {}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct FloatThreshold {
     threshold: Option<f64>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct IntegerThreshold {
     threshold: Option<usize>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct R025 {
     percentile: Option<usize>,
     threshold: Option<f64>, // ratio
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Defaults {
     pub currency: Option<String>,
     pub item_classification_scheme: Option<String>,
@@ -37,18 +45,25 @@ pub struct Defaults {
     pub award_status: Option<String>,
 }
 
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
+pub enum Codelist {
+    BidStatus,
+    AwardStatus,
+}
+
 #[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 #[allow(non_snake_case)]
 pub struct Settings {
     // prepare command.
-    pub codelists: Option<HashMap<String, HashMap<String, String>>>,
+    pub codelists: Option<HashMap<Codelist, HashMap<String, String>>>,
     pub defaults: Option<Defaults>,
     // indicators command.
     pub currency: Option<String>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
     pub R035: Option<IntegerThreshold>, // count
-    pub R036: Option<HashMap<String, String>>,
+    pub R036: Option<Empty>,
     pub R038: Option<FloatThreshold>, // ratio
 }
 

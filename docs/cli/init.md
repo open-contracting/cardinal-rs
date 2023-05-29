@@ -52,10 +52,10 @@ $ ocdscardinal init -
 ; bid_status = valid
 ; award_status = active
 
-[codelists.bidStatus]
+[codelists.BidStatus]
 ; qualified = valid
 
-[codelists.awardStatus]
+[codelists.AwardStatus]
 ; Active = active
 
 ; `indicators` command
