@@ -74,7 +74,7 @@ jobs:
             SUFFIX=""
           fi
           mkdir "$DIRECTORY"
-          cp CHANGELOG.md LICENSE README.md "target/${{ matrix.target }}/release/ocdscardinal$SUFFIX" "$DIRECTORY"
+          cp docs/changelog.md LICENSE README.md "target/${{ matrix.target }}/release/ocdscardinal$SUFFIX" "$DIRECTORY"
           7z a "$DIRECTORY.zip" "$DIRECTORY"
           echo "path=$DIRECTORY.zip" >> $GITHUB_OUTPUT
       - env:
