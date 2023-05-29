@@ -1,6 +1,6 @@
 [package]
 name = "ocdscardinal"
-version = "0.0.2"
+version = "0.0.3"
 authors = ["Open Contracting Partnership <data@open-contracting.org>"]
 edition = "2021"
 description = "Measure red flags and procurement indicators using OCDS data."
