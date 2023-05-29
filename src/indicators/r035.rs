@@ -1,6 +1,5 @@
 use std::cmp;
 use std::collections::HashSet;
-use std::mem;
 
 use serde_json::{Map, Value};
 
@@ -14,7 +13,7 @@ pub struct R035 {
 impl Calculate for R035 {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            threshold: mem::take(&mut settings.R035).map_or(1, |v| v.threshold.map_or(1, |t| cmp::max(t, 1))),
+            threshold: std::mem::take(&mut settings.R035).map_or(1, |v| v.threshold.map_or(1, |t| cmp::max(t, 1))),
         }
     }
 

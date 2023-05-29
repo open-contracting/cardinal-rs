@@ -111,7 +111,6 @@ pub struct Fraction {
 }
 
 impl AddAssign for Fraction {
-    // https://en.wikipedia.org/wiki/Mediant_(mathematics)
     fn add_assign(&mut self, other: Self) {
         self.numerator += other.numerator;
         self.denominator += other.denominator;
@@ -160,6 +159,7 @@ pub(crate) use fraction;
 
 // Macros to access struct fields dynamically.
 
+// https://en.wikipedia.org/wiki/Mediant_(mathematics)
 macro_rules! mediant {
     ( $accumulator:ident , $current:ident , $field:ident ) => {
         for (key, value) in std::mem::take(&mut $current.$field) {

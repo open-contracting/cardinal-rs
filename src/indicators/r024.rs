@@ -1,5 +1,3 @@
-use std::mem;
-
 use log::warn;
 use serde_json::{Map, Value};
 use statrs::statistics::Data;
@@ -17,7 +15,7 @@ impl Calculate for R024 {
     fn new(settings: &mut Settings) -> Self {
         Self {
             default_currency: settings.currency.clone(),
-            threshold: mem::take(&mut settings.R024).unwrap_or_default().threshold,
+            threshold: std::mem::take(&mut settings.R024).unwrap_or_default().threshold,
         }
     }
 
@@ -84,7 +82,7 @@ impl Calculate for R024 {
 
     fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
         if item.currency.is_none() || other.currency.is_none() || item.currency == other.currency {
-            item.r024_ratios.extend(mem::take(&mut other.r024_ratios));
+            item.r024_ratios.extend(std::mem::take(&mut other.r024_ratios));
         } else {
             warn!("{:?} is not {:?}, skipping.", other.currency, item.currency);
         }

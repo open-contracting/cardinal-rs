@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::mem;
 
 use serde_json::{Map, Value};
 use statrs::statistics::Data;
@@ -9,7 +8,7 @@ use crate::indicators::{fraction, mediant, set_result, Calculate, Indicators, Se
 
 macro_rules! flag {
     ( $item:ident , $field:ident , $threshold:expr , $group:ident ) => {
-        let ratios: HashMap<String, f64> = mem::take(&mut $item.$field)
+        let ratios: HashMap<String, f64> = std::mem::take(&mut $item.$field)
             .into_iter()
             .map(|(id, fraction)| (id, fraction.into()))
             .collect();
@@ -38,7 +37,7 @@ pub struct R038 {
 impl Calculate for R038 {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            threshold: mem::take(&mut settings.R038).unwrap_or_default().threshold,
+            threshold: std::mem::take(&mut settings.R038).unwrap_or_default().threshold,
         }
     }
 

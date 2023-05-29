@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-use std::mem;
 
 use serde_json::{Map, Value};
 use statrs::statistics::Data;
@@ -16,7 +15,7 @@ pub struct R025 {
 impl Calculate for R025 {
     fn new(settings: &mut Settings) -> Self {
         let (percentile, threshold) =
-            mem::take(&mut settings.R025).map_or((75, None), |v| (v.percentile.unwrap_or(75), v.threshold));
+            std::mem::take(&mut settings.R025).map_or((75, None), |v| (v.percentile.unwrap_or(75), v.threshold));
         Self { percentile, threshold }
     }
 
