@@ -51,7 +51,7 @@ Before following this command's workflow, follow the earlier steps in the {doc}`
 
    :::{admonition} To do
    :class: caution
-   This section will expand on the interpretation of results. [#40](https://github.com/open-contracting/cardinal-rs/issues/40)
+   This section will expand on the interpretation of results. See GitHub issue [#40](https://github.com/open-contracting/cardinal-rs/issues/40).
    :::
 
 1. **Edit the settings**. Adjust the configuration of the [indicators](#list) based on your review of the results, in order to reduce false positives.
