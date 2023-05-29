@@ -15,7 +15,8 @@ jobs:
           key: ${{ matrix.os }}
       # https://github.com/Swatinem/rust-cache/issues/93#issuecomment-1321064841
       - run: cargo update
-      # https://github.com/taiki-e/cargo-llvm-cov#on-github-actions
+      - uses: taiki-e/install-action@cargo-udeps
+      - run: cargo udeps
       - uses: taiki-e/install-action@cargo-llvm-cov
       - run: cargo llvm-cov --lcov --output-path lcov.info
       - if: matrix.os == 'ubuntu-latest'
