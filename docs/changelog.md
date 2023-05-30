@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.4 (2023-06-30)
+
+### Changed
+
+- {doc}`cli/prepare` command:
+
+  - Add `--output` (`-o`) and `--errors` (`-e`) options, instead of using shell redirection.
+  - Fill in `/awards[]/items[]/classification/scheme` with `item_classification_scheme`.
+
 ## 0.0.3 (2023-05-29)
 
 ### Added

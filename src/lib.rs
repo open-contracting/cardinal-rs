@@ -6,8 +6,9 @@ pub mod standard;
 
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{self, BufRead, Write};
+use std::io::{self, BufRead, BufWriter, Write};
 use std::path::PathBuf;
+use std::sync::{Arc, Mutex};
 
 use anyhow::Result;
 use indexmap::IndexMap;
@@ -280,8 +281,19 @@ impl Prepare {
     /// # Panics
     ///
     #[allow(clippy::cognitive_complexity)]
-    pub fn run(buffer: impl BufRead + Send, settings: Settings) {
+    #[allow(clippy::too_many_lines)]
+    // https://github.com/rust-lang/rust-clippy/issues/10413
+    #[allow(clippy::significant_drop_tightening)]
+    pub fn run<W: Write + Send>(
+        buffer: impl BufRead + Send,
+        settings: Settings,
+        output: &mut W,
+        errors: &mut W,
+    ) -> Result<(), anyhow::Error> {
         let default = HashMap::new();
+
+        let output = Arc::new(Mutex::new(BufWriter::new(output)));
+        let errors = Arc::new(Mutex::new(BufWriter::new(errors)));
 
         let defaults = settings.defaults.unwrap_or_default();
         // Closed codelists.
@@ -294,110 +306,127 @@ impl Prepare {
         let bid_status = codelists.get(&Codelist::BidStatus).unwrap_or(&default);
         let award_status = codelists.get(&Codelist::AwardStatus).unwrap_or(&default);
 
-        buffer.lines().enumerate().par_bridge().for_each(|(i, lines_result)| {
-            match lines_result {
-                Ok(string) => {
-                    match serde_json::from_str(&string) {
-                        Ok(value) => {
-                            if let Value::Object(mut release) = value {
-                                let ocid = release.get("ocid").map_or_else(|| Value::Null, std::clone::Clone::clone);
+        buffer.lines().enumerate().par_bridge().try_for_each(|(i, lines)| -> Result<(), anyhow::Error> {
+            // Use guard clauses to reduce indentation and ease readabaility.
+            let string = match lines {
+                Ok(string) => string,
+                Err(e) => return Ok(warn!("Line {} caused an I/O error, skipping. [{e}]", i + 1)),
+            };
 
-                                prepare_id_object!(release, "buyer");
+            let mut value: Value = match serde_json::from_str(&string) {
+                Ok(value) => value,
+                Err(e) => {
+                    if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
+                        warn!("Line {} is invalid JSON, skipping. [{e}]", i + 1);
+                    }
+                    return Ok(());
+                }
+            };
 
-                                // /tender
-                                if let Some(Value::Object(tender)) = release.get_mut("tender") {
-                                    prepare_id_object!(tender, "procuringEntity");
-                                }
+            let Some(release) = value.as_object_mut() else {
+                return Ok(warn!("Line {} is not a JSON object, skipping.", i + 1))
+            };
 
-                                // /bids
-                                if let Some(Value::Object(bids)) = release.get_mut("bids")
-                                    && let Some(Value::Array(details)) = bids.get_mut("details")
-                                {
-                                    for (j, bid) in details.iter_mut().enumerate() {
-                                        if let Some(Value::Object(value)) = bid.get_mut("value")
-                                            && !value.contains_key("currency")
-                                        {
-                                            currency_default.as_ref().map_or_else(|| {
-                                                eprintln!("{},{ocid},/bids/details[]/value/currency,{j},,not set", i + 1);
-                                            }, |currency| {
-                                                value.insert("currency".into(), currency.clone());
-                                            });
-                                        }
+            let mut rows = csv::Writer::from_writer(vec![]);
 
-                                        if let Some(Value::Array(items)) = bid.get_mut("items") {
-                                            for (k, item) in items.iter_mut().enumerate() {
-                                                if let Some(Value::Object(classification)) = item.get_mut("classification")
-                                                    && !classification.contains_key("scheme")
-                                                {
-                                                    item_classification_scheme_default.as_ref().map_or_else(|| {
-                                                        eprintln!("{},{ocid},/bids/details[]/items[]/classification/scheme,{j}.{k},,not set", i + 1);
-                                                    }, |scheme| {
-                                                        classification.insert("scheme".into(), scheme.clone());
-                                                    });
-                                                }
-                                            }
-                                        }
+            let ocid = release.get("ocid").map_or_else(|| Value::Null, std::clone::Clone::clone);
 
-                                        if let Some(Value::String(status)) = bid.get_mut("status") {
-                                            if bid_status.contains_key(status) {
-                                                *status = bid_status[status].clone();
-                                            }
-                                            if !BID_STATUS.contains(status.as_str()) {
-                                                eprintln!("{},{ocid},/bids/details[]/status,{j},\"{status}\",invalid", i + 1);
-                                            }
-                                        } else if bid.get("status").is_none() {
-                                            bid_status_default.as_ref().map_or_else(|| {
-                                                eprintln!("{},{ocid},/bids/details[]/status,{j},,not set", i + 1);
-                                            }, |status| {
-                                                bid["status"] = status.clone();
-                                            });
-                                        }
+            prepare_id_object!(release, "buyer");
 
-                                        prepare_id_array!(bid, "tenderers");
-                                    }
-                                }
+            // /tender
+            if let Some(Value::Object(tender)) = release.get_mut("tender") {
+                prepare_id_object!(tender, "procuringEntity");
+            }
 
-                                // /awards
-                                if let Some(Value::Array(awards)) = release.get_mut("awards") {
-                                    for (j, award) in awards.iter_mut().enumerate() {
-                                        if let Some(Value::String(status)) = award.get_mut("status") {
-                                            if award_status.contains_key(status) {
-                                                *status = award_status[status].clone();
-                                            }
-                                            if !AWARD_STATUS.contains(status.as_str()) {
-                                                eprintln!("{},{ocid},/awards[]/status,{j},\"{status}\",invalid", i + 1);
-                                            }
-                                        } else if award.get("status").is_none() {
-                                            award_status_default.as_ref().map_or_else(|| {
-                                                eprintln!("{},{ocid},/awards[]/status,{j},,not set", i + 1);
-                                            }, |status| {
-                                                award["status"] = status.clone();
-                                            });
-                                        }
-
-                                        prepare_id_array!(award, "suppliers");
-                                    }
-                                }
-
-                                println!("{}", serde_json::to_string(&release).unwrap());
-                            } else {
-                                warn!("Line {} is not a JSON object, skipping.", i + 1);
-                            }
+            // /bids
+            if let Some(Value::Object(bids)) = release.get_mut("bids")
+                && let Some(Value::Array(details)) = bids.get_mut("details")
+            {
+                for (j, bid) in details.iter_mut().enumerate() {
+                    if let Some(Value::Object(value)) = bid.get_mut("value")
+                        && !value.contains_key("currency")
+                    {
+                        if let Some(default) = &currency_default {
+                            value.insert("currency".into(), default.clone());
+                        } else {
+                            rows.serialize((i + 1, &ocid, "/bids/details[]/value/currency", j, "", "not set"))?;
                         }
-                        Err(e) => {
-                            // Skip empty lines silently.
-                            // https://stackoverflow.com/a/64361042/244258
-                            if !string.as_bytes().iter().all(u8::is_ascii_whitespace) {
-                                warn!("Line {} is invalid JSON, skipping. [{e}]", i + 1);
+                    }
+
+                    if let Some(Value::Array(items)) = bid.get_mut("items") {
+                        for (k, item) in items.iter_mut().enumerate() {
+                            if let Some(Value::Object(classification)) = item.get_mut("classification")
+                                && !classification.contains_key("scheme")
+                            {
+                                if let Some(default) = &item_classification_scheme_default {
+                                    classification.insert("scheme".into(), default.clone());
+                                } else {
+                                    rows.serialize((i + 1, &ocid, "/bids/details[]/items[]/classification/scheme", format!("{j}.{k}"), "", "not set"))?;
+                                }
                             }
                         }
                     }
+
+                    if let Some(Value::String(status)) = bid.get_mut("status") {
+                        if bid_status.contains_key(status) {
+                            *status = bid_status[status].clone();
+                        }
+                        if !BID_STATUS.contains(status.as_str()) {
+                            rows.serialize((i + 1, &ocid, "/bids/details[]/status", j, status, "invalid"))?;
+                        }
+                    } else if bid.get("status").is_none() {
+                        if let Some(default) = &bid_status_default {
+                            bid["status"] = default.clone();
+                        } else {
+                            rows.serialize((i + 1, &ocid, "/bids/details[]/status", j, "", "not set"))?;
+                        }
+                    }
+
+                    prepare_id_array!(bid, "tenderers");
                 }
-                // Err: https://doc.rust-lang.org/std/io/enum.ErrorKind.html
-                // https://github.com/rust-lang/rust/blob/1.65.0/library/std/src/io/buffered/bufreader.rs#L362-L365
-                Err(e) => warn!("Line {} caused an I/O error, skipping. [{e}]", i + 1),
             }
-        });
+
+            // /awards
+            if let Some(Value::Array(awards)) = release.get_mut("awards") {
+                for (j, award) in awards.iter_mut().enumerate() {
+                    if let Some(Value::Array(items)) = award.get_mut("items") {
+                        for (k, item) in items.iter_mut().enumerate() {
+                            if let Some(Value::Object(classification)) = item.get_mut("classification")
+                                && !classification.contains_key("scheme")
+                            {
+                                if let Some(default) = &item_classification_scheme_default {
+                                    classification.insert("scheme".into(), default.clone());
+                                } else {
+                                    rows.serialize((i + 1, &ocid, "/awards[]/items[]/classification/scheme", format!("{j}.{k}"), "", "not set"))?;
+                                }
+                            }
+                        }
+                    }
+
+                    if let Some(Value::String(status)) = award.get_mut("status") {
+                        if award_status.contains_key(status) {
+                            *status = award_status[status].clone();
+                        }
+                        if !AWARD_STATUS.contains(status.as_str()) {
+                            rows.serialize((i + 1, &ocid, "/awards[]/status", j, status, "invalid"))?;
+                        }
+                    } else if award.get("status").is_none() {
+                        if let Some(default) = &award_status_default {
+                            award["status"] = default.clone();
+                        } else {
+                            rows.serialize((i + 1, &ocid, "/awards[]/status", j, "", "not set"))?;
+                        }
+                    }
+
+                    prepare_id_array!(award, "suppliers");
+                }
+            }
+
+            writeln!(output.lock().unwrap(), "{}", &serde_json::to_string(&release)?)?;
+            errors.lock().unwrap().write_all(&rows.into_inner()?)?;
+
+            Ok(())
+        })
     }
 }
 

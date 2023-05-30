@@ -1,7 +1,7 @@
 #![feature(unix_sigpipe)]
 
 use std::fs::File;
-use std::io::{self, BufReader, Read};
+use std::io::{self, BufReader, Read, Write};
 use std::path::{Path, PathBuf};
 use std::process;
 
@@ -48,6 +48,12 @@ enum Commands {
         /// The path to the settings file
         #[arg(long, short, value_parser = settings_parser)]
         settings: Option<ocdscardinal::Settings>,
+        /// The file to which to write corrected data (or "-" for standard output)
+        #[arg(long, short)]
+        output: PathBuf,
+        /// The file to which to write quality issues (or "-" for standard output)
+        #[arg(long, short)]
+        errors: PathBuf,
     },
     /// Calculate procurement indicators from OCDS compiled releases in a line-delimited JSON file
     ///
@@ -89,6 +95,11 @@ fn application_error(e: &anyhow::Error) -> ! {
     process::exit(1);
 }
 
+fn input_output_error(message: &str, e: &io::Error) -> ! {
+    eprintln!("I/O error: {message}: {e:#}");
+    process::exit(1);
+}
+
 fn reader(file: &PathBuf) -> BufReader<Box<dyn Read + Send>> {
     if file == &PathBuf::from("-") {
         BufReader::new(Box::new(io::stdin()))
@@ -101,6 +112,16 @@ fn reader(file: &PathBuf) -> BufReader<Box<dyn Read + Send>> {
             Ok(file) => BufReader::new(Box::new(file)),
             Err(e) => file_argument_error(file, &e.to_string()),
         }
+    }
+}
+
+fn create(file: &PathBuf) -> Box<dyn Write + Send> {
+    if file == &PathBuf::from("-") {
+        Box::new(io::stdout())
+    } else {
+        Box::new(File::create(file).unwrap_or_else(|e| {
+            input_output_error(&format!("Couldn't open {file:?} for writing"), &e);
+        }))
     }
 }
 
@@ -122,24 +143,28 @@ fn main() {
 
     match &cli.command {
         Commands::Init { file } => match ocdscardinal::init(file) {
-            Err(e) => {
-                eprintln!("Error writing to {file:?}: {e}");
-            }
-            Ok(false) => {
-                println!("Settings written to {file:?}.");
-            }
-            _ => {}
+            Err(e) => eprintln!("Error writing to {file:?}: {e}"),
+            Ok(false) => println!("Settings written to {file:?}."),
+            Ok(true) => {} // written to standard output
         },
         Commands::Coverage { file } => match ocdscardinal::Coverage::run(reader(file)) {
-            Ok(item) => {
-                println!("{:?}", item.results());
-            }
-            Err(e) => {
+            Ok(item) => println!("{:?}", item.results()),
+            Err(e) => application_error(&e),
+        },
+        Commands::Prepare {
+            file,
+            settings,
+            output,
+            errors,
+        } => {
+            if let Err(e) = ocdscardinal::Prepare::run(
+                reader(file),
+                settings.clone().unwrap_or_default(),
+                &mut create(output),
+                &mut create(errors),
+            ) {
                 application_error(&e);
             }
-        },
-        Commands::Prepare { file, settings } => {
-            ocdscardinal::Prepare::run(reader(file), settings.clone().unwrap_or_default());
         }
         Commands::Indicators { file, count, settings } => {
             match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default()) {
@@ -151,9 +176,7 @@ fn main() {
                         }
                     }
                 }
-                Err(e) => {
-                    application_error(&e);
-                }
+                Err(e) => application_error(&e),
             }
         }
     }

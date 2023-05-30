@@ -15,13 +15,14 @@ keywords = ["cli", "json"]
 anyhow = "1.0"
 clap = { version = "4.0", features = ["derive", "wrap_help"] }
 config = {version = "0.13", features = ["ini"] }
+csv = "1.0"
 human-panic = "1.0"
 indexmap = { version = "1.0", features = ["serde"] }
 log = "0.4"
 num_cpus = "1.0"
 pretty_env_logger = "0.4"
 rayon = "1.0"
-serde = "1.0"
+serde = { version ="1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["preserve_order"] }
 statrs = "0.16"
 

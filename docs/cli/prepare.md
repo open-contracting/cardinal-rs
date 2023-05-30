@@ -13,7 +13,7 @@ Corrected data is written to standard output as line-delimited JSON.
 Quality issues are written to standard error as CSV rows with the columns: line, ocid, path, array
 indexes, incorrect value, error description.
 
-Usage: ocdscardinal[EXE] prepare [OPTIONS] <FILE>
+Usage: ocdscardinal[EXE] prepare [OPTIONS] --output <OUTPUT> --errors <ERRORS> <FILE>
 
 Arguments:
   <FILE>
@@ -26,6 +26,12 @@ Options:
 
   -v, --verbose...
           Increase verbosity
+
+  -o, --output <OUTPUT>
+          The file to which to write corrected data (or "-" for standard output)
+
+  -e, --errors <ERRORS>
+          The file to which to write quality issues (or "-" for standard output)
 
   -h, --help
           Print help (see a summary with '-h')
@@ -48,7 +54,7 @@ Before following this command's workflow, follow the earlier steps in the {doc}`
 1. Run the `prepare` command. For example, if your data is in `input.jsonl`, this command writes the corrected data to `prepared.jsonl` and the quality issues to `issues.csv`:
 
    ```bash
-   ocdscardinal prepare --settings settings.ini input.jsonl > prepared.jsonl 2> issues.csv
+   ocdscardinal prepare --settings settings.ini --output prepared.jsonl --errors issues.csv input.jsonl
    ```
 
 1. Review the quality issues in the `issues.csv` file. Don't worry if many issues are reported: most are repetitive and can be fixed at once. Read the [demonstration](#demonstration) to learn how to interpret results.
@@ -63,16 +69,6 @@ This command is designed to only warn about quality issues (1) that it can fix a
 
 ## Demonstration
 
-Corrected data is written to standard output. Quality issues are written to standard error.
-
-Without redirection (`>`), standard output and standard error are both written to the console.
-
-It is recommended to redirect standard output and standard error to separate files. For example:
-
-```bash
-ocdscardinal prepare --settings settings.ini input.jsonl > prepared.jsonl 2> issues.csv
-```
-
 ::::{admonition} Example
 :class: seealso
 
@@ -84,11 +80,11 @@ This simplified file contains a bid without a status:
 :language: json
 :::
 
-Without redirection, the `prepare` command writes both the quality issue and the (unchanged) data to the console:
+For this demonstration, write both the quality issue and the (unchanged) data to the console:
 
 ```console
-$ ocdscardinal prepare docs/examples/prepare.jsonl
-1,"ocds-213czf-1",/bids/details[]/status,0,,not set
+$ ocdscardinal prepare --output - --errors - docs/examples/prepare.jsonl
+1,ocds-213czf-1,/bids/details[]/status,0,,not set
 {"ocid":"ocds-213czf-1","bids":{"details":[{"id":1}]}}
 
 ```
@@ -101,7 +97,7 @@ Quality issues are reported as CSV rows. Adding a header and rendering the row a
 1,"ocds-213czf-1",/bids/details[]/status,0,,not set
 :::
 
-If you redirect the quality issues to a file, you can open the CSV as a spreadsheet.
+If you write the quality issues to a file instead of the console, you can open the CSV as a spreadsheet.
 
 ::::
 
@@ -156,8 +152,9 @@ This behavior can't be disabled. If you need to disable it, [create an issue on 
 The command supports filling in:
 
 - `/bids/details[]/value/currency`
-- `/bids/details[]/items/classification/scheme`
+- `/bids/details[]/items[]/classification/scheme`
 - `/bids/details[]/status`
+- `/awards[]/items[]/classification/scheme`
 - `/awards[]/status`
 
 To fill in one or more of these fields when the field isn't set, add a `[defaults]` section with relevant properties to your {doc}`../topics/settings`. For example:
