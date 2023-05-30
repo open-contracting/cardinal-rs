@@ -3,3 +3,5 @@ Cargo.lock
 *.profraw
 /docs/_build
 /settings.ini
+/prepared.jsonl
+/issues.csv
