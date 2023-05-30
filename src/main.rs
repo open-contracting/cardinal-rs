@@ -95,11 +95,6 @@ fn application_error(e: &anyhow::Error) -> ! {
     process::exit(1);
 }
 
-fn input_output_error(message: &str, e: &io::Error) -> ! {
-    eprintln!("I/O error: {message}: {e:#}");
-    process::exit(1);
-}
-
 fn reader(file: &PathBuf) -> BufReader<Box<dyn Read + Send>> {
     if file == &PathBuf::from("-") {
         BufReader::new(Box::new(io::stdin()))
@@ -119,9 +114,7 @@ fn create(file: &PathBuf) -> Box<dyn Write + Send> {
     if file == &PathBuf::from("-") {
         Box::new(io::stdout())
     } else {
-        Box::new(File::create(file).unwrap_or_else(|e| {
-            input_output_error(&format!("Couldn't open {file:?} for writing"), &e);
-        }))
+        Box::new(File::create(file).unwrap_or_else(|e| file_argument_error(file, &e.to_string())))
     }
 }
 
