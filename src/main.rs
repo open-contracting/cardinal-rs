@@ -74,6 +74,9 @@ enum Commands {
     Init {
         /// The path to the settings file to write
         file: PathBuf,
+        /// Overwrite the settings file if it already exists
+        #[arg(long, short, default_value_t = false)]
+        force: bool,
     },
 }
 
@@ -135,7 +138,7 @@ fn main() {
     pretty_env_logger::formatted_builder().filter_level(level).init();
 
     match &cli.command {
-        Commands::Init { file } => match ocdscardinal::init(file) {
+        Commands::Init { file, force } => match ocdscardinal::init(file, force) {
             Err(e) => eprintln!("Error writing to {file:?}: {e}"),
             Ok(false) => println!("Settings written to {file:?}."),
             Ok(true) => {} // written to standard output

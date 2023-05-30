@@ -37,7 +37,7 @@ macro_rules! add_indicators {
 ///
 /// # Errors
 ///
-pub fn init(path: &PathBuf) -> std::io::Result<bool> {
+pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
     let content = b"\
 ; `prepare` command
 ;
@@ -78,11 +78,12 @@ pub fn init(path: &PathBuf) -> std::io::Result<bool> {
 ";
 
     let stdout = path == &PathBuf::from("-");
+    let exists = path.exists();
 
     if stdout {
         let mut file = io::stdout().lock();
         file.write_all(content)?;
-    } else {
+    } else if !exists || *force {
         let mut file = File::create(path)?;
         file.write_all(content)?;
     };
@@ -306,7 +307,7 @@ impl Prepare {
         let bid_status = codelists.get(&Codelist::BidStatus).unwrap_or(&default);
         let award_status = codelists.get(&Codelist::AwardStatus).unwrap_or(&default);
 
-        buffer.lines().enumerate().par_bridge().try_for_each(|(i, lines)| -> Result<(), anyhow::Error> {
+        let result = buffer.lines().enumerate().par_bridge().try_for_each(|(i, lines)| -> Result<(), anyhow::Error> {
             // Use guard clauses to reduce indentation and ease readabaility.
             let string = match lines {
                 Ok(string) => string,
@@ -426,7 +427,12 @@ impl Prepare {
             errors.lock().unwrap().write_all(&rows.into_inner()?)?;
 
             Ok(())
-        })
+        });
+
+        output.lock().unwrap().flush()?;
+        errors.lock().unwrap().flush()?;
+
+        result
     }
 }
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.5 (Unreleased)
+
+### Changed
+
+- {doc}`cli/init` command:
+
+  - Add `--force` (`-f`) option to overwrite an existing file.
+
 ## 0.0.4 (2023-06-30)
 
 ### Changed

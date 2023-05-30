@@ -14,6 +14,7 @@ Arguments:
   <FILE>  The path to the settings file to write
 
 Options:
+  -f, --force       Overwrite the settings file if it already exists
   -v, --verbose...  Increase verbosity
   -h, --help        Print help
 
@@ -32,10 +33,6 @@ $ ocdscardinal init settings.ini
 Settings written to "settings.ini".
 
 ```
-
-:::{warning}
-If `settings.ini` already exists, its contents are overwritten.
-:::
 
 Preview the content of the settings file:
 

@@ -5,3 +5,5 @@ Cargo.lock
 /settings.ini
 /prepared.jsonl
 /issues.csv
+/results.json
+/results.csv

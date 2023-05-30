@@ -80,12 +80,11 @@ This simplified file contains a bid without a status:
 :language: json
 :::
 
-For this demonstration, write both the quality issue and the (unchanged) data to the console:
+For this demonstration, write the quality issues to the console:
 
 ```console
-$ ocdscardinal prepare --output - --errors - docs/examples/prepare.jsonl
+$ ocdscardinal prepare --output /dev/null --errors - docs/examples/prepare.jsonl
 1,ocds-213czf-1,/bids/details[]/status,0,,not set
-{"ocid":"ocds-213czf-1","bids":{"details":[{"id":1}]}}
 
 ```
 
