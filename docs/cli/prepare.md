@@ -83,7 +83,7 @@ This simplified file contains a bid without a status:
 For this demonstration, write the quality issues to the console:
 
 ```console
-$ ocdscardinal prepare --output /dev/null --errors - docs/examples/prepare.jsonl
+$ ocdscardinal prepare --output prepared.jsonl --errors - docs/examples/prepare.jsonl
 1,ocds-213czf-1,/bids/details[]/status,0,,not set
 
 ```
