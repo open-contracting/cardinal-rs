@@ -273,7 +273,7 @@ macro_rules! prepare_id_array {
 }
 
 #[derive(Debug, Default)]
-pub struct Prepare {}
+pub struct Prepare;
 
 impl Prepare {
     ///
