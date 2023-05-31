@@ -87,10 +87,11 @@ fn file_argument_error(file: &Path, message: &str) -> ! {
 }
 
 fn settings_parser(s: &str) -> Result<ocdscardinal::Settings, ConfigError> {
-    Config::builder()
-        .add_source(config::File::with_name(s))
-        .build()?
-        .try_deserialize::<ocdscardinal::Settings>()
+    let config = Config::builder().add_source(config::File::with_name(s)).build()?;
+    serde_path_to_error::deserialize(config).map_err(|error| match error.inner() {
+        ConfigError::Message(_) => ConfigError::Message(error.to_string()),
+        _ => error.into_inner(),
+    })
 }
 
 fn application_error(e: &anyhow::Error) -> ! {
