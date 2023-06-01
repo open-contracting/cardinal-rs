@@ -6,15 +6,15 @@
 
 - Prefix an error about an unknown property in the settings file with the path at which the error occurred.
 - {doc}`cli/init` command:
-
   - Add `--force` (`-f`) option to overwrite an existing file.
+- {doc}`cli/prepare` command:
+  - Improve write performance.
 
 ## 0.0.4 (2023-06-30)
 
 ### Changed
 
 - {doc}`cli/prepare` command:
-
   - Add `--output` (`-o`) and `--errors` (`-e`) options, instead of using shell redirection.
   - Fill in `/awards[]/items[]/classification/scheme` with `item_classification_scheme`.
 
@@ -25,11 +25,9 @@
 - {doc}`cli/init` command.
 - {doc}`cli/prepare` command.
 - {doc}`cli/indicators/index` command:
-
   - R025 (*The ratio of winning bids to submitted bids for a top tenderer is a low outlier*).
   - R036 (*The lowest submitted bid is disqualified, while the award criterion is price only*).
   - R038 (*The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer*).
-
 - Expand documentation.
 
 ### Changed

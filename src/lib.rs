@@ -2,13 +2,13 @@
 #![feature(lazy_cell)]
 
 pub mod indicators;
+mod queue;
 pub mod standard;
 
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead, BufWriter, Write};
 use std::path::PathBuf;
-use std::sync::{Arc, Mutex};
 
 use anyhow::Result;
 use indexmap::IndexMap;
@@ -22,6 +22,7 @@ use crate::indicators::r035::R035;
 use crate::indicators::r036::R036;
 use crate::indicators::r038::R038;
 pub use crate::indicators::{Calculate, Codelist, Group, Indicator, Indicators, Settings};
+use crate::queue::Job;
 use crate::standard::{AWARD_STATUS, BID_STATUS};
 
 macro_rules! add_indicators {
@@ -293,8 +294,8 @@ impl Prepare {
     ) -> Result<(), anyhow::Error> {
         let default = HashMap::new();
 
-        let output = Arc::new(Mutex::new(BufWriter::new(output)));
-        let errors = Arc::new(Mutex::new(BufWriter::new(errors)));
+        let output = Job::new(BufWriter::new(output));
+        let errors = Job::new(BufWriter::new(errors));
 
         let defaults = settings.defaults.unwrap_or_default();
         // Closed codelists.
@@ -328,7 +329,7 @@ impl Prepare {
                 return Ok(warn!("Line {} is not a JSON object, skipping.", i + 1))
             };
 
-            let mut rows = csv::Writer::from_writer(vec![]);
+            let mut rows = csv::Writer::from_writer(errors.new_task());
 
             let ocid = release.get("ocid").map_or_else(|| Value::Null, std::clone::Clone::clone);
 
@@ -423,14 +424,13 @@ impl Prepare {
                 }
             }
 
-            writeln!(output.lock().unwrap(), "{}", &serde_json::to_string(&release)?)?;
-            errors.lock().unwrap().write_all(&rows.into_inner()?)?;
+            writeln!(output.new_task(), "{}", &serde_json::to_string(&release)?)?;
 
             Ok(())
         });
 
-        output.lock().unwrap().flush()?;
-        errors.lock().unwrap().flush()?;
+        output.new_task().flush()?;
+        errors.new_task().flush()?;
 
         result
     }
