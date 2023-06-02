@@ -38,6 +38,8 @@ Preview the content of the settings file:
 
 ```console
 $ ocdscardinal init -
+; currency = USD
+
 ; `prepare` command
 ;
 ; Read the documentation at:

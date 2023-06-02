@@ -7,6 +7,7 @@
 - Prefix an error about an unknown property in the settings file with the path at which the error occurred.
 - {doc}`cli/init` command:
   - Add `--force` (`-f`) option to overwrite an existing file.
+  - Add `currency` property.
 - {doc}`cli/prepare` command:
   - Improve write performance.
 

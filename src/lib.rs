@@ -40,6 +40,8 @@ macro_rules! add_indicators {
 ///
 pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
     let content = b"\
+; currency = USD
+
 ; `prepare` command
 ;
 ; Read the documentation at:
