@@ -22,7 +22,7 @@ macro_rules! flag {
         });
 
         for (id, ratio) in ratios {
-            if ratio > upper_fence {
+            if ratio >= upper_fence {
                 set_result!($item, $group, id, R038, ratio);
             }
         }

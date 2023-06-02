@@ -100,7 +100,7 @@ impl Calculate for R024 {
         });
 
         for (ocid, ratio) in &item.r024_ratios {
-            if *ratio < lower_fence {
+            if *ratio <= lower_fence {
                 set_result!(item, OCID, ocid, R024, *ratio);
             }
         }

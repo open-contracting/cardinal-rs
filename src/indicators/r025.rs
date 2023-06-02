@@ -72,7 +72,7 @@ impl Calculate for R025 {
 
         for (id, fraction) in &item.r025_tenderer {
             let ratio = fraction.into();
-            if fraction.denominator as f64 > upper_fence && ratio < lower_fence {
+            if fraction.denominator as f64 >= upper_fence && ratio <= lower_fence {
                 set_result!(item, Tenderer, id, R025, ratio);
             }
         }
