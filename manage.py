@@ -1,5 +1,10 @@
 #!/usr/bin/env python
+import csv
+import json
+import os.path
 import re
+import sys
+from datetime import datetime
 from pathlib import Path
 from textwrap import dedent
 
@@ -11,6 +16,43 @@ directory = Path(__file__).resolve().parent
 @click.group()
 def cli():
     pass
+
+
+@cli.command()
+@click.argument("infile", type=click.Path(exists=True, dir_okay=False))
+@click.argument("outfile", type=click.Path(dir_okay=False))
+def json_to_csv(infile, outfile):
+    exists = os.path.exists(outfile)
+
+    seen = set()
+    if exists:
+        with open(outfile) as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                seen.add((row["ocid"], row["code"], row["buyer_id"], row["procuring_entity_id"], row["tenderer_id"]))
+
+    with open(infile) as f:
+        data = json.load(f)
+
+    rows = []
+    for ocid, results in data.get("OCID", {}).items():
+        for code, result in results.items():
+            if (ocid, code, "", "", "") not in seen:
+                rows.append({
+                    "ocid": ocid,
+                    "subject": "OCID",
+                    "code": code,
+                    "result": result,
+                    "created_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                })
+
+    click.echo(f"Writing {len(rows)} rows")
+    fieldnames = ["ocid", "subject", "code", "result", "buyer_id", "procuring_entity_id", "tenderer_id", "created_at"]
+    with open(outfile, "a") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
+        if not exists:
+            writer.writeheader()
+        writer.writerows(rows)
 
 
 @cli.command()
