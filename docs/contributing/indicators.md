@@ -421,19 +421,22 @@ If the methodology considers compiled releases in aggregate – for example, it 
     pub r999_variable_name: HashMap<String, Fraction>,
 ```
 
-:::{note}
+:::{admonition} To do
+:class: caution
 If you need guidance on this step, [create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues).
 :::
 
 ### `reduce` method
 
-:::{note}
+:::{admonition} To do
+:class: caution
 If you need guidance on this step, [create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues).
 :::
 
 ### `finalize` method
 
-:::{note}
+:::{admonition} To do
+:class: caution
 If you need guidance on this step, [create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues).
 :::
 
