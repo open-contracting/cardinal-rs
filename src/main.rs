@@ -63,7 +63,7 @@ enum Commands {
     Indicators {
         /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
         file: PathBuf,
-        /// Print the number of OCIDs with results
+        /// Print the number of results per group to standard error
         #[arg(long, short, default_value_t = false)]
         count: bool,
         /// The path to the settings file
@@ -169,7 +169,7 @@ fn main() {
                     println!("{}", serde_json::to_string(&item.results()).unwrap());
                     if *count {
                         for (group, subresults) in item.results() {
-                            println!("{:?}: {:?}", group, subresults.len());
+                            eprintln!("{:?}: {:?}", group, subresults.len());
                         }
                     }
                 }

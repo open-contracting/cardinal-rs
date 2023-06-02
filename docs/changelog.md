@@ -10,6 +10,8 @@
   - Add `currency` property.
 - {doc}`cli/prepare` command:
   - Improve write performance.
+- {doc}`cli/indicators/index` command:
+  - The `--count` option writes to standard error instead of standard output, to not mix with the JSON.
 
 ## 0.0.4 (2023-06-30)
 
