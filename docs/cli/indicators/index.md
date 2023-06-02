@@ -196,7 +196,7 @@ The page for each indicator describes its individual methodology. For all indica
 
 - The `ocid` isn’t a string.
 - The relevant organization references don’t set an `id`.
-- Monetary values, where relevant, don’t use the main currency. [#11](https://github.com/open-contracting/cardinal-rs/issues/11)
+- Monetary values, where relevant, don’t use the main currency.
 
   To configure the main currency, add to the top of your settings file:
 
@@ -205,6 +205,10 @@ The page for each indicator describes its individual methodology. For all indica
   ```
 
   Otherwise, the main currency is set to the first observed currency.
+
+  :::{note}
+  Do you want to eliminate this exclusion? Please contributed to [GitHub issue #11](https://github.com/open-contracting/cardinal-rs/issues/11).
+  :::
 
 :::{toctree}
 :hidden: true

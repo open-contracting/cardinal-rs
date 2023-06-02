@@ -7,14 +7,14 @@ use crate::indicators::{set_result, Calculate, Indicators, Settings};
 
 #[derive(Default)]
 pub struct R024 {
-    default_currency: Option<String>,
+    currency: Option<String>,
     threshold: Option<f64>, // resolved in reduce()
 }
 
 impl Calculate for R024 {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            default_currency: settings.currency.clone(),
+            currency: settings.currency.clone(),
             threshold: std::mem::take(&mut settings.R024).unwrap_or_default().threshold,
         }
     }
@@ -46,8 +46,10 @@ impl Calculate for R024 {
                     && tenderers.len() == 1
                     && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
                 {
+                    // Exclude missing currencies and different currencies than the selected currency. If no currency
+                    // is selected (`self.currency`), use the first observed currency.
                     if currency == item.currency.get_or_insert_with(||
-                        self.default_currency.as_ref().map_or_else(||
+                        self.currency.as_ref().map_or_else(||
                             currency.clone(), Clone::clone
                         )
                     ) {

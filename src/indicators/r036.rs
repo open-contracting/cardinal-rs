@@ -6,13 +6,13 @@ use serde_json::{Map, Value};
 
 #[derive(Default)]
 pub struct R036 {
-    default_currency: Option<String>,
+    currency: Option<String>,
 }
 
 impl Calculate for R036 {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            default_currency: settings.currency.clone(),
+            currency: settings.currency.clone(),
         }
     }
 
@@ -34,7 +34,7 @@ impl Calculate for R036 {
                     && let Some(amount) = amount.as_f64()
                 {
                     if currency == item.currency.get_or_insert_with(||
-                        self.default_currency.as_ref().map_or_else(||
+                        self.currency.as_ref().map_or_else(||
                             currency.clone(), Clone::clone
                         )
                     ) {
