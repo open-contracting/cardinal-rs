@@ -7,13 +7,19 @@ use statrs::statistics::OrderStatistics;
 use crate::indicators::{fraction, mediant, set_meta, set_result, Calculate, Indicators, Settings};
 
 macro_rules! flag {
-    ( $item:ident , $field:ident , $threshold:expr , $group:ident ) => {
+    ( $self:ident , $item:ident , $field:ident , $group:ident ) => {
         let ratios: HashMap<String, f64> = std::mem::take(&mut $item.$field)
             .into_iter()
-            .map(|(id, fraction)| (id, fraction.into()))
+            .filter_map(|(id, fraction)| {
+                if fraction.denominator >= $self.minimum_submitted_bids {
+                    Some((id, fraction.into()))
+                } else {
+                    None
+                }
+            })
             .collect();
 
-        let upper_fence = $threshold.unwrap_or_else(|| {
+        let upper_fence = $self.threshold.unwrap_or_else(|| {
             let mut data = Data::new(ratios.values().copied().collect::<Vec<_>>());
             let q1 = data.lower_quartile();
             let q3 = data.upper_quartile();
@@ -41,12 +47,16 @@ macro_rules! flag {
 #[derive(Default)]
 pub struct R038 {
     threshold: Option<f64>, // resolved in reduce()
+    minimum_submitted_bids: usize,
 }
 
 impl Calculate for R038 {
     fn new(settings: &mut Settings) -> Self {
+        let setting = std::mem::take(&mut settings.R038).unwrap_or_default();
+
         Self {
-            threshold: std::mem::take(&mut settings.R038).unwrap_or_default().threshold,
+            threshold: setting.threshold,
+            minimum_submitted_bids: setting.minimum_submitted_bids.unwrap_or(1),
         }
     }
 
@@ -105,8 +115,8 @@ impl Calculate for R038 {
     }
 
     fn finalize(&self, item: &mut Indicators) {
-        flag!(item, r038_buyer, self.threshold, Buyer);
-        flag!(item, r038_procuring_entity, self.threshold, ProcuringEntity);
-        flag!(item, r038_tenderer, self.threshold, Tenderer);
+        flag!(self, item, r038_buyer, Buyer);
+        flag!(self, item, r038_procuring_entity, ProcuringEntity);
+        flag!(self, item, r038_tenderer, Tenderer);
     }
 }

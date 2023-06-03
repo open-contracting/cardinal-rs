@@ -54,6 +54,13 @@ pub struct R025 {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct R038 {
+    threshold: Option<f64>, // ratio
+    minimum_submitted_bids: Option<usize>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 #[allow(non_snake_case)]
 pub struct Settings {
     // prepare command.
@@ -65,7 +72,7 @@ pub struct Settings {
     pub R025: Option<R025>,
     pub R035: Option<IntegerThreshold>, // count
     pub R036: Option<Empty>,
-    pub R038: Option<FloatThreshold>, // ratio
+    pub R038: Option<R038>,
 }
 
 // Final results.
