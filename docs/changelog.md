@@ -7,7 +7,7 @@
 - {doc}`cli/indicators/index` command:
   - Add `Meta` key to assist interpretation of results.
   - Add `--no-meta` option to omit `Meta` key.
-  - R038: Add `minimum_submitted_bids` configuration.
+  - R038: Add `minimum_submitted_bids` and `minimum_contracting_processes` configurations.
 
 ### Changed
 

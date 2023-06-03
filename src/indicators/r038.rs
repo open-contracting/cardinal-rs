@@ -7,11 +7,11 @@ use statrs::statistics::OrderStatistics;
 use crate::indicators::{fraction, mediant, set_meta, set_result, Calculate, Indicators, Settings};
 
 macro_rules! flag {
-    ( $self:ident , $item:ident , $field:ident , $group:ident ) => {
+    ( $self:ident , $item:ident , $field:ident , $minimum:expr , $group:ident ) => {
         let ratios: HashMap<String, f64> = std::mem::take(&mut $item.$field)
             .into_iter()
             .filter_map(|(id, fraction)| {
-                if fraction.denominator >= $self.minimum_submitted_bids {
+                if fraction.denominator >= $minimum {
                     Some((id, fraction.into()))
                 } else {
                     None
@@ -48,6 +48,7 @@ macro_rules! flag {
 pub struct R038 {
     threshold: Option<f64>, // resolved in reduce()
     minimum_submitted_bids: usize,
+    minimum_contracting_processes: usize,
 }
 
 impl Calculate for R038 {
@@ -56,7 +57,8 @@ impl Calculate for R038 {
 
         Self {
             threshold: setting.threshold,
-            minimum_submitted_bids: setting.minimum_submitted_bids.unwrap_or(1),
+            minimum_submitted_bids: setting.minimum_submitted_bids.unwrap_or(2),
+            minimum_contracting_processes: setting.minimum_contracting_processes.unwrap_or(2),
         }
     }
 
@@ -115,8 +117,14 @@ impl Calculate for R038 {
     }
 
     fn finalize(&self, item: &mut Indicators) {
-        flag!(self, item, r038_buyer, Buyer);
-        flag!(self, item, r038_procuring_entity, ProcuringEntity);
-        flag!(self, item, r038_tenderer, Tenderer);
+        flag!(self, item, r038_buyer, self.minimum_contracting_processes, Buyer);
+        flag!(
+            self,
+            item,
+            r038_procuring_entity,
+            self.minimum_contracting_processes,
+            ProcuringEntity
+        );
+        flag!(self, item, r038_tenderer, self.minimum_submitted_bids, Tenderer);
     }
 }

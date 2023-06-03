@@ -57,6 +57,7 @@ pub struct R025 {
 pub struct R038 {
     threshold: Option<f64>, // ratio
     minimum_submitted_bids: Option<usize>,
+    minimum_contracting_processes: Option<usize>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
