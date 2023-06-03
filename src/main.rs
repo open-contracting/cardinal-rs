@@ -64,12 +64,15 @@ enum Commands {
     Indicators {
         /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
         file: PathBuf,
-        /// Print the number of results per group to standard error
-        #[arg(long, short, default_value_t = false)]
-        count: bool,
         /// The path to the settings file
         #[arg(long, short, value_parser = settings_parser)]
         settings: Option<ocdscardinal::Settings>,
+        /// Print the number of results per group to standard error
+        #[arg(long, short, default_value_t = false)]
+        count: bool,
+        /// Exclude the "Meta" key from the results object
+        #[arg(long, default_value_t = false)]
+        no_meta: bool,
     },
     /// Write a default settings file for configuration.
     Init {
@@ -164,20 +167,25 @@ fn main() {
                 application_error(&e);
             }
         }
-        Commands::Indicators { file, count, settings } => {
-            match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default()) {
-                Ok(item) => {
-                    let mut output = serde_json::to_value(item.results()).unwrap();
+        Commands::Indicators {
+            file,
+            count,
+            settings,
+            no_meta,
+        } => match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default()) {
+            Ok(item) => {
+                let mut output = serde_json::to_value(item.results()).unwrap();
+                if !no_meta {
                     output["Meta"] = serde_json::to_value(&item.meta).unwrap();
-                    println!("{}", serde_json::to_string(&output).unwrap());
-                    if *count {
-                        for (group, subresults) in item.results() {
-                            eprintln!("{:?}: {:?}", group, subresults.len());
-                        }
+                }
+                println!("{}", serde_json::to_string(&output).unwrap());
+                if *count {
+                    for (group, subresults) in item.results() {
+                        eprintln!("{:?}: {:?}", group, subresults.len());
                     }
                 }
-                Err(e) => application_error(&e),
             }
-        }
+            Err(e) => application_error(&e),
+        },
     }
 }

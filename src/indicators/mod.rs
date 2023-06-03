@@ -98,7 +98,7 @@ pub struct RoundMap(#[serde(serialize_with = "round")] IndexMap<String, f64>);
 
 #[derive(Debug, Default)]
 pub struct Indicators {
-    pub results: IndexMap<Group, HashMap<String, HashMap<Indicator, f64>>>,
+    pub results: HashMap<Group, HashMap<String, HashMap<Indicator, f64>>>,
     pub meta: HashMap<Indicator, RoundMap>,
     pub currency: Option<String>,
     /// The percentage difference between the winning bid and the second-lowest valid bid for each `ocid`.

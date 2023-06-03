@@ -138,7 +138,7 @@ where
 }
 
 impl Indicators {
-    pub const fn results(&self) -> &IndexMap<Group, HashMap<String, HashMap<Indicator, f64>>> {
+    pub const fn results(&self) -> &HashMap<Group, HashMap<String, HashMap<Indicator, f64>>> {
         &self.results
     }
 
@@ -549,7 +549,7 @@ mod tests {
 
     fn check_indicators(name: &str, settings: Settings) {
         let result = Indicators::run(reader(name, "jsonl"), settings);
-        let expected: IndexMap<Group, HashMap<String, HashMap<Indicator, f64>>> =
+        let expected: HashMap<Group, HashMap<String, HashMap<Indicator, f64>>> =
             serde_json::from_reader(reader(name, "expected")).unwrap();
 
         assert_eq!(result.unwrap().results, expected);
