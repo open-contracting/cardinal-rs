@@ -120,11 +120,11 @@ The **output** of an indicator is always a decimal. If an indicator didn't produ
 
 You can [consult](#list) the codes for all indicators, read the description of their outputs and see a demonstration of their calculation.
 
-The JSON output also has a ``Meta`` key at the top level. Its value is an object with information about the quartiles and fences used to calculate the results. For example:
+The JSON output also has a ``Meta`` key at the top level. Its value is an object with information about the quartiles and fences used to calculate the results, rounded to 4 decimals. For example:
 
 ```json
 {
-  ...
+  // ...
   "Meta": {
     "R024": {
       "q1": 66.6667,
