@@ -4,20 +4,21 @@
 
 ### Added
 
+- {doc}`cli/init` command:
+  - Add `--force` (`-f`) option to overwrite an existing file.
 - {doc}`cli/indicators/index` command:
-  - Add `Meta` key to assist interpretation of results.
-  - Add `--no-meta` option to omit `Meta` key.
+  - Add `--no-meta` option to omit the `Meta` key.
   - R038: Add `minimum_submitted_bids` and `minimum_contracting_processes` configurations.
 
 ### Changed
 
 - Prefix an error about an unknown property in the settings file with the path at which the error occurred.
 - {doc}`cli/init` command:
-  - Add `--force` (`-f`) option to overwrite an existing file.
-  - Add `currency` property.
+  - Add `currency` property to default file.
 - {doc}`cli/prepare` command:
   - Improve write performance.
 - {doc}`cli/indicators/index` command:
+  - Add `Meta` key to assist interpretation of results.
   - The `--count` option writes to standard error instead of standard output, to not mix with the JSON.
   - All `threshold` and `percentile` configurations are consistently interpreted as inclusive.
 
