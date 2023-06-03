@@ -59,7 +59,8 @@ enum Commands {
     ///
     /// The result is a JSON object, in which the keys are one of "OCID", "Buyer", "ProcuringEntity"
     /// or "Tenderer". The values are JSON objects, in which the keys are identifiers (e.g. ocid)
-    /// and values are results (of any indicators that returned a result).
+    /// and values are results (of any indicators that returned a result). The result also has a
+    /// "Meta" key, with information about the quartiles and fences used to calculate the results.
     Indicators {
         /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
         file: PathBuf,
@@ -166,7 +167,9 @@ fn main() {
         Commands::Indicators { file, count, settings } => {
             match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default()) {
                 Ok(item) => {
-                    println!("{}", serde_json::to_string(&item.results()).unwrap());
+                    let mut output = serde_json::to_value(item.results()).unwrap();
+                    output["Meta"] = serde_json::to_value(&item.meta).unwrap();
+                    println!("{}", serde_json::to_string(&output).unwrap());
                     if *count {
                         for (group, subresults) in item.results() {
                             eprintln!("{:?}: {:?}", group, subresults.len());

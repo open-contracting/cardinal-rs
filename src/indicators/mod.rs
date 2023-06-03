@@ -8,10 +8,26 @@ use std::collections::HashMap;
 use std::ops::AddAssign;
 
 use indexmap::IndexMap;
-use serde::{Deserialize, Serialize};
+use serde::ser::SerializeMap;
+use serde::{Deserialize, Serialize, Serializer};
 use serde_json::{Map, Value};
 
 // Settings.
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
+pub enum Codelist {
+    BidStatus,
+    AwardStatus,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Defaults {
+    pub currency: Option<String>,
+    pub item_classification_scheme: Option<String>,
+    pub bid_status: Option<String>,
+    pub award_status: Option<String>,
+}
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -38,21 +54,6 @@ pub struct R025 {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct Defaults {
-    pub currency: Option<String>,
-    pub item_classification_scheme: Option<String>,
-    pub bid_status: Option<String>,
-    pub award_status: Option<String>,
-}
-
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
-pub enum Codelist {
-    BidStatus,
-    AwardStatus,
-}
-
-#[derive(Clone, Debug, Default, Deserialize)]
-#[serde(deny_unknown_fields)]
 #[allow(non_snake_case)]
 pub struct Settings {
     // prepare command.
@@ -70,6 +71,14 @@ pub struct Settings {
 // Final results.
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
+pub enum Group {
+    OCID,
+    Buyer,
+    ProcuringEntity,
+    Tenderer,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
 pub enum Indicator {
     R024,
     R025,
@@ -78,17 +87,19 @@ pub enum Indicator {
     R038,
 }
 
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
-pub enum Group {
-    OCID,
-    Buyer,
-    ProcuringEntity,
-    Tenderer,
+#[derive(Clone, Copy, Debug, Default)]
+pub struct Fraction {
+    numerator: usize,
+    denominator: usize,
 }
+
+#[derive(Debug, Default, Serialize)]
+pub struct RoundMap(#[serde(serialize_with = "round")] IndexMap<String, f64>);
 
 #[derive(Debug, Default)]
 pub struct Indicators {
     pub results: IndexMap<Group, HashMap<String, HashMap<Indicator, f64>>>,
+    pub meta: HashMap<Indicator, RoundMap>,
     pub currency: Option<String>,
     /// The percentage difference between the winning bid and the second-lowest valid bid for each `ocid`.
     pub r024_ratios: HashMap<String, f64>,
@@ -102,13 +113,34 @@ pub struct Indicators {
     pub r038_tenderer: HashMap<String, Fraction>,
 }
 
-// Intermediate results.
-
-#[derive(Clone, Copy, Debug, Default)]
-pub struct Fraction {
-    numerator: usize,
-    denominator: usize,
+fn round<S>(m: &IndexMap<String, f64>, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let mut map = serializer.serialize_map(Some(m.len()))?;
+    for (k, v) in m {
+        map.serialize_entry(k, &((v * 10_000.0).round() / 10_000.0))?;
+    }
+    map.end()
 }
+
+// Traits.
+
+pub trait Calculate {
+    fn new(settings: &mut Settings) -> Self
+    where
+        Self: Sized;
+
+    fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str);
+
+    #[allow(unused_variables)]
+    fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {}
+
+    #[allow(unused_variables)]
+    fn finalize(&self, item: &mut Indicators) {}
+}
+
+// Trait implementations.
 
 impl AddAssign for Fraction {
     fn add_assign(&mut self, other: Self) {
@@ -127,22 +159,6 @@ impl From<&Fraction> for f64 {
     fn from(fraction: &Fraction) -> Self {
         fraction.numerator as Self / fraction.denominator as Self
     }
-}
-
-// Traits.
-
-pub trait Calculate {
-    fn new(settings: &mut Settings) -> Self
-    where
-        Self: Sized;
-
-    fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str);
-
-    #[allow(unused_variables)]
-    fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {}
-
-    #[allow(unused_variables)]
-    fn finalize(&self, item: &mut Indicators) {}
 }
 
 // Initialization macros.
@@ -184,3 +200,15 @@ macro_rules! set_result {
     };
 }
 pub(crate) use set_result;
+
+macro_rules! set_meta {
+    ( $item:ident , $indicator:ident , $key:expr , $value:ident ) => {
+        $item
+            .meta
+            .entry(crate::indicators::Indicator::$indicator)
+            .or_default()
+            .0
+            .insert($key.to_owned(), $value)
+    };
+}
+pub(crate) use set_meta;

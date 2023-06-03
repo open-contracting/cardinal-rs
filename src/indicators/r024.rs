@@ -3,7 +3,7 @@ use serde_json::{Map, Value};
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-use crate::indicators::{set_result, Calculate, Indicators, Settings};
+use crate::indicators::{set_meta, set_result, Calculate, Indicators, Settings};
 
 #[derive(Default)]
 pub struct R024 {
@@ -95,9 +95,13 @@ impl Calculate for R024 {
             let mut data = Data::new(item.r024_ratios.values().copied().collect::<Vec<_>>());
             let q1 = data.lower_quartile();
             let q3 = data.upper_quartile();
+            set_meta!(item, R024, "q1", q1);
+            set_meta!(item, R024, "q3", q3);
             // q1 - IQR * 1.5
             (q3 - q1).mul_add(-1.5, q1)
         });
+
+        set_meta!(item, R024, "lower_fence", lower_fence);
 
         for (ocid, ratio) in &item.r024_ratios {
             if *ratio <= lower_fence {

@@ -198,6 +198,7 @@ impl Indicators {
                 // If we return `Ok(item)`, we can't consume temporary internal fields.
                 Ok(Self {
                     results: item.results,
+                    meta: item.meta,
                     ..Default::default()
                 })
             },

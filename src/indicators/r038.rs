@@ -4,7 +4,7 @@ use serde_json::{Map, Value};
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-use crate::indicators::{fraction, mediant, set_result, Calculate, Indicators, Settings};
+use crate::indicators::{fraction, mediant, set_meta, set_result, Calculate, Indicators, Settings};
 
 macro_rules! flag {
     ( $item:ident , $field:ident , $threshold:expr , $group:ident ) => {
@@ -17,9 +17,18 @@ macro_rules! flag {
             let mut data = Data::new(ratios.values().copied().collect::<Vec<_>>());
             let q1 = data.lower_quartile();
             let q3 = data.upper_quartile();
+            set_meta!($item, R038, format!("{:?}_q1", crate::indicators::Group::$group), q1);
+            set_meta!($item, R038, format!("{:?}_q3", crate::indicators::Group::$group), q3);
             // q3 + IQR * 1.5
             (q3 - q1).mul_add(1.5, q3)
         });
+
+        set_meta!(
+            $item,
+            R038,
+            format!("{:?}_upper_fence", crate::indicators::Group::$group),
+            upper_fence
+        );
 
         for (id, ratio) in ratios {
             if ratio >= upper_fence {

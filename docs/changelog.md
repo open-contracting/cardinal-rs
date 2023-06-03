@@ -2,6 +2,11 @@
 
 ## 0.0.5 (Unreleased)
 
+### Added
+
+- {doc}`cli/indicators/index` command:
+  - Add `Meta` key to assist interpretation of results.
+
 ### Changed
 
 - Prefix an error about an unknown property in the settings file with the path at which the error occurred.
@@ -12,6 +17,7 @@
   - Improve write performance.
 - {doc}`cli/indicators/index` command:
   - The `--count` option writes to standard error instead of standard output, to not mix with the JSON.
+  - All `threshold` and `percentile` configurations are consistently interpreted as inclusive.
 
 ## 0.0.4 (2023-06-30)
 

@@ -77,7 +77,7 @@ The JSON output is therefore organized as an object in which the key is a **grou
 }
 ```
 
-Each value at the top level is an object representing the results within that **group**, in which the key is an **identifier** extracted from the input data:
+Each value at the *top* level is an object representing the results within that **group**, in which the key is an **identifier** extracted from the input data:
 
 | Group | Identifier |
 | - | - |
@@ -99,7 +99,7 @@ For example:
 }
 ```
 
-Each value at the second level is an object representing the results relating to that **identifier**, in which the key is the **code** for an indicator, and the value is the **output** of that indicator. For example:
+Each value at the *second* level is an object representing the results relating to that **identifier**, in which the key is the **code** for an indicator, and the value is the **output** of that indicator. For example:
 
 ```json
 {
@@ -119,6 +119,21 @@ Each value at the second level is an object representing the results relating to
 The **output** of an indicator is always a decimal. If an indicator didn't produce an output – either because it couldn't be calculated, or because no red flag was raised – then its code won't appear.
 
 You can [consult](#list) the codes for all indicators, read the description of their outputs and see a demonstration of their calculation.
+
+The JSON output also has a ``Meta`` key at the top level. Its value is an object with information about the quartiles and fences used to calculate the results. For example:
+
+```json
+{
+  ...
+  "Meta": {
+    "R024": {
+      "q1": 66.6667,
+      "q3": 100.0,
+      "lower_fence": 16.6667
+    }
+  }
+}
+```
 
 ## Configuration
 
