@@ -19,26 +19,28 @@ macro_rules! flag {
             })
             .collect();
 
-        let upper_fence = $self.threshold.unwrap_or_else(|| {
-            let mut data = Data::new(ratios.values().copied().collect::<Vec<_>>());
-            let q1 = data.lower_quartile();
-            let q3 = data.upper_quartile();
-            set_meta!($item, R038, format!("{:?}_q1", crate::indicators::Group::$group), q1);
-            set_meta!($item, R038, format!("{:?}_q3", crate::indicators::Group::$group), q3);
-            // q3 + IQR * 1.5
-            (q3 - q1).mul_add(1.5, q3)
-        });
+        if !ratios.is_empty() {
+            let upper_fence = $self.threshold.unwrap_or_else(|| {
+                let mut data = Data::new(ratios.values().copied().collect::<Vec<_>>());
+                let q1 = data.lower_quartile();
+                let q3 = data.upper_quartile();
+                set_meta!($item, R038, format!("{:?}_q1", crate::indicators::Group::$group), q1);
+                set_meta!($item, R038, format!("{:?}_q3", crate::indicators::Group::$group), q3);
+                // q3 + IQR * 1.5
+                (q3 - q1).mul_add(1.5, q3)
+            });
 
-        set_meta!(
-            $item,
-            R038,
-            format!("{:?}_upper_fence", crate::indicators::Group::$group),
-            upper_fence
-        );
+            set_meta!(
+                $item,
+                R038,
+                format!("{:?}_upper_fence", crate::indicators::Group::$group),
+                upper_fence
+            );
 
-        for (id, ratio) in ratios {
-            if ratio >= upper_fence {
-                set_result!($item, $group, id, R038, ratio);
+            for (id, ratio) in ratios {
+                if ratio >= upper_fence {
+                    set_result!($item, $group, id, R038, ratio);
+                }
             }
         }
     };
