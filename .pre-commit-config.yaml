@@ -6,20 +6,20 @@ repos:
       - id: cargo-fmt
         name: cargo fmt
         entry: cargo fmt
-        language: system
+        language: rust
         types: [rust]
         args: ["--all", "--"]
       - id: cargo-check
         name: cargo check
         entry: cargo check
-        language: system
+        language: rust
         types: [rust]
         args: ["--workspace"]
         pass_filenames: false
       - id: cargo-clippy
         name: cargo clippy
         entry: cargo clippy
-        language: system
+        language: rust
         types: [rust]
         # https://doc.rust-lang.org/stable/clippy/
         args: [
