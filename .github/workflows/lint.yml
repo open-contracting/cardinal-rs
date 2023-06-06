@@ -14,6 +14,9 @@ jobs:
         uses: tj-actions/changed-files@v36
       - uses: pre-commit/action@v3.0.0
         with:
-          extra_args: pip-compile --files ${{ steps.changed-files.outputs.all_changed_files }}
+          extra_args: cargo-check --files ${{ steps.changed-files.outputs.all_changed_files }}
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: cargo-clippy --files ${{ steps.changed-files.outputs.all_changed_files }}
       - uses: taiki-e/install-action@cargo-udeps
       - run: cargo udeps
