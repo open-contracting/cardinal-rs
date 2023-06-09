@@ -66,6 +66,7 @@ jobs:
       # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#preinstalled-software
       - name: Create archive
         id: archive
+        shell: bash
         run: |
           DIRECTORY="ocdscardinal-${{ github.ref_name }}-${{ matrix.build }}"
           if [[ "${{ matrix.target }}" =~ "-pc-windows-" ]]; then
