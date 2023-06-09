@@ -22,7 +22,7 @@
   - The `--count` option writes to standard error instead of standard output, to not mix outputs.
   - All `threshold` and `percentile` configurations are consistently interpreted as inclusive.
 
-## 0.0.4 (2023-06-30)
+## 0.0.4 (2023-05-30)
 
 ### Changed
 
