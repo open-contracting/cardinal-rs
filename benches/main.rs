@@ -3,6 +3,7 @@
 
 use std::fs::File;
 use std::io::BufReader;
+use std::time::Duration;
 
 use criterion::{black_box, Criterion};
 use criterion_macro::criterion;
@@ -10,10 +11,14 @@ use criterion_macro::criterion;
 use ocdscardinal::{Indicators, Settings};
 
 #[criterion]
-fn criterion_benchmark(c: &mut Criterion) {
-    c.bench_function("indicators", |b| {
+fn bench(c: &mut Criterion) {
+    let mut group = c.benchmark_group("group");
+
+    group.measurement_time(Duration::from_secs(10)).sample_size(60); // defaults 5, 100
+
+    group.bench_function("indicators", |b| {
         b.iter(|| {
-            let path = "tests/fixtures/indicators/R024.jsonl";
+            let path = "benches/fixtures/10000.jsonl";
             let file = File::open(path).unwrap();
 
             let _ = Indicators::run(
@@ -29,4 +34,6 @@ fn criterion_benchmark(c: &mut Criterion) {
             );
         })
     });
+
+    group.finish();
 }
