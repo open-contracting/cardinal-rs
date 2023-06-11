@@ -7,6 +7,7 @@
 - {doc}`cli/init` command:
   - Add `--force` (`-f`) option to overwrite an existing file.
 - {doc}`cli/indicators/index` command:
+  - Add `--maps` option to include the `Maps` key.
   - Add `--no-meta` option to omit the `Meta` key.
   - [R038](cli/indicators/R/038): Add `minimum_submitted_bids` and `minimum_contracting_processes` configurations.
 

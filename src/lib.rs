@@ -142,11 +142,18 @@ impl Indicators {
         &self.results
     }
 
+    fn map() -> Self {
+        Self {
+            map: true,
+            ..Default::default()
+        }
+    }
+
     ///
     /// # Errors
     ///
     #[rustfmt::skip]
-    pub fn run(buffer: impl BufRead + Send, mut settings: Settings) -> Result<Self> {
+    pub fn run(buffer: impl BufRead + Send, mut settings: Settings, map: &bool) -> Result<Self> {
         let mut indicators: Vec<Box<dyn Calculate + Sync>> = vec![];
 
         add_indicators!(
@@ -159,9 +166,15 @@ impl Indicators {
             R038,
         );
 
+        let identity = if *map {
+            Self::map
+        } else {
+            Self::default
+        };
+
         fold_reduce(
             buffer,
-            Self::default,
+            identity,
             |mut item, value| {
                 if let Value::Object(release) = value
                     && let Some(Value::String(ocid)) = release.get("ocid")
@@ -174,10 +187,9 @@ impl Indicators {
                 item
             },
             |mut item, mut other| {
-                // If each OCID appears on one line only, no overwriting will occur.
                 let group = item.results.entry(Group::OCID).or_default();
-                // Call remove() to avoid clone() (moving one entry would leave hashmap in invalid state).
-                group.extend(other.results.remove(&Group::OCID).unwrap_or_default());
+                // If each OCID appears on one line of the file, no overwriting occurs.
+                group.extend(std::mem::take(other.results.entry(Group::OCID).or_default()));
                 // Note: Buyer and ProcuringEntity indicators are only calculated in finalize().
 
                 for indicator in &indicators {
@@ -191,6 +203,7 @@ impl Indicators {
                     indicator.finalize(&mut item);
                 }
 
+                // This key is always set by the reduce closure.
                 if item.results[&Group::OCID].is_empty() {
                     item.results.remove(&Group::OCID);
                 }
@@ -199,6 +212,7 @@ impl Indicators {
                 Ok(Self {
                     results: item.results,
                     meta: item.meta,
+                    maps: item.maps,
                     ..Default::default()
                 })
             },
@@ -432,6 +446,7 @@ impl Prepare {
             Ok(())
         });
 
+        // Buffers flush when dropped, but any errors are ignored. Flush explicitly to raise errors.
         output.new_task().flush()?;
         errors.new_task().flush()?;
 
@@ -548,7 +563,7 @@ mod tests {
     }
 
     fn check_indicators(name: &str, settings: Settings) {
-        let result = Indicators::run(reader(name, "jsonl"), settings);
+        let result = Indicators::run(reader(name, "jsonl"), settings, &false);
         let expected: HashMap<Group, HashMap<String, HashMap<Indicator, f64>>> =
             serde_json::from_reader(reader(name, "expected")).unwrap();
 

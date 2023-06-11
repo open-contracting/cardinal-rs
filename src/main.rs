@@ -59,8 +59,13 @@ enum Commands {
     ///
     /// The result is a JSON object, in which the keys are one of "OCID", "Buyer", "ProcuringEntity"
     /// or "Tenderer". The values are JSON objects, in which the keys are identifiers (e.g. ocid)
-    /// and values are results (of any indicators that returned a result). The result also has a
-    /// "Meta" key, with information about the quartiles and fences used to calculate the results.
+    /// and values are results (of any indicators that returned a result).
+    ///
+    /// Unless --no-meta is set, the result has a "Meta" key, with information about the quartiles
+    /// and fences used to calculate the results.
+    ///
+    /// If --map is set, the result has a "Maps" key, with mappings from contracting processes to
+    /// organizations.
     Indicators {
         /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
         file: PathBuf,
@@ -73,6 +78,9 @@ enum Commands {
         /// Exclude the "Meta" key from the results object
         #[arg(long, default_value_t = false)]
         no_meta: bool,
+        /// Include the "Maps" key, mapping contracting processes to organizations
+        #[arg(long, default_value_t = false)]
+        map: bool,
     },
     /// Write a default settings file for configuration.
     Init {
@@ -172,11 +180,15 @@ fn main() {
             count,
             settings,
             no_meta,
-        } => match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default()) {
+            map,
+        } => match ocdscardinal::Indicators::run(reader(file), settings.clone().unwrap_or_default(), map) {
             Ok(item) => {
                 let mut output = serde_json::to_value(item.results()).unwrap();
                 if !no_meta {
                     output["Meta"] = serde_json::to_value(&item.meta).unwrap();
+                }
+                if *map {
+                    output["Maps"] = serde_json::to_value(&item.maps).unwrap();
                 }
                 println!("{}", serde_json::to_string(&output).unwrap());
                 if *count {

@@ -64,7 +64,7 @@ impl Calculate for R038 {
         }
     }
 
-    fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, _ocid: &str) {
+    fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
         let submitted_bids = Indicators::get_submitted_bids(release);
 
         // Avoid NaN errors.
@@ -91,6 +91,13 @@ impl Calculate for R038 {
                     if let Some(Value::String(id)) = tenderer.get("id") {
                         let fraction = item.r038_tenderer.entry(id.clone()).or_default();
                         *fraction += fraction!(increment, 1);
+                        if item.map {
+                            item.maps
+                                .ocid_tenderer
+                                .entry(ocid.to_owned())
+                                .or_default()
+                                .insert(id.clone());
+                        }
                     }
                 }
             }
@@ -101,6 +108,9 @@ impl Calculate for R038 {
         {
             let fraction = item.r038_buyer.entry(id.clone()).or_default();
             *fraction += fraction!(disqualified_bids_count, submitted_bids_count);
+            if item.map && disqualified_bids_count > 0 {
+                item.maps.ocid_buyer_r038.entry(ocid.to_owned()).or_default().insert(id.clone());
+            }
         }
 
         if let Some(Value::Object(tender)) = release.get("tender")
@@ -109,6 +119,9 @@ impl Calculate for R038 {
         {
             let fraction = item.r038_procuring_entity.entry(id.clone()).or_default();
             *fraction += fraction!(disqualified_bids_count, submitted_bids_count);
+            if item.map && disqualified_bids_count > 0 {
+                item.maps.ocid_procuring_entity_r038.entry(ocid.to_owned()).or_default().insert(id.clone());
+            }
         }
     }
 
@@ -116,6 +129,19 @@ impl Calculate for R038 {
         mediant!(item, other, r038_buyer);
         mediant!(item, other, r038_procuring_entity);
         mediant!(item, other, r038_tenderer);
+
+        if item.map {
+            // If each OCID appears on only one line of the file, no overwriting will occur.
+            item.maps
+                .ocid_buyer_r038
+                .extend(std::mem::take(&mut other.maps.ocid_buyer_r038));
+            item.maps
+                .ocid_procuring_entity_r038
+                .extend(std::mem::take(&mut other.maps.ocid_procuring_entity_r038));
+            item.maps
+                .ocid_tenderer
+                .extend(std::mem::take(&mut other.maps.ocid_tenderer));
+        }
     }
 
     fn finalize(&self, item: &mut Indicators) {

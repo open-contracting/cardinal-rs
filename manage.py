@@ -4,6 +4,7 @@ import json
 import os.path
 import re
 import sys
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from textwrap import dedent
@@ -22,17 +23,32 @@ def cli():
 @click.argument("infile", type=click.Path(exists=True, dir_okay=False))
 @click.argument("outfile", type=click.Path(dir_okay=False))
 def json_to_csv(infile, outfile):
+    fieldnames = ["ocid", "subject", "code", "result", "buyer_id", "procuring_entity_id", "tenderer_id", "created_at"]
+    subject_code_to_map_id = {
+        "Buyer": {"R038": "ocid_buyer_r038"},
+        "ProcuringEntity": {"R038": "ocid_procuring_entity_r038"},
+        "Tenderer": defaultdict(lambda: "ocid_tenderer"),
+    }
+    created_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+
     exists = os.path.exists(outfile)
 
     seen = set()
     if exists:
         with open(outfile) as f:
-            reader = csv.DictReader(f)
+            reader = csv.DictReader(f, fieldnames=fieldnames)
             for row in reader:
                 seen.add((row["ocid"], row["code"], row["buyer_id"], row["procuring_entity_id"], row["tenderer_id"]))
 
     with open(infile) as f:
         data = json.load(f)
+
+    identifier_to_ocid = defaultdict(lambda: defaultdict(list))
+    # {"Maps": {"ocid_tenderer": {"an-ocid": ["a-tenderer-id"]}}}
+    for map_id, mapping in data["Maps"].items():
+        for ocid, identifiers in mapping.items():
+            for identifier in identifiers:
+                identifier_to_ocid[map_id][identifier].append(ocid)
 
     rows = []
     for ocid, results in data.get("OCID", {}).items():
@@ -43,11 +59,33 @@ def json_to_csv(infile, outfile):
                     "subject": "OCID",
                     "code": code,
                     "result": result,
-                    "created_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "created_at": created_at,
                 })
 
+    for subject, index, column in (
+        ("Buyer", 2, "buyer_id"),
+        ("ProcuringEntity", 3, "procuring_entity_id"),
+        ("Tenderer", 4, "tenderer_id"),
+
+    ):
+        # {"Tenderer": {"a-tenderer-id": {"R038": 0.1}}}
+        for identifier, results in data.get(subject, {}).items():
+            for code, result in results.items():
+                map_id = subject_code_to_map_id[subject][code]
+                for ocid in identifier_to_ocid.get(map_id, {}).get(identifier, []):
+                    key = [ocid, code, "", "", ""]
+                    key[index] = identifier
+                    if tuple(key) not in seen:
+                        rows.append({
+                            "ocid": ocid,
+                            "subject": subject,
+                            "code": code,
+                            column: identifier,
+                            "result": result,
+                            "created_at": created_at,
+                        })
+
     click.echo(f"Writing {len(rows)} rows")
-    fieldnames = ["ocid", "subject", "code", "result", "buyer_id", "procuring_entity_id", "tenderer_id", "created_at"]
     with open(outfile, "a") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
         if not exists:

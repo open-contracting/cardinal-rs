@@ -31,6 +31,7 @@ fn bench(c: &mut Criterion) {
                     R038: Some(Default::default()),
                     ..Default::default()
                 },
+                &false,
             );
         })
     });

@@ -10,8 +10,13 @@ Calculate procurement indicators from OCDS compiled releases in a line-delimited
 
 The result is a JSON object, in which the keys are one of "OCID", "Buyer", "ProcuringEntity" or
 "Tenderer". The values are JSON objects, in which the keys are identifiers (e.g. ocid) and values
-are results (of any indicators that returned a result). The result also has a "Meta" key, with
-information about the quartiles and fences used to calculate the results.
+are results (of any indicators that returned a result).
+
+Unless --no-meta is set, the result has a "Meta" key, with information about the quartiles and
+fences used to calculate the results.
+
+If --map is set, the result has a "Maps" key, with mappings from contracting processes to
+organizations.
 
 Usage: ocdscardinal[EXE] indicators [OPTIONS] <FILE>
 
@@ -32,6 +37,9 @@ Options:
 
       --no-meta
           Exclude the "Meta" key from the results object
+
+      --map
+          Include the "Maps" key, mapping contracting processes to organizations
 
   -h, --help
           Print help (see a summary with '-h')

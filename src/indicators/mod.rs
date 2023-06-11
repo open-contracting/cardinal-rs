@@ -4,7 +4,7 @@ pub mod r035;
 pub mod r036;
 pub mod r038;
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::ops::AddAssign;
 
 use indexmap::IndexMap;
@@ -95,7 +95,17 @@ pub enum Indicator {
     R038,
 }
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Debug, Default, Serialize)]
+pub struct Maps {
+    /// The buyer for each `ocid` in which at least one bid is disqualified.
+    pub ocid_buyer_r038: HashMap<String, HashSet<String>>,
+    /// The procuring entity for each `ocid` in which at least one bid is disqualified.
+    pub ocid_procuring_entity_r038: HashMap<String, HashSet<String>>,
+    /// The tenderers that submitted bids for each `ocid`.
+    pub ocid_tenderer: HashMap<String, HashSet<String>>,
+}
+
+#[derive(Debug, Default)]
 pub struct Fraction {
     numerator: usize,
     denominator: usize,
@@ -108,6 +118,7 @@ pub struct RoundMap(#[serde(serialize_with = "round")] IndexMap<String, f64>);
 pub struct Indicators {
     pub results: HashMap<Group, HashMap<String, HashMap<Indicator, f64>>>,
     pub meta: HashMap<Indicator, RoundMap>,
+    pub maps: Maps,
     pub currency: Option<String>,
     /// The percentage difference between the winning bid and the second-lowest valid bid for each `ocid`.
     pub r024_ratios: HashMap<String, f64>,
@@ -119,6 +130,8 @@ pub struct Indicators {
     pub r038_procuring_entity: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `bids/details/tenderers/id`.
     pub r038_tenderer: HashMap<String, Fraction>,
+    /// Whether to map contracting processes to organizations.
+    pub map: bool,
 }
 
 fn round<S>(m: &IndexMap<String, f64>, serializer: S) -> Result<S::Ok, S::Error>

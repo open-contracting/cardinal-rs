@@ -84,6 +84,7 @@ impl Calculate for R024 {
 
     fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
         if item.currency.is_none() || other.currency.is_none() || item.currency == other.currency {
+            // If each OCID appears on one line of the file, no overwriting occurs.
             item.r024_ratios.extend(std::mem::take(&mut other.r024_ratios));
         } else {
             warn!("{:?} is not {:?}, skipping.", other.currency, item.currency);
