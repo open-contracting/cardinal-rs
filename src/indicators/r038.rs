@@ -109,7 +109,7 @@ impl Calculate for R038 {
             let fraction = item.r038_buyer.entry(id.clone()).or_default();
             *fraction += fraction!(disqualified_bids_count, submitted_bids_count);
             if item.map && disqualified_bids_count > 0 {
-                item.maps.ocid_buyer_r038.entry(ocid.to_owned()).or_default().insert(id.clone());
+                item.maps.ocid_buyer_r038.insert(ocid.to_owned(), id.clone());
             }
         }
 
@@ -120,7 +120,7 @@ impl Calculate for R038 {
             let fraction = item.r038_procuring_entity.entry(id.clone()).or_default();
             *fraction += fraction!(disqualified_bids_count, submitted_bids_count);
             if item.map && disqualified_bids_count > 0 {
-                item.maps.ocid_procuring_entity_r038.entry(ocid.to_owned()).or_default().insert(id.clone());
+                item.maps.ocid_procuringentity_r038.insert(ocid.to_owned(), id.clone());
             }
         }
     }
@@ -136,8 +136,8 @@ impl Calculate for R038 {
                 .ocid_buyer_r038
                 .extend(std::mem::take(&mut other.maps.ocid_buyer_r038));
             item.maps
-                .ocid_procuring_entity_r038
-                .extend(std::mem::take(&mut other.maps.ocid_procuring_entity_r038));
+                .ocid_procuringentity_r038
+                .extend(std::mem::take(&mut other.maps.ocid_procuringentity_r038));
             item.maps
                 .ocid_tenderer
                 .extend(std::mem::take(&mut other.maps.ocid_tenderer));

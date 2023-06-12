@@ -98,9 +98,9 @@ pub enum Indicator {
 #[derive(Debug, Default, Serialize)]
 pub struct Maps {
     /// The buyer for each `ocid` in which at least one bid is disqualified.
-    pub ocid_buyer_r038: HashMap<String, HashSet<String>>,
+    pub ocid_buyer_r038: HashMap<String, String>,
     /// The procuring entity for each `ocid` in which at least one bid is disqualified.
-    pub ocid_procuring_entity_r038: HashMap<String, HashSet<String>>,
+    pub ocid_procuringentity_r038: HashMap<String, String>,
     /// The tenderers that submitted bids for each `ocid`.
     pub ocid_tenderer: HashMap<String, HashSet<String>>,
 }

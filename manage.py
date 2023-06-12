@@ -26,7 +26,7 @@ def json_to_csv(infile, outfile):
     fieldnames = ["ocid", "subject", "code", "result", "buyer_id", "procuring_entity_id", "tenderer_id", "created_at"]
     subject_code_to_map_id = {
         "Buyer": {"R038": "ocid_buyer_r038"},
-        "ProcuringEntity": {"R038": "ocid_procuring_entity_r038"},
+        "ProcuringEntity": {"R038": "ocid_procuringentity_r038"},
         "Tenderer": defaultdict(lambda: "ocid_tenderer"),
     }
     created_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -47,6 +47,9 @@ def json_to_csv(infile, outfile):
     # {"Maps": {"ocid_tenderer": {"an-ocid": ["a-tenderer-id"]}}}
     for map_id, mapping in data["Maps"].items():
         for ocid, identifiers in mapping.items():
+            # ocid_buyer* and ocid_procuringentity* are `str`.
+            if not isinstance(identifiers, list):
+                identifiers = [identifiers]
             for identifier in identifiers:
                 identifier_to_ocid[map_id][identifier].append(ocid)
 
