@@ -15,7 +15,7 @@ project = "Cardinal"
 copyright = "2002, Open Contracting Partnership"
 author = "Open Contracting Partnership"
 
-version = "0.0.4"
+version = "0.0.5"
 release = version
 
 # -- General configuration ---------------------------------------------------
