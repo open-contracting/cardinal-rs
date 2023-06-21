@@ -75,10 +75,13 @@ impl Calculate for R025 {
         set_meta!(item, R025, "upper_fence", upper_fence);
         set_meta!(item, R025, "lower_fence", lower_fence);
 
-        for (id, fraction) in &item.r025_tenderer {
-            let ratio = fraction.into();
-            if fraction.denominator as f64 >= upper_fence && ratio <= lower_fence {
-                set_result!(item, Tenderer, id, R025, ratio);
+        // A ratio of winning bids to submitted bids is non-negative. Skip if IQR is 0.
+        if lower_fence > 0.0 {
+            for (id, fraction) in &item.r025_tenderer {
+                let ratio = fraction.into();
+                if fraction.denominator as f64 >= upper_fence && ratio <= lower_fence {
+                    set_result!(item, Tenderer, id, R025, ratio);
+                }
             }
         }
     }

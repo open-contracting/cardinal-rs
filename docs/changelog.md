@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.6 (Unreleased)
+
+## Fixed
+
+- {doc}`cli/indicators/index` command:
+  - If the interquartile range is 0, nothing is flagged.
+
 ## 0.0.5 (2023-06-14)
 
 ### Added

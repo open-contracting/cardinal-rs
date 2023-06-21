@@ -37,9 +37,12 @@ macro_rules! flag {
                 upper_fence
             );
 
-            for (id, ratio) in ratios {
-                if ratio >= upper_fence {
-                    set_result!($item, $group, id, R038, ratio);
+            // A ratio of disqualified bids to submitted bids is non-negative. Skip if IQR is 0.
+            if upper_fence > 0.0 {
+                for (id, ratio) in ratios {
+                    if ratio >= upper_fence {
+                        set_result!($item, $group, id, R038, ratio);
+                    }
                 }
             }
         }

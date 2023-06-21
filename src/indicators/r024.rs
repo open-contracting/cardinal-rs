@@ -104,9 +104,12 @@ impl Calculate for R024 {
 
         set_meta!(item, R024, "lower_fence", lower_fence);
 
-        for (ocid, ratio) in &item.r024_ratios {
-            if *ratio <= lower_fence {
-                set_result!(item, OCID, ocid, R024, *ratio);
+        // The percentage difference is non-negative. Skip if IQR is 0.
+        if lower_fence > 0.0 {
+            for (ocid, ratio) in &item.r024_ratios {
+                if *ratio <= lower_fence {
+                    set_result!(item, OCID, ocid, R024, *ratio);
+                }
             }
         }
     }
