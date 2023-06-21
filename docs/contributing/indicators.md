@@ -4,14 +4,18 @@ You can use the check marks to track your progress (do not reload the page).
 
 In this tutorial, the example indicator is given the code R999. Its methodology is "A competition completed with few submitted bids," with the default for "few" being 1 bid.
 
-## 1. Assign a code
+## 1. Develop the methodology
+
+All fences are inclusive in Cardinal, to be consistent and to be easy to interpret. However, this means that, if the methodology identifies outliers using the interquartile range, and if the interquartile range is zero, then the indicator will always return a result. Therefore, the methodology must guard against this by returning nothing if the interquartile range is zero.
+
+## 2. Assign a code
 
 When adding an indicator that is not assigned a code among the [resources](https://www.open-contracting.org/resources/) of the Open Contracting Partnership (or if you don't know):
 
 - [ ] [Create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues) to be assigned a code.
 
 (indicators-boilerplate)=
-## 2. Add boilerplate content
+## 3. Add boilerplate content
 
 :::{admonition} One-time setup
 To install the requirements for automation, create a Python virtual environment and run:
@@ -111,7 +115,7 @@ cargo test
 All tests should pass! (with warnings about unused variables and imports)
 :::
 
-## 3. Edit the settings in `src/indicators/mod.rs`
+## 4. Edit the settings in `src/indicators/mod.rs`
 
 The [configurations](../cli/indicators/index.md#configuration) for an indicator are represented as a field named after the indicator (`R999`) on the `Settings` struct, defined in `src/indicators/mod.rs`.
 
@@ -198,7 +202,7 @@ echo '{}' | cargo run -- indicators --settings settings.ini -
 The output should be `{}`, with no errors about unknown fields!
 :::
 
-## 4. Write the module
+## 5. Write the module
 
 Open the new module (`src/indicators/r999.rs`, in this example) in a text editor.
 
@@ -440,12 +444,12 @@ If you need guidance on this step, [create an issue on GitHub](http://github.com
 If you need guidance on this step, [create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues).
 :::
 
-## 5. Update the `init` command
+## 6. Update the `init` command
 
 - [ ] In `src/lib.rs`, edit the multiline string at the top of the `init` function to include a section for the new indicator, and any configurations as comments.
 - [ ] In `docs/cli/init.md`, edit the command's output at the bottom of the file to match the multiline string.
 
-## 6. Write the tests
+## 7. Write the tests
 
 The test framework reads `*.jsonl` files in the `tests/fixtures/indicators/` directory. Each `*.jsonl` file is prefixed with an indicator code: for example, `R038.jsonl` and `R038_tenderer.jsonl`. The test framework runs the `indicators` command with that indicator [enabled](../cli/indicators/index.md#enable-an-indicator), and compares the output to the corresponding `*.expected` file: for example, `R038.expected` and `R038_tenderer.expected`.
 
@@ -508,7 +512,7 @@ test tests::r999 ... ok
 ```
 :::
 
-## 7. Add documentation
+## 8. Add documentation
 
 ### Document the indicator
 
