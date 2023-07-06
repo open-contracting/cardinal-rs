@@ -14,12 +14,12 @@ keywords = ["cli", "json"]
 [dependencies]
 anyhow = "1.0"
 clap = { version = "4.0", features = ["derive", "wrap_help"] }
-config = {version = "0.13", features = ["ini"] }
+config = {version = "0.13", features = ["ini"], default-features = false }
 csv = "1.0"
 human-panic = "1.0"
-indexmap = { version = "1.0", features = ["serde"] }
+indexmap = { version = "2.0", features = ["serde"] }
 log = "0.4"
-pretty_env_logger = "0.4"
+pretty_env_logger = "0.5"
 rayon = "1.0"
 readonly = "0.2"
 serde = { version ="1.0", features = ["derive"] }
@@ -36,6 +36,6 @@ criterion = { version = "0.5", features = ["html_reports", "real_blackbox"] }
 criterion-macro = "0.4"
 pretty_assertions = "1.0"
 predicates = "2.0"
-rstest = "0.16"
+rstest = "0.18"
 tempfile = "3.0"
-trycmd = "0.14"
+trycmd = { version = "0.14", features = ["color-auto", "diff"], default-features = false }
