@@ -250,14 +250,20 @@ R/index
 
 * - Code
   - Title
+  - Description
 * - [R024](R/024)
-  - [The percentage difference between the winning bid and the second-lowest valid bid is a low outlier](R/024)
+  - [Price close to winning bid](R/024)
+  - The percentage difference between the winning bid and the second-lowest valid bid is a low outlier.
 * - [R025](R/025)
-  - [The ratio of winning bids to submitted bids for a top tenderer is a low outlier](R/025)
+  - [Excessive unsuccessful bids](R/025)
+  - The ratio of winning bids to submitted bids for a top tenderer is a low outlier.
 * - [R035](R/035)
-  - [Bids are disqualified if not submitted by the single tenderer of the winning bid](R/035)
+  - [All except winning bid disqualified](R/035)
+  - Bids are disqualified if not submitted by the single tenderer of the winning bid.
 * - [R036](R/036)
-  - [The lowest submitted bid is disqualified, while the award criterion is price only](R/036)
+  - [Lowest bid disqualified](R/036)
+  - The lowest submitted bid is disqualified, while the award criterion is price only.
 * - [R038](R/038)
-  - [The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer](R/038)
+  - [Excessive disqualified bids](R/038)
+  - The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer.
 :::

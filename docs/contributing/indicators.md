@@ -97,7 +97,7 @@ The files created are explained in the next sections.
                 R999,
     ```
 
-- In `docs/examples/settings.ini`, add a section for the new indicator in alphabetical order:
+- [ ] In `docs/examples/settings.ini`, add a section for the new indicator in alphabetical order:
 
     ```ini
     [R999]
