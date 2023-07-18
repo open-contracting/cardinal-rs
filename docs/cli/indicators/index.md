@@ -151,6 +151,8 @@ The JSON output also has a ``Meta`` key at the top level. Its value is an object
 
 The page for each [indicator](#list) describes its individual settings.
 
+All configuration is optional. Cardinal provides good defaults.
+
 :::{seealso}
 An introduction to the {doc}`../../topics/settings`.
 :::

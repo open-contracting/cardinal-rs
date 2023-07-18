@@ -22,7 +22,7 @@ The indicator's value is TODO.
 
 ## Configuration
 
-To configure the TODO:
+All configuration is optional. To override the default TODO:
 
 ```ini
 [R999]
