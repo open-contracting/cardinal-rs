@@ -92,20 +92,24 @@ impl Calculate for R024 {
     }
 
     fn finalize(&self, item: &mut Indicators) {
-        let lower_fence = self.threshold.unwrap_or_else(|| {
-            let mut data = Data::new(item.r024_ratios.values().copied().collect::<Vec<_>>());
-            let q1 = data.lower_quartile();
-            let q3 = data.upper_quartile();
-            set_meta!(item, R024, "q1", q1);
-            set_meta!(item, R024, "q3", q3);
-            // q1 - IQR * 1.5
-            (q3 - q1).mul_add(-1.5, q1)
-        });
+        let (lower_fence, q1) = self.threshold.map_or_else(
+            || {
+                let mut data = Data::new(item.r024_ratios.values().copied().collect::<Vec<_>>());
+                let q1 = data.lower_quartile();
+                let q3 = data.upper_quartile();
+                set_meta!(item, R024, "q1", q1);
+                set_meta!(item, R024, "q3", q3);
+                // q1 - IQR * 1.5
+                ((q3 - q1).mul_add(-1.5, q1), q1)
+            },
+            |v| (v, 1.0), // dummy value to pass guard
+        );
 
         set_meta!(item, R024, "lower_fence", lower_fence);
 
-        // The percentage difference is non-negative. Skip if IQR is 0.
-        if lower_fence > 0.0 {
+        // The percentage difference is non-negative.
+        // Skip if 75% of contracting processes have no percentage difference; otherwise, 75% are flagged.
+        if q1 > 0.0 && lower_fence > 0.0 {
             for (ocid, ratio) in &item.r024_ratios {
                 if *ratio <= lower_fence {
                     set_result!(item, OCID, ocid, R024, *ratio);

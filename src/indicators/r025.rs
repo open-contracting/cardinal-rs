@@ -62,21 +62,25 @@ impl Calculate for R025 {
         )
         .percentile(self.percentile);
 
-        let lower_fence = self.threshold.unwrap_or_else(|| {
-            let mut data = Data::new(item.r025_tenderer.values().map(f64::from).collect::<Vec<_>>());
-            let q1 = data.lower_quartile();
-            let q3 = data.upper_quartile();
-            set_meta!(item, R025, "q1", q1);
-            set_meta!(item, R025, "q3", q3);
-            // q1 - IQR * 1.5
-            (q3 - q1).mul_add(-1.5, q1)
-        });
+        let (lower_fence, q1) = self.threshold.map_or_else(
+            || {
+                let mut data = Data::new(item.r025_tenderer.values().map(f64::from).collect::<Vec<_>>());
+                let q1 = data.lower_quartile();
+                let q3 = data.upper_quartile();
+                set_meta!(item, R025, "q1", q1);
+                set_meta!(item, R025, "q3", q3);
+                // q1 - IQR * 1.5
+                ((q3 - q1).mul_add(-1.5, q1), q1)
+            },
+            |v| (v, 1.0), // dummy value to pass guard
+        );
 
         set_meta!(item, R025, "upper_fence", upper_fence);
         set_meta!(item, R025, "lower_fence", lower_fence);
 
-        // A ratio of winning bids to submitted bids is non-negative. Skip if IQR is 0.
-        if lower_fence > 0.0 {
+        // A ratio of winning bids to submitted bids is non-negative.
+        // Skip if 75% of tenderers have no winning bids; otherwise, a likely majority of top tenderers are flagged.
+        if q1 > 0.0 && lower_fence > 0.0 {
             for (id, fraction) in &item.r025_tenderer {
                 let ratio = fraction.into();
                 if fraction.denominator as f64 >= upper_fence && ratio <= lower_fence {

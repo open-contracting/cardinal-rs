@@ -5,7 +5,7 @@
 ## Fixed
 
 - {doc}`cli/indicators/index` command:
-  - If the interquartile range is 0, nothing is flagged.
+  - If the first quartile, third quartile and interquartile range are 0, skip the indicator to not flag 75% of cases.
 
 ## 0.0.5 (2023-06-14)
 

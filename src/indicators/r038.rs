@@ -37,7 +37,8 @@ macro_rules! flag {
                 upper_fence
             );
 
-            // A ratio of disqualified bids to submitted bids is non-negative. Skip if IQR is 0.
+            // A ratio of disqualified bids to submitted bids is non-negative.
+            // Skip if 75% of cases have no disqualified bids; otherwise, 75% are flagged.
             if upper_fence > 0.0 {
                 for (id, ratio) in ratios {
                     if ratio >= upper_fence {
