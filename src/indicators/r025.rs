@@ -9,7 +9,7 @@ use crate::indicators::{fraction, mediant, set_meta, set_result, Calculate, Indi
 #[derive(Default)]
 pub struct R025 {
     percentile: usize,
-    threshold: Option<f64>, // resolved in reduce()
+    threshold: Option<f64>, // resolved in finalize()
 }
 
 impl Calculate for R025 {

@@ -40,8 +40,8 @@ impl Calculate for R030 {
                     && let Some(Value::Array(tenderers)) = bid.get("tenderers")
                 {
                     for tenderer in tenderers {
-                        if let Some(Value::String(id)) = tenderer.get("id") {
-                            if award_supplier_ids.contains(id) {
+                        if let Some(Value::String(tenderer_id)) = tenderer.get("id") {
+                            if award_supplier_ids.contains(tenderer_id) {
                                 set_result!(item, OCID, ocid, R030, 1.0);
                                 break;
                             }

@@ -52,7 +52,7 @@ macro_rules! flag {
 
 #[derive(Default)]
 pub struct R038 {
-    threshold: Option<f64>, // resolved in reduce()
+    threshold: Option<f64>, // resolved in finalize()
     minimum_submitted_bids: usize,
     minimum_contracting_processes: usize,
 }

@@ -8,7 +8,7 @@ use crate::indicators::{set_meta, set_result, Calculate, Indicators, Settings};
 #[derive(Default)]
 pub struct R024 {
     currency: Option<String>,
-    threshold: Option<f64>, // resolved in reduce()
+    threshold: Option<f64>, // resolved in finalize()
 }
 
 impl Calculate for R024 {
