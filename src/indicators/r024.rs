@@ -53,7 +53,6 @@ impl Calculate for R024 {
                             currency.clone(), Clone::clone
                         )
                     ) {
-                        // We assume the winner submits one valid bid.
                         if supplier_id == tenderer_id {
                             winner_amount = Some(amount);
                         } else if let Some(other) = lowest_non_winner_amount {
