@@ -2,7 +2,12 @@
 
 ## 0.0.6 (Unreleased)
 
-## Fixed
+### Added
+
+- {doc}`cli/indicators/index` command:
+  - R030 (*Late bid won*).
+
+### Fixed
 
 - {doc}`cli/indicators/index` command:
   - If the first quartile, third quartile and interquartile range are 0, skip the indicator to not flag 75% of cases.

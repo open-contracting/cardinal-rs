@@ -69,6 +69,8 @@ $ ocdscardinal init -
 ; percentile = 75
 ; threshold = 0.05
 
+[R030]
+
 [R035]
 ; threshold = 1
 

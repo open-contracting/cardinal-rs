@@ -52,7 +52,7 @@ TODO
 *Output*
 
 ```console
-$ ocdscardinal indicators --settings docs/examples/settings.ini docs/examples/R/999.jsonl
+$ ocdscardinal indicators --settings docs/examples/settings.ini --no-meta docs/examples/R/999.jsonl
 {}
 
 ```

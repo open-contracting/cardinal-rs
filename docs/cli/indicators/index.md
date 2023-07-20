@@ -223,9 +223,9 @@ Indicators are assigned codes for easy reference: for example, `R001`. The first
 
 The page for each indicator describes its individual methodology. For all indicators, a contracting process is excluded if:
 
-- The `ocid` isn’t a string.
-- The relevant organization references don’t set an `id`.
-- Monetary values, where relevant, don’t use the main currency.
+- The `ocid` isn't a string.
+- The relevant organization references don't set an `id`.
+- Monetary values, where relevant, don't use the main currency.
 
   To configure the main currency, add to the top of your settings file:
 
@@ -259,6 +259,9 @@ R/index
 * - [R025](R/025)
   - [Excessive unsuccessful bids](R/025)
   - The ratio of winning bids to submitted bids for a top tenderer is a low outlier.
+* - [R030](R/030)
+  - [Late bid won](R/030)
+  - The winning bid was received after the submission deadline.
 * - [R035](R/035)
   - [All except winning bid disqualified](R/035)
   - Bids are disqualified if not submitted by the single tenderer of the winning bid.

@@ -18,6 +18,7 @@ use serde_json::{Map, Value};
 
 use crate::indicators::r024::R024;
 use crate::indicators::r025::R025;
+use crate::indicators::r030::R030;
 use crate::indicators::r035::R035;
 use crate::indicators::r036::R036;
 use crate::indicators::r038::R038;
@@ -70,6 +71,8 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 [R025]
 ; percentile = 75
 ; threshold = 0.05
+
+[R030]
 
 [R035]
 ; threshold = 1
@@ -161,6 +164,7 @@ impl Indicators {
             settings,
             R024,
             R025,
+            R030,
             R035,
             R036,
             R038,
