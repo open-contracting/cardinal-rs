@@ -76,7 +76,7 @@ $ ocdscardinal coverage docs/examples/coverage-duplicate.jsonl
 :::
 ::::
 
-If a member name is empty, its path is the same as its parent object’s path:
+If a member name is empty, its path is the same as its parent object's path:
 
 ::::{grid} 1 2 2 2
 :::{grid-item}
@@ -99,7 +99,7 @@ $ ocdscardinal coverage docs/examples/coverage-empty.jsonl
 :::
 ::::
 
-If a member name ends with `[]`, its path can be the same as a matching sibling’s path:
+If a member name ends with `[]`, its path can be the same as a matching sibling's path:
 
 ::::{grid} 1 2 2 2
 :::{grid-item}
