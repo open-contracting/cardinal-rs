@@ -556,6 +556,7 @@ Demonstration
   ```md
   * - [R999](R/999)
     - [The title of the indicator](R/999)
+    - The description of the indicator.
   ```
 
 - [ ] In `docs/changelog.md`, add a changelog entry for the indicator:

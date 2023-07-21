@@ -422,6 +422,7 @@ impl Prepare {
                 for (j, award) in awards.iter_mut().enumerate() {
                     if let Some(Value::Array(items)) = award.get_mut("items") {
                         for (k, item) in items.iter_mut().enumerate() {
+                            prepare_id_object!(item, "classification");
                             if let Some(Value::Object(classification)) = item.get_mut("classification")
                                 && !classification.contains_key("scheme")
                             {
