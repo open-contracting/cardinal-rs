@@ -16,12 +16,17 @@ impl Calculate for R030 {
         if let Some(Value::Object(tender)) = release.get("tender")
             && let Some(Value::Object(tender_period)) = tender.get("tenderPeriod")
             && let Some(Value::String(end_date)) = tender_period.get("endDate")
-            && let Some((complete_awards, details)) = Indicators::get_complete_awards_and_bids_if_all_awards_final(release)
+            && let Some(Value::Array(awards)) = release.get("awards")
+            && let Some(Value::Object(bids)) = release.get("bids")
+            && let Some(Value::Array(details)) = bids.get("details")
         {
             let mut award_supplier_ids = HashSet::new();
 
-            for award in complete_awards {
-                if let Some(Value::Array(suppliers)) = award.get("suppliers") {
+            for award in awards {
+                if let Some(Value::String(status)) = award.get("status")
+                    && status == "active"
+                    && let Some(Value::Array(suppliers)) = award.get("suppliers")
+                {
                     for supplier in suppliers {
                         if let Some(Value::String(id)) = supplier.get("id") {
                             award_supplier_ids.insert(id);
