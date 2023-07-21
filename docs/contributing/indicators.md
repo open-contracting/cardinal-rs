@@ -12,7 +12,7 @@ All fences are inclusive in Cardinal, to be consistent and to be easy to interpr
 
 When adding an indicator that is not assigned a code among the [resources](https://www.open-contracting.org/resources/) of the Open Contracting Partnership (or if you don't know):
 
-- [ ] [Create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues) to be assigned a code.
+- [ ] [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues) to be assigned a code.
 
 (indicators-boilerplate)=
 ## 3. Add boilerplate content
@@ -316,7 +316,7 @@ With that in mind, while you implement the indicator, think about whether:
 
 - A new configuration should be added, to address a quality issue you encountered.
 
-[Create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues) to request any changes to the `prepare` command.
+[Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues) to request any changes to the `prepare` command.
 
 ### How data is processed
 
@@ -427,21 +427,23 @@ If the methodology considers compiled releases in aggregate – for example, it 
 
 :::{admonition} To do
 :class: caution
-If you need guidance on this step, [create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues).
+If you need guidance on this step, [create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues).
 :::
 
 ### `reduce` method
 
 :::{admonition} To do
 :class: caution
-If you need guidance on this step, [create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues).
+If you need guidance on this step, [create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues).
 :::
+
+If the indicator considers and flags a subset of tenderers, buyers, or procuring entities, set `item.maps`. See `r038.rs`, for example.
 
 ### `finalize` method
 
 :::{admonition} To do
 :class: caution
-If you need guidance on this step, [create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues).
+If you need guidance on this step, [create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues).
 :::
 
 ## 6. Update the `init` command

@@ -144,7 +144,7 @@ The command converts these ID fields to strings, in order to prevent this issue:
 As new indicators are added, additional ID fields will be converted.
 
 :::{note}
-This behavior can't be disabled. If you need to disable it, [create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues).
+This behavior can't be disabled. If you need to disable it, [create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues).
 :::
 
 ### Fill in missing values
@@ -170,7 +170,7 @@ award_status = active
 As new indicators are added, additional currency and scheme fields will be filled in.
 
 :::{tip}
-Need to fill in other values? [Create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
+Need to fill in other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
 :::
 
 ### Re-map incorrect codes
@@ -190,5 +190,5 @@ InTreatment = pending
 ```
 
 :::{tip}
-Need to re-map other values? [Create an issue on GitHub](http://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
+Need to re-map other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
 :::
