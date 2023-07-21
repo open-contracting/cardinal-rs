@@ -95,13 +95,6 @@ impl Calculate for R038 {
                     if let Some(Value::String(id)) = tenderer.get("id") {
                         let fraction = item.r038_tenderer.entry(id.clone()).or_default();
                         *fraction += fraction!(increment, 1);
-                        if item.map {
-                            item.maps
-                                .ocid_tenderer
-                                .entry(ocid.to_owned())
-                                .or_default()
-                                .insert(id.clone());
-                        }
                     }
                 }
             }
@@ -134,17 +127,14 @@ impl Calculate for R038 {
         mediant!(item, other, r038_procuring_entity);
         mediant!(item, other, r038_tenderer);
 
+        // If each OCID appears on only one line of the file, no overwriting will occur.
         if item.map {
-            // If each OCID appears on only one line of the file, no overwriting will occur.
             item.maps
                 .ocid_buyer_r038
                 .extend(std::mem::take(&mut other.maps.ocid_buyer_r038));
             item.maps
                 .ocid_procuringentity_r038
                 .extend(std::mem::take(&mut other.maps.ocid_procuringentity_r038));
-            item.maps
-                .ocid_tenderer
-                .extend(std::mem::take(&mut other.maps.ocid_tenderer));
         }
     }
 

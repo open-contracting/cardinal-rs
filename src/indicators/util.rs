@@ -4,8 +4,40 @@ use serde_json::{Map, Value};
 use crate::indicators::{Calculate, Indicators, Settings};
 
 #[derive(Default)]
+pub struct Tenderers {}
+
+#[derive(Default)]
 pub struct SecondLowestBidRatio {
     currency: Option<String>,
+}
+
+impl Calculate for Tenderers {
+    fn new(_settings: &mut Settings) -> Self {
+        Self::default()
+    }
+
+    fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
+        for bid in Indicators::get_submitted_bids(release) {
+            if let Some(Value::Array(tenderers)) = bid.get("tenderers") {
+                for tenderer in tenderers {
+                    if let Some(Value::String(id)) = tenderer.get("id") {
+                        item.maps
+                            .ocid_tenderer
+                            .entry(ocid.to_owned())
+                            .or_default()
+                            .insert(id.clone());
+                    }
+                }
+            }
+        }
+    }
+
+    fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
+        // If each OCID appears on only one line of the file, no overwriting will occur.
+        item.maps
+            .ocid_tenderer
+            .extend(std::mem::take(&mut other.maps.ocid_tenderer));
+    }
 }
 
 impl Calculate for SecondLowestBidRatio {
