@@ -271,4 +271,7 @@ R/index
 * - [R038](R/038)
   - [Excessive disqualified bids](R/038)
   - The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer.
+* - [R058](R/058)
+  - [Heavily discounted bid](R/058)
+  - The percentage difference between the winning bid and the second-lowest valid bid is a high outlier.
 :::

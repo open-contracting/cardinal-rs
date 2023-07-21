@@ -22,6 +22,8 @@ use crate::indicators::r030::R030;
 use crate::indicators::r035::R035;
 use crate::indicators::r036::R036;
 use crate::indicators::r038::R038;
+use crate::indicators::r058::R058;
+use crate::indicators::util::SecondLowestBidRatio;
 pub use crate::indicators::{Calculate, Codelist, Group, Indicator, Indicators, Settings};
 use crate::queue::Job;
 use crate::standard::{AWARD_STATUS, BID_STATUS};
@@ -159,6 +161,11 @@ impl Indicators {
     pub fn run(buffer: impl BufRead + Send, mut settings: Settings, map: &bool) -> Result<Self> {
         let mut indicators: Vec<Box<dyn Calculate + Sync>> = vec![];
 
+        // Must run before indicator initialization, which mutates settings.
+        if settings.R024.is_some() || settings.R058.is_some() {
+            indicators.push(Box::new(SecondLowestBidRatio::new(&mut settings)));
+        }
+
         add_indicators!(
             indicators,
             settings,
@@ -168,6 +175,7 @@ impl Indicators {
             R035,
             R036,
             R038,
+            R058,
         );
 
         let identity = if *map {

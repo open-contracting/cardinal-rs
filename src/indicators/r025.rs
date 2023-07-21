@@ -22,7 +22,7 @@ impl Calculate for R025 {
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, _ocid: &str) {
         if let Some((complete_awards, details)) =
             Indicators::get_complete_awards_and_bids_if_all_awards_final(release)
-            // See comments for R024.fold().
+            // See comments for SecondLowestBidRatio.fold().
             && complete_awards.len() == 1
             && let Some(Value::Array(suppliers)) = complete_awards[0].get("suppliers")
             && suppliers.len() == 1

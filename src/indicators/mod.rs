@@ -4,6 +4,8 @@ pub mod r030;
 pub mod r035;
 pub mod r036;
 pub mod r038;
+pub mod r058;
+pub mod util;
 
 use std::collections::{HashMap, HashSet};
 use std::ops::AddAssign;
@@ -76,6 +78,7 @@ pub struct Settings {
     pub R035: Option<IntegerThreshold>, // count
     pub R036: Option<Empty>,
     pub R038: Option<R038>,
+    pub R058: Option<FloatThreshold>, // ratio
 }
 
 // Final results.
@@ -96,6 +99,7 @@ pub enum Indicator {
     R035,
     R036,
     R038,
+    R058,
 }
 
 #[derive(Debug, Default, Serialize)]
@@ -124,7 +128,7 @@ pub struct Indicators {
     pub maps: Maps,
     pub currency: Option<String>,
     /// The percentage difference between the winning bid and the second-lowest valid bid for each `ocid`.
-    pub r024_ratios: HashMap<String, f64>,
+    pub second_lowest_bid_ratios: HashMap<String, f64>,
     // The ratio of winning bids to submitted bids for each `bids/details/tenderers/id`.
     pub r025_tenderer: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `buyer/id`.
@@ -155,7 +159,8 @@ pub trait Calculate {
     where
         Self: Sized;
 
-    fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str);
+    #[allow(unused_variables)]
+    fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {}
 
     #[allow(unused_variables)]
     fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {}
