@@ -26,6 +26,7 @@ impl Calculate for R048 {
         if let Some(Value::Array(awards)) = release.get("awards") {
             for award in awards {
                 if let Some(Value::String(status)) = award.get("status")
+                    // Award is complete.
                     && status == "active"
                     && let Some(Value::Array(suppliers)) = award.get("suppliers")
                     // Don't assume that all suppliers supply all items, as this can overcount heterogeneous suppliers.

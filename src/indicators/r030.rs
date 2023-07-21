@@ -24,6 +24,7 @@ impl Calculate for R030 {
 
             for award in awards {
                 if let Some(Value::String(status)) = award.get("status")
+                    // Award is complete.
                     && status == "active"
                     && let Some(Value::Array(suppliers)) = award.get("suppliers")
                 {
