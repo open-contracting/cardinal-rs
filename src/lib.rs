@@ -22,6 +22,7 @@ use crate::indicators::r030::R030;
 use crate::indicators::r035::R035;
 use crate::indicators::r036::R036;
 use crate::indicators::r038::R038;
+use crate::indicators::r048::R048;
 use crate::indicators::r058::R058;
 use crate::indicators::util::{SecondLowestBidRatio, Tenderers};
 pub use crate::indicators::{Calculate, Codelist, Group, Indicator, Indicators, Settings};
@@ -82,6 +83,13 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 [R036]
 
 [R038]
+; threshold = 0.5
+
+[R048]
+; digits = 2
+; threshold = 10
+
+[R058]
 ; threshold = 0.5
 ";
 
@@ -161,11 +169,10 @@ impl Indicators {
     pub fn run(buffer: impl BufRead + Send, mut settings: Settings, map: &bool) -> Result<Self> {
         let mut indicators: Vec<Box<dyn Calculate + Sync>> = vec![];
 
-        if *map && (settings.R025.is_some() || settings.R038.is_some()) {
+        // is_some() must run before indicator initialization, which mutates settings.
+        if *map && (settings.R025.is_some() || settings.R038.is_some() || settings.R048.is_some()) {
             indicators.push(Box::new(Tenderers::new(&mut settings)));
         }
-
-        // Must run before indicator initialization, which mutates settings.
         if settings.R024.is_some() || settings.R058.is_some() {
             indicators.push(Box::new(SecondLowestBidRatio::new(&mut settings)));
         }
@@ -179,6 +186,7 @@ impl Indicators {
             R035,
             R036,
             R038,
+            R048,
             R058,
         );
 

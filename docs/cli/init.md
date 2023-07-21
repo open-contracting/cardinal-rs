@@ -79,4 +79,11 @@ $ ocdscardinal init -
 [R038]
 ; threshold = 0.5
 
+[R048]
+; digits = 2
+; threshold = 10
+
+[R058]
+; threshold = 0.5
+
 ```

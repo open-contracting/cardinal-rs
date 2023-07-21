@@ -4,6 +4,7 @@ pub mod r030;
 pub mod r035;
 pub mod r036;
 pub mod r038;
+pub mod r048;
 pub mod r058;
 pub mod util;
 
@@ -65,6 +66,13 @@ pub struct R038 {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct R048 {
+    digits: Option<usize>,
+    threshold: Option<usize>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 #[allow(non_snake_case)]
 pub struct Settings {
     // prepare command.
@@ -78,6 +86,7 @@ pub struct Settings {
     pub R035: Option<IntegerThreshold>, // count
     pub R036: Option<Empty>,
     pub R038: Option<R038>,
+    pub R048: Option<R048>,
     pub R058: Option<FloatThreshold>, // ratio
 }
 
@@ -99,6 +108,7 @@ pub enum Indicator {
     R035,
     R036,
     R038,
+    R048,
     R058,
 }
 
@@ -137,6 +147,8 @@ pub struct Indicators {
     pub r038_procuring_entity: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `bids/details/tenderers/id`.
     pub r038_tenderer: HashMap<String, Fraction>,
+    /// The item classifications for each `bids/details/tenderers/id`.
+    pub r048_classifications: HashMap<String, HashSet<String>>,
     /// Whether to map contracting processes to organizations.
     pub map: bool,
 }
@@ -231,7 +243,7 @@ macro_rules! set_result {
 pub(crate) use set_result;
 
 macro_rules! set_meta {
-    ( $item:ident , $indicator:ident , $key:expr , $value:ident ) => {
+    ( $item:ident , $indicator:ident , $key:expr , $value:expr ) => {
         $item
             .meta
             .entry(crate::indicators::Indicator::$indicator)

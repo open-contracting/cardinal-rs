@@ -1,0 +1,5 @@
+{"ocid":"F","awards":[{"status":"active","suppliers":[{"id":"F"}],"items":[{"classification":{"id":"10000000"}},{"classification":{"id":"11000000"}}]}]}
+{"ocid":"1","awards":[{"status":"active","suppliers":[{"id":"1"}],"items":[{"classification":{"id":"10000000"}}]}]}
+{"ocid":"2","awards":[{"status":"active","suppliers":[{"id":"2"}],"items":[{"classification":{"id":"10000000"}}]}]}
+{"ocid":"3","awards":[{"status":"active","suppliers":[{"id":"3"}],"items":[{"classification":{"id":"10000000"}}]}]}
+{"ocid":"4","awards":[{"status":"active","suppliers":[{"id":"4"}],"items":[{"classification":{"id":"10000000"}}]}]}
