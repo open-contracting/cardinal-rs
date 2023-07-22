@@ -5,6 +5,7 @@
 ### Added
 
 - {doc}`cli/indicators/index` command:
+  - R028 (*Identical bid prices*).
   - R030 (*Late bid won*).
   - R048 (*Heterogeneous supplier*).
   - R058 (*Heavily discounted bid*).

@@ -259,6 +259,9 @@ R/index
 * - [R025](R/025)
   - [Excessive unsuccessful bids](R/025)
   - The ratio of winning bids to submitted bids for a top tenderer is a low outlier.
+* - [R028](R/028)
+  - [Identical bid prices](R/028)
+  - Two bids submitted by different tenderers have the same price.
 * - [R030](R/030)
   - [Late bid won](R/030)
   - The winning bid was received after the submission deadline.

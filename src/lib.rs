@@ -18,6 +18,7 @@ use serde_json::{Map, Value};
 
 use crate::indicators::r024::R024;
 use crate::indicators::r025::R025;
+use crate::indicators::r028::R028;
 use crate::indicators::r030::R030;
 use crate::indicators::r035::R035;
 use crate::indicators::r036::R036;
@@ -74,6 +75,8 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 [R025]
 ; percentile = 75
 ; threshold = 0.05
+
+[R028]
 
 [R030]
 
@@ -182,6 +185,7 @@ impl Indicators {
             settings,
             R024,
             R025,
+            R028,
             R030,
             R035,
             R036,
@@ -272,6 +276,7 @@ impl Indicators {
         None
     }
 
+    // Includes pending, valid and disqualified bids.
     fn get_submitted_bids(release: &Map<String, Value>) -> Vec<&Value> {
         let mut submitted_bids = vec![];
 

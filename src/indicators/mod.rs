@@ -1,5 +1,6 @@
 pub mod r024;
 pub mod r025;
+pub mod r028;
 pub mod r030;
 pub mod r035;
 pub mod r036;
@@ -82,6 +83,7 @@ pub struct Settings {
     pub currency: Option<String>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
+    pub R028: Option<Empty>,
     pub R030: Option<Empty>,
     pub R035: Option<IntegerThreshold>, // count
     pub R036: Option<Empty>,
@@ -104,6 +106,7 @@ pub enum Group {
 pub enum Indicator {
     R024,
     R025,
+    R028,
     R030,
     R035,
     R036,
