@@ -33,9 +33,9 @@ impl Calculate for R025 {
             for bid in details {
                 if let Some(Value::String(status)) = bid.get("status")
                     && let Some(Value::Array(tenderers)) = bid.get("tenderers")
-                    && status == "valid"
                     && tenderers.len() == 1
                     && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
+                    && status == "valid"
                 {
                     valid_tenderer_ids.insert(tenderer_id);
                 }

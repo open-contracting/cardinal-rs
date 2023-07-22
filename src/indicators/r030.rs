@@ -24,9 +24,8 @@ impl Calculate for R030 {
 
             for award in awards {
                 if let Some(Value::String(status)) = award.get("status")
-                    // Award is complete.
-                    && status == "active"
                     && let Some(Value::Array(suppliers)) = award.get("suppliers")
+                    && status == "active"
                 {
                     for supplier in suppliers {
                         if let Some(Value::String(id)) = supplier.get("id") {
@@ -38,12 +37,10 @@ impl Calculate for R030 {
 
             for bid in details {
                 if let Some(Value::String(status)) = bid.get("status")
-                    // Bid is accepted.
-                    && status == "valid"
                     && let Some(Value::String(date)) = bid.get("date")
-                    // Bid is late.
-                    && date > end_date
                     && let Some(Value::Array(tenderers)) = bid.get("tenderers")
+                    && status == "valid"
+                    && date > end_date
                 {
                     for tenderer in tenderers {
                         if let Some(Value::String(id)) = tenderer.get("id") {

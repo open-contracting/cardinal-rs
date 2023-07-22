@@ -65,14 +65,14 @@ impl Calculate for SecondLowestBidRatio {
         {
             for bid in details {
                 if let Some(Value::String(status)) = bid.get("status")
-                    && let Some(Value::Array(tenderers)) = bid.get("tenderers")
                     && let Some(Value::Object(value)) = bid.get("value")
                     && let Some(Value::Number(amount)) = value.get("amount")
                     && let Some(Value::String(currency)) = value.get("currency")
-                    && let Some(amount) = amount.as_f64()
-                    && status == "valid"
+                    && let Some(Value::Array(tenderers)) = bid.get("tenderers")
                     && tenderers.len() == 1
                     && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
+                    && let Some(amount) = amount.as_f64()
+                    && status == "valid"
                 {
                     // Exclude missing currencies and different currencies than the selected currency. If no currency
                     // is selected (`self.currency`), use the first observed currency.
