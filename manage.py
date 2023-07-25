@@ -137,6 +137,12 @@ def add_indicator(code):
             ],
         ),
         (
+            directory / "benches" / "main.rs",
+            [
+                (r"\[[A-Z]\d{3}", r"", upper, f"                    {upper}: Some(Default::default()),\n"),
+            ],
+        )
+        (
             directory / "docs" / "examples" / "settings.ini",
             [
                 (r"\[[A-Z]\d{3}", r"", upper, f"[{upper}]\n"),

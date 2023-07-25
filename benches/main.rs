@@ -26,9 +26,13 @@ fn bench(c: &mut Criterion) {
                 Settings {
                     R024: Some(Default::default()),
                     R025: Some(Default::default()),
+                    R028: Some(Default::default()),
+                    R030: Some(Default::default()),
                     R035: Some(Default::default()),
                     R036: Some(Default::default()),
                     R038: Some(Default::default()),
+                    R048: Some(Default::default()),
+                    R058: Some(Default::default()),
                     ..Default::default()
                 },
                 &false,
