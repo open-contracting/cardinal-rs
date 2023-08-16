@@ -63,36 +63,25 @@ impl Calculate for SecondLowestBidRatio {
             && suppliers.len() == 1
             && let Some(Value::String(supplier_id)) = suppliers[0].get("id")
         {
-            for bid in details {
-                if let Some(Value::String(status)) = bid.get("status")
-                    && let Some(Value::Object(value)) = bid.get("value")
-                    && let Some(Value::Number(amount)) = value.get("amount")
-                    && let Some(Value::String(currency)) = value.get("currency")
-                    && let Some(Value::Array(tenderers)) = bid.get("tenderers")
-                    && tenderers.len() == 1
-                    && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
-                    && let Some(amount) = amount.as_f64()
-                    && status == "valid"
-                {
-                    // Exclude missing currencies and different currencies than the selected currency. If no currency
-                    // is selected (`self.currency`), use the first observed currency.
-                    if currency == item.currency.get_or_insert_with(||
-                        self.currency.as_ref().map_or_else(||
-                            currency.clone(), Clone::clone
-                        )
-                    ) {
-                        if supplier_id == tenderer_id {
-                            winner_amount = Some(amount);
-                        } else if let Some(other) = lowest_non_winner_amount {
-                            if amount < other {
-                                lowest_non_winner_amount = Some(amount);
-                            }
-                        } else {
+            for (tenderer_id, amount, currency) in Indicators::get_tenderer_and_value_of_valid_bids(details) {
+                // Exclude missing currencies and different currencies than the selected currency. If no currency
+                // is selected (`self.currency`), use the first observed currency.
+                if currency == item.currency.get_or_insert_with(||
+                    self.currency.as_ref().map_or_else(||
+                        currency.clone(), Clone::clone
+                    )
+                ) {
+                    if supplier_id == tenderer_id {
+                        winner_amount = Some(amount);
+                    } else if let Some(other) = lowest_non_winner_amount {
+                        if amount < other {
                             lowest_non_winner_amount = Some(amount);
                         }
                     } else {
-                        warn!("{} is not {:?}, skipping.", currency, item.currency);
+                        lowest_non_winner_amount = Some(amount);
                     }
+                } else {
+                    warn!("{} is not {:?}, skipping.", currency, item.currency);
                 }
             }
         }

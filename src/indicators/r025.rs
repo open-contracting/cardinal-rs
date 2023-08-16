@@ -4,7 +4,7 @@ use serde_json::{Map, Value};
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-use crate::indicators::{fraction, mediant, set_meta, set_result, Calculate, Indicators, Settings};
+use crate::indicators::{fraction, set_meta, set_result, sum, Calculate, Indicators, Settings};
 
 #[derive(Default)]
 pub struct R025 {
@@ -50,7 +50,7 @@ impl Calculate for R025 {
     }
 
     fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
-        mediant!(item, other, r025_tenderer);
+        sum!(item, other, r025_tenderer);
     }
 
     fn finalize(&self, item: &mut Indicators) {

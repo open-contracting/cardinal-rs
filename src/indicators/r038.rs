@@ -4,7 +4,7 @@ use serde_json::{Map, Value};
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-use crate::indicators::{fraction, mediant, set_meta, set_result, Calculate, Indicators, Settings};
+use crate::indicators::{fraction, set_meta, set_result, sum, Calculate, Indicators, Settings};
 
 macro_rules! flag {
     ( $self:ident , $item:ident , $field:ident , $minimum:expr , $group:ident ) => {
@@ -123,9 +123,9 @@ impl Calculate for R038 {
     }
 
     fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
-        mediant!(item, other, r038_buyer);
-        mediant!(item, other, r038_procuring_entity);
-        mediant!(item, other, r038_tenderer);
+        sum!(item, other, r038_buyer);
+        sum!(item, other, r038_procuring_entity);
+        sum!(item, other, r038_tenderer);
 
         // If each OCID appears on only one line of the file, no overwriting will occur.
         if item.map {

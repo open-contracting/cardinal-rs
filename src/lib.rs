@@ -295,6 +295,27 @@ impl Indicators {
 
         submitted_bids
     }
+
+    fn get_tenderer_and_value_of_valid_bids(details: &Vec<Value>) -> Vec<(&String, f64, &String)> {
+        let mut tuples = vec![];
+
+        for bid in details {
+            if let Some(Value::String(status)) = bid.get("status")
+                && let Some(Value::Object(value)) = bid.get("value")
+                && let Some(Value::Number(amount)) = value.get("amount")
+                && let Some(Value::String(currency)) = value.get("currency")
+                && let Some(Value::Array(tenderers)) = bid.get("tenderers")
+                && tenderers.len() == 1
+                && let Some(Value::String(tenderer_id)) = tenderers[0].get("id")
+                && let Some(amount) = amount.as_f64()
+                && status == "valid"
+            {
+                tuples.push((tenderer_id, amount, currency));
+            }
+        }
+
+        tuples
+    }
 }
 
 macro_rules! prepare_id_object {

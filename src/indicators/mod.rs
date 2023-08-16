@@ -186,6 +186,7 @@ pub trait Calculate {
 
 // Trait implementations.
 
+// https://en.wikipedia.org/wiki/Mediant_(mathematics)
 impl AddAssign for Fraction {
     fn add_assign(&mut self, other: Self) {
         self.numerator += other.numerator;
@@ -219,8 +220,7 @@ pub(crate) use fraction;
 
 // Macros to access struct fields dynamically.
 
-// https://en.wikipedia.org/wiki/Mediant_(mathematics)
-macro_rules! mediant {
+macro_rules! sum {
     ( $accumulator:ident , $current:ident , $field:ident ) => {
         for (key, value) in std::mem::take(&mut $current.$field) {
             let fraction = $accumulator.$field.entry(key).or_default();
@@ -228,10 +228,11 @@ macro_rules! mediant {
         }
     };
 }
-pub(crate) use mediant;
+pub(crate) use sum;
 
 // Other macros.
 
+// HashMap<Group, HashMap<String, HashMap<Indicator, f64>>>
 macro_rules! set_result {
     ( $item:ident , $group:ident , $key:ident , $indicator:ident , $value:expr ) => {
         $item
@@ -240,7 +241,9 @@ macro_rules! set_result {
             .or_default()
             .entry($key.to_owned())
             .or_default()
-            .insert(crate::indicators::Indicator::$indicator, $value)
+            .entry(crate::indicators::Indicator::$indicator)
+            .and_modify(|v| *v += $value)
+            .or_insert($value)
     };
 }
 pub(crate) use set_result;
