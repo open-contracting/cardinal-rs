@@ -39,6 +39,7 @@ Preview the content of the settings file:
 ```console
 $ ocdscardinal init -
 ; currency = USD
+; fixed_price_procurement_methods = Random Selection
 
 ; `prepare` command
 ;

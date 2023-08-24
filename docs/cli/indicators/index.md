@@ -178,6 +178,17 @@ The disable an indicator, either delete its section and properties, or comment t
 
 Now, the `indicators` command won't run this indicator.
 
+(global-configuration)=
+### Global configuration
+
+If there are procedures (indicated by `tender/procurementMethodDetails`) in which buyers predetermine prices, add to the top of your settings file, as a pipe-separated list, for example:
+
+```ini
+fixed_price_procurement_methods = Random Selection|Sorteo de Obras
+```
+
+Otherwise, price-based indicators will return false positives.
+
 ## Glossary
 
 % Do not add terms to the glossary that are not used in the documentation!

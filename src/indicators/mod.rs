@@ -81,6 +81,7 @@ pub struct Settings {
     pub defaults: Option<Defaults>,
     // indicators command.
     pub currency: Option<String>,
+    pub fixed_price_procurement_methods: Option<String>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
     pub R028: Option<Empty>,

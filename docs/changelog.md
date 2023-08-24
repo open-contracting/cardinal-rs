@@ -9,6 +9,7 @@
   - R030 (*Late bid won*).
   - R048 (*Heterogeneous supplier*).
   - R058 (*Heavily discounted bid*).
+  - `fixed_price_procurement_methods` configuration.
 
 ### Changed
 

@@ -6,14 +6,22 @@ use serde_json::{Map, Value};
 use crate::indicators::{set_result, Calculate, Indicators, Settings};
 
 #[derive(Default)]
-pub struct R028 {}
+pub struct R028 {
+    fixed_price_procurement_methods: HashSet<String>,
+}
 
 impl Calculate for R028 {
-    fn new(_settings: &mut Settings) -> Self {
-        Self::default()
+    fn new(settings: &mut Settings) -> Self {
+        Self {
+            fixed_price_procurement_methods: Indicators::parse_fixed_price_procurement_methods(settings),
+        }
     }
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
+        if Indicators::is_fixed_price_procurement_method(release, &self.fixed_price_procurement_methods) {
+            return;
+        }
+
         let mut prices = HashMap::new();
 
         for bid in Indicators::get_submitted_bids(release) {

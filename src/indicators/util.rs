@@ -1,4 +1,6 @@
 use log::warn;
+use std::collections::HashSet;
+
 use serde_json::{Map, Value};
 
 use crate::indicators::{Calculate, Indicators, Settings};
@@ -8,6 +10,7 @@ pub struct Tenderers {}
 
 #[derive(Default)]
 pub struct SecondLowestBidRatio {
+    fixed_price_procurement_methods: HashSet<String>,
     currency: Option<String>,
 }
 
@@ -43,11 +46,16 @@ impl Calculate for Tenderers {
 impl Calculate for SecondLowestBidRatio {
     fn new(settings: &mut Settings) -> Self {
         Self {
+            fixed_price_procurement_methods: Indicators::parse_fixed_price_procurement_methods(settings),
             currency: settings.currency.clone(),
         }
     }
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
+        if Indicators::is_fixed_price_procurement_method(release, &self.fixed_price_procurement_methods) {
+            return;
+        }
+
         let mut winner = None;
         let mut winner_amount = None;
         let mut lowest_non_winner = None;

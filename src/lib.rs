@@ -5,7 +5,7 @@ pub mod indicators;
 mod queue;
 pub mod standard;
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{self, BufRead, BufWriter, Write};
 use std::path::PathBuf;
@@ -46,6 +46,7 @@ macro_rules! add_indicators {
 pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
     let content = b"\
 ; currency = USD
+; fixed_price_procurement_methods = Random Selection
 
 ; `prepare` command
 ;
@@ -285,6 +286,31 @@ impl Indicators {
         }
 
         None
+    }
+
+    fn parse_fixed_price_procurement_methods(settings: &mut Settings) -> HashSet<String> {
+        settings
+            .fixed_price_procurement_methods
+            .clone()
+            .unwrap_or_default()
+            .split('|')
+            .map(str::to_string)
+            .collect()
+    }
+
+    fn is_fixed_price_procurement_method(
+        release: &Map<String, Value>,
+        fixed_price_procurement_methods: &HashSet<String>,
+    ) -> bool {
+        if !fixed_price_procurement_methods.is_empty()
+            && let Some(Value::Object(tender)) = release.get("tender")
+            && let Some(Value::String(procurement_method_details)) = tender.get("procurementMethodDetails")
+            && fixed_price_procurement_methods.contains(procurement_method_details)
+        {
+            true
+        } else {
+            false
+        }
     }
 
     // Includes pending, valid and disqualified bids.
