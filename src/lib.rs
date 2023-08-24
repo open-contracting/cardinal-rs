@@ -88,6 +88,8 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 
 [R038]
 ; threshold = 0.5
+; minimum_submitted_bids = 2
+; minimum_contracting_processes = 2
 
 [R048]
 ; digits = 2
@@ -223,8 +225,7 @@ impl Indicators {
                 let group = item.results.entry(Group::Tenderer).or_default();
                 // The indicator needs to always assign the same value for tenderer results.
                 for (key, value) in std::mem::take(other.results.entry(Group::Tenderer).or_default()) {
-                    let result = group.entry(key).or_default();
-                    result.extend(value);
+                    group.entry(key).or_default().extend(value);
                 }
 
                 // Note: Buyer and ProcuringEntity indicators are only calculated in finalize().

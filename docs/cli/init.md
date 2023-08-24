@@ -81,6 +81,8 @@ $ ocdscardinal init -
 
 [R038]
 ; threshold = 0.5
+; minimum_submitted_bids = 2
+; minimum_contracting_processes = 2
 
 [R048]
 ; digits = 2
