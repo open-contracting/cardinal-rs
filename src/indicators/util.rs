@@ -48,8 +48,10 @@ impl Calculate for SecondLowestBidRatio {
     }
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
-        let mut lowest_non_winner_amount = None;
+        let mut winner = None;
         let mut winner_amount = None;
+        let mut lowest_non_winner = None;
+        let mut lowest_non_winner_amount = None;
 
         if let Some((complete_awards, details)) =
             Indicators::get_complete_awards_and_bids_if_all_awards_final(release)
@@ -72,12 +74,15 @@ impl Calculate for SecondLowestBidRatio {
                     )
                 ) {
                     if supplier_id == tenderer_id {
+                        winner = Some(tenderer_id);
                         winner_amount = Some(amount);
                     } else if let Some(other) = lowest_non_winner_amount {
                         if amount < other {
+                            lowest_non_winner = Some(tenderer_id);
                             lowest_non_winner_amount = Some(amount);
                         }
                     } else {
+                        lowest_non_winner = Some(tenderer_id);
                         lowest_non_winner_amount = Some(amount);
                     }
                 } else {
@@ -86,7 +91,9 @@ impl Calculate for SecondLowestBidRatio {
             }
         }
 
-        if let Some(winner_amount) = winner_amount
+        if let Some(winner) = winner
+            && let Some(winner_amount) = winner_amount
+            && let Some(lowest_non_winner) = lowest_non_winner
             && let Some(lowest_non_winner_amount) = lowest_non_winner_amount
             // If the lowest bid didn't win, the award criteria aren't price only, as otherwise assumed.
             && lowest_non_winner_amount >= winner_amount
@@ -94,6 +101,10 @@ impl Calculate for SecondLowestBidRatio {
             item.second_lowest_bid_ratios.insert(
                 ocid.to_owned(),
                 (lowest_non_winner_amount - winner_amount) / winner_amount,
+            );
+            item.winner_and_lowest_non_winner.insert(
+                ocid.to_owned(),
+                [winner.clone(), lowest_non_winner.clone()],
             );
         }
     }
@@ -103,6 +114,8 @@ impl Calculate for SecondLowestBidRatio {
             // If each OCID appears on one line of the file, no overwriting occurs.
             item.second_lowest_bid_ratios
                 .extend(std::mem::take(&mut other.second_lowest_bid_ratios));
+            item.winner_and_lowest_non_winner
+                .extend(std::mem::take(&mut other.winner_and_lowest_non_winner));
         } else {
             warn!("{:?} is not {:?}, skipping.", other.currency, item.currency);
         }

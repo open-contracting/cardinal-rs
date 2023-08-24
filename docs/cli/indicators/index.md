@@ -189,7 +189,7 @@ bid
 
 bidder
 
-  An {term}`economic operator` that {term}`submitted` one or more {term}`bids<bid>` as part of a {term}`contracting process`.
+  Synonym of {term}`tenderer`.
 
 buyer
 
@@ -213,7 +213,11 @@ submitted
 
 tenderer
 
-  Synonym of {term}`bidder`.
+  An {term}`economic operator` that {term}`submitted` one or more {term}`bids<bid>` as part of a {term}`contracting process`.
+
+winner
+
+  A {term}`tenderer` that is awarded a contract.
 :::
 
 (list)=

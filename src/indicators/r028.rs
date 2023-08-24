@@ -28,6 +28,12 @@ impl Calculate for R028 {
                     let price = (OrderedFloat(amount), currency);
                     if let Some(other) = prices.get(&price) && ids != *other {
                         set_result!(item, OCID, ocid, R028, 1.0);
+                        for id in ids {
+                            set_result!(item, Tenderer, id, R028, 1.0);
+                        }
+                        for id in other {
+                            set_result!(item, Tenderer, *id, R028, 1.0);
+                        }
                         break;
                     }
                     prices.insert(price, ids);

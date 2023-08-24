@@ -10,6 +10,12 @@
   - R048 (*Heterogeneous supplier*).
   - R058 (*Heavily discounted bid*).
 
+### Changed
+
+- {doc}`cli/indicators/index` command:
+  - R024: Flag the winner and second-lowest bidder.
+  - R035: Flag the winner.
+
 ### Fixed
 
 - {doc}`cli/indicators/index` command:

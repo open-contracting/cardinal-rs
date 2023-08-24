@@ -136,13 +136,14 @@ pub struct RoundMap(#[serde(serialize_with = "round")] IndexMap<String, f64>);
 
 #[derive(Debug, Default)]
 pub struct Indicators {
-    pub results: HashMap<Group, HashMap<String, HashMap<Indicator, f64>>>,
+    pub results: IndexMap<Group, IndexMap<String, HashMap<Indicator, f64>>>,
     pub meta: HashMap<Indicator, RoundMap>,
     pub maps: Maps,
     pub currency: Option<String>,
     /// The percentage difference between the winning bid and the second-lowest valid bid for each `ocid`.
     pub second_lowest_bid_ratios: HashMap<String, f64>,
-    // The ratio of winning bids to submitted bids for each `bids/details/tenderers/id`.
+    pub winner_and_lowest_non_winner: HashMap<String, [String; 2]>,
+    /// The ratio of winning bids to submitted bids for each `bids/details/tenderers/id`.
     pub r025_tenderer: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `buyer/id`.
     pub r038_buyer: HashMap<String, Fraction>,
@@ -232,9 +233,9 @@ pub(crate) use sum;
 
 // Other macros.
 
-// HashMap<Group, HashMap<String, HashMap<Indicator, f64>>>
+// IndexMap<Group, IndexMap<String, HashMap<Indicator, f64>>>
 macro_rules! set_result {
-    ( $item:ident , $group:ident , $key:ident , $indicator:ident , $value:expr ) => {
+    ( $item:ident , $group:ident , $key:expr , $indicator:ident , $value:expr ) => {
         $item
             .results
             .entry(crate::indicators::Group::$group)
@@ -247,7 +248,7 @@ macro_rules! set_result {
 pub(crate) use set_result;
 
 macro_rules! add_result {
-    ( $item:ident , $group:ident , $key:ident , $indicator:ident , $value:expr ) => {
+    ( $item:ident , $group:ident , $key:expr , $indicator:ident , $value:expr ) => {
         $item
             .results
             .entry(crate::indicators::Group::$group)

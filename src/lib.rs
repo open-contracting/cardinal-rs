@@ -154,7 +154,7 @@ where
 }
 
 impl Indicators {
-    pub const fn results(&self) -> &HashMap<Group, HashMap<String, HashMap<Indicator, f64>>> {
+    pub const fn results(&self) -> &IndexMap<Group, IndexMap<String, HashMap<Indicator, f64>>> {
         &self.results
     }
 
@@ -218,6 +218,14 @@ impl Indicators {
                 let group = item.results.entry(Group::OCID).or_default();
                 // If each OCID appears on one line of the file, no overwriting occurs.
                 group.extend(std::mem::take(other.results.entry(Group::OCID).or_default()));
+
+                let group = item.results.entry(Group::Tenderer).or_default();
+                // The indicator needs to always assign the same value for tenderer results.
+                for (key, value) in std::mem::take(other.results.entry(Group::Tenderer).or_default()) {
+                    let result = group.entry(key).or_default();
+                    result.extend(value);
+                }
+
                 // Note: Buyer and ProcuringEntity indicators are only calculated in finalize().
 
                 for indicator in &indicators {
@@ -231,9 +239,12 @@ impl Indicators {
                     indicator.finalize(&mut item);
                 }
 
-                // This key is always set by the reduce closure.
+                // These keys ares always set by the reduce closure.
                 if item.results[&Group::OCID].is_empty() {
                     item.results.remove(&Group::OCID);
+                }
+                if item.results[&Group::Tenderer].is_empty() {
+                    item.results.remove(&Group::Tenderer);
                 }
 
                 // If we return `Ok(item)`, we can't consume temporary internal fields.
@@ -615,7 +626,7 @@ mod tests {
 
     fn check_indicators(name: &str, settings: Settings) {
         let result = Indicators::run(reader(name, "jsonl"), settings, &false);
-        let expected: HashMap<Group, HashMap<String, HashMap<Indicator, f64>>> =
+        let expected: IndexMap<Group, IndexMap<String, HashMap<Indicator, f64>>> =
             serde_json::from_reader(reader(name, "expected")).unwrap();
 
         assert_eq!(result.unwrap().results, expected);

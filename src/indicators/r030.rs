@@ -46,7 +46,7 @@ impl Calculate for R030 {
                         if let Some(Value::String(id)) = tenderer.get("id") {
                             if award_supplier_ids.contains(id) {
                                 set_result!(item, OCID, ocid, R030, 1.0);
-                                break;
+                                set_result!(item, Tenderer, id, R030, 1.0);
                             }
                         }
                     }

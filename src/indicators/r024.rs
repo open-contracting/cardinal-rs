@@ -38,6 +38,9 @@ impl Calculate for R024 {
             for (ocid, ratio) in &item.second_lowest_bid_ratios {
                 if *ratio <= lower_fence {
                     set_result!(item, OCID, ocid, R024, *ratio);
+                    for id in &item.winner_and_lowest_non_winner[ocid] {
+                        set_result!(item, Tenderer, id, R024, 0.0);
+                    }
                 }
             }
         }

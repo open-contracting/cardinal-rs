@@ -64,6 +64,7 @@ impl Calculate for R035 {
             && difference >= self.threshold
         {
             set_result!(item, OCID, ocid, R035, difference as f64);
+            set_result!(item, Tenderer, valid_tenderer_ids.iter().next().unwrap().to_owned(), R035, 0.0);
         }
     }
 }
