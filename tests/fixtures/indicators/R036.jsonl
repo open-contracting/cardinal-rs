@@ -3,4 +3,5 @@
 {"ocid":"withdrawn","bids":{"details":[{"status":"disqualified","value":{"amount":10,"currency":"USD"}},{"status":"withdrawn","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
 {"ocid":"pending","bids":{"details":[{"status":"disqualified","value":{"amount":10,"currency":"USD"}},{"status":"pending","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
 {"ocid":"valid","bids":{"details":[{"status":"disqualified","value":{"amount":10,"currency":"USD"}},{"status":"valid","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
+{"ocid":"equal","bids":{"details":[{"status":"disqualified","value":{"amount":1,"currency":"USD"}},{"status":"valid","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
 {"ocid":"nonfinal","bids":{"details":[{"status":"disqualified","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"pending"}]}

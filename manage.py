@@ -28,7 +28,7 @@ def json_to_csv(infile, outfile):
         "Buyer": {"R038": "ocid_buyer_r038"},
         "ProcuringEntity": {"R038": "ocid_procuringentity_r038"},
         "Tenderer": defaultdict(
-            lambda: "ocid_tenderer",
+            lambda: "ocid_tenderer",  # R025 R038 R048
             R024="ocid_tenderer_r024",
             R028="ocid_tenderer_r028",
             R030="ocid_tenderer_r030",
