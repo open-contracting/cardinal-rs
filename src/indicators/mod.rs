@@ -241,12 +241,25 @@ macro_rules! set_result {
             .or_default()
             .entry($key.to_owned())
             .or_default()
+            .insert(crate::indicators::Indicator::$indicator, $value)
+    };
+}
+pub(crate) use set_result;
+
+macro_rules! add_result {
+    ( $item:ident , $group:ident , $key:ident , $indicator:ident , $value:expr ) => {
+        $item
+            .results
+            .entry(crate::indicators::Group::$group)
+            .or_default()
+            .entry($key.to_owned())
+            .or_default()
             .entry(crate::indicators::Indicator::$indicator)
             .and_modify(|v| *v += $value)
             .or_insert($value)
     };
 }
-pub(crate) use set_result;
+pub(crate) use add_result;
 
 macro_rules! set_meta {
     ( $item:ident , $indicator:ident , $key:expr , $value:expr ) => {
