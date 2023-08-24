@@ -40,6 +40,13 @@ impl Calculate for R024 {
                     set_result!(item, OCID, ocid, R024, *ratio);
                     for id in &item.winner_and_lowest_non_winner[ocid] {
                         set_result!(item, Tenderer, id, R024, 0.0);
+                        if item.map {
+                            item.maps
+                                .ocid_tenderer_r024
+                                .entry(ocid.clone())
+                                .or_default()
+                                .insert(id.clone());
+                        }
                     }
                 }
             }

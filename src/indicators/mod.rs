@@ -123,6 +123,12 @@ pub struct Maps {
     pub ocid_procuringentity_r038: HashMap<String, String>,
     /// The tenderers that submitted bids for each `ocid`.
     pub ocid_tenderer: HashMap<String, HashSet<String>>,
+    /// The flagged tenderers for each flagged `ocid`.
+    pub ocid_tenderer_r024: HashMap<String, HashSet<String>>,
+    pub ocid_tenderer_r028: HashMap<String, HashSet<String>>,
+    pub ocid_tenderer_r030: HashMap<String, HashSet<String>>,
+    pub ocid_tenderer_r035: HashMap<String, HashSet<String>>,
+    pub ocid_tenderer_r058: HashMap<String, HashSet<String>>,
 }
 
 #[derive(Debug, Default)]

@@ -27,7 +27,14 @@ def json_to_csv(infile, outfile):
     subject_code_to_map_id = {
         "Buyer": {"R038": "ocid_buyer_r038"},
         "ProcuringEntity": {"R038": "ocid_procuringentity_r038"},
-        "Tenderer": defaultdict(lambda: "ocid_tenderer"),
+        "Tenderer": defaultdict(
+            lambda: "ocid_tenderer",
+            R024="ocid_tenderer_r024",
+            R028="ocid_tenderer_r028",
+            R030="ocid_tenderer_r030",
+            R035="ocid_tenderer_r035",
+            R058="ocid_tenderer_r058",
+        ),
     }
     created_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -57,19 +64,20 @@ def json_to_csv(infile, outfile):
     for ocid, results in data.get("OCID", {}).items():
         for code, result in results.items():
             if (ocid, code, "", "", "") not in seen:
-                rows.append({
-                    "ocid": ocid,
-                    "subject": "OCID",
-                    "code": code,
-                    "result": result,
-                    "created_at": created_at,
-                })
+                rows.append(
+                    {
+                        "ocid": ocid,
+                        "subject": "OCID",
+                        "code": code,
+                        "result": result,
+                        "created_at": created_at,
+                    }
+                )
 
     for subject, index, column in (
         ("Buyer", 2, "buyer_id"),
         ("ProcuringEntity", 3, "procuring_entity_id"),
         ("Tenderer", 4, "tenderer_id"),
-
     ):
         # {"Tenderer": {"a-tenderer-id": {"R038": 0.1}}}
         for identifier, results in data.get(subject, {}).items():
@@ -79,14 +87,16 @@ def json_to_csv(infile, outfile):
                     key = [ocid, code, "", "", ""]
                     key[index] = identifier
                     if tuple(key) not in seen:
-                        rows.append({
-                            "ocid": ocid,
-                            "subject": subject,
-                            "code": code,
-                            column: identifier,
-                            "result": result,
-                            "created_at": created_at,
-                        })
+                        rows.append(
+                            {
+                                "ocid": ocid,
+                                "subject": subject,
+                                "code": code,
+                                column: identifier,
+                                "result": result,
+                                "created_at": created_at,
+                            }
+                        )
 
     click.echo(f"Writing {len(rows)} rows")
     with open(outfile, "a") as f:
@@ -141,13 +151,13 @@ def add_indicator(code):
             [
                 (r"\[[A-Z]\d{3}", r"", upper, f"                    {upper}: Some(Default::default()),\n"),
             ],
-        )
+        ),
         (
             directory / "docs" / "examples" / "settings.ini",
             [
                 (r"\[[A-Z]\d{3}", r"", upper, f"[{upper}]\n"),
             ],
-        )
+        ),
     ):
         instructions.append(("🦀", r"", upper, ""))
 

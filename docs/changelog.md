@@ -13,8 +13,8 @@
 ### Changed
 
 - {doc}`cli/indicators/index` command:
-  - R024: Flag the winner and second-lowest bidder.
-  - R035: Flag the winner.
+  - [R024](cli/indicators/R/024): Flag the winner and second-lowest bidder. Add `--maps` key.
+  - [R035](cli/indicators/R/035): Flag the winner. Add `--maps` key.
 
 ### Fixed
 

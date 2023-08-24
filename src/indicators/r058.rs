@@ -35,7 +35,15 @@ impl Calculate for R058 {
             for (ocid, ratio) in &item.second_lowest_bid_ratios {
                 if *ratio >= upper_fence {
                     set_result!(item, OCID, ocid, R058, *ratio);
-                    set_result!(item, Tenderer, item.winner_and_lowest_non_winner[ocid][0], R058, 0.0);
+                    let id = &item.winner_and_lowest_non_winner[ocid][0];
+                    set_result!(item, Tenderer, id, R058, 0.0);
+                    if item.map {
+                        item.maps
+                            .ocid_tenderer_r058
+                            .entry(ocid.clone())
+                            .or_default()
+                            .insert(id.clone());
+                    }
                 }
             }
         }

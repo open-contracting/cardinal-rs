@@ -28,17 +28,29 @@ impl Calculate for R028 {
                     let price = (OrderedFloat(amount), currency);
                     if let Some(other) = prices.get(&price) && ids != *other {
                         set_result!(item, OCID, ocid, R028, 1.0);
-                        for id in ids {
-                            set_result!(item, Tenderer, id, R028, 1.0);
+                        for id in &ids {
+                            set_result!(item, Tenderer, *id, R028, 1.0);
+                            if item.map {
+                                item.maps.ocid_tenderer_r028.entry(ocid.to_owned()).or_default().insert((*id).to_string());
+                            }
                         }
                         for id in other {
                             set_result!(item, Tenderer, *id, R028, 1.0);
+                            if item.map {
+                                item.maps.ocid_tenderer_r028.entry(ocid.to_owned()).or_default().insert((*id).to_string());
+                            }
                         }
-                        break;
                     }
                     prices.insert(price, ids);
                 }
             }
         }
+    }
+
+    fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
+        // If each OCID appears on only one line of the file, no overwriting will occur.
+        item.maps
+            .ocid_tenderer_r028
+            .extend(std::mem::take(&mut other.maps.ocid_tenderer_r028));
     }
 }

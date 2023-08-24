@@ -64,7 +64,18 @@ impl Calculate for R035 {
             && difference >= self.threshold
         {
             set_result!(item, OCID, ocid, R035, difference as f64);
-            set_result!(item, Tenderer, valid_tenderer_ids.iter().next().unwrap().to_owned(), R035, 0.0);
+            let id = valid_tenderer_ids.iter().next().unwrap().to_owned();
+            set_result!(item, Tenderer, id, R035, 0.0);
+            if item.map {
+                item.maps.ocid_tenderer_r035.entry(ocid.to_owned()).or_default().insert(id.clone());
+            }
         }
+    }
+
+    fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
+        // If each OCID appears on only one line of the file, no overwriting will occur.
+        item.maps
+            .ocid_tenderer_r035
+            .extend(std::mem::take(&mut other.maps.ocid_tenderer_r035));
     }
 }
