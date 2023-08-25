@@ -75,9 +75,9 @@ pub struct R038 {
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct R048 {
-    digits: Option<usize>,
-    threshold: Option<usize>,
-    minimum_contracting_processes: Option<usize>,
+    pub digits: Option<usize>,
+    pub threshold: Option<usize>,
+    pub minimum_contracting_processes: Option<usize>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]

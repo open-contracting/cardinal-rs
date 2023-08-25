@@ -34,13 +34,19 @@ fn {name}() {{
         let function = name.to_ascii_lowercase();
         let field = name.split('_').next().unwrap();
 
+        let value = if field == "R048" {
+            "indicators::R048 { minimum_contracting_processes: Some(1), ..Default::default() }"
+        } else {
+            "Default::default()"
+        };
+
         write!(
             file,
             r#"
 #[test]
 fn {function}() {{
     check_indicators("indicators/{name}", Settings {{
-        {field}: Some(Default::default()),
+        {field}: Some({value}),
         ..Default::default()
     }})
 }}
