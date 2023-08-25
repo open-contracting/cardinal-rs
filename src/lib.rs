@@ -59,6 +59,10 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ; bid_status = valid
 ; award_status = active
 
+[redactions]
+; amount = 0
+; organization_id = placeholder
+
 [codelists.BidStatus]
 ; qualified = valid
 
@@ -358,21 +362,33 @@ impl Indicators {
 }
 
 macro_rules! prepare_id_object {
-    ( $field:ident , $key:expr ) => {
+    ( $field:ident , $key:expr , $redact:ident ) => {
         if let Some(Value::Object(object)) = $field.get_mut($key) {
             if let Some(Value::Number(id)) = object.get_mut("id") {
                 object["id"] = Value::String(id.to_string());
+            }
+            if let Some(Value::String(id)) = object.get("id") {
+                if $redact.contains(id) {
+                    object.remove("id");
+                }
             }
         }
     };
 }
 
 macro_rules! prepare_id_array {
-    ( $field:ident , $key:expr ) => {
+    ( $field:ident , $key:expr , $redact:ident ) => {
         if let Some(Value::Array(array)) = $field.get_mut($key) {
-            for object in array {
-                if let Some(Value::Number(id)) = object.get_mut("id") {
-                    object["id"] = Value::String(id.to_string());
+            for entry in array {
+                if let Value::Object(object) = entry {
+                    if let Some(Value::Number(id)) = object.get_mut("id") {
+                        object["id"] = Value::String(id.to_string());
+                    }
+                    if let Some(Value::String(id)) = object.get("id") {
+                        if $redact.contains(id) {
+                            object.remove("id");
+                        }
+                    }
                 }
             }
         }
@@ -398,7 +414,8 @@ impl Prepare {
         output: &mut W,
         errors: &mut W,
     ) -> Result<(), anyhow::Error> {
-        let default = HashMap::new();
+        let empty_set: HashSet<String> = HashSet::new();
+        let default_mapping = HashMap::new();
 
         let output = Job::new(BufWriter::new(output));
         let errors = Job::new(BufWriter::new(errors));
@@ -410,9 +427,25 @@ impl Prepare {
         let bid_status_default = defaults.bid_status.map(Value::String);
         let award_status_default = defaults.award_status.map(Value::String);
 
+        let redactions = settings.redactions.unwrap_or_default();
+        let mut redact_amount = redactions
+            .amount
+            .unwrap_or_default()
+            .split('|')
+            .filter_map(|s| s.parse::<f64>().ok())
+            .collect::<Vec<_>>();
+        let redact_organization_id = redactions
+            .organization_id
+            .unwrap_or_default()
+            .split('|')
+            .map(str::to_string)
+            .collect::<HashSet<_>>();
+        // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.sort_by
+        redact_amount.sort_by(|a, b| a.partial_cmp(b).unwrap());
+
         let codelists = settings.codelists.unwrap_or_default();
-        let bid_status = codelists.get(&Codelist::BidStatus).unwrap_or(&default);
-        let award_status = codelists.get(&Codelist::AwardStatus).unwrap_or(&default);
+        let bid_status = codelists.get(&Codelist::BidStatus).unwrap_or(&default_mapping);
+        let award_status = codelists.get(&Codelist::AwardStatus).unwrap_or(&default_mapping);
 
         let result = buffer.lines().enumerate().par_bridge().try_for_each(|(i, lines)| -> Result<(), anyhow::Error> {
             // Use guard clauses to reduce indentation and ease readabaility.
@@ -439,11 +472,11 @@ impl Prepare {
 
             let ocid = release.get("ocid").map_or_else(|| Value::Null, std::clone::Clone::clone);
 
-            prepare_id_object!(release, "buyer");
+            prepare_id_object!(release, "buyer", redact_organization_id);
 
             // /tender
             if let Some(Value::Object(tender)) = release.get_mut("tender") {
-                prepare_id_object!(tender, "procuringEntity");
+                prepare_id_object!(tender, "procuringEntity", redact_organization_id);
             }
 
             // /bids
@@ -451,13 +484,19 @@ impl Prepare {
                 && let Some(Value::Array(details)) = bids.get_mut("details")
             {
                 for (j, bid) in details.iter_mut().enumerate() {
-                    if let Some(Value::Object(value)) = bid.get_mut("value")
-                        && !value.contains_key("currency")
-                    {
-                        if let Some(default) = &currency_default {
-                            value.insert("currency".into(), default.clone());
-                        } else {
-                            rows.serialize((i + 1, &ocid, "/bids/details[]/value/currency", j, "", "not set"))?;
+                    if let Some(Value::Object(value)) = bid.get_mut("value") {
+                        if let Some(Value::Number(amount)) = value.get("amount")
+                            && let Some(amount) = amount.as_f64()
+                            && redact_amount.binary_search_by(|probe| probe.partial_cmp(&amount).unwrap()).is_ok()
+                        {
+                            value.remove("amount");
+                        }
+                        if !value.contains_key("currency") {
+                            if let Some(default) = &currency_default {
+                                value.insert("currency".into(), default.clone());
+                            } else {
+                                rows.serialize((i + 1, &ocid, "/bids/details[]/value/currency", j, "", "not set"))?;
+                            }
                         }
                     }
 
@@ -490,7 +529,7 @@ impl Prepare {
                         }
                     }
 
-                    prepare_id_array!(bid, "tenderers");
+                    prepare_id_array!(bid, "tenderers", redact_organization_id);
                 }
             }
 
@@ -499,7 +538,7 @@ impl Prepare {
                 for (j, award) in awards.iter_mut().enumerate() {
                     if let Some(Value::Array(items)) = award.get_mut("items") {
                         for (k, item) in items.iter_mut().enumerate() {
-                            prepare_id_object!(item, "classification");
+                            prepare_id_object!(item, "classification", empty_set);
                             if let Some(Value::Object(classification)) = item.get_mut("classification")
                                 && !classification.contains_key("scheme")
                             {
@@ -527,7 +566,7 @@ impl Prepare {
                         }
                     }
 
-                    prepare_id_array!(award, "suppliers");
+                    prepare_id_array!(award, "suppliers", redact_organization_id);
                 }
             }
 

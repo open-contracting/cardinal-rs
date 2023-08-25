@@ -173,6 +173,45 @@ As new indicators are added, additional currency and scheme fields will be fille
 Need to fill in other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
 :::
 
+### Redact incorrect values
+
+:::{tip}
+Need to redact other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
+:::
+
+#### Monetary amounts
+
+Indicators assume that amount values are accurate. If an amount field is assigned a placeholder value, this assumption fails. For example, if 0 is used when the amount is confidential or wasn't entered, then the lowest bids might be miscalculated.
+
+To redact an amount value, add a `[redactions]` section with an `amount` property to your {doc}`../topics/settings`. Its value is a pipe-separated list. For example:
+
+```ini
+[redactions]
+amount = 0|99999999
+```
+
+This configuration supports redacting values from:
+
+- `/bids/details[]/value/amount`
+
+#### Organization IDs
+
+Indicators assume that ID values represent distinct entities. If an ID field is assigned a placeholder value, this assumption fails. For example, if the placeholder value is used frequently, then the top suppliers might be miscalculated.
+
+To redact an ID value from an organization reference, add a `[redactions]` section with an `organization_id` property to your {doc}`../topics/settings`. Its value is a pipe-separated list. For example:
+
+```ini
+[redactions]
+organization_id = my-placeholder|dummy-value
+```
+
+This configuration supports redacting values from:
+
+- `/buyer/id`
+- `/tender/procuringEntity/id`
+- `/bids/details[]/tenderers[]/id`
+- `/awards[]/suppliers[]/id`
+
 ### Re-map incorrect codes
 
 The command supports substituting codes in these codelist fields:

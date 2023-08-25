@@ -4,6 +4,8 @@
 
 ### Added
 
+- {doc}`cli/prepare` command:
+  - Add `[redactions]` section.
 - {doc}`cli/indicators/index` command:
   - R028 (*Identical bid prices*).
   - R030 (*Late bid won*).
