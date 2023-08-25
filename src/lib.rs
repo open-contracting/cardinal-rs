@@ -94,6 +94,7 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 [R048]
 ; digits = 2
 ; threshold = 10
+; minimum_contracting_processes = 20
 
 [R058]
 ; threshold = 0.5

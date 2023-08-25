@@ -70,6 +70,7 @@ pub struct R038 {
 pub struct R048 {
     digits: Option<usize>,
     threshold: Option<usize>,
+    minimum_contracting_processes: Option<usize>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -159,7 +160,7 @@ pub struct Indicators {
     /// The ratio of disqualified bids to submitted bids for each `bids/details/tenderers/id`.
     pub r038_tenderer: HashMap<String, Fraction>,
     /// The item classifications for each `bids/details/tenderers/id`.
-    pub r048_classifications: HashMap<String, HashSet<String>>,
+    pub r048_classifications: HashMap<String, (usize, HashSet<String>)>,
     /// Whether to map contracting processes to organizations.
     pub map: bool,
 }

@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use serde_json::{Map, Value};
 use statrs::statistics::Data;
@@ -10,6 +10,7 @@ use crate::indicators::{set_meta, set_result, Calculate, Indicators, Settings};
 pub struct R048 {
     digits: usize,
     threshold: Option<usize>, // resolved in finalize()
+    minimum_contracting_processes: usize,
 }
 
 impl Calculate for R048 {
@@ -19,10 +20,13 @@ impl Calculate for R048 {
         Self {
             digits: setting.digits.unwrap_or(2),
             threshold: setting.threshold,
+            minimum_contracting_processes: setting.minimum_contracting_processes.unwrap_or(20),
         }
     }
 
     fn fold(&self, accumulator: &mut Indicators, release: &Map<String, Value>, _ocid: &str) {
+        let mut observed_supplier_ids = HashSet::new();
+
         if let Some(Value::Array(awards)) = release.get("awards") {
             for award in awards {
                 if let Some(Value::String(status)) = award.get("status")
@@ -37,7 +41,11 @@ impl Calculate for R048 {
                         if let Some(Value::Object(classification)) = item.get("classification")
                             && let Some(Value::String(classification_id)) = classification.get("id")
                         {
-                            let codes = accumulator.r048_classifications.entry(supplier_id.clone()).or_default();
+                            let (count, codes) = accumulator.r048_classifications.entry(supplier_id.clone()).or_default();
+                            if !observed_supplier_ids.contains(supplier_id) {
+                                *count += 1;
+                                observed_supplier_ids.insert(supplier_id);
+                            }
                             codes.insert(classification_id.chars().take(self.digits).collect());
                         }
                     }
@@ -47,16 +55,23 @@ impl Calculate for R048 {
     }
 
     fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
-        for (key, value) in std::mem::take(&mut other.r048_classifications) {
-            let codes = item.r048_classifications.entry(key).or_default();
-            codes.extend(value);
+        for (key, (other_count, other_codes)) in std::mem::take(&mut other.r048_classifications) {
+            let (count, codes) = item.r048_classifications.entry(key).or_default();
+            *count += other_count;
+            codes.extend(other_codes);
         }
     }
 
     fn finalize(&self, item: &mut Indicators) {
         let lengths = std::mem::take(&mut item.r048_classifications)
             .into_iter()
-            .map(|(id, codes)| (id, codes.len() as f64))
+            .filter_map(|(id, (count, codes))| {
+                if count >= self.minimum_contracting_processes {
+                    Some((id, codes.len() as f64))
+                } else {
+                    None
+                }
+            })
             .collect::<HashMap<_, _>>();
 
         let upper_fence = self.threshold.map_or_else(
@@ -67,7 +82,7 @@ impl Calculate for R048 {
                 set_meta!(item, R048, "q1", q1);
                 set_meta!(item, R048, "q3", q3);
                 // q3 + IQR * 1.5
-                (q3 - q1).mul_add(1.5, q3).ceil()
+                (q3 - q1).mul_add(1.5, q3)
             },
             |v| v as f64,
         );

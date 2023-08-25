@@ -87,6 +87,7 @@ $ ocdscardinal init -
 [R048]
 ; digits = 2
 ; threshold = 10
+; minimum_contracting_processes = 20
 
 [R058]
 ; threshold = 0.5
