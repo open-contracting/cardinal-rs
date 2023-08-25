@@ -294,7 +294,7 @@ impl Indicators {
         None
     }
 
-    fn parse_fixed_price_procurement_methods(settings: &mut Settings) -> HashSet<String> {
+    fn parse_fixed_price_procurement_methods(settings: &Settings) -> HashSet<String> {
         settings
             .fixed_price_procurement_methods
             .clone()
