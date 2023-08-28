@@ -1,3 +1,5 @@
+#![feature(let_chains)]
+
 use std::env;
 use std::fs::File;
 use std::io::Write;
@@ -31,13 +33,14 @@ fn {name}() {{
     for entry in glob("tests/fixtures/indicators/*.jsonl").expect("Failed to read glob pattern") {
         let path = entry.unwrap();
         let name = path.file_stem().unwrap().to_str().unwrap();
-        let function = name.to_ascii_lowercase();
-        let field = name.split('_').next().unwrap();
+        let function = name.to_ascii_lowercase().replace('-', "_");
+        let mut parts = name.splitn(3, '-');
+        let indicator = parts.next().unwrap();
 
-        let value = if field == "R048" {
-            "indicators::R048 { minimum_contracting_processes: Some(1), ..Default::default() }"
+        let setting = if let Some(field) = parts.next() && let Some(value) = parts.next() {
+            format!("indicators::{indicator} {{ {field}: Some({value}), ..Default::default() }}")
         } else {
-            "Default::default()"
+            "Default::default()".into()
         };
 
         write!(
@@ -46,7 +49,7 @@ fn {name}() {{
 #[test]
 fn {function}() {{
     check_indicators("indicators/{name}", Settings {{
-        {field}: Some({value}),
+        {indicator}: Some({setting}),
         ..Default::default()
     }})
 }}
