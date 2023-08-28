@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use serde_json::{Map, Value};
 
-use crate::indicators::{set_result, Calculate, Indicators, Settings};
+use crate::indicators::{reduce_map, set_map, set_result, Calculate, Indicators, Settings};
 
 #[derive(Default)]
 pub struct R030 {}
@@ -48,7 +48,7 @@ impl Calculate for R030 {
                                 set_result!(item, OCID, ocid, R030, 1.0);
                                 set_result!(item, Tenderer, id, R030, 1.0);
                                 if item.map {
-                                    item.maps.ocid_tenderer_r030.entry(ocid.to_owned()).or_default().insert(id.clone());
+                                    set_map!(item, ocid_tenderer_r030, ocid.to_owned(), id.clone());
                                 }
                             }
                         }
@@ -59,9 +59,6 @@ impl Calculate for R030 {
     }
 
     fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
-        // If each OCID appears on only one line of the file, no overwriting will occur.
-        item.maps
-            .ocid_tenderer_r030
-            .extend(std::mem::take(&mut other.maps.ocid_tenderer_r030));
+        reduce_map!(item, other, ocid_tenderer_r030);
     }
 }
