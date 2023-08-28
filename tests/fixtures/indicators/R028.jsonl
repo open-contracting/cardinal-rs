@@ -4,3 +4,4 @@
 {"ocid":"shuffled tenderers","bids":{"details":[{"status":"valid","value":{"amount":1,"currency":"USD"},"tenderers":[{"id":"A"},{"id":"Z"}]},{"status":"disqualified","value":{"amount":1,"currency":"USD"},"tenderers":[{"id":"Z"},{"id":"A"}]}]}}
 {"ocid":"different decimals","bids":{"details":[{"status":"valid","value":{"amount":1.0,"currency":"USD"},"tenderers":[{"id":"V"}]},{"status":"disqualified","value":{"amount":1.1,"currency":"USD"},"tenderers":[{"id":"D"}]}]}}
 {"ocid":"different currencies","bids":{"details":[{"status":"valid","value":{"amount":1,"currency":"USD"},"tenderers":[{"id":"V"}]},{"status":"disqualified","value":{"amount":1,"currency":"CAD"},"tenderers":[{"id":"D"}]}]}}
+{"ocid":"cancelled tender","bids":{"details":[{"status":"valid","value":{"amount":1,"currency":"USD"},"tenderers":[{"id":"V"}]},{"status":"disqualified","value":{"amount":1,"currency":"USD"},"tenderers":[{"id":"D"}]}]},"tender":{"status":"cancelled"}}

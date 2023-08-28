@@ -214,6 +214,7 @@ impl Indicators {
             |mut item, value| {
                 if let Value::Object(release) = value
                     && let Some(Value::String(ocid)) = release.get("ocid")
+                    && !Self::is_cancelled_contracting_process(&release)
                 {
                     for indicator in &indicators {
                         indicator.fold(&mut item, &release, ocid);
@@ -302,6 +303,17 @@ impl Indicators {
             .split('|')
             .map(str::to_string)
             .collect()
+    }
+
+    fn is_cancelled_contracting_process(release: &Map<String, Value>) -> bool {
+        if let Some(Value::Object(tender)) = release.get("tender")
+            && let Some(Value::String(status)) = tender.get("status")
+            && status == "cancelled"
+        {
+            true
+        } else {
+            false
+        }
     }
 
     fn is_fixed_price_procurement_method(

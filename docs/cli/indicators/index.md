@@ -240,6 +240,7 @@ The page for each indicator describes its individual methodology. For all indica
 
 - The `ocid` isn't a string.
 - The relevant organization references don't set an `id`.
+- The contracting process (`tender/status`) is cancelled.
 - Monetary values, where relevant, don't use the main currency.
 
   To configure the main currency, add to the top of your settings file:

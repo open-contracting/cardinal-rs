@@ -8,3 +8,4 @@
 {"ocid":"unsuccessful award","awards":[{"status":"unsuccessful","suppliers":[{"id":"S"}],"items":[{"classification":{"id":"10000000"}},{"classification":{"id":"11000000"}}]}]}
 {"ocid":"invalid award","awards":[{"status":"invalid","suppliers":[{"id":"S"}],"items":[{"classification":{"id":"10000000"}},{"classification":{"id":"11000000"}}]}]}
 {"ocid":"multiple suppliers","awards":[{"status":"active","suppliers":[{"id":"S"},{"id":"T"}],"items":[{"classification":{"id":"10000000"}},{"classification":{"id":"11000000"}}]}]}
+{"ocid":"cancelled tender","awards":[{"status":"active","suppliers":[{"id":"F"}],"items":[{"classification":{"id":"10000000"}},{"classification":{"id":"11000000"}}]}],"tender":{"status":"cancelled"}}

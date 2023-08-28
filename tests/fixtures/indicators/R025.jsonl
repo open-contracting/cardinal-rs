@@ -8,3 +8,4 @@
 {"ocid":"7","bids":{"details":[{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"7"}]}]},"awards":[{"status":"active","suppliers":[{"id":"7"}]}]}
 {"ocid":"8","bids":{"details":[{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"8"}]}]},"awards":[{"status":"active","suppliers":[{"id":"8"}]}]}
 {"ocid":"F","bids":{"details":[{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"F"}]}]},"awards":[{"status":"active","suppliers":[{"id":"F"}]}]}
+{"ocid":"cancelled tender","bids":{"details":[{"status":"valid","tenderers":[{"id":"F"}]},{"status":"valid","tenderers":[{"id":"0"}]}]},"awards":[{"status":"active","suppliers":[{"id":"0"}]}],"tender":{"status":"cancelled"}}
