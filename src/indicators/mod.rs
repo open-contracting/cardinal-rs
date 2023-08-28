@@ -235,7 +235,7 @@ macro_rules! fraction {
 }
 pub(crate) use fraction;
 
-// Macros to access struct fields dynamically.
+// Macros to access struct fields dynamically (.$).
 
 macro_rules! sum {
     ( $accumulator:ident , $current:ident , $field:ident ) => {
@@ -246,6 +246,21 @@ macro_rules! sum {
     };
 }
 pub(crate) use sum;
+
+macro_rules! set_map {
+    ( $item:ident , $field:ident , $ocid:expr , $id:expr ) => {
+        $item.maps.$field.entry($ocid).or_default().insert($id);
+    };
+}
+pub(crate) use set_map;
+
+macro_rules! reduce_map {
+    ( $item:ident , $other:ident , $field:ident ) => {
+        // If each OCID appears on only one line of the file, no overwriting will occur.
+        $item.maps.$field.extend(std::mem::take(&mut $other.maps.$field));
+    };
+}
+pub(crate) use reduce_map;
 
 // Other macros.
 
@@ -274,18 +289,3 @@ macro_rules! set_meta {
     };
 }
 pub(crate) use set_meta;
-
-macro_rules! set_map {
-    ( $item:ident , $field:ident , $ocid:expr , $id:expr ) => {
-        $item.maps.$field.entry($ocid).or_default().insert($id);
-    };
-}
-pub(crate) use set_map;
-
-macro_rules! reduce_map {
-    ( $item:ident , $other:ident , $field:ident ) => {
-        // If each OCID appears on only one line of the file, no overwriting will occur.
-        $item.maps.$field.extend(std::mem::take(&mut $other.maps.$field));
-    };
-}
-pub(crate) use reduce_map;
