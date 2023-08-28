@@ -3,7 +3,7 @@ use std::collections::HashSet;
 
 use serde_json::{Map, Value};
 
-use crate::indicators::{set_result, Calculate, Indicators, Settings};
+use crate::indicators::{is_status, set_result, Calculate, Indicators, Settings};
 
 #[derive(Default)]
 pub struct R036 {
@@ -29,9 +29,7 @@ impl Calculate for R036 {
 
         if let Some(Value::Array(awards)) = release.get("awards")
             // There are one or more complete awards.
-            && awards.iter().any(
-                |award| award.get("status").map_or(false, |status| status.as_str() == Some("active"))
-            )
+            && awards.iter().any(|award| is_status!(award, "active"))
         {
             for bid in Indicators::get_submitted_bids(release) {
                 if let Some(Value::String(status)) = bid.get("status")

@@ -289,3 +289,12 @@ macro_rules! set_meta {
     };
 }
 pub(crate) use set_meta;
+
+macro_rules! is_status {
+    ( $object:ident , $status:expr ) => {
+        $object
+            .get("status")
+            .map_or(false, |status| status.as_str() == Some($status))
+    };
+}
+pub(crate) use is_status;
