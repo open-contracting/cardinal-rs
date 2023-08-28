@@ -5,7 +5,7 @@
 ### Added
 
 - {doc}`cli/prepare` command:
-  - Add `[redactions]` section.
+  - Add `[redactions]` section. Warn about zero-value bids.
 - {doc}`cli/indicators/index` command:
   - R028 (*Identical bid prices*).
   - R030 (*Late bid won*).
@@ -15,6 +15,8 @@
 
 ### Changed
 
+- {doc}`cli/prepare` command:
+  - Warn about invalid default statuses.
 - {doc}`cli/indicators/index` command:
   - [R024](cli/indicators/R/024): Flag the winner and second-lowest bidder. Add `--maps` key.
   - [R035](cli/indicators/R/035): Flag the winner. Add `--maps` key.

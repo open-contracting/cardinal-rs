@@ -432,13 +432,14 @@ impl Prepare {
         let output = Job::new(BufWriter::new(output));
         let errors = Job::new(BufWriter::new(errors));
 
+        // [defaults]
         let defaults = settings.defaults.unwrap_or_default();
-        // Closed codelists.
         let currency_default = defaults.currency.map(Value::String);
         let item_classification_scheme_default = defaults.item_classification_scheme.map(Value::String);
         let bid_status_default = defaults.bid_status.map(Value::String);
         let award_status_default = defaults.award_status.map(Value::String);
 
+        // [redactions]
         let redactions = settings.redactions.unwrap_or_default();
         let mut redact_amount = redactions
             .amount
@@ -499,9 +500,12 @@ impl Prepare {
                     if let Some(Value::Object(value)) = bid.get_mut("value") {
                         if let Some(Value::Number(amount)) = value.get("amount")
                             && let Some(amount) = amount.as_f64()
-                            && redact_amount.binary_search_by(|probe| probe.partial_cmp(&amount).unwrap()).is_ok()
                         {
-                            value.remove("amount");
+                            if redact_amount.binary_search_by(|probe| probe.partial_cmp(&amount).unwrap()).is_ok() {
+                                value.remove("amount");
+                            } else if amount == 0.0 {
+                                rows.serialize((i + 1, &ocid, "/bids/details[]/value/amount", j, "", "is zero"))?;
+                            }
                         }
                         if !value.contains_key("currency") {
                             if let Some(default) = &currency_default {
@@ -526,18 +530,20 @@ impl Prepare {
                         }
                     }
 
+                    // is_none() is used instead of !contains_key(), as bid is a Value, not a Map.
+                    if bid.get("status").is_none() {
+                        if let Some(default) = &bid_status_default {
+                            bid["status"] = default.clone();
+                        } else {
+                            rows.serialize((i + 1, &ocid, "/bids/details[]/status", j, "", "not set"))?;
+                        }
+                    }
                     if let Some(Value::String(status)) = bid.get_mut("status") {
                         if bid_status.contains_key(status) {
                             *status = bid_status[status].clone();
                         }
                         if !BID_STATUS.contains(status.as_str()) {
                             rows.serialize((i + 1, &ocid, "/bids/details[]/status", j, status, "invalid"))?;
-                        }
-                    } else if bid.get("status").is_none() {
-                        if let Some(default) = &bid_status_default {
-                            bid["status"] = default.clone();
-                        } else {
-                            rows.serialize((i + 1, &ocid, "/bids/details[]/status", j, "", "not set"))?;
                         }
                     }
 
@@ -563,18 +569,20 @@ impl Prepare {
                         }
                     }
 
+                    // is_none() is used instead of !contains_key(), as award is a Value, not a Map.
+                    if award.get("status").is_none() {
+                        if let Some(default) = &award_status_default {
+                            award["status"] = default.clone();
+                        } else {
+                            rows.serialize((i + 1, &ocid, "/awards[]/status", j, "", "not set"))?;
+                        }
+                    }
                     if let Some(Value::String(status)) = award.get_mut("status") {
                         if award_status.contains_key(status) {
                             *status = award_status[status].clone();
                         }
                         if !AWARD_STATUS.contains(status.as_str()) {
                             rows.serialize((i + 1, &ocid, "/awards[]/status", j, status, "invalid"))?;
-                        }
-                    } else if award.get("status").is_none() {
-                        if let Some(default) = &award_status_default {
-                            award["status"] = default.clone();
-                        } else {
-                            rows.serialize((i + 1, &ocid, "/awards[]/status", j, "", "not set"))?;
                         }
                     }
 
