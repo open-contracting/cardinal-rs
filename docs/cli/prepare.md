@@ -214,7 +214,7 @@ This configuration supports redacting values from:
 - `/bids/details[]/tenderers[]/id`
 - `/awards[]/suppliers[]/id`
 
-### Re-map incorrect codes
+### Re-map invalid codes
 
 The command supports substituting codes in these codelist fields:
 
@@ -232,4 +232,27 @@ InTreatment = pending
 
 :::{tip}
 Need to re-map other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
+:::
+
+### Replace incorrect award statuses
+
+In rare cases, it is appropriate to change an award's status according to its contracts' statuses.
+
+:::{admonition} Example
+:class: seealso
+
+The Government of Ruritania bundles many decisions into one award object, and uses the contract object as a proxy for the individual decision. As such, every award object is related to one or more contract objects. If the individual decision is cancelled (for example, the award is appealed at court or the supplier refuses to sign the contract), the contract object's status is changed to cancelled. The award object's status remains active.
+:::
+
+Indicators assume that awards, not contracts, represent individual decisions – in conformance with OCDS. In the example, to better satisfy this assumption, the status of an award can be changed to cancelled if the status of every related contract is cancelled.
+
+To replace an award's status in this way, add a `[corrections]` section with a `award_status_by_contract_status` property to your {doc}`../topics/settings`. Its value is a boolean. For example:
+
+```ini
+[corrections]
+award_status_by_contract_status = true
+```
+
+:::{tip}
+Need to correct other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
 :::

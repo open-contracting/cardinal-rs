@@ -43,6 +43,12 @@ pub struct Redactions {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct Corrections {
+    pub award_status_by_contract_status: Option<bool>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Empty {}
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -88,6 +94,7 @@ pub struct Settings {
     pub codelists: Option<HashMap<Codelist, HashMap<String, String>>>,
     pub defaults: Option<Defaults>,
     pub redactions: Option<Redactions>,
+    pub corrections: Option<Corrections>,
     // indicators command.
     pub currency: Option<String>,
     pub fixed_price_procurement_methods: Option<String>,

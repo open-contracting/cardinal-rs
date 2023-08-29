@@ -1,0 +1,15 @@
+{"ocid":"award status unset","awards":[{"id":"1"}],"contracts":[{"awardID":"1","status":"cancelled"}]}
+{"ocid":"award status null","awards":[{"id":"1","status":null}],"contracts":[{"awardID":"1","status":"cancelled"}]}
+{"ocid":"award status empty","awards":[{"id":"1","status":""}],"contracts":[{"awardID":"1","status":"cancelled"}]}
+{"ocid":"award status active","awards":[{"id":"1","status":"active"}],"contracts":[{"awardID":"1","status":"cancelled"}]}
+{"ocid":"int-int","awards":[{"id":1}],"contracts":[{"awardID":1,"status":"cancelled"}]}
+{"ocid":"int-str","awards":[{"id":1}],"contracts":[{"awardID":"1","status":"cancelled"}]}
+{"ocid":"str-int","awards":[{"id":"1"}],"contracts":[{"awardID":1,"status":"cancelled"}]}
+{"ocid":"contract status all cancelled","awards":[{"id":"1"}],"contracts":[{"awardID":"1","status":"cancelled"},{"awardID":"1","status":"cancelled"}]}
+{"ocid":"contract status one unset","awards":[{"id":"1"}],"contracts":[{"awardID":"1","status":"cancelled"},{"awardID":"1"}]}
+{"ocid":"contract status one null","awards":[{"id":"1"}],"contracts":[{"awardID":"1","status":"cancelled"},{"awardID":"1","status":null}]}
+{"ocid":"contract status one empty","awards":[{"id":"1"}],"contracts":[{"awardID":"1","status":"cancelled"},{"awardID":"1","status":""}]}
+{"ocid":"contract status one active","awards":[{"id":"1"}],"contracts":[{"awardID":"1","status":"cancelled"},{"awardID":"1","status":"active"}]}
+{"ocid":"no id","awards":[{"status":"active"}],"contracts":[{"awardID":"1","status":"cancelled"}]}
+{"ocid":"no awardID","awards":[{"id":"1"}],"contracts":[{"status":"cancelled"}]}
+{"ocid":"no status","awards":[{"id":"1"}],"contracts":[{"awardID":"1"}]}

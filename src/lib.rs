@@ -16,6 +16,7 @@ use log::warn;
 use rayon::prelude::*;
 use serde_json::{Map, Value};
 
+use crate::indicators::is_status;
 use crate::indicators::r024::R024;
 use crate::indicators::r025::R025;
 use crate::indicators::r028::R028;
@@ -62,6 +63,9 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 [redactions]
 ; amount = 0
 ; organization_id = placeholder
+
+[corrections]
+; award_status_by_contract_status = true
 
 [codelists.BidStatus]
 ; qualified = valid
@@ -464,6 +468,11 @@ impl Prepare {
         // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.sort_by
         redact_amount.sort_by(|a, b| a.partial_cmp(b).unwrap());
 
+        // [corrections]
+        let corrections = settings.corrections.unwrap_or_default();
+        let award_status_by_contract_status = corrections.award_status_by_contract_status.unwrap_or_default();
+
+        // [codelists.*]
         let codelists = settings.codelists.unwrap_or_default();
         let bid_status = codelists.get(&Codelist::BidStatus).unwrap_or(&default_mapping);
         let award_status = codelists.get(&Codelist::AwardStatus).unwrap_or(&default_mapping);
@@ -490,6 +499,8 @@ impl Prepare {
             };
 
             let mut rows = csv::Writer::from_writer(errors.new_task());
+
+            let mut award_id_contracts_cancelled = HashMap::new();
 
             let ocid = release.get("ocid").map_or_else(|| Value::Null, std::clone::Clone::clone);
 
@@ -559,6 +570,20 @@ impl Prepare {
                 }
             }
 
+            // /contracts
+            if award_status_by_contract_status
+                && let Some(Value::Array(contracts)) = release.get_mut("contracts")
+            {
+                for contract in contracts.iter_mut() {
+                    stringify!(contract, "awardID");
+
+                    if let Some(Value::String(award_id)) = contract.get("awardID") {
+                        let is_cancelled = is_status!(contract, "cancelled");
+                        award_id_contracts_cancelled.entry(award_id.clone()).and_modify(|b| *b &= is_cancelled).or_insert(is_cancelled);
+                    }
+                }
+            }
+
             // /awards
             if let Some(Value::Array(awards)) = release.get_mut("awards") {
                 for (j, award) in awards.iter_mut().enumerate() {
@@ -595,6 +620,12 @@ impl Prepare {
                         if !AWARD_STATUS.contains(status.as_str()) {
                             rows.serialize((i + 1, &ocid, "/awards[]/status", j, status, "invalid"))?;
                         }
+                    }
+                    if award_status_by_contract_status
+                        && let Some(Value::String(id)) = award.get("id")
+                        && *award_id_contracts_cancelled.get(id).unwrap_or(&false)
+                    {
+                        award["status"] = Value::String("cancelled".into());
                     }
 
                     prepare_id_array!(award, "suppliers", redact_organization_id);

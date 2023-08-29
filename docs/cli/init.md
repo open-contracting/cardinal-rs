@@ -56,6 +56,9 @@ $ ocdscardinal init -
 ; amount = 0
 ; organization_id = placeholder
 
+[corrections]
+; award_status_by_contract_status = true
+
 [codelists.BidStatus]
 ; qualified = valid
 
