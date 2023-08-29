@@ -1,0 +1,1 @@
+{"buyer":{"id":1},"tender":{"procuringEntity":{"id":1}},"bids":{"details":[{"tenderers":[{"id":1},{"id":2}]}]},"awards":[{"id":1,"suppliers":[{"id":1},{"id":2}],"items":[{"classification":{"id":1}},{"classification":{"id":2}}]},{"id":2,"suppliers":[{"id":1},{"id":2}],"items":[{"classification":{"id":1}},{"classification":{"id":2}}]}],"contracts":[{"awardID":1},{"awardID":2}]}
