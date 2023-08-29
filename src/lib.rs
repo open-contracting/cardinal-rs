@@ -574,7 +574,7 @@ impl Prepare {
             if award_status_by_contract_status
                 && let Some(Value::Array(contracts)) = release.get_mut("contracts")
             {
-                for contract in contracts.iter_mut() {
+                for contract in &mut *contracts {
                     stringify!(contract, "awardID");
 
                     if let Some(Value::String(award_id)) = contract.get("awardID") {
@@ -766,7 +766,8 @@ mod tests {
     fn check_prepare(name: &str) {
         let mut output = vec![];
         let mut errors = vec![];
-        let source = config::File::with_name(format!("tests/fixtures/{name}.ini").as_str());
+        let basedir = Path::new("tests").join("fixtures");
+        let source = config::File::from(basedir.join(format!("{name}.ini")));
 
         // Same as main.rs.
         let config = Config::builder().add_source(source).build().unwrap();
@@ -778,7 +779,7 @@ mod tests {
         reader(name, "output").read_to_string(&mut expected_output).unwrap();
         assert_eq!(String::from_utf8(output).unwrap(), expected_output);
 
-        if Path::new(format!("tests/fixtures/{name}.errors").as_str()).exists() {
+        if basedir.join(format!("{name}.errors")).exists() {
             let mut expected_errors = String::new();
             reader(name, "errors").read_to_string(&mut expected_errors).unwrap();
             assert_eq!(String::from_utf8(errors).unwrap(), expected_errors);
