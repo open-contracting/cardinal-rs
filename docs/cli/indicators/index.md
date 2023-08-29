@@ -181,7 +181,7 @@ Now, the `indicators` command won't run this indicator.
 (global-configuration)=
 ### Global configuration
 
-If there are procedures (indicated by `tender/procurementMethodDetails`) in which buyers predetermine prices, add to the top of your settings file, as a pipe-separated list, for example:
+If there are procedures (indicated by `/tender/procurementMethodDetails`) in which buyers predetermine prices, add to the top of your settings file, as a pipe-separated list, for example:
 
 ```ini
 fixed_price_procurement_methods = Random Selection|Sorteo de Obras
@@ -240,7 +240,7 @@ The page for each indicator describes its individual methodology. For all indica
 
 - The `ocid` isn't a string.
 - The relevant organization references don't set an `id`.
-- The contracting process (`tender/status`) is cancelled.
+- The contracting process (`/tender/status`) is cancelled.
 - Monetary values, where relevant, don't use the main currency.
 
   To configure the main currency, add to the top of your settings file:
