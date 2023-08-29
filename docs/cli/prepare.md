@@ -123,7 +123,7 @@ Given the context of this example, the columns can be used as follows.
     | Value | Meaning |
     | - | - |
     | not set | The field isn't set. To correct, [fill in missing values](#fill-in-missing-values). |
-    | invalid | The code isn't valid. To correct, [re-map incorrect codes](#re-map-incorrect-codes). |
+    | invalid | The code isn't valid. To correct, [re-map incorrect codes](#re-map-invalid-codes). |
 :::
 
 ## Configuration

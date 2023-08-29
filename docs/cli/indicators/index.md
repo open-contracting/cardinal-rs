@@ -239,8 +239,8 @@ Indicators are assigned codes for easy reference: for example, `R001`. The first
 The page for each indicator describes its individual methodology. For all indicators, a contracting process is excluded if:
 
 - The `ocid` isn't a string.
-- The relevant organization references don't set an `id`.
 - The contracting process (`/tender/status`) is cancelled.
+- The relevant organization references don't set an `id`.
 - Monetary values, where relevant, don't use the main currency.
 
   To configure the main currency, add to the top of your settings file:
