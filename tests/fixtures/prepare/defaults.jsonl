@@ -1,0 +1,7 @@
+{"bids":{"details":[{"items":[{"classification":{"id":"100000000"}}],"value":{"amount":1}}]},"awards":[{"items":[{"classification":{"id":"10000000"}}]}]}
+
+- `/bids/details[]/value/currency`
+- `/bids/details[]/items[]/classification/scheme`
+- `/bids/details[]/status`
+- `/awards[]/items[]/classification/scheme`
+- `/awards[]/status`
