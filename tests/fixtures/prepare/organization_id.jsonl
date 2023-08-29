@@ -1,0 +1,1 @@
+{"buyer":{"id":"foo"},"tender":{"procuringEntity":{"id":"bar"}},"bids":{"details":[{"tenderers":[{"id":"baz"},{"id":"foo"}]}]},"awards":[{"suppliers":[{"id":"bzz"},{"id":"bar"}]}]}
