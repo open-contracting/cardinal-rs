@@ -705,8 +705,10 @@ mod tests {
 
     use std::env;
     use std::fs::File;
-    use std::io::BufReader;
+    use std::io::{BufReader, Read};
+    use std::path::Path;
 
+    use config::Config;
     use pretty_assertions::assert_eq;
 
     #[cfg(test)]
@@ -728,6 +730,30 @@ mod tests {
         let expected: IndexMap<String, u32> = serde_json::from_reader(reader(name, "expected")).unwrap();
 
         assert_eq!(result.unwrap().counts, expected);
+    }
+
+    fn check_prepare(name: &str) {
+        let mut output = vec![];
+        let mut errors = vec![];
+        let source = config::File::with_name(format!("tests/fixtures/{name}.ini").as_str());
+
+        // Same as main.rs.
+        let config = Config::builder().add_source(source).build().unwrap();
+        let settings = serde_path_to_error::deserialize(config).unwrap();
+
+        let result = Prepare::run(reader(name, "jsonl"), settings, &mut output, &mut errors);
+
+        let mut expected_output = String::new();
+        reader(name, "output").read_to_string(&mut expected_output).unwrap();
+        assert_eq!(String::from_utf8(output).unwrap(), expected_output);
+
+        if Path::new(format!("tests/fixtures/{name}.errors").as_str()).exists() {
+            let mut expected_errors = String::new();
+            reader(name, "errors").read_to_string(&mut expected_errors).unwrap();
+            assert_eq!(String::from_utf8(errors).unwrap(), expected_errors);
+        }
+
+        assert!(result.is_ok());
     }
 
     fn check_indicators(name: &str, settings: Settings) {
