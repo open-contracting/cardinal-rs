@@ -138,8 +138,10 @@ The command converts these ID fields to strings, in order to prevent this issue:
 - `/buyer/id`
 - `/tender/procuringEntity/id`
 - `/bids/details[]/tenderers[]/id`
+- `/awards[]/id`
 - `/awards[]/suppliers[]/id`
 - `/awards[]/items[]/classification/id`
+- `/contracts[]/awardID`
 
 As new indicators are added, additional ID fields will be converted.
 

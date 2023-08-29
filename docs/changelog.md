@@ -17,10 +17,11 @@
 
 - {doc}`cli/prepare` command:
   - Warn about invalid default statuses.
+  - Normalize `/awards[]/id` and `/contracts[]/awardID`.
 - {doc}`cli/indicators/index` command:
   - [R024](cli/indicators/R/024): Flag the winner and second-lowest bidder. Add `--maps` key.
   - [R035](cli/indicators/R/035): Flag the winner. Add `--maps` key.
-  - Add global exclusion for cancelled `tender/status`.
+  - Add global exclusion for cancelled `/tender/status`.
 
 ### Fixed
 

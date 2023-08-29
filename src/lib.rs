@@ -373,6 +373,14 @@ impl Indicators {
     }
 }
 
+macro_rules! stringify {
+    ( $object:ident , $key:expr ) => {
+        if let Some(Value::Number(id)) = $object.get_mut($key) {
+            $object[$key] = Value::String(id.to_string());
+        }
+    };
+}
+
 macro_rules! prepare_id_object {
     ( $field:ident , $key:expr , $redact:ident ) => {
         if let Some(Value::Object(object)) = $field.get_mut($key) {
@@ -554,9 +562,12 @@ impl Prepare {
             // /awards
             if let Some(Value::Array(awards)) = release.get_mut("awards") {
                 for (j, award) in awards.iter_mut().enumerate() {
+                    stringify!(award, "id");
+
                     if let Some(Value::Array(items)) = award.get_mut("items") {
                         for (k, item) in items.iter_mut().enumerate() {
                             prepare_id_object!(item, "classification", empty_set);
+
                             if let Some(Value::Object(classification)) = item.get_mut("classification")
                                 && !classification.contains_key("scheme")
                             {
