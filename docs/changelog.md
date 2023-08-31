@@ -20,8 +20,8 @@
   - Warn about invalid default statuses.
   - Normalize `/awards[]/id` and `/contracts[]/awardID`.
 - {doc}`cli/indicators/index` command:
-  - [R024](cli/indicators/R/024): Flag the winner and second-lowest bidder. Add `--maps` key.
-  - [R035](cli/indicators/R/035): Flag the winner. Add `--maps` key.
+  - [R024](cli/indicators/R/024): Flag the winner and second-lowest bidder. Add `--map` key.
+  - [R035](cli/indicators/R/035): Flag the winner. Add `--map` key.
   - Add global exclusion for cancelled `/tender/status`.
 
 ### Fixed
@@ -36,7 +36,7 @@
 - {doc}`cli/init` command:
   - Add `--force` (`-f`) option to overwrite an existing file.
 - {doc}`cli/indicators/index` command:
-  - Add `--maps` option to include the `Maps` key.
+  - Add `--map` option to include the `Maps` key.
   - Add `--no-meta` option to omit the `Meta` key.
   - [R038](cli/indicators/R/038): Add `minimum_submitted_bids` and `minimum_contracting_processes` configurations.
 
