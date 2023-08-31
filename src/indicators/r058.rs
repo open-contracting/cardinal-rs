@@ -1,7 +1,7 @@
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-use crate::indicators::{set_map, set_meta, set_result, Calculate, Indicators, Settings};
+use crate::indicators::{set_meta, set_result, set_tenderer_map, Calculate, Indicators, Settings};
 
 #[derive(Default)]
 pub struct R058 {
@@ -37,9 +37,7 @@ impl Calculate for R058 {
                     set_result!(item, OCID, ocid, R058, *ratio);
                     let id = &item.winner_and_lowest_non_winner[ocid][0];
                     set_result!(item, Tenderer, id, R058, 0.0);
-                    if item.map {
-                        set_map!(item, ocid_tenderer_r058, ocid.clone(), id.clone());
-                    }
+                    set_tenderer_map!(item, ocid_tenderer_r058, ocid.clone(), id.clone());
                 }
             }
         }

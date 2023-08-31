@@ -4,7 +4,7 @@ use serde_json::{Map, Value};
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-use crate::indicators::{fraction, set_meta, set_result, sum, Calculate, Indicators, Settings};
+use crate::indicators::{fraction, reduce_map, set_meta, set_result, sum, Calculate, Indicators, Settings};
 
 macro_rules! flag {
     ( $self:ident , $item:ident , $field:ident , $minimum:expr , $group:ident ) => {
@@ -127,15 +127,8 @@ impl Calculate for R038 {
         sum!(item, other, r038_procuring_entity);
         sum!(item, other, r038_tenderer);
 
-        // If each OCID appears on only one line of the file, no overwriting will occur.
-        if item.map {
-            item.maps
-                .ocid_buyer_r038
-                .extend(std::mem::take(&mut other.maps.ocid_buyer_r038));
-            item.maps
-                .ocid_procuringentity_r038
-                .extend(std::mem::take(&mut other.maps.ocid_procuringentity_r038));
-        }
+        reduce_map!(item, other, ocid_buyer_r038);
+        reduce_map!(item, other, ocid_procuringentity_r038);
     }
 
     fn finalize(&self, item: &mut Indicators) {

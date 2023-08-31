@@ -254,17 +254,21 @@ macro_rules! sum {
 }
 pub(crate) use sum;
 
-macro_rules! set_map {
+macro_rules! set_tenderer_map {
     ( $item:ident , $field:ident , $ocid:expr , $id:expr ) => {
-        $item.maps.$field.entry($ocid).or_default().insert($id);
+        if $item.map {
+            $item.maps.$field.entry($ocid).or_default().insert($id);
+        }
     };
 }
-pub(crate) use set_map;
+pub(crate) use set_tenderer_map;
 
 macro_rules! reduce_map {
     ( $item:ident , $other:ident , $field:ident ) => {
-        // If each OCID appears on only one line of the file, no overwriting will occur.
-        $item.maps.$field.extend(std::mem::take(&mut $other.maps.$field));
+        if $item.map {
+            // If each OCID appears on only one line of the file, no overwriting will occur.
+            $item.maps.$field.extend(std::mem::take(&mut $other.maps.$field));
+        }
     };
 }
 pub(crate) use reduce_map;

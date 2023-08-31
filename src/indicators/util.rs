@@ -3,7 +3,7 @@ use std::collections::HashSet;
 
 use serde_json::{Map, Value};
 
-use crate::indicators::{Calculate, Indicators, Settings};
+use crate::indicators::{reduce_map, set_tenderer_map, Calculate, Indicators, Settings};
 
 #[derive(Default)]
 pub struct Tenderers {}
@@ -24,11 +24,8 @@ impl Calculate for Tenderers {
             if let Some(Value::Array(tenderers)) = bid.get("tenderers") {
                 for tenderer in tenderers {
                     if let Some(Value::String(id)) = tenderer.get("id") {
-                        item.maps
-                            .ocid_tenderer
-                            .entry(ocid.to_owned())
-                            .or_default()
-                            .insert(id.clone());
+                        // `if item.map` is checked in Indicators::run.
+                        set_tenderer_map!(item, ocid_tenderer, ocid.to_owned(), id.clone());
                     }
                 }
             }
@@ -36,10 +33,7 @@ impl Calculate for Tenderers {
     }
 
     fn reduce(&self, item: &mut Indicators, other: &mut Indicators) {
-        // If each OCID appears on only one line of the file, no overwriting will occur.
-        item.maps
-            .ocid_tenderer
-            .extend(std::mem::take(&mut other.maps.ocid_tenderer));
+        reduce_map!(item, other, ocid_tenderer);
     }
 }
 
