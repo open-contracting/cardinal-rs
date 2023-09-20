@@ -1,0 +1,215 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2002, Open Contracting Partnership
+# This file is distributed under the same license as the Cardinal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Cardinal 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-20 16:40-0400\n"
+"PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: ../../cli/indicators/R/038.md:1
+msgid "Excessive disqualified bids (R038)"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:3
+msgid ""
+"The ratio of disqualified bids to submitted bids is a high outlier per "
+"buyer, procuring entity or tenderer."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:6
+msgid "{doc}`035`"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:9
+msgid "Methodology"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:11
+msgid ""
+"For each buyer, the **ratio** is calculated as "
+"$numberOfBidsDisqualifiedByBuyer \\over numberOfBidsSubmittedToBuyer$ across"
+" all contracting processes. A buyer is flagged if its ratio is greater than "
+"or equal to the **upper fence** of $Q_3 + 1.5(IQR)$, where $Q_3$ is the "
+"third quartile and $IQR$ is the interquartile range for the set of ratios."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:13
+msgid ""
+"For each procuring entity, the **ratio** is calculated the same as for "
+"buyers."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:15
+msgid ""
+"For each tenderer, the **ratio** is calculated as "
+"$numberOfBidsDisqualifiedForTenderer \\over numberOfBidsSubmittedByTenderer$"
+" across all contracting processes. A tenderer is flagged if its ratio is "
+"greater than or equal to the **upper fence** of $Q_3 + 1.5(IQR)$, where "
+"$Q_3$ is the third quartile and $IQR$ is the interquartile range for the set"
+" of ratios."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:17
+msgid "Example for a buyer or procuring entity"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:20
+msgid ""
+"25% ($Q_1$) of buyers in Atlantis disqualify at most 2% of bids received. "
+"75% ($Q_3$) of buyers disqualify at most 22% of bids received. This yields "
+"an upper fence of 52%."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:22
+msgid ""
+"The State Water Corporation disqualified 59% of bids received. This is more "
+"than the upper fence of 52%. Therefore, the State Water Corporation is "
+"flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:25
+msgid "Example for a tenderer"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:28
+msgid ""
+"25% ($Q_1$) of bidders in Atlantis have no disqualified bids. 75% ($Q_3$) of"
+" bidders have at most 24% disqualified bids. This yields an upper fence of "
+"60%."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:30
+msgid ""
+"73% of the bids submitted by MisconductCorp were disqualified. This is "
+"higher than the upper fence of 60%. Therefore, MisconductCorp is flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:33
+msgid "Why is this a red flag?"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:36
+msgid ""
+"A corrupt buyer or procuring entity can award pre-determined bidders by "
+"disqualifying other bidders' bids."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:38
+msgid ""
+"A colluding bidder can mimic competition by submitting deliberately "
+"unqualified bids."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:41
+msgid ""
+"<small>Based on \"Excluding Qualified Bidders\" in [*Guide to Combating "
+"Corruption & Fraud in Infrastructure Development "
+"Projects*](https://guide.iacrc.org/potential-scheme-excluding-qualified-"
+"bidders/) and [*Behind the Scenes of ProZorro: Does Ukrainian business trust"
+" public procurement?*](https://ti-ukraine.org/wp-"
+"content/uploads/2019/11/Behind-the-Scenes-of-ProZorro.-Does-Ukrainian-"
+"business-trust-public-procurement.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:43
+msgid "Output"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:45
+msgid "The indicator's value is the **ratio**, as a decimal."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:47
+msgid "If the ``--map`` command-line flag is set, the ``Maps`` key contains:"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:49
+msgid "ocid_buyer_r038"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:50
+msgid "The buyer for each `ocid` in which at least one bid is disqualified."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:52
+msgid "ocid_procuringentity_r038"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:53
+msgid ""
+"The procuring entity for each `ocid` in which at least one bid is "
+"disqualified."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:55
+msgid "Configuration"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:57
+msgid "All configuration is optional."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:59
+msgid ""
+"To override the default **upper fence**, add to your settings file, as a "
+"decimal:"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:66
+msgid ""
+"Tenderers with fewer than 2 submitted bids are excluded. If you observe many"
+" false positives among tenderers with few submitted bids, you can increase "
+"this minimum. To override this minimum number, add to your settings file, as"
+" an integer:"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:73
+msgid ""
+"Buyers and procuring entities with fewer than 2 contracting processes are "
+"excluded. If you observe many false positives among organizations with few "
+"contracting processes, you can increase this minimum. To override this "
+"minimum number, add to your settings file, as an integer:"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:81
+msgid "Put all properties under one `[R038]` section."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:84
+msgid "Assumptions"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:86
+msgid ""
+"This indicator assumes that `/buyer/id`, `/tender/procuringEntity/id` and "
+"`/bids/details[]/tenderers[]/id` are stable across contracting processes."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:89
+msgid ""
+"Is this assumption not true for your data? Please contribute to GitHub issue"
+" [#32](https://github.com/open-contracting/cardinal-rs/issues/32)."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:92
+msgid "Demonstration"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:94
+msgid "*Input*"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:100
+msgid "*Output*"
+msgstr ""

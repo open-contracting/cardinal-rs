@@ -1,0 +1,154 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2002, Open Contracting Partnership
+# This file is distributed under the same license as the Cardinal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Cardinal 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-20 16:40-0400\n"
+"PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: ../../topics/workflow.md:1
+msgid "Overall workflow"
+msgstr ""
+
+#: ../../topics/workflow.md:3
+msgid "This page describes the general workflow when using Cardinal."
+msgstr ""
+
+#: ../../topics/workflow.md:5
+msgid "1. Collect data"
+msgstr ""
+
+#: ../../topics/workflow.md:7
+msgid "Collect the data you want to analyze in OCDS format."
+msgstr ""
+
+#: ../../topics/workflow.md:9
+msgid ""
+"You can use the [OCP Data Registry](https://data.open-contracting.org) to "
+"download data from over 50 publishers. The Registry provides data as OCDS "
+"compiled releases in line-delimited JSON files (the same format expected by "
+"Cardinal)."
+msgstr ""
+
+#: ../../topics/workflow.md:12
+msgid ""
+"Is the data you're interested in not in OCDS format? Contact OCP's [Data "
+"Support Team](mailto:data@open-contracting.org) to see how we can help."
+msgstr ""
+
+#: ../../topics/workflow.md:15
+msgid "2. Prepare data"
+msgstr ""
+
+#: ../../topics/workflow.md:17
+msgid "Format"
+msgstr ""
+
+#: ../../topics/workflow.md:19
+msgid ""
+"If you are *not* using data from the Registry, ensure that the [releases or "
+"records](https://standard.open-"
+"contracting.org/latest/en/primer/releases_and_records/) are merged into "
+"compiled releases, and that the compiled releases are upgraded to OCDS 1.1 "
+"(the version since 2017)."
+msgstr ""
+
+#: ../../topics/workflow.md:21
+msgid ""
+"You can use [OCDS Kit](https://ocdskit.readthedocs.io/en/latest/)'s command-"
+"line interface to "
+"[compile](https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#compile) "
+"and "
+"[upgrade](https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#upgrade) "
+"the OCDS data."
+msgstr ""
+
+#: ../../topics/workflow.md:23
+msgid "Quality"
+msgstr ""
+
+#: ../../topics/workflow.md:25
+msgid ""
+"For the indicator results to be reliable, the input data must be good "
+"quality."
+msgstr ""
+
+#: ../../topics/workflow.md:27
+msgid ""
+"You can use the {doc}`../cli/prepare` command to identify and correct "
+"quality issues."
+msgstr ""
+
+#: ../../topics/workflow.md:29
+msgid "3. Explore data"
+msgstr ""
+
+#: ../../topics/workflow.md:31
+msgid ""
+"To inform your [selection and "
+"configuration](../cli/indicators/index.md#workflow) of indicators, you can "
+"explore your data using JSON processors like "
+"[jaq](https://github.com/01mf02/jaq) (faster) or "
+"[jq](https://stedolan.github.io/jq/) (slower)."
+msgstr ""
+
+#: ../../topics/workflow.md:33
+msgid ""
+"For example, if the publisher uses `/tender/procurementMethodDetails` for "
+"the local name of the procurement method, you can count the occurrences of "
+"each procurement method with:"
+msgstr ""
+
+#: ../../topics/workflow.md:50
+msgid ""
+"If the publisher uses a classification system for products and services, "
+"like UNSPSC or CPV, you can count the occurrences of each segment/division "
+"of the classification with:"
+msgstr ""
+
+#: ../../topics/workflow.md:62
+msgid "4. Calculate indicators"
+msgstr ""
+
+#: ../../topics/workflow.md:64
+msgid ""
+"Use the {doc}`../cli/indicators/index` command to calculate procurement "
+"indicators and red flags."
+msgstr ""
+
+#: ../../topics/workflow.md:66
+msgid ""
+"Additional information on this step is provided in the [command's "
+"documentation](../cli/indicators/index)."
+msgstr ""
+
+#: ../../topics/workflow.md:68
+msgid "5. Analyze results"
+msgstr ""
+
+#: ../../topics/workflow.md:70
+msgid "Coming soon"
+msgstr ""
+
+#: ../../topics/workflow.md:72
+msgid ""
+"The Open Contracting Partnership is building business intelligence tools, "
+"using the indicator results from Cardinal."
+msgstr ""
+
+#: ../../topics/workflow.md:74
+msgid ""
+"Are you interested? Contact OCP's [Data Support Team](mailto:data@open-"
+"contracting.org)."
+msgstr ""

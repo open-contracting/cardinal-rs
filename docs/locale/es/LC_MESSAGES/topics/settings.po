@@ -1,0 +1,63 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2002, Open Contracting Partnership
+# This file is distributed under the same license as the Cardinal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Cardinal 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-20 16:40-0400\n"
+"PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: ../../topics/settings.md:1
+msgid "Settings file"
+msgstr ""
+
+#: ../../topics/settings.md:3
+msgid ""
+"A settings file can be used to configure the behavior of the "
+"{doc}`../cli/prepare` and {doc}`../cli/indicators/index` commands, using the"
+" `--settings` option to provide the path to the settings file."
+msgstr ""
+
+#: ../../topics/settings.md:5
+msgid "File format"
+msgstr ""
+
+#: ../../topics/settings.md:7
+msgid "The settings file is in INI format (don't worry – it's simple)."
+msgstr ""
+
+#: ../../topics/settings.md:9
+msgid ""
+"The file is split into sections. A section starts with a name in square "
+"brackets, like this:"
+msgstr ""
+
+#: ../../topics/settings.md:15
+msgid "A section can contain zero or more properties, like this:"
+msgstr ""
+
+#: ../../topics/settings.md:22
+msgid "A property is a name and a value, with an equals sign (=) in between."
+msgstr ""
+
+#: ../../topics/settings.md:24
+msgid ""
+"You can document your configuration by starting a line with a semi-colon "
+"(;), like this:"
+msgstr ""
+
+#: ../../topics/settings.md:32
+msgid ""
+"These lines are known as *comments*. (You can also use a number sign (#) "
+"instead of a semi-colon.)"
+msgstr ""

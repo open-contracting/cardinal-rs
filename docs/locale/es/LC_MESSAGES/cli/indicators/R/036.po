@@ -1,0 +1,108 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2002, Open Contracting Partnership
+# This file is distributed under the same license as the Cardinal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Cardinal 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-20 16:40-0400\n"
+"PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: ../../cli/indicators/R/036.md:1
+msgid "Lowest bid disqualified (R036)"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:3
+msgid ""
+"The lowest submitted bid is disqualified, while the award criterion is price"
+" only."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:5
+msgid "Methodology"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:7
+msgid "A contracting process is flagged if:"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:9
+msgid "There are one or more active awards."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:10
+msgid "The lowest submitted bid is disqualified."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:12
+msgid "Example"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:15
+msgid ""
+"The Public Works Department sets the award criterion as lowest price. "
+"FairDeal Inc. submits a bid of \\$100,000. BribeCorp submits a bid of "
+"\\$111,111. The Public Works Department disqualifies the bid from FairDeal "
+"Inc."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:18
+msgid "Why is this a red flag?"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:21
+msgid ""
+"A corrupt buyer can award the pre-determined bidder by disqualifying lower-"
+"priced bids."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:24
+msgid ""
+"<small>Based on \"The lowest bid is rejected almost inexplicably\" in "
+"[*Fraud in Public Procurement: A collection of Red Flags and Best "
+"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
+"public-procurement-final-20122017-ares20176254403.pdf) and \"Lowest bidder "
+"not selected\" in *Most Common Red Flags of Fraud and Corruption in "
+"Procurement in Bank-Financed Projects* (World Bank, 2018).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:26
+msgid "Output"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:28
+msgid "The indicator's value is always 1.0."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:30
+msgid "Configuration"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:32
+msgid "The indicator is not configurable."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:35
+msgid "`fixed_price_procurement_methods` in {ref}`global-configuration`"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:38
+msgid "Demonstration"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:40
+msgid "*Input*"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:46
+msgid "*Output*"
+msgstr ""

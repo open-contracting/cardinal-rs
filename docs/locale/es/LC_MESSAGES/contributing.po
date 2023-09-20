@@ -1,0 +1,865 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2002, Open Contracting Partnership
+# This file is distributed under the same license as the Cardinal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Cardinal 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-20 16:27-0400\n"
+"PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: ../../contributing/index.md:1
+msgid "Contributing"
+msgstr ""
+
+#: ../../contributing/index.md:3
+msgid "Setup"
+msgstr ""
+
+#: ../../contributing/index.md:5
+msgid "Set up the git pre-commit hook:"
+msgstr ""
+
+#: ../../contributing/index.md:12
+msgid "[Install the nightly release of Rust](https://rustup.rs):"
+msgstr ""
+
+#: ../../contributing/index.md:19
+msgid ""
+"If you are new to Rust, see the [Reference section](https://ocp-software-"
+"handbook.readthedocs.io/en/latest/rust/#reference) of the Rust page of the "
+"OCP Software Development Handbook."
+msgstr ""
+
+#: ../../contributing/index.md:22
+msgid "Tasks"
+msgstr ""
+
+#: ../../contributing/indicators.md:1
+msgid "Add an indicator"
+msgstr ""
+
+#: ../../contributing/indicators.md:3
+msgid ""
+"You can use the check marks to track your progress (do not reload the page)."
+msgstr ""
+
+#: ../../contributing/indicators.md:5
+msgid ""
+"In this tutorial, the example indicator is given the code R999. Its "
+"methodology is \"A competition completed with few submitted bids,\" with the"
+" default for \"few\" being 1 bid."
+msgstr ""
+
+#: ../../contributing/indicators.md:7
+msgid "1. Develop the methodology"
+msgstr ""
+
+#: ../../contributing/indicators.md:9
+msgid ""
+"All fences are inclusive in Cardinal, to be consistent and to be easy to "
+"interpret. However, this means that, if the methodology identifies outliers "
+"using the interquartile range, and if the interquartile range is zero, then "
+"the indicator will always return a result. Therefore, the methodology must "
+"guard against this by returning nothing if the interquartile range is zero."
+msgstr ""
+
+#: ../../contributing/indicators.md:11
+msgid "2. Assign a code"
+msgstr ""
+
+#: ../../contributing/indicators.md:13
+msgid ""
+"When adding an indicator that is not assigned a code among the "
+"[resources](https://www.open-contracting.org/resources/) of the Open "
+"Contracting Partnership (or if you don't know):"
+msgstr ""
+
+#: ../../contributing/indicators.md:15
+msgid ""
+"[Create an issue on GitHub](https://github.com/open-contracting/cardinal-"
+"rs/issues) to be assigned a code."
+msgstr ""
+
+#: ../../contributing/indicators.md:18
+msgid "3. Add boilerplate content"
+msgstr ""
+
+#: ../../contributing/indicators.md:20
+msgid "One-time setup"
+msgstr ""
+
+#: ../../contributing/indicators.md:21
+msgid ""
+"To install the requirements for automation, create a Python virtual "
+"environment and run:"
+msgstr ""
+
+#: ../../contributing/indicators.md:28
+msgid "To perform these steps, run, replacing `r999`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:34
+msgid "The files created are explained in the next sections."
+msgstr ""
+
+#: ../../contributing/indicators.md:36
+msgid "Create the new module, `src/indicators/r999.rs`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:42
+msgid "Create the test input, `tests/fixtures/indicators/R999.jsonl`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:48
+msgid "Create the test output, `tests/fixtures/indicators/R999.expected`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:54
+msgid "Create the documentation page, `docs/cli/indicators/R/999.md`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:60
+msgid "Create the demonstration input, `docs/examples/R/999.jsonl`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:66
+msgid "In `src/indicators/mod.rs`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:68
+msgid "Declare the new module in alphabetical order at the top of the file:"
+msgstr ""
+
+#: ../../contributing/indicators.md:74
+msgid ""
+"Add a field to the `Settings` struct. This field is explained in the next "
+"section."
+msgstr ""
+
+#: ../../contributing/indicators.md:80
+msgid ""
+"Add a variant to the `Indicator` enum. The variants are keys in the JSON "
+"output of the {doc}`../cli/indicators/index` command:"
+msgstr ""
+
+#: ../../contributing/indicators.md:86
+msgid "In `src/lib.rs`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:88
+msgid ""
+"Import the new struct from the new module in alphabetical order at the top "
+"of the file:"
+msgstr ""
+
+#: ../../contributing/indicators.md:94
+msgid ""
+"Add the new struct in alphabetical order to the ``add_indicators!`` macro "
+"call:"
+msgstr ""
+
+#: ../../contributing/indicators.md:100
+msgid ""
+"In `docs/examples/settings.ini`, add a section for the new indicator in "
+"alphabetical order:"
+msgstr ""
+
+#: ../../contributing/indicators.md:106 ../../contributing/indicators.md:193
+#: ../../contributing/indicators.md:295 ../../contributing/indicators.md:403
+#: ../../contributing/indicators.md:501
+msgid "Try it!"
+msgstr ""
+
+#: ../../contributing/indicators.md:109 ../../contributing/indicators.md:406
+#: ../../contributing/indicators.md:504
+msgid "If you run:"
+msgstr ""
+
+#: ../../contributing/indicators.md:115
+msgid ""
+"All tests should pass! (with warnings about unused variables and imports)"
+msgstr ""
+
+#: ../../contributing/indicators.md:118
+msgid "4. Edit the settings in `src/indicators/mod.rs`"
+msgstr ""
+
+#: ../../contributing/indicators.md:120
+msgid ""
+"The [configurations](../cli/indicators/index.md#configuration) for an "
+"indicator are represented as a field named after the indicator (`R999`) on "
+"the `Settings` struct, defined in `src/indicators/mod.rs`."
+msgstr ""
+
+#: ../../contributing/indicators.md:128
+msgid ""
+"In Cardinal, all configurations are optional. So, the field must be an "
+"[`Option<T>`](https://doc.rust-lang.org/std/option/index.html), and the "
+"fields on the struct that the `Option` contains (`T`) must also be optional."
+msgstr ""
+
+#: ../../contributing/indicators.md:130
+msgid ""
+"If the indicator's only configuration is a threshold (integer or decimal), "
+"then the `IntegerThreshold` or `FloatThreshold` struct can be used, shown "
+"below for easy reference."
+msgstr ""
+
+#: ../../contributing/indicators.md:144
+msgid ""
+"If the indicator has no configuration, the `Empty` struct can be used, which"
+" has no fields."
+msgstr ""
+
+#: ../../contributing/indicators.md:152
+msgid "Otherwise, create a new struct named after the indicator. For example:"
+msgstr ""
+
+#: ../../contributing/indicators.md:164
+msgid ""
+"The [`#[serde(deny_unknown_fields)]`](https://serde.rs/container-"
+"attrs.html#deny_unknown_fields) attribute causes an error if the user sets "
+"an unknown property."
+msgstr ""
+
+#: ../../contributing/indicators.md:166 ../../contributing/indicators.md:241
+#: ../../contributing/indicators.md:374 ../../contributing/indicators.md:485
+msgid "Example"
+msgstr ""
+
+#: ../../contributing/indicators.md:169
+msgid ""
+"R999's methodology is \"A competition completed with few submitted bids.\" "
+"You will edit the settings to allow users to configure the number of "
+"submitted bids (the \"threshold\") that raises the red flag."
+msgstr ""
+
+#: ../../contributing/indicators.md:171
+msgid ""
+"In `src/indicators/mod.rs`, the `Settings` struct already has a field for "
+"the indicator from {ref}`indicators-boilerplate`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:177
+msgid ""
+"As is, no configuration is allowed. Cardinal attempts to parse any "
+"properties in the `[R999]` section of the INI file into the `Empty` struct. "
+"Because the struct has no fields, no properties are parsed, and the user "
+"sees an error as feedback."
+msgstr ""
+
+#: ../../contributing/indicators.md:179
+msgid ""
+"The number of submitted bids can be represented as an integer. To parse a "
+"property with the name `threshold` and an integer value, you can reuse the "
+"`IntegerThreshold` struct:"
+msgstr ""
+
+#: ../../contributing/indicators.md:185
+msgid ""
+"Users can now configure R999's threshold, using the "
+"{doc}`../topics/settings`. For example:"
+msgstr ""
+
+#: ../../contributing/indicators.md:196
+msgid ""
+"Follow the example, create a `settings.ini` file with the content above, and"
+" run:"
+msgstr ""
+
+#: ../../contributing/indicators.md:202
+msgid "The output should be `{}`, with no errors about unknown fields!"
+msgstr ""
+
+#: ../../contributing/indicators.md:205
+msgid "5. Write the module"
+msgstr ""
+
+#: ../../contributing/indicators.md:207
+msgid ""
+"Open the new module (`src/indicators/r999.rs`, in this example) in a text "
+"editor."
+msgstr ""
+
+#: ../../contributing/indicators.md:209
+msgid ""
+"An indicator is an `impl`ementation of the `Calculate` trait on a struct "
+"(`R999`, in this example)."
+msgstr ""
+
+#: ../../contributing/indicators.md:217
+msgid ""
+"Note that items (like structs) are scoped by their module. In other words, "
+"an `R999` struct in `mod.rs` for the indicator's configuration has no "
+"relation with the `R999` struct in `r999.rs` for its internal state."
+msgstr ""
+
+#: ../../contributing/indicators.md:220
+msgid ""
+"Comparing Rust to other languages, [structs](https://doc.rust-"
+"lang.org/book/ch05-00-structs.html) are like objects, and "
+"[traits](https://doc.rust-lang.org/book/ch10-02-traits.html) are like "
+"interfaces. Structs have data (\"fields\"), and `impl` blocks provide a "
+"struct's methods. Like Python, items are scoped by module and are imported "
+"(`use`)."
+msgstr ""
+
+#: ../../contributing/indicators.md:223
+msgid ""
+"The `Calculate` trait declares four methods, which are defined in the `impl`"
+" block:"
+msgstr ""
+
+#: ../../contributing/indicators.md:231
+msgid "Edit the `new` method"
+msgstr ""
+
+#: ../../contributing/indicators.md:233
+msgid ""
+"If the indicator is not configurable, then the `new` method and the struct "
+"(`R999`) can be left as-is."
+msgstr ""
+
+#: ../../contributing/indicators.md:235
+msgid ""
+"If the indicator is configurable, then the `new` method reads the `settings`"
+" arguments and returns an instance of the struct (the capitalized `Self` "
+"token refers to the struct)."
+msgstr ""
+
+#: ../../contributing/indicators.md:238
+msgid ""
+"To avoid unnecessary memory allocation, you can "
+"[`std::mem::take()`](https://doc.rust-lang.org/std/mem/fn.take.html) the "
+"`Settings` field named after the indicator. Indicators should not use other "
+"indicators' settings."
+msgstr ""
+
+#: ../../contributing/indicators.md:244
+msgid ""
+"R999's methodology is \"A competition completed with few submitted bids,\" "
+"with the default for \"few\" being 1 bid."
+msgstr ""
+
+#: ../../contributing/indicators.md:246
+msgid ""
+"So far, you added the `R999` field to the `Settings` struct in "
+"`src/indicators/mod.rs`."
+msgstr ""
+
+#: ../../contributing/indicators.md:248
+msgid ""
+"You can now move the field's value into the `R999` struct in the new module,"
+" `src/indicators/r999.rs`."
+msgstr ""
+
+#: ../../contributing/indicators.md:250
+msgid ""
+"Add a corresponding field to the `R999` struct. All configurations are "
+"optional (in this case, `Option<usize>`), but the methodology is to set a "
+"default of 1. So, we can make the field non-optional on this struct:"
+msgstr ""
+
+#: ../../contributing/indicators.md:260
+msgid ""
+"If the field's default value couldn't be set at initialization, you would "
+"make it optional: for example, if the default value depended on order "
+"statistics, like quartiles."
+msgstr ""
+
+#: ../../contributing/indicators.md:270
+msgid "Move the value from the `Settings` struct into the `R999` struct:"
+msgstr ""
+
+#: ../../contributing/indicators.md:281
+msgid ""
+"This incantation requires understanding the [`Option`](https://doc.rust-"
+"lang.org/std/option/index.html) type, the [`Default`](https://doc.rust-"
+"lang.org/std/default/trait.Default.html) trait and the "
+"[`std::mem::take()`](https://doc.rust-lang.org/std/mem/fn.take.html) "
+"function. In short, the `R999` struct's `threshold` field is set to the "
+"configured value if set and the default value (1), otherwise."
+msgstr ""
+
+#: ../../contributing/indicators.md:283
+msgid ""
+"If the field's default value couldn't be set at initialization, you would "
+"omit the `unwrap_or(1)`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:298
+msgid "If you run the command again, the output should still be `{}`:"
+msgstr ""
+
+#: ../../contributing/indicators.md:305
+msgid "How data is prepared"
+msgstr ""
+
+#: ../../contributing/indicators.md:307
+msgid ""
+"As described in the [overall workflow](../topics/workflow), data is prepared"
+" before it is processed. This avoids complicating the indicator calculations"
+" with many exceptions and edge cases."
+msgstr ""
+
+#: ../../contributing/indicators.md:309
+msgid ""
+"Also, as described in the [prepare workflow](../cli/prepare.md#workflow), "
+"the `prepare` command should only warn about quality issues that it can fix "
+"and that interfere with the indicator calculations."
+msgstr ""
+
+#: ../../contributing/indicators.md:311
+msgid ""
+"With that in mind, while you implement the indicator, think about whether:"
+msgstr ""
+
+#: ../../contributing/indicators.md:313
+msgid ""
+"An existing [configuration](../cli/prepare.md#configuration) of the "
+"`prepare` command should be edited to include additional fields."
+msgstr ""
+
+#: ../../contributing/indicators.md:315
+msgid ""
+"For example, at the time of writing, the `currency` property of the "
+"[`defaults`](../cli/prepare.md#fill-in-missing-values) section only applies "
+"to `/bids/details[]/value/currency`, because no indicator uses other "
+"currency fields yet."
+msgstr ""
+
+#: ../../contributing/indicators.md:317
+msgid ""
+"A new configuration should be added, to address a quality issue you "
+"encountered."
+msgstr ""
+
+#: ../../contributing/indicators.md:319
+msgid ""
+"[Create an issue on GitHub](https://github.com/open-contracting/cardinal-"
+"rs/issues) to request any changes to the `prepare` command."
+msgstr ""
+
+#: ../../contributing/indicators.md:321
+msgid "How data is processed"
+msgstr ""
+
+#: ../../contributing/indicators.md:323
+msgid ""
+"Processing is divided into 3 steps: fold, reduce, and finalize. A trait "
+"method corresponds to each step."
+msgstr ""
+
+#: ../../contributing/indicators.md:325
+msgid ""
+"Each method accepts an `item` argument, whose type is `Indicators` (named "
+"after the command)."
+msgstr ""
+
+#: ../../contributing/indicators.md:327
+msgid ""
+"The `Indicators` struct has a `results` field for the final results, and "
+"other fields – whose names are prefixed by indicator codes – for "
+"intermediate results:"
+msgstr ""
+
+#: ../../contributing/indicators.md:335
+msgid ""
+"Cardinal processes compiled releases concurrently. The responsibilities of "
+"the 3 methods are:"
+msgstr ""
+
+#: ../../contributing/indicators.md:337
+msgid "Fold"
+msgstr ""
+
+#: ../../contributing/indicators.md:338
+msgid ""
+"Operate on a single compiled release (its `release` argument), and write "
+"either final results or intermediate results."
+msgstr ""
+
+#: ../../contributing/indicators.md:340
+msgid "Reduce"
+msgstr ""
+
+#: ../../contributing/indicators.md:341
+msgid ""
+"Combine the intermediate results from the *fold* step (if any) into one "
+"`Indicators` instance. The `other` argument represents the instance that is "
+"to be combined."
+msgstr ""
+
+#: ../../contributing/indicators.md:343
+msgid "Finalize"
+msgstr ""
+
+#: ../../contributing/indicators.md:344
+msgid "Use the intermediate results to write final results."
+msgstr ""
+
+#: ../../contributing/indicators.md:346
+msgid ""
+"Use the `set_result!` macro to write final results. It accepts an `item`, "
+"[group](../cli/indicators/index.md#demonstration) (`OCID`, `Tenderer`, "
+"`Buyer`, or `ProcuringEntity`), identifier, indicator code, and result as a "
+"decimal (`f64`). For example:"
+msgstr ""
+
+#: ../../contributing/indicators.md:352
+msgid "Or:"
+msgstr ""
+
+#: ../../contributing/indicators.md:359
+msgid ""
+"If you remember, the indicator code was added as a variant to the "
+"`Indicator` enum in {ref}`indicators-boilerplate`."
+msgstr ""
+
+#: ../../contributing/indicators.md:363
+msgid ""
+"Implementing an indicator often raises questions about its methodology. In "
+"general, try to implement it such that its result is stable. In other words,"
+" new data can cause a red flag to be raised, but shouldn't cause it to be "
+"lowered. This typically means waiting for all relevant data to be available."
+" For example, an indicator about the number of submitted bids should wait "
+"for all awards to be complete."
+msgstr ""
+
+#: ../../contributing/indicators.md:366
+msgid "`fold` method"
+msgstr ""
+
+#: ../../contributing/indicators.md:368
+msgid "Final results"
+msgstr ""
+
+#: ../../contributing/indicators.md:370
+msgid ""
+"If the methodology considers compiled releases in isolation, the final "
+"results can be written by the `fold` method. In this case, the `reduce` and "
+"`finalize` methods can be deleted."
+msgstr ""
+
+#: ../../contributing/indicators.md:372
+msgid ""
+"At this point, you need to know Rust, but you can study other indicators and"
+" adapt their code."
+msgstr ""
+
+#: ../../contributing/indicators.md:377
+msgid ""
+"R999's methodology is \"A competition completed with few submitted bids.\" "
+"Comments are provided to ease reading."
+msgstr ""
+
+#: ../../contributing/indicators.md:412
+msgid "The compiled release should be flagged by the R999 indicator!"
+msgstr ""
+
+#: ../../contributing/indicators.md:419
+msgid "Intermediate results"
+msgstr ""
+
+#: ../../contributing/indicators.md:421
+msgid ""
+"If the methodology considers compiled releases in aggregate – for example, "
+"it uses order statistics to identify outliers – then the `fold` method "
+"writes intermediate results to new field(s) on the `Indicators` struct. For "
+"example:"
+msgstr ""
+
+#: ../../contributing/indicators.md:428 ../../contributing/indicators.md:435
+#: ../../contributing/indicators.md:444
+msgid "To do"
+msgstr ""
+
+#: ../../contributing/indicators.md:430 ../../contributing/indicators.md:437
+#: ../../contributing/indicators.md:446
+msgid ""
+"If you need guidance on this step, [create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues)."
+msgstr ""
+
+#: ../../contributing/indicators.md:433
+msgid "`reduce` method"
+msgstr ""
+
+#: ../../contributing/indicators.md:440
+msgid ""
+"If the indicator considers and flags a subset of tenderers, buyers, or "
+"procuring entities, set `item.maps`. See `r038.rs`, for example."
+msgstr ""
+
+#: ../../contributing/indicators.md:442
+msgid "`finalize` method"
+msgstr ""
+
+#: ../../contributing/indicators.md:449
+msgid "6. Update the `init` command"
+msgstr ""
+
+#: ../../contributing/indicators.md:451
+msgid ""
+"In `src/lib.rs`, edit the multiline string at the top of the `init` function"
+" to include a section for the new indicator, and any configurations as "
+"comments."
+msgstr ""
+
+#: ../../contributing/indicators.md:452
+msgid ""
+"In `docs/cli/init.md`, edit the command's output at the bottom of the file "
+"to match the multiline string."
+msgstr ""
+
+#: ../../contributing/indicators.md:454
+msgid "7. Write the tests"
+msgstr ""
+
+#: ../../contributing/indicators.md:456
+msgid ""
+"The test framework reads `*.jsonl` files in the `tests/fixtures/indicators/`"
+" directory. Each `*.jsonl` file is prefixed with an indicator code: for "
+"example, `R038.jsonl` and `R038_tenderer.jsonl`. The test framework runs the"
+" `indicators` command with that indicator "
+"[enabled](../cli/indicators/index.md#enable-an-indicator), and compares the "
+"output to the corresponding `*.expected` file: for example, `R038.expected` "
+"and `R038_tenderer.expected`."
+msgstr ""
+
+#: ../../contributing/indicators.md:458
+msgid "The test file(s) for an indicator should:"
+msgstr ""
+
+#: ../../contributing/indicators.md:460
+msgid "Cause the indicator to return a result (to test for true positives)"
+msgstr ""
+
+#: ../../contributing/indicators.md:461
+msgid ""
+"Include data that covers any {ref}`exclusions<indicators-exclusions>` or "
+"edge cases (to test against false positives)"
+msgstr ""
+
+#: ../../contributing/indicators.md:462
+msgid ""
+"Not include data that is irrelevant to the indicator (to make the test "
+"readable)"
+msgstr ""
+
+#: ../../contributing/indicators.md:464
+msgid "You can use the `ocid` field to describe each compiled release."
+msgstr ""
+
+#: ../../contributing/indicators.md:466
+msgid "You can use single letters for identifiers, for example:"
+msgstr ""
+
+#: ../../contributing/indicators.md:471
+msgid "Identifier to be **F**lagged"
+msgstr ""
+
+#: ../../contributing/indicators.md:472
+msgid "**B**uyer"
+msgstr ""
+
+#: ../../contributing/indicators.md:473
+msgid "**P**rocuring entity"
+msgstr ""
+
+#: ../../contributing/indicators.md:474
+msgid "**S**upplier of an active award"
+msgstr ""
+
+#: ../../contributing/indicators.md:475
+msgid "Supplier of a **C**ancelled award"
+msgstr ""
+
+#: ../../contributing/indicators.md:476
+msgid "Supplier of an **U**nsuccessful award"
+msgstr ""
+
+#: ../../contributing/indicators.md:477
+msgid "Tenderer of a **I**nvited bid"
+msgstr ""
+
+#: ../../contributing/indicators.md:478
+msgid "Tenderer of a **P**ending bid"
+msgstr ""
+
+#: ../../contributing/indicators.md:479
+msgid "Tenderer of a **V**alid bid"
+msgstr ""
+
+#: ../../contributing/indicators.md:480
+msgid "Tenderer of a **D**isqualified bid"
+msgstr ""
+
+#: ../../contributing/indicators.md:481
+msgid "**W**inning tenderer"
+msgstr ""
+
+#: ../../contributing/indicators.md:482
+msgid "**L**osing tenderer"
+msgstr ""
+
+#: ../../contributing/indicators.md:488
+msgid ""
+"Edit the `R999.jsonl` and `R999.expected` files in the "
+"`tests/fixtures/indicators/` directory from {ref}`indicators-boilerplate`. "
+"To only test whether the indicator returns a result, replace the contents of"
+" the files with:"
+msgstr ""
+
+#: ../../contributing/indicators.md:494
+msgid "And:"
+msgstr ""
+
+#: ../../contributing/indicators.md:510
+msgid "All tests should pass, including:"
+msgstr ""
+
+#: ../../contributing/indicators.md:517
+msgid "8. Add documentation"
+msgstr ""
+
+#: ../../contributing/indicators.md:519
+msgid "Document the indicator"
+msgstr ""
+
+#: ../../contributing/indicators.md:521
+msgid ""
+"Open the documentation page (`docs/cli/indicators/R/999.md`, in this "
+"example) in a text editor."
+msgstr ""
+
+#: ../../contributing/indicators.md:523
+msgid "Title"
+msgstr ""
+
+#: ../../contributing/indicators.md:524
+msgid ""
+"Write a concise, one-line sentence communicating the condition under which "
+"the red flag is raised. Read {ref}`other titles<list>` to match the word "
+"choice."
+msgstr ""
+
+#: ../../contributing/indicators.md:526
+msgid "Methodology"
+msgstr ""
+
+#: ../../contributing/indicators.md:527
+msgid ""
+"Read {ref}`other methodologies<list>`, to match the word choice, sentence "
+"construction, and use of bullet lists and paragraph breaks."
+msgstr ""
+
+#: ../../contributing/indicators.md:528
+msgid ""
+"Bold the first occurrence of each word in the methodology that can be "
+"configured (*Configuration*) or interpreted (*Output*)."
+msgstr ""
+
+#: ../../contributing/indicators.md:529
+msgid ""
+"Write a brief example containing names and numbers, to ease the "
+"interpretation of the methodology."
+msgstr ""
+
+#: ../../contributing/indicators.md:530
+msgid "Explain why the methodology indicates a red flag."
+msgstr ""
+
+#: ../../contributing/indicators.md:532
+msgid "Output"
+msgstr ""
+
+#: ../../contributing/indicators.md:533
+msgid ""
+"Bold the word for the concept from the methodology to which the output "
+"corresponds. Declare the type of the output if it is ambiguous."
+msgstr ""
+
+#: ../../contributing/indicators.md:535
+msgid "Configuration"
+msgstr ""
+
+#: ../../contributing/indicators.md:536
+msgid ""
+"Read {ref}`other configurations<list>`, to match the phrasing and styling. "
+"Bold the words for the concepts from the methodology that are configurable. "
+"Declare the type of the configuration."
+msgstr ""
+
+#: ../../contributing/indicators.md:538
+msgid "If there is no configuration, delete this section."
+msgstr ""
+
+#: ../../contributing/indicators.md:541
+msgid "Exclusions"
+msgstr ""
+
+#: ../../contributing/indicators.md:542
+msgid ""
+"Describe any features that cause the indicator to skip a compiled release, "
+"as a bullet list."
+msgstr ""
+
+#: ../../contributing/indicators.md:544
+msgid "If there are no exclusions, delete this section."
+msgstr ""
+
+#: ../../contributing/indicators.md:546
+msgid "Assumptions"
+msgstr ""
+
+#: ../../contributing/indicators.md:547
+msgid ""
+"Mention any assumptions made by the methodology. (In general, there should "
+"be none.)"
+msgstr ""
+
+#: ../../contributing/indicators.md:549
+msgid "If there are no assumptions, delete this section."
+msgstr ""
+
+#: ../../contributing/indicators.md:551
+msgid "Demonstration"
+msgstr ""
+
+#: ../../contributing/indicators.md:552
+msgid ""
+"Adapt your test files to update the `docs/examples/R/999.jsonl` file with a "
+"minimal input, and the `console` code block with the corresponding output. "
+"Run `cargo test` to check the output."
+msgstr ""
+
+#: ../../contributing/indicators.md:554
+msgid "Update the list of indicators and the changelog"
+msgstr ""
+
+#: ../../contributing/indicators.md:556
+msgid ""
+"In `docs/cli/indicators/index.md`, add the indicator in alphabetical order "
+"to the relevant table:"
+msgstr ""
+
+#: ../../contributing/indicators.md:564
+msgid "In `docs/changelog.md`, add a changelog entry for the indicator:"
+msgstr ""
+
+#: ../../contributing/indicators.md:573
+msgid ""
+"**You're done!** 🎉 We welcome all new indicators as pull requests on "
+"[GitHub](https://github.com/open-contracting/cardinal-rs)."
+msgstr ""

@@ -1,0 +1,1870 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2002, Open Contracting Partnership
+# This file is distributed under the same license as the Cardinal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Cardinal 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-20 16:27-0400\n"
+"PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: ../../cli/coverage.md:1
+msgid "coverage"
+msgstr ""
+
+#: ../../cli/coverage.md:3
+msgid ""
+"The `coverage` command counts the number of times each JSON field is non-"
+"empty."
+msgstr ""
+
+#: ../../cli/coverage.md:5 ../../cli/indicators/index.md:5
+#: ../../cli/prepare.md:5
+msgid ""
+"Run the `help` command to read its description, output format and options:"
+msgstr ""
+
+#: ../../cli/coverage.md:34 ../../cli/indicators/R/023.md:46
+#: ../../cli/indicators/R/024.md:75 ../../cli/indicators/R/025.md:71
+#: ../../cli/indicators/R/028.md:42 ../../cli/indicators/R/030.md:49
+#: ../../cli/indicators/R/035.md:59 ../../cli/indicators/R/036.md:38
+#: ../../cli/indicators/R/038.md:92 ../../cli/indicators/R/048.md:85
+#: ../../cli/indicators/R/058.md:75 ../../cli/indicators/index.md:77
+#: ../../cli/init.md:27 ../../cli/prepare.md:70
+msgid "Demonstration"
+msgstr ""
+
+#: ../../cli/coverage.md:36
+msgid "Given this line-delimited JSON file:"
+msgstr ""
+
+#: ../../cli/coverage.md:42
+msgid "The `coverage` command outputs:"
+msgstr ""
+
+#: ../../cli/coverage.md:50
+msgid "Caveats"
+msgstr ""
+
+#: ../../cli/coverage.md:53
+msgid "These edge cases are not expected to be encountered in real data."
+msgstr ""
+
+#: ../../cli/coverage.md:56
+msgid "If a member name is duplicated, only the last duplicate is considered:"
+msgstr ""
+
+#: ../../cli/coverage.md:79
+msgid ""
+"If a member name is empty, its path is the same as its parent object's path:"
+msgstr ""
+
+#: ../../cli/coverage.md:102
+msgid ""
+"If a member name ends with `[]`, its path can be the same as a matching "
+"sibling's path:"
+msgstr ""
+
+#: ../../cli/index.md:13
+msgid "Commands"
+msgstr ""
+
+#: ../../cli/index.md:1
+msgid "Command-line interface"
+msgstr ""
+
+#: ../../cli/index.md:3
+msgid "The executable (a.k.a. binary or program) is `ocdscardinal`."
+msgstr ""
+
+#: ../../cli/index.md:5
+msgid ""
+"[ZIP archives of precompiled binaries for OCDS Cardinal are available for "
+"Windows, macOS and Linux.](https://github.com/open-contracting/cardinal-"
+"rs/releases)"
+msgstr ""
+
+#: ../../cli/index.md:7
+msgid ""
+"If you're a **Rust programmer**, ocdscardinal can be installed with `cargo`:"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:1
+msgid "Fixed-multiple bid prices (R023)"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:3 ../../cli/indicators/index.md:274
+msgid ""
+"The percentage difference between two tenderers' bid prices is the same in "
+"different contracting processes."
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:5 ../../cli/indicators/R/024.md:9
+#: ../../cli/indicators/R/025.md:5 ../../cli/indicators/R/028.md:5
+#: ../../cli/indicators/R/030.md:5 ../../cli/indicators/R/035.md:9
+#: ../../cli/indicators/R/036.md:5 ../../cli/indicators/R/038.md:9
+#: ../../cli/indicators/R/048.md:5 ../../cli/indicators/R/058.md:9
+msgid "Methodology"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:7 ../../cli/indicators/R/023.md:12
+#: ../../cli/indicators/R/023.md:18 ../../cli/indicators/R/023.md:40
+#: ../../cli/indicators/R/023.md:44
+msgid "TODO"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:9 ../../cli/indicators/R/024.md:17
+#: ../../cli/indicators/R/025.md:14 ../../cli/indicators/R/028.md:11
+#: ../../cli/indicators/R/030.md:14 ../../cli/indicators/R/035.md:19
+#: ../../cli/indicators/R/036.md:12 ../../cli/indicators/R/048.md:35
+#: ../../cli/indicators/R/058.md:17 ../../cli/prepare.md:72
+#: ../../cli/prepare.md:241
+msgid "Example"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:15 ../../cli/indicators/R/024.md:25
+#: ../../cli/indicators/R/025.md:24 ../../cli/indicators/R/028.md:17
+#: ../../cli/indicators/R/030.md:20 ../../cli/indicators/R/035.md:25
+#: ../../cli/indicators/R/036.md:18 ../../cli/indicators/R/038.md:33
+#: ../../cli/indicators/R/048.md:44 ../../cli/indicators/R/058.md:25
+msgid "Why is this a red flag?"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:21
+msgid ""
+"<small>Based on \"Concerted bids\" in [*A decision support system for fraud "
+"detection in public "
+"procurement*](https://www.researchgate.net/publication/341703812_A_decision_support_system_for_fraud_detection_in_public_procurement)"
+" and \"Bid prices differ by an equal amount or factor\" in [*Fraud in Public"
+" Procurement: A collection of Red Flags and Best "
+"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
+"public-procurement-final-20122017-ares20176254403.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:23 ../../cli/indicators/R/024.md:33
+#: ../../cli/indicators/R/025.md:32 ../../cli/indicators/R/028.md:25
+#: ../../cli/indicators/R/030.md:28 ../../cli/indicators/R/035.md:33
+#: ../../cli/indicators/R/036.md:26 ../../cli/indicators/R/038.md:43
+#: ../../cli/indicators/R/048.md:52 ../../cli/indicators/R/058.md:33
+msgid "Output"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:25
+msgid ""
+"The indicator's value is the number of times the **ratio** is the same."
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:27 ../../cli/indicators/R/024.md:44
+#: ../../cli/indicators/R/025.md:36 ../../cli/indicators/R/028.md:34
+#: ../../cli/indicators/R/030.md:37 ../../cli/indicators/R/035.md:44
+#: ../../cli/indicators/R/036.md:30 ../../cli/indicators/R/038.md:55
+#: ../../cli/indicators/R/048.md:56 ../../cli/indicators/R/058.md:44
+#: ../../cli/indicators/index.md:150 ../../cli/prepare.md:129
+msgid "Configuration"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:29
+msgid ""
+"All configuration is optional. If you observe many false positives, you can "
+"increase the threshold. To override the default **threshold**, add to your "
+"settings file, as a natural number:"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:36 ../../cli/indicators/R/024.md:57
+#: ../../cli/indicators/R/025.md:58 ../../cli/indicators/R/035.md:53
+#: ../../cli/indicators/R/048.md:81 ../../cli/indicators/R/058.md:57
+msgid "Exclusions"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:38 ../../cli/indicators/R/024.md:59
+#: ../../cli/indicators/R/025.md:60 ../../cli/indicators/R/035.md:55
+#: ../../cli/indicators/R/058.md:59
+msgid "A contracting process is excluded if:"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:42 ../../cli/indicators/R/024.md:71
+#: ../../cli/indicators/R/030.md:41 ../../cli/indicators/R/038.md:84
+#: ../../cli/indicators/R/058.md:71
+msgid "Assumptions"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:48 ../../cli/indicators/R/024.md:77
+#: ../../cli/indicators/R/025.md:73 ../../cli/indicators/R/028.md:44
+#: ../../cli/indicators/R/030.md:51 ../../cli/indicators/R/035.md:61
+#: ../../cli/indicators/R/036.md:40 ../../cli/indicators/R/038.md:94
+#: ../../cli/indicators/R/048.md:87 ../../cli/indicators/R/058.md:77
+msgid "*Input*"
+msgstr ""
+
+#: ../../cli/indicators/R/023.md:54 ../../cli/indicators/R/024.md:83
+#: ../../cli/indicators/R/025.md:79 ../../cli/indicators/R/028.md:50
+#: ../../cli/indicators/R/030.md:57 ../../cli/indicators/R/035.md:67
+#: ../../cli/indicators/R/036.md:46 ../../cli/indicators/R/038.md:100
+#: ../../cli/indicators/R/048.md:93 ../../cli/indicators/R/058.md:83
+msgid "*Output*"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:1
+msgid "Price close to winning bid (R024)"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:3 ../../cli/indicators/index.md:277
+msgid ""
+"The percentage difference between the winning bid and the second-lowest "
+"valid bid is a low outlier."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:6
+msgid "{doc}`058`"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:11 ../../cli/indicators/R/058.md:11
+msgid ""
+"For each contracting process, the **difference** is calculated as "
+"$(secondLowestValidBidAmount - winningBidAmount) \\over winningBidAmount$."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:13
+msgid ""
+"A contracting process is flagged if the difference is less than or equal to "
+"the **lower fence** of $Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile "
+"and $IQR$ is the interquartile range for the set of differences."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:15
+msgid "The winner and second-lowest bidder are also flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:20
+msgid ""
+"In 25% ($Q_1$) of contracting processes in Atlantis, the second-lowest valid"
+" bid is at most 5% greater than the winning bid. In 75% ($Q_3$) of "
+"contracting processes, it is at most 7% greater. This yields a lower fence "
+"of 2% (`0.02`)."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:22
+msgid ""
+"In a contracting process, CollusionCorp won with a bid of \\$100,000, and "
+"ProcureManipulate lost with the second-lowest bid of \\$101,000. The "
+"difference is 1% (`0.01`). This is less than the lower fence of 2%. "
+"Therefore, the process is flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:28
+msgid ""
+"A colluding bidder can mimic competition by submitting a bid that is similar"
+" in price (but different in quality, for example) from its colluding "
+"partner."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:31
+msgid ""
+"<small>Based on \"Difference between first and second relative offer "
+"prices\" in [*Toolkit for detecting collusive bidding in public "
+"procurement*](https://www.govtransparency.eu/wp-"
+"content/uploads/2015/11/GTI_WP2014_2_Toth_et_al_150413.pdf) and \"Winning "
+"tender just below the next lowest bid\" in [*Fraud in Public Procurement: A "
+"collection of Red Flags and Best "
+"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
+"public-procurement-final-20122017-ares20176254403.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:35 ../../cli/indicators/R/058.md:35
+msgid ""
+"The indicator's value for the contracting process is the **difference**, as "
+"a decimal."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:37 ../../cli/indicators/R/035.md:37
+#: ../../cli/indicators/R/058.md:37
+msgid "The indicator's value for the tenderer is always 0.0."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:39 ../../cli/indicators/R/028.md:29
+#: ../../cli/indicators/R/030.md:32 ../../cli/indicators/R/035.md:39
+#: ../../cli/indicators/R/038.md:47 ../../cli/indicators/R/058.md:39
+msgid "If the ``--map`` command-line flag is set, the ``Maps`` key contains:"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:41
+msgid "ocid_tenderer_r024"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:42 ../../cli/indicators/R/028.md:32
+#: ../../cli/indicators/R/030.md:35 ../../cli/indicators/R/035.md:42
+#: ../../cli/indicators/R/058.md:42
+msgid "The flagged tenderers for each flagged `ocid`."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:46
+msgid ""
+"All configuration is optional. To override the default **lower fence**, add "
+"to your settings file, as a decimal:"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:54 ../../cli/indicators/R/028.md:39
+#: ../../cli/indicators/R/036.md:35 ../../cli/indicators/R/058.md:54
+msgid "`fixed_price_procurement_methods` in {ref}`global-configuration`"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:61 ../../cli/indicators/R/025.md:62
+#: ../../cli/indicators/R/035.md:57 ../../cli/indicators/R/058.md:61
+msgid "An award's status is pending or invalid."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:62
+msgid ""
+"The winning bid is not the lowest bid. (This indicator requires the award "
+"criteria to be price-only.)"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:63 ../../cli/indicators/R/025.md:63
+#: ../../cli/indicators/R/058.md:63
+msgid ""
+"There are multiple active awards (a.k.a. winning bids). "
+"[#14](https://github.com/open-contracting/cardinal-rs/issues/14)"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:64 ../../cli/indicators/R/025.md:64
+#: ../../cli/indicators/R/058.md:64
+msgid ""
+"A bid is submitted by multiple tenderers. [#17](https://github.com/open-"
+"contracting/cardinal-rs/issues/17)"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:65 ../../cli/indicators/R/025.md:65
+#: ../../cli/indicators/R/058.md:65
+msgid ""
+"An award is made to multiple suppliers. [#17](https://github.com/open-"
+"contracting/cardinal-rs/issues/17)"
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:68 ../../cli/indicators/R/025.md:68
+#: ../../cli/indicators/R/058.md:68
+msgid ""
+"Do you want to eliminate an exclusion? Please contributed to the linked "
+"GitHub issue."
+msgstr ""
+
+#: ../../cli/indicators/R/024.md:73 ../../cli/indicators/R/058.md:73
+msgid ""
+"This indicator assumes that the tenderer of the winning bid didn't submit "
+"another valid bid."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:1
+msgid "Excessive unsuccessful bids (R025)"
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:3 ../../cli/indicators/index.md:280
+msgid ""
+"The ratio of winning bids to submitted bids for a top tenderer is a low "
+"outlier."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:7
+msgid ""
+"For each tenderer, the **ratio** is calculated as $numberOfWinningBids "
+"\\over numberOfValidBids$ across all contracting processes."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:9
+msgid "A tenderer is flagged if:"
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:11
+msgid ""
+"Its number of valid bids is greater than or equal to the **upper fence** of "
+"the third quartile ($Q_3$) of the set of numbers of valid bids."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:12
+msgid ""
+"Its ratio is less than or equal to the **lower fence** of $Q_1 - 1.5(IQR)$, "
+"where $Q_1$ is the first quartile and $IQR$ is the interquartile range for "
+"the set of ratios."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:17
+msgid ""
+"75% ($Q_3$) of bidders in Atlantis submitted at most 100 bids. UnethicalBid "
+"Ltd. submitted 150 bids. This is greater than the upper fence of 100. "
+"Therefore, UnethicalBid Ltd. is a top tenderer."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:19
+msgid ""
+"25% ($Q_1$) of bidders in Atlantis won at most half (`0.5`) of their bids. "
+"75% ($Q_3$) of bidders won at most three quarters (`0.75`) of their bids. "
+"This yields a lower fence of one eighth (`0.125`)."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:21
+msgid ""
+"UnethicalBid Ltd. won 15 of its 150 bids, or one tenth (`0.1`). This is less"
+" than the lower fence of one eighth. Therefore, UnethicalBid Ltd. is "
+"flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:27
+msgid ""
+"A colluding bidder can mimic competition by submitting deliberately losing "
+"bids (at inflated bid prices, for example) in contracting processes in which"
+" a colluding partner participates."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:30
+msgid ""
+"<small>Based on \"Superfluous losing bidders\" in [*Toolkit for detecting "
+"collusive bidding in public procurement*](https://www.govtransparency.eu/wp-"
+"content/uploads/2015/11/GTI_WP2014_2_Toth_et_al_150413.pdf) and \"Top "
+"losers\" in [*A decision support system for fraud detection in public "
+"procurement*](https://www.researchgate.net/publication/341703812_A_decision_support_system_for_fraud_detection_in_public_procurement).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:34 ../../cli/indicators/R/038.md:45
+msgid "The indicator's value is the **ratio**, as a decimal."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:38 ../../cli/indicators/R/038.md:57
+#: ../../cli/indicators/R/048.md:58
+msgid "All configuration is optional."
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:40
+msgid ""
+"To override the default **upper fence**, add to your settings file, as a "
+"percentage:"
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:47
+msgid ""
+"To override the default **lower fence**, add to your settings file, as a "
+"decimal:"
+msgstr ""
+
+#: ../../cli/indicators/R/025.md:55
+msgid "Put all properties under one `[R025]` section."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:1
+msgid "Identical bid prices (R028)"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:3 ../../cli/indicators/index.md:283
+msgid "Different tenderers submitted bids with the same price."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:7
+msgid ""
+"A contracting process is flagged if different tenderers submitted bids with "
+"the same price."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:9 ../../cli/indicators/R/030.md:12
+msgid "These tenderers are also flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:14
+msgid ""
+"The Ministry of Defense opens bids early and leaks the lowest price to "
+"BribeCorp. BribeCorp submits a bid matching the lowest price. The Ministry "
+"of Defense awards the contract to BribeCorp."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:20
+msgid ""
+"A corrupt buyer can award the pre-determined bidder by leaking competitors' "
+"prices."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:23
+msgid ""
+"<small>Based on \"Bidders having the same bid price\" in [*Assessing the "
+"potential for detecting collusion in Swedish public "
+"procurement*](https://www.govtransparency.eu/wp-"
+"content/uploads/2021/08/Fazekas-Toth_SE_PPcartel_detection_20161115.pdf) and"
+" \"Different companies include identical unit prices in their bid "
+"documents\" in [*Fraud in Public Procurement: A collection of Red Flags and "
+"Best Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-"
+"files/fraud-public-procurement-final-20122017-ares20176254403.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:27 ../../cli/indicators/R/030.md:30
+#: ../../cli/indicators/R/036.md:28
+msgid "The indicator's value is always 1.0."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:31
+msgid "ocid_tenderer_r028"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:36 ../../cli/indicators/R/030.md:39
+#: ../../cli/indicators/R/036.md:32
+msgid "The indicator is not configurable."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:1
+msgid "Late bid won (R030)"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:3 ../../cli/indicators/index.md:286
+msgid "The winning bid was received after the submission deadline."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:7 ../../cli/indicators/R/035.md:11
+#: ../../cli/indicators/R/036.md:7
+msgid "A contracting process is flagged if:"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:9
+msgid "A valid bid's received date is after the submission deadline."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:10
+msgid ""
+"At least one tenderer of the valid bid is the supplier of an active award."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:17
+msgid ""
+"The submission deadline is March 15. The Public Works Department leaks "
+"information from the received bids to CorruptX Solutions, to give it a "
+"competitive advantage. CorruptX Solutions submits a bid on April 1. The "
+"Public Works Department accepts the bid and awards the contract to CorruptX "
+"Solutions."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:23
+msgid ""
+"A corrupt buyer can award the pre-determined bidder by disregarding the "
+"submission deadline."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:26
+msgid ""
+"<small>Based on \"Bids after the deadline accepted\" in [*Corruption in "
+"Public Procurement: Finding the Right "
+"Indicators*](https://www.researchgate.net/publication/303359108_Corruption_in_Public_Procurement_Finding_the_Right_Indicators)"
+" and \"Late submissions accepted\" in [*Fraud in Public Procurement: A "
+"collection of Red Flags and Best "
+"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
+"public-procurement-final-20122017-ares20176254403.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:34
+msgid "ocid_tenderer_r030"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:43
+msgid ""
+"This indicator assumes that the tenderer didn't submit another valid bid "
+"before the submission deadline; in other words, its late bid is the winning "
+"bid."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:46
+msgid ""
+"Is this assumption not true for your data? Does your data set the "
+"`/awards[]/relatedBid` field? Please [create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues)."
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:1
+msgid "All except winning bid disqualified (R035)"
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:3 ../../cli/indicators/index.md:289
+msgid ""
+"Bids are disqualified if not submitted by the single tenderer of the winning"
+" bid."
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:6
+msgid "{doc}`038`"
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:13
+msgid ""
+"Exactly one tenderer submitted one or more bids that are valid (i.e. "
+"qualified)."
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:14
+msgid ""
+"The tenderer of the valid bids and the suppliers of all active awards are "
+"the same."
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:15
+msgid ""
+"At least 1 other tenderer submitted a bid that was disqualified. (1 is the "
+"**threshold**.)"
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:17 ../../cli/indicators/R/058.md:15
+msgid "The winner is also flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:22
+msgid ""
+"The National Rail Service receives five bids. It disqualifies four bids, and"
+" awards the contract to the remaining bid from CorruptX Solutions."
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:28
+msgid ""
+"A corrupt buyer can award the pre-determined bidder by disqualifying other "
+"bidders' bids."
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:31
+msgid ""
+"<small>Based on \"Prevalence of faulty bids\" in [*Toolkit for detecting "
+"collusive bidding in public procurement*](https://www.govtransparency.eu/wp-"
+"content/uploads/2015/11/GTI_WP2014_2_Toth_et_al_150413.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:35
+msgid ""
+"The indicator's value for the contracting process is the number of unique "
+"tenderers with disqualified bids."
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:41
+msgid "ocid_tenderer_r035"
+msgstr ""
+
+#: ../../cli/indicators/R/035.md:46
+msgid ""
+"All configuration is optional. If you observe many false positives among "
+"contracting processes with few submitted bids, you can increase the "
+"threshold. To override the default **threshold**, add to your settings file,"
+" as a natural number:"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:1
+msgid "Lowest bid disqualified (R036)"
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:3 ../../cli/indicators/index.md:292
+msgid ""
+"The lowest submitted bid is disqualified, while the award criterion is price"
+" only."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:9
+msgid "There are one or more active awards."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:10
+msgid "The lowest submitted bid is disqualified."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:15
+msgid ""
+"The Public Works Department sets the award criterion as lowest price. "
+"FairDeal Inc. submits a bid of \\$100,000. BribeCorp submits a bid of "
+"\\$111,111. The Public Works Department disqualifies the bid from FairDeal "
+"Inc."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:21
+msgid ""
+"A corrupt buyer can award the pre-determined bidder by disqualifying lower-"
+"priced bids."
+msgstr ""
+
+#: ../../cli/indicators/R/036.md:24
+msgid ""
+"<small>Based on \"The lowest bid is rejected almost inexplicably\" in "
+"[*Fraud in Public Procurement: A collection of Red Flags and Best "
+"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
+"public-procurement-final-20122017-ares20176254403.pdf) and \"Lowest bidder "
+"not selected\" in *Most Common Red Flags of Fraud and Corruption in "
+"Procurement in Bank-Financed Projects* (World Bank, 2018).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:1
+msgid "Excessive disqualified bids (R038)"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:3 ../../cli/indicators/index.md:295
+msgid ""
+"The ratio of disqualified bids to submitted bids is a high outlier per "
+"buyer, procuring entity or tenderer."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:6
+msgid "{doc}`035`"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:11
+msgid ""
+"For each buyer, the **ratio** is calculated as "
+"$numberOfBidsDisqualifiedByBuyer \\over numberOfBidsSubmittedToBuyer$ across"
+" all contracting processes. A buyer is flagged if its ratio is greater than "
+"or equal to the **upper fence** of $Q_3 + 1.5(IQR)$, where $Q_3$ is the "
+"third quartile and $IQR$ is the interquartile range for the set of ratios."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:13
+msgid ""
+"For each procuring entity, the **ratio** is calculated the same as for "
+"buyers."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:15
+msgid ""
+"For each tenderer, the **ratio** is calculated as "
+"$numberOfBidsDisqualifiedForTenderer \\over numberOfBidsSubmittedByTenderer$"
+" across all contracting processes. A tenderer is flagged if its ratio is "
+"greater than or equal to the **upper fence** of $Q_3 + 1.5(IQR)$, where "
+"$Q_3$ is the third quartile and $IQR$ is the interquartile range for the set"
+" of ratios."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:17
+msgid "Example for a buyer or procuring entity"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:20
+msgid ""
+"25% ($Q_1$) of buyers in Atlantis disqualify at most 2% of bids received. "
+"75% ($Q_3$) of buyers disqualify at most 22% of bids received. This yields "
+"an upper fence of 52%."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:22
+msgid ""
+"The State Water Corporation disqualified 59% of bids received. This is more "
+"than the upper fence of 52%. Therefore, the State Water Corporation is "
+"flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:25
+msgid "Example for a tenderer"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:28
+msgid ""
+"25% ($Q_1$) of bidders in Atlantis have no disqualified bids. 75% ($Q_3$) of"
+" bidders have at most 24% disqualified bids. This yields an upper fence of "
+"60%."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:30
+msgid ""
+"73% of the bids submitted by MisconductCorp were disqualified. This is "
+"higher than the upper fence of 60%. Therefore, MisconductCorp is flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:36
+msgid ""
+"A corrupt buyer or procuring entity can award pre-determined bidders by "
+"disqualifying other bidders' bids."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:38
+msgid ""
+"A colluding bidder can mimic competition by submitting deliberately "
+"unqualified bids."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:41
+msgid ""
+"<small>Based on \"Excluding Qualified Bidders\" in [*Guide to Combating "
+"Corruption & Fraud in Infrastructure Development "
+"Projects*](https://guide.iacrc.org/potential-scheme-excluding-qualified-"
+"bidders/) and [*Behind the Scenes of ProZorro: Does Ukrainian business trust"
+" public procurement?*](https://ti-ukraine.org/wp-"
+"content/uploads/2019/11/Behind-the-Scenes-of-ProZorro.-Does-Ukrainian-"
+"business-trust-public-procurement.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:49
+msgid "ocid_buyer_r038"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:50
+msgid "The buyer for each `ocid` in which at least one bid is disqualified."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:52
+msgid "ocid_procuringentity_r038"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:53
+msgid ""
+"The procuring entity for each `ocid` in which at least one bid is "
+"disqualified."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:59
+msgid ""
+"To override the default **upper fence**, add to your settings file, as a "
+"decimal:"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:66
+msgid ""
+"Tenderers with fewer than 2 submitted bids are excluded. If you observe many"
+" false positives among tenderers with few submitted bids, you can increase "
+"this minimum. To override this minimum number, add to your settings file, as"
+" an integer:"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:73
+msgid ""
+"Buyers and procuring entities with fewer than 2 contracting processes are "
+"excluded. If you observe many false positives among organizations with few "
+"contracting processes, you can increase this minimum. To override this "
+"minimum number, add to your settings file, as an integer:"
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:81
+msgid "Put all properties under one `[R038]` section."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:86
+msgid ""
+"This indicator assumes that `/buyer/id`, `/tender/procuringEntity/id` and "
+"`/bids/details[]/tenderers[]/id` are stable across contracting processes."
+msgstr ""
+
+#: ../../cli/indicators/R/038.md:89
+msgid ""
+"Is this assumption not true for your data? Please contribute to GitHub issue"
+" [#32](https://github.com/open-contracting/cardinal-rs/issues/32)."
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:1
+msgid "Heterogeneous supplier (R048)"
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:3 ../../cli/indicators/index.md:298
+msgid "The variety of items supplied by a tenderer is a high outlier."
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:7
+msgid ""
+"This indicator requires awarded items to be classified using a hierarchy of "
+"numeric codes. For example, [UNSPSC](https://www.unspsc.org) and "
+"[CPV](https://simap.ted.europa.eu/cpv) have four primary levels."
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:12
+msgid "UNSPSC"
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:22
+msgid "CPV"
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:33
+msgid ""
+"For each tenderer, the **variety** is calculated as the number of distinct "
+"first-level classifications across all items awarded to the tenderer, across"
+" all contracting processes. A tenderer is flagged if its variety is greater "
+"than or equal to the **upper fence** of $Q_3 + 1.5(IQR)$, where $Q_3$ is the"
+" third quartile and $IQR$ is the interquartile range for the set of "
+"varieties among tenderers awarded in at least 20 contracting processes."
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:39
+msgid ""
+"25% ($Q_1$) of bidders in Atlantis supply items in 1 product category. 75% "
+"($Q_3$) of bidders supply items in at most 4 product categories. This yields"
+" an upper fence of 8.5 (9 in effect)."
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:41
+msgid ""
+"RentSeekers Inc. supplies items in 20 product categories. This is higher "
+"than the upper fence of 8.5. Therefore, RentSeekers Inc. is flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:47
+msgid ""
+"A heterogeneous supplier is more likely to be unsuitable, increasing the "
+"risk of low value for money, low quality of delivery, and/or rent "
+"extraction."
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:50
+msgid ""
+"<small>Based on \"Component C1B\" in [*Design and measurement of a "
+"corruption risk index from a supplier perspective in the context of COVID-19"
+" emergency*](https://www.estudiosanticorrupcion.org/wp-"
+"content/uploads/2021/02/IA-OCP-Working-PaperV3.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:54
+msgid "The indicator's value is the **variety**, as a decimal."
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:60
+msgid ""
+"To override the default **upper fence**, add to your settings file, as a "
+"natural number:"
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:67
+msgid ""
+"If the first level of the classification hierarchy isn't coded as two "
+"digits, or if the first level is too broad, you can increase the number of "
+"digits. To override the default number of **digits**, add to your settings "
+"file, as a natural number:"
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:74
+msgid ""
+"If a tenderer is awarded in a small number of contracting processes, its "
+"variety is expected to be small. To minimize this correlation, the "
+"calculation of the upper fence considers only tenderers awarded in at least "
+"20 contracting processes. To override this minimum number, add to your "
+"settings file, as a natural number:"
+msgstr ""
+
+#: ../../cli/indicators/R/048.md:83
+msgid "An active award is excluded if it is made to multiple suppliers."
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:1
+msgid "Heavily discounted bid (R058)"
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:3 ../../cli/indicators/index.md:301
+msgid ""
+"The percentage difference between the winning bid and the second-lowest "
+"valid bid is a high outlier."
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:6
+msgid "{doc}`024`"
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:13
+msgid ""
+"A contracting process is flagged if the difference is greater than or equal "
+"to the **upper fence** of $Q_3 + 1.5(IQR)$, where $Q_3$ is the third "
+"quartile and $IQR$ is the interquartile range for the set of differences."
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:20
+msgid ""
+"In 25% ($Q_1$) of contracting processes in Atlantis, the second-lowest valid"
+" bid is at most 5% greater than the winning bid. In 75% ($Q_3$) of "
+"contracting processes, it is at most 7% greater. This yields an upper fence "
+"of 10% (`0.1`)."
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:22
+msgid ""
+"In a contracting process, Lemon Industries won with a bid of \\$100,000, and"
+" FairDeal Enterprises lost with the second-lowest bid of \\$115,000. The "
+"difference is 15% (`0.15`). This is greater than the upper fence of 10%. "
+"Therefore, the process is flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:28
+msgid ""
+"An unethical bidder can offer defective goods (\"lemons\") if the buyer has "
+"inadequate quality criteria."
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:31
+msgid ""
+"<small>Based on \"The price offered by the winning bidder is significantly "
+"lower than the price offered by the rest of the bidders\" in [*Fraud in "
+"Public Procurement: A collection of Red Flags and Best "
+"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
+"public-procurement-final-20122017-ares20176254403.pdf) and [*The Market for "
+"\"Lemons\": Quality Uncertainty and the Market "
+"Mechanism*](https://www.sfu.ca/~wainwrig/Econ400/akerlof.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:41
+msgid "ocid_tenderer_r058"
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:46
+msgid ""
+"All configuration is optional. To override the default **upper fence**, add "
+"to your settings file, as a decimal:"
+msgstr ""
+
+#: ../../cli/indicators/R/058.md:62
+msgid "The winning bid is not the lowest bid."
+msgstr ""
+
+#: ../../cli/indicators/R/index.md:1 ../../cli/indicators/index.md:264
+msgid "Red flags"
+msgstr ""
+
+#: ../../cli/indicators/index.md:1
+msgid "indicators"
+msgstr ""
+
+#: ../../cli/indicators/index.md:3
+msgid ""
+"The `indicators` command calculates procurement indicators and red flags."
+msgstr ""
+
+#: ../../cli/indicators/index.md:49 ../../cli/prepare.md:41
+msgid "Workflow"
+msgstr ""
+
+#: ../../cli/indicators/index.md:52 ../../cli/prepare.md:44
+msgid ""
+"Before following this command's workflow, follow the earlier steps in the "
+"{doc}`../../topics/workflow`."
+msgstr ""
+
+#: ../../cli/indicators/index.md:55
+msgid ""
+"**Select indicators**. If you ran the {doc}`../init` command when preparing "
+"your data, you already have a {doc}`../../topics/settings` that enables all "
+"indicators. [Enable](#enable-an-indicator) or [disable](#disable-an-"
+"indicator) indicators as you wish."
+msgstr ""
+
+#: ../../cli/indicators/index.md:56
+msgid ""
+"**Run the command**. For example, if your settings are in `settings.ini` and"
+" your data is in `prepared.jsonl`, this command writes the output to "
+"`results.json`:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:62
+msgid ""
+"**Review the results**. Read the [demonstration](#demonstration) to learn "
+"about the output format."
+msgstr ""
+
+#: ../../cli/indicators/index.md:64
+msgid "To do"
+msgstr ""
+
+#: ../../cli/indicators/index.md:66
+msgid ""
+"This section will expand on the interpretation of results. See GitHub issue "
+"[#40](https://github.com/open-contracting/cardinal-rs/issues/40)."
+msgstr ""
+
+#: ../../cli/indicators/index.md:69
+msgid ""
+"**Edit the settings**. Adjust the configuration of the [indicators](#list) "
+"based on your review of the results, in order to reduce false positives."
+msgstr ""
+
+#: ../../cli/indicators/index.md:71 ../../cli/prepare.md:64
+msgid "Repeat the last three steps until you are satisfied with the results."
+msgstr ""
+
+#: ../../cli/indicators/index.md:74
+msgid ""
+"Have questions, concerns, or feedback? [Email James "
+"McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology."
+msgstr ""
+
+#: ../../cli/indicators/index.md:79
+msgid ""
+"A procurement indicator or red flag can be about a contracting process, "
+"buyer, procuring entity or tenderer. For example, a contracting process "
+"might have a suspicious feature, like all bids except the winner's being "
+"disqualified. Or, a buyer might exhibit suspicious behavior, like "
+"disqualifying a large number of bids across its contracting processes."
+msgstr ""
+
+#: ../../cli/indicators/index.md:81
+msgid ""
+"The JSON output is therefore organized as an object in which the key is a "
+"**group**: \"OCID\" (the unique identifier of a contracting process), "
+"\"Buyer\", \"ProcuringEntity\" or \"Tenderer\". For example:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:92
+msgid ""
+"Each value at the *top* level is an object representing the results within "
+"that **group**, in which the key is an **identifier** extracted from the "
+"input data:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:73
+msgid "Group"
+msgstr ""
+
+#: ../../cli/indicators/index.md:73
+msgid "Identifier"
+msgstr ""
+
+#: ../../cli/indicators/index.md:73
+msgid "OCID"
+msgstr ""
+
+#: ../../cli/indicators/index.md:73
+msgid "`/ocid`"
+msgstr ""
+
+#: ../../cli/indicators/index.md:73
+msgid "Buyer"
+msgstr ""
+
+#: ../../cli/indicators/index.md:73 ../../cli/prepare.md:138
+#: ../../cli/prepare.md:212
+msgid "`/buyer/id`"
+msgstr ""
+
+#: ../../cli/indicators/index.md:73
+msgid "ProcuringEntity"
+msgstr ""
+
+#: ../../cli/indicators/index.md:73 ../../cli/prepare.md:139
+#: ../../cli/prepare.md:213
+msgid "`/tender/procuringEntity/id`"
+msgstr ""
+
+#: ../../cli/indicators/index.md:73
+msgid "Tenderer"
+msgstr ""
+
+#: ../../cli/indicators/index.md:73 ../../cli/prepare.md:140
+#: ../../cli/prepare.md:214
+msgid "`/bids/details[]/tenderers[]/id`"
+msgstr ""
+
+#: ../../cli/indicators/index.md:101
+msgid "For example:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:114
+msgid ""
+"Each value at the *second* level is an object representing the results "
+"relating to that **identifier**, in which the key is the **code** for an "
+"indicator, and the value is the **output** of that indicator. For example:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:131
+msgid ""
+"The **output** of an indicator is always a decimal. If an indicator didn't "
+"produce an output – either because it couldn't be calculated, or because no "
+"red flag was raised – then its code won't appear."
+msgstr ""
+
+#: ../../cli/indicators/index.md:133
+msgid ""
+"You can [consult](#list) the codes for all indicators, read the description "
+"of their outputs and see a demonstration of their calculation."
+msgstr ""
+
+#: ../../cli/indicators/index.md:135
+msgid ""
+"The JSON output also has a ``Meta`` key at the top level. Its value is an "
+"object with information about the quartiles and fences used to calculate the"
+" results, rounded to 4 decimals. For example:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:152
+msgid ""
+"The page for each [indicator](#list) describes its individual settings."
+msgstr ""
+
+#: ../../cli/indicators/index.md:154
+msgid "All configuration is optional. Cardinal provides good defaults."
+msgstr ""
+
+#: ../../cli/indicators/index.md:157
+msgid "An introduction to the {doc}`../../topics/settings`."
+msgstr ""
+
+#: ../../cli/indicators/index.md:160
+msgid "Enable an indicator"
+msgstr ""
+
+#: ../../cli/indicators/index.md:162
+msgid "To enable an indicator, start a section with its code, for example:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:168
+msgid ""
+"You don't need to set properties in this section. (Only if you want to!)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:170
+msgid "Disable an indicator"
+msgstr ""
+
+#: ../../cli/indicators/index.md:172
+msgid ""
+"The disable an indicator, either delete its section and properties, or "
+"comment them out, for example:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:179
+msgid "Now, the `indicators` command won't run this indicator."
+msgstr ""
+
+#: ../../cli/indicators/index.md:182
+msgid "Global configuration"
+msgstr ""
+
+#: ../../cli/indicators/index.md:184
+msgid ""
+"If there are procedures (indicated by `/tender/procurementMethodDetails`) in"
+" which buyers predetermine prices, add to the top of your settings file, as "
+"a pipe-separated list, for example:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:190
+msgid "Otherwise, price-based indicators will return false positives."
+msgstr ""
+
+#: ../../cli/indicators/index.md:192
+msgid "Glossary"
+msgstr ""
+
+#: ../../cli/indicators/index.md:0
+msgid "bid"
+msgstr ""
+
+#: ../../cli/indicators/index.md:199
+msgid ""
+"An offer made by an {term}`economic operator` as part of a "
+"{term}`contracting process`. Also known as a *tender*."
+msgstr ""
+
+#: ../../cli/indicators/index.md:4
+msgid "bidder"
+msgstr ""
+
+#: ../../cli/indicators/index.md:203
+msgid "Synonym of {term}`tenderer`."
+msgstr ""
+
+#: ../../cli/indicators/index.md:8
+msgid "buyer"
+msgstr ""
+
+#: ../../cli/indicators/index.md:207
+msgid ""
+"The organization aiming to conclude a contract with an {term}`economic "
+"operator` or to use the goods, services or works resulting from the "
+"contract, as part of a {term}`contracting process`."
+msgstr ""
+
+#: ../../cli/indicators/index.md:12
+msgid "contracting process"
+msgstr ""
+
+#: ../../cli/indicators/index.md:211
+msgid ""
+"All the actions aimed at implementing one or more contracts. This covers "
+"tendering, awarding, contracting and implementation. Also known as a "
+"*procedure*."
+msgstr ""
+
+#: ../../cli/indicators/index.md:16
+msgid "economic operator"
+msgstr ""
+
+#: ../../cli/indicators/index.md:215
+msgid ""
+"A person or organization – or group of people or organizations – that offers"
+" goods, services or works. Also known as a *business*, *contractor*, "
+"*service provider*, *supplier* or *undertaking*."
+msgstr ""
+
+#: ../../cli/indicators/index.md:20
+msgid "procuring entity"
+msgstr ""
+
+#: ../../cli/indicators/index.md:219
+msgid ""
+"The organization managing the {term}`contracting process`. An organization "
+"can be both a {term}`buyer` and a procuring entity (like in a simple "
+"contracting process)."
+msgstr ""
+
+#: ../../cli/indicators/index.md:24
+msgid "submitted"
+msgstr ""
+
+#: ../../cli/indicators/index.md:223
+msgid ""
+"A {term}`bid` is submitted if its status is pending (i.e. not evaluated "
+"yet), valid (i.e. qualified), or disqualified. It is not submitted if its "
+"status is invited or withdrawn."
+msgstr ""
+
+#: ../../cli/indicators/index.md:28
+msgid "tenderer"
+msgstr ""
+
+#: ../../cli/indicators/index.md:227
+msgid ""
+"An {term}`economic operator` that {term}`submitted` one or more "
+"{term}`bids<bid>` as part of a {term}`contracting process`."
+msgstr ""
+
+#: ../../cli/indicators/index.md:32
+msgid "winner"
+msgstr ""
+
+#: ../../cli/indicators/index.md:231
+msgid "A {term}`tenderer` that is awarded a contract."
+msgstr ""
+
+#: ../../cli/indicators/index.md:235
+msgid "Indicators"
+msgstr ""
+
+#: ../../cli/indicators/index.md:237
+msgid ""
+"Indicators are assigned codes for easy reference: for example, `R001`. The "
+"first letter indicates the category: **R**ed flag or **U**se case."
+msgstr ""
+
+#: ../../cli/indicators/index.md:239
+msgid ""
+"The page for each indicator describes its individual methodology. For all "
+"indicators, a contracting process is excluded if:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:241
+msgid "The `ocid` isn't a string."
+msgstr ""
+
+#: ../../cli/indicators/index.md:242
+msgid "The contracting process (`/tender/status`) is cancelled."
+msgstr ""
+
+#: ../../cli/indicators/index.md:243
+msgid "The relevant organization references don't set an `id`."
+msgstr ""
+
+#: ../../cli/indicators/index.md:244
+msgid "Monetary values, where relevant, don't use the main currency."
+msgstr ""
+
+#: ../../cli/indicators/index.md:246
+msgid "To configure the main currency, add to the top of your settings file:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:252
+msgid "Otherwise, the main currency is set to the first observed currency."
+msgstr ""
+
+#: ../../cli/indicators/index.md:255
+msgid ""
+"Do you want to eliminate this exclusion? Please contributed to [GitHub issue"
+" #11](https://github.com/open-contracting/cardinal-rs/issues/11)."
+msgstr ""
+
+#: ../../cli/indicators/index.md:269
+msgid "Code"
+msgstr ""
+
+#: ../../cli/indicators/index.md:270
+msgid "Title"
+msgstr ""
+
+#: ../../cli/indicators/index.md:271
+msgid "Description"
+msgstr ""
+
+#: ../../cli/indicators/index.md:272
+msgid "[R023](R/023)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:273
+msgid "[Fixed-multiple bid prices](R/023)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:275
+msgid "[R024](R/024)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:276
+msgid "[Price close to winning bid](R/024)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:278
+msgid "[R025](R/025)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:279
+msgid "[Excessive unsuccessful bids](R/025)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:281
+msgid "[R028](R/028)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:282
+msgid "[Identical bid prices](R/028)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:284
+msgid "[R030](R/030)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:285
+msgid "[Late bid won](R/030)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:287
+msgid "[R035](R/035)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:288
+msgid "[All except winning bid disqualified](R/035)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:290
+msgid "[R036](R/036)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:291
+msgid "[Lowest bid disqualified](R/036)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:293
+msgid "[R038](R/038)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:294
+msgid "[Excessive disqualified bids](R/038)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:296
+msgid "[R048](R/048)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:297
+msgid "[Heterogeneous supplier](R/048)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:299
+msgid "[R058](R/058)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:300
+msgid "[Heavily discounted bid](R/058)"
+msgstr ""
+
+#: ../../cli/init.md:1
+msgid "init"
+msgstr ""
+
+#: ../../cli/init.md:3
+msgid "The `init` command writes a default settings file for configuration."
+msgstr ""
+
+#: ../../cli/init.md:5
+msgid "Run the `help` command to read its description:"
+msgstr ""
+
+#: ../../cli/init.md:24
+msgid "An introduction to the {doc}`../topics/settings`."
+msgstr ""
+
+#: ../../cli/init.md:29
+msgid "Write a settings file to `settings.ini`:"
+msgstr ""
+
+#: ../../cli/init.md:37
+msgid "Preview the content of the settings file:"
+msgstr ""
+
+#: ../../cli/prepare.md:1
+msgid "prepare"
+msgstr ""
+
+#: ../../cli/prepare.md:3
+msgid ""
+"The `prepare` command corrects quality issues within OCDS compiled releases."
+msgstr ""
+
+#: ../../cli/prepare.md:47
+msgid "Initialize a `settings.ini` file, using the {doc}`init` command:"
+msgstr ""
+
+#: ../../cli/prepare.md:54
+msgid ""
+"Run the `prepare` command. For example, if your data is in `input.jsonl`, "
+"this command writes the corrected data to `prepared.jsonl` and the quality "
+"issues to `issues.csv`:"
+msgstr ""
+
+#: ../../cli/prepare.md:60
+msgid ""
+"Review the quality issues in the `issues.csv` file. Don't worry if many "
+"issues are reported: most are repetitive and can be fixed at once. Read the "
+"[demonstration](#demonstration) to learn how to interpret results."
+msgstr ""
+
+#: ../../cli/prepare.md:62
+msgid ""
+"Adjust the [configuration](#configuration) in the `settings.ini` file to fix"
+" the quality issues."
+msgstr ""
+
+#: ../../cli/prepare.md:67
+msgid ""
+"This command is designed to only warn about quality issues (1) that it can "
+"fix and (2) that interfere with the calculation of {doc}`indicators/index`. "
+"If you want to check for other quality issues, contact OCP's [Data Support "
+"Team](mailto:data@open-contracting.org) about [Pelican](https://www.open-"
+"contracting.org/2020/01/28/meet-pelican-our-new-tool-for-assessing-the-"
+"quality-of-open-contracting-data/)."
+msgstr ""
+
+#: ../../cli/prepare.md:76
+msgid ""
+"The bid status (`/bids/details[]/status`) is needed to determine whether a "
+"bid is {term}`submitted`, invited or withdrawn."
+msgstr ""
+
+#: ../../cli/prepare.md:78
+msgid "This simplified file contains a bid without a status:"
+msgstr ""
+
+#: ../../cli/prepare.md:84
+msgid "For this demonstration, write the quality issues to the console:"
+msgstr ""
+
+#: ../../cli/prepare.md:92
+msgid ""
+"Quality issues are reported as CSV rows. Adding a header and rendering the "
+"row as a table produces:"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:110
+msgid "line"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:112
+msgid "ocid"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:114
+msgid "path"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:116
+msgid "array indexes"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:118
+msgid "incorrect value"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:120
+msgid "error description"
+msgstr ""
+
+#: ../../cli/prepare.md:97
+msgid "1"
+msgstr ""
+
+#: ../../cli/prepare.md:97
+msgid "ocds-213czf-1"
+msgstr ""
+
+#: ../../cli/prepare.md:97
+msgid "/bids/details[]/status"
+msgstr ""
+
+#: ../../cli/prepare.md:97
+msgid "0"
+msgstr ""
+
+#: ../../cli/prepare.md:97
+msgid "not set"
+msgstr ""
+
+#: ../../cli/prepare.md:100
+msgid ""
+"If you write the quality issues to a file instead of the console, you can "
+"open the CSV as a spreadsheet."
+msgstr ""
+
+#: ../../cli/prepare.md:103
+msgid "Given the context of this example, the columns can be used as follows."
+msgstr ""
+
+#: ../../cli/prepare.md:108
+msgid "Column"
+msgstr ""
+
+#: ../../cli/prepare.md:109
+msgid "Use"
+msgstr ""
+
+#: ../../cli/prepare.md:111
+msgid "Find the problematic compiled release in the input file."
+msgstr ""
+
+#: ../../cli/prepare.md:113
+msgid ""
+"Find the problematic compiled release in another system, like the data "
+"source."
+msgstr ""
+
+#: ../../cli/prepare.md:115
+msgid ""
+"Consult the field that has an issue. This column can be used to sort and "
+"filter the issues."
+msgstr ""
+
+#: ../../cli/prepare.md:117
+msgid ""
+"Find the problematic array entry in the compiled release. If the *path* "
+"contains multiple arrays (`[]`), the indexes are separated by periods."
+msgstr ""
+
+#: ../../cli/prepare.md:119
+msgid ""
+"Consult the value that caused the issue. If the issue is that the field "
+"isn't set, this is blank."
+msgstr ""
+
+#: ../../cli/prepare.md:121
+msgid ""
+"Determine the potential solution to the issue. The possible values are:"
+msgstr ""
+
+#: ../../cli/prepare.md:131
+msgid "Normalize ID fields"
+msgstr ""
+
+#: ../../cli/prepare.md:133
+msgid ""
+"Some ID fields allow both strings (`\"1\"`) and integers (`1`): for example,"
+" an award's `id` and a contract's `awardID`. If the types are inconsistent, "
+"then lookups fail: for example, retrieving a contract's award or a "
+"supplier's address."
+msgstr ""
+
+#: ../../cli/prepare.md:136
+msgid ""
+"The command converts these ID fields to strings, in order to prevent this "
+"issue:"
+msgstr ""
+
+#: ../../cli/prepare.md:141
+msgid "`/awards[]/id`"
+msgstr ""
+
+#: ../../cli/prepare.md:142 ../../cli/prepare.md:215
+msgid "`/awards[]/suppliers[]/id`"
+msgstr ""
+
+#: ../../cli/prepare.md:143
+msgid "`/awards[]/items[]/classification/id`"
+msgstr ""
+
+#: ../../cli/prepare.md:144
+msgid "`/contracts[]/awardID`"
+msgstr ""
+
+#: ../../cli/prepare.md:146
+msgid "As new indicators are added, additional ID fields will be converted."
+msgstr ""
+
+#: ../../cli/prepare.md:149
+msgid ""
+"This behavior can't be disabled. If you need to disable it, [create an issue"
+" on GitHub](https://github.com/open-contracting/cardinal-rs/issues)."
+msgstr ""
+
+#: ../../cli/prepare.md:152
+msgid "Fill in missing values"
+msgstr ""
+
+#: ../../cli/prepare.md:154
+msgid "The command supports filling in:"
+msgstr ""
+
+#: ../../cli/prepare.md:156
+msgid "`/bids/details[]/value/currency`"
+msgstr ""
+
+#: ../../cli/prepare.md:157
+msgid "`/bids/details[]/items[]/classification/scheme`"
+msgstr ""
+
+#: ../../cli/prepare.md:158
+msgid "`/bids/details[]/status`"
+msgstr ""
+
+#: ../../cli/prepare.md:159
+msgid "`/awards[]/items[]/classification/scheme`"
+msgstr ""
+
+#: ../../cli/prepare.md:160
+msgid "`/awards[]/status`"
+msgstr ""
+
+#: ../../cli/prepare.md:162
+msgid ""
+"To fill in one or more of these fields when the field isn't set, add a "
+"`[defaults]` section with relevant properties to your "
+"{doc}`../topics/settings`. For example:"
+msgstr ""
+
+#: ../../cli/prepare.md:172
+msgid ""
+"As new indicators are added, additional currency and scheme fields will be "
+"filled in."
+msgstr ""
+
+#: ../../cli/prepare.md:175
+msgid ""
+"Need to fill in other values? [Create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
+"James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of "
+"Technology."
+msgstr ""
+
+#: ../../cli/prepare.md:178
+msgid "Redact incorrect values"
+msgstr ""
+
+#: ../../cli/prepare.md:181
+msgid ""
+"Need to redact other values? [Create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
+"James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of "
+"Technology."
+msgstr ""
+
+#: ../../cli/prepare.md:184
+msgid "Monetary amounts"
+msgstr ""
+
+#: ../../cli/prepare.md:186
+msgid ""
+"Indicators assume that amount values are accurate. If an amount field is "
+"assigned a placeholder value, this assumption fails. For example, if 0 is "
+"used when the amount is confidential or wasn't entered, then the lowest bids"
+" might be miscalculated."
+msgstr ""
+
+#: ../../cli/prepare.md:188
+msgid ""
+"To redact an amount value, add a `[redactions]` section with an `amount` "
+"property to your {doc}`../topics/settings`. Its value is a pipe-separated "
+"list. For example:"
+msgstr ""
+
+#: ../../cli/prepare.md:195 ../../cli/prepare.md:210
+msgid "This configuration supports redacting values from:"
+msgstr ""
+
+#: ../../cli/prepare.md:197
+msgid "`/bids/details[]/value/amount`"
+msgstr ""
+
+#: ../../cli/prepare.md:199
+msgid "Organization IDs"
+msgstr ""
+
+#: ../../cli/prepare.md:201
+msgid ""
+"Indicators assume that ID values represent distinct entities. If an ID field"
+" is assigned a placeholder value, this assumption fails. For example, if the"
+" placeholder value is used frequently, then the top suppliers might be "
+"miscalculated."
+msgstr ""
+
+#: ../../cli/prepare.md:203
+msgid ""
+"To redact an ID value from an organization reference, add a `[redactions]` "
+"section with an `organization_id` property to your "
+"{doc}`../topics/settings`. Its value is a pipe-separated list. For example:"
+msgstr ""
+
+#: ../../cli/prepare.md:217
+msgid "Re-map invalid codes"
+msgstr ""
+
+#: ../../cli/prepare.md:219
+msgid "The command supports substituting codes in these codelist fields:"
+msgstr ""
+
+#: ../../cli/prepare.md:221
+msgid "`/bids/details[]/status`, by adding a `[codelists.BidStatus]` section"
+msgstr ""
+
+#: ../../cli/prepare.md:222
+msgid "`/awards[]/status`, by adding a `[codelists.AwardStatus]` section"
+msgstr ""
+
+#: ../../cli/prepare.md:224
+msgid ""
+"To replace a code, add a property under the relevant section, in which the "
+"code to replace is the name, and its replacement is the value. For example:"
+msgstr ""
+
+#: ../../cli/prepare.md:234
+msgid ""
+"Need to re-map other values? [Create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
+"James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of "
+"Technology."
+msgstr ""
+
+#: ../../cli/prepare.md:237
+msgid "Replace incorrect award statuses"
+msgstr ""
+
+#: ../../cli/prepare.md:239
+msgid ""
+"In rare cases, it is appropriate to change an award's status according to "
+"its contracts' statuses."
+msgstr ""
+
+#: ../../cli/prepare.md:244
+msgid ""
+"The Government of Ruritania bundles many decisions into one award object, "
+"and uses the contract object as a proxy for the individual decision. As "
+"such, every award object is related to one or more contract objects. If the "
+"individual decision is cancelled (for example, the award is appealed at "
+"court or the supplier refuses to sign the contract), the contract object's "
+"status is changed to cancelled. The award object's status remains active."
+msgstr ""
+
+#: ../../cli/prepare.md:247
+msgid ""
+"Indicators assume that awards, not contracts, represent individual decisions"
+" – in conformance with OCDS. In the example, to better satisfy this "
+"assumption, the status of an award can be changed to cancelled if the status"
+" of every related contract is cancelled."
+msgstr ""
+
+#: ../../cli/prepare.md:249
+msgid ""
+"To replace an award's status in this way, add a `[corrections]` section with"
+" a `award_status_by_contract_status` property to your "
+"{doc}`../topics/settings`. Its value is a boolean. For example:"
+msgstr ""
+
+#: ../../cli/prepare.md:257
+msgid ""
+"Need to correct other values? [Create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
+"James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of "
+"Technology."
+msgstr ""

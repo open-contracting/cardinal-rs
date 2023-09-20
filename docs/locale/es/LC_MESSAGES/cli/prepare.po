@@ -1,0 +1,443 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2002, Open Contracting Partnership
+# This file is distributed under the same license as the Cardinal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Cardinal 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-20 16:40-0400\n"
+"PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: ../../cli/prepare.md:1
+msgid "prepare"
+msgstr ""
+
+#: ../../cli/prepare.md:3
+msgid ""
+"The `prepare` command corrects quality issues within OCDS compiled releases."
+msgstr ""
+
+#: ../../cli/prepare.md:5
+msgid ""
+"Run the `help` command to read its description, output format and options:"
+msgstr ""
+
+#: ../../cli/prepare.md:41
+msgid "Workflow"
+msgstr ""
+
+#: ../../cli/prepare.md:44
+msgid ""
+"Before following this command's workflow, follow the earlier steps in the "
+"{doc}`../../topics/workflow`."
+msgstr ""
+
+#: ../../cli/prepare.md:47
+msgid "Initialize a `settings.ini` file, using the {doc}`init` command:"
+msgstr ""
+
+#: ../../cli/prepare.md:54
+msgid ""
+"Run the `prepare` command. For example, if your data is in `input.jsonl`, "
+"this command writes the corrected data to `prepared.jsonl` and the quality "
+"issues to `issues.csv`:"
+msgstr ""
+
+#: ../../cli/prepare.md:60
+msgid ""
+"Review the quality issues in the `issues.csv` file. Don't worry if many "
+"issues are reported: most are repetitive and can be fixed at once. Read the "
+"[demonstration](#demonstration) to learn how to interpret results."
+msgstr ""
+
+#: ../../cli/prepare.md:62
+msgid ""
+"Adjust the [configuration](#configuration) in the `settings.ini` file to fix"
+" the quality issues."
+msgstr ""
+
+#: ../../cli/prepare.md:64
+msgid "Repeat the last three steps until you are satisfied with the results."
+msgstr ""
+
+#: ../../cli/prepare.md:67
+msgid ""
+"This command is designed to only warn about quality issues (1) that it can "
+"fix and (2) that interfere with the calculation of {doc}`indicators/index`. "
+"If you want to check for other quality issues, contact OCP's [Data Support "
+"Team](mailto:data@open-contracting.org) about [Pelican](https://www.open-"
+"contracting.org/2020/01/28/meet-pelican-our-new-tool-for-assessing-the-"
+"quality-of-open-contracting-data/)."
+msgstr ""
+
+#: ../../cli/prepare.md:70
+msgid "Demonstration"
+msgstr ""
+
+#: ../../cli/prepare.md:72 ../../cli/prepare.md:241
+msgid "Example"
+msgstr ""
+
+#: ../../cli/prepare.md:76
+msgid ""
+"The bid status (`/bids/details[]/status`) is needed to determine whether a "
+"bid is {term}`submitted`, invited or withdrawn."
+msgstr ""
+
+#: ../../cli/prepare.md:78
+msgid "This simplified file contains a bid without a status:"
+msgstr ""
+
+#: ../../cli/prepare.md:84
+msgid "For this demonstration, write the quality issues to the console:"
+msgstr ""
+
+#: ../../cli/prepare.md:92
+msgid ""
+"Quality issues are reported as CSV rows. Adding a header and rendering the "
+"row as a table produces:"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:110
+msgid "line"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:112
+msgid "ocid"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:114
+msgid "path"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:116
+msgid "array indexes"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:118
+msgid "incorrect value"
+msgstr ""
+
+#: ../../cli/prepare.md:97 ../../cli/prepare.md:120
+msgid "error description"
+msgstr ""
+
+#: ../../cli/prepare.md:97
+msgid "1"
+msgstr ""
+
+#: ../../cli/prepare.md:97
+msgid "ocds-213czf-1"
+msgstr ""
+
+#: ../../cli/prepare.md:97
+msgid "/bids/details[]/status"
+msgstr ""
+
+#: ../../cli/prepare.md:97
+msgid "0"
+msgstr ""
+
+#: ../../cli/prepare.md:97
+msgid "not set"
+msgstr ""
+
+#: ../../cli/prepare.md:100
+msgid ""
+"If you write the quality issues to a file instead of the console, you can "
+"open the CSV as a spreadsheet."
+msgstr ""
+
+#: ../../cli/prepare.md:103
+msgid "Given the context of this example, the columns can be used as follows."
+msgstr ""
+
+#: ../../cli/prepare.md:108
+msgid "Column"
+msgstr ""
+
+#: ../../cli/prepare.md:109
+msgid "Use"
+msgstr ""
+
+#: ../../cli/prepare.md:111
+msgid "Find the problematic compiled release in the input file."
+msgstr ""
+
+#: ../../cli/prepare.md:113
+msgid ""
+"Find the problematic compiled release in another system, like the data "
+"source."
+msgstr ""
+
+#: ../../cli/prepare.md:115
+msgid ""
+"Consult the field that has an issue. This column can be used to sort and "
+"filter the issues."
+msgstr ""
+
+#: ../../cli/prepare.md:117
+msgid ""
+"Find the problematic array entry in the compiled release. If the *path* "
+"contains multiple arrays (`[]`), the indexes are separated by periods."
+msgstr ""
+
+#: ../../cli/prepare.md:119
+msgid ""
+"Consult the value that caused the issue. If the issue is that the field "
+"isn't set, this is blank."
+msgstr ""
+
+#: ../../cli/prepare.md:121
+msgid ""
+"Determine the potential solution to the issue. The possible values are:"
+msgstr ""
+
+#: ../../cli/prepare.md:129
+msgid "Configuration"
+msgstr ""
+
+#: ../../cli/prepare.md:131
+msgid "Normalize ID fields"
+msgstr ""
+
+#: ../../cli/prepare.md:133
+msgid ""
+"Some ID fields allow both strings (`\"1\"`) and integers (`1`): for example,"
+" an award's `id` and a contract's `awardID`. If the types are inconsistent, "
+"then lookups fail: for example, retrieving a contract's award or a "
+"supplier's address."
+msgstr ""
+
+#: ../../cli/prepare.md:136
+msgid ""
+"The command converts these ID fields to strings, in order to prevent this "
+"issue:"
+msgstr ""
+
+#: ../../cli/prepare.md:138 ../../cli/prepare.md:212
+msgid "`/buyer/id`"
+msgstr ""
+
+#: ../../cli/prepare.md:139 ../../cli/prepare.md:213
+msgid "`/tender/procuringEntity/id`"
+msgstr ""
+
+#: ../../cli/prepare.md:140 ../../cli/prepare.md:214
+msgid "`/bids/details[]/tenderers[]/id`"
+msgstr ""
+
+#: ../../cli/prepare.md:141
+msgid "`/awards[]/id`"
+msgstr ""
+
+#: ../../cli/prepare.md:142 ../../cli/prepare.md:215
+msgid "`/awards[]/suppliers[]/id`"
+msgstr ""
+
+#: ../../cli/prepare.md:143
+msgid "`/awards[]/items[]/classification/id`"
+msgstr ""
+
+#: ../../cli/prepare.md:144
+msgid "`/contracts[]/awardID`"
+msgstr ""
+
+#: ../../cli/prepare.md:146
+msgid "As new indicators are added, additional ID fields will be converted."
+msgstr ""
+
+#: ../../cli/prepare.md:149
+msgid ""
+"This behavior can't be disabled. If you need to disable it, [create an issue"
+" on GitHub](https://github.com/open-contracting/cardinal-rs/issues)."
+msgstr ""
+
+#: ../../cli/prepare.md:152
+msgid "Fill in missing values"
+msgstr ""
+
+#: ../../cli/prepare.md:154
+msgid "The command supports filling in:"
+msgstr ""
+
+#: ../../cli/prepare.md:156
+msgid "`/bids/details[]/value/currency`"
+msgstr ""
+
+#: ../../cli/prepare.md:157
+msgid "`/bids/details[]/items[]/classification/scheme`"
+msgstr ""
+
+#: ../../cli/prepare.md:158
+msgid "`/bids/details[]/status`"
+msgstr ""
+
+#: ../../cli/prepare.md:159
+msgid "`/awards[]/items[]/classification/scheme`"
+msgstr ""
+
+#: ../../cli/prepare.md:160
+msgid "`/awards[]/status`"
+msgstr ""
+
+#: ../../cli/prepare.md:162
+msgid ""
+"To fill in one or more of these fields when the field isn't set, add a "
+"`[defaults]` section with relevant properties to your "
+"{doc}`../topics/settings`. For example:"
+msgstr ""
+
+#: ../../cli/prepare.md:172
+msgid ""
+"As new indicators are added, additional currency and scheme fields will be "
+"filled in."
+msgstr ""
+
+#: ../../cli/prepare.md:175
+msgid ""
+"Need to fill in other values? [Create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
+"James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of "
+"Technology."
+msgstr ""
+
+#: ../../cli/prepare.md:178
+msgid "Redact incorrect values"
+msgstr ""
+
+#: ../../cli/prepare.md:181
+msgid ""
+"Need to redact other values? [Create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
+"James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of "
+"Technology."
+msgstr ""
+
+#: ../../cli/prepare.md:184
+msgid "Monetary amounts"
+msgstr ""
+
+#: ../../cli/prepare.md:186
+msgid ""
+"Indicators assume that amount values are accurate. If an amount field is "
+"assigned a placeholder value, this assumption fails. For example, if 0 is "
+"used when the amount is confidential or wasn't entered, then the lowest bids"
+" might be miscalculated."
+msgstr ""
+
+#: ../../cli/prepare.md:188
+msgid ""
+"To redact an amount value, add a `[redactions]` section with an `amount` "
+"property to your {doc}`../topics/settings`. Its value is a pipe-separated "
+"list. For example:"
+msgstr ""
+
+#: ../../cli/prepare.md:195 ../../cli/prepare.md:210
+msgid "This configuration supports redacting values from:"
+msgstr ""
+
+#: ../../cli/prepare.md:197
+msgid "`/bids/details[]/value/amount`"
+msgstr ""
+
+#: ../../cli/prepare.md:199
+msgid "Organization IDs"
+msgstr ""
+
+#: ../../cli/prepare.md:201
+msgid ""
+"Indicators assume that ID values represent distinct entities. If an ID field"
+" is assigned a placeholder value, this assumption fails. For example, if the"
+" placeholder value is used frequently, then the top suppliers might be "
+"miscalculated."
+msgstr ""
+
+#: ../../cli/prepare.md:203
+msgid ""
+"To redact an ID value from an organization reference, add a `[redactions]` "
+"section with an `organization_id` property to your "
+"{doc}`../topics/settings`. Its value is a pipe-separated list. For example:"
+msgstr ""
+
+#: ../../cli/prepare.md:217
+msgid "Re-map invalid codes"
+msgstr ""
+
+#: ../../cli/prepare.md:219
+msgid "The command supports substituting codes in these codelist fields:"
+msgstr ""
+
+#: ../../cli/prepare.md:221
+msgid "`/bids/details[]/status`, by adding a `[codelists.BidStatus]` section"
+msgstr ""
+
+#: ../../cli/prepare.md:222
+msgid "`/awards[]/status`, by adding a `[codelists.AwardStatus]` section"
+msgstr ""
+
+#: ../../cli/prepare.md:224
+msgid ""
+"To replace a code, add a property under the relevant section, in which the "
+"code to replace is the name, and its replacement is the value. For example:"
+msgstr ""
+
+#: ../../cli/prepare.md:234
+msgid ""
+"Need to re-map other values? [Create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
+"James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of "
+"Technology."
+msgstr ""
+
+#: ../../cli/prepare.md:237
+msgid "Replace incorrect award statuses"
+msgstr ""
+
+#: ../../cli/prepare.md:239
+msgid ""
+"In rare cases, it is appropriate to change an award's status according to "
+"its contracts' statuses."
+msgstr ""
+
+#: ../../cli/prepare.md:244
+msgid ""
+"The Government of Ruritania bundles many decisions into one award object, "
+"and uses the contract object as a proxy for the individual decision. As "
+"such, every award object is related to one or more contract objects. If the "
+"individual decision is cancelled (for example, the award is appealed at "
+"court or the supplier refuses to sign the contract), the contract object's "
+"status is changed to cancelled. The award object's status remains active."
+msgstr ""
+
+#: ../../cli/prepare.md:247
+msgid ""
+"Indicators assume that awards, not contracts, represent individual decisions"
+" – in conformance with OCDS. In the example, to better satisfy this "
+"assumption, the status of an award can be changed to cancelled if the status"
+" of every related contract is cancelled."
+msgstr ""
+
+#: ../../cli/prepare.md:249
+msgid ""
+"To replace an award's status in this way, add a `[corrections]` section with"
+" a `award_status_by_contract_status` property to your "
+"{doc}`../topics/settings`. Its value is a boolean. For example:"
+msgstr ""
+
+#: ../../cli/prepare.md:257
+msgid ""
+"Need to correct other values? [Create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
+"James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of "
+"Technology."
+msgstr ""

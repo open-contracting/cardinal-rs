@@ -1,0 +1,117 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2002, Open Contracting Partnership
+# This file is distributed under the same license as the Cardinal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Cardinal 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-20 16:40-0400\n"
+"PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: ../../cli/indicators/R/028.md:1
+msgid "Identical bid prices (R028)"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:3
+msgid "Different tenderers submitted bids with the same price."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:5
+msgid "Methodology"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:7
+msgid ""
+"A contracting process is flagged if different tenderers submitted bids with "
+"the same price."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:9
+msgid "These tenderers are also flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:11
+msgid "Example"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:14
+msgid ""
+"The Ministry of Defense opens bids early and leaks the lowest price to "
+"BribeCorp. BribeCorp submits a bid matching the lowest price. The Ministry "
+"of Defense awards the contract to BribeCorp."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:17
+msgid "Why is this a red flag?"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:20
+msgid ""
+"A corrupt buyer can award the pre-determined bidder by leaking competitors' "
+"prices."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:23
+msgid ""
+"<small>Based on \"Bidders having the same bid price\" in [*Assessing the "
+"potential for detecting collusion in Swedish public "
+"procurement*](https://www.govtransparency.eu/wp-"
+"content/uploads/2021/08/Fazekas-Toth_SE_PPcartel_detection_20161115.pdf) and"
+" \"Different companies include identical unit prices in their bid "
+"documents\" in [*Fraud in Public Procurement: A collection of Red Flags and "
+"Best Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-"
+"files/fraud-public-procurement-final-20122017-ares20176254403.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:25
+msgid "Output"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:27
+msgid "The indicator's value is always 1.0."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:29
+msgid "If the ``--map`` command-line flag is set, the ``Maps`` key contains:"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:31
+msgid "ocid_tenderer_r028"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:32
+msgid "The flagged tenderers for each flagged `ocid`."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:34
+msgid "Configuration"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:36
+msgid "The indicator is not configurable."
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:39
+msgid "`fixed_price_procurement_methods` in {ref}`global-configuration`"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:42
+msgid "Demonstration"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:44
+msgid "*Input*"
+msgstr ""
+
+#: ../../cli/indicators/R/028.md:50
+msgid "*Output*"
+msgstr ""

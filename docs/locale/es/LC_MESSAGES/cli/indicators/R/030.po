@@ -1,0 +1,139 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2002, Open Contracting Partnership
+# This file is distributed under the same license as the Cardinal package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Cardinal 0.0.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-09-20 16:40-0400\n"
+"PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+#: ../../cli/indicators/R/030.md:1
+msgid "Late bid won (R030)"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:3
+msgid "The winning bid was received after the submission deadline."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:5
+msgid "Methodology"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:7
+msgid "A contracting process is flagged if:"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:9
+msgid "A valid bid's received date is after the submission deadline."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:10
+msgid ""
+"At least one tenderer of the valid bid is the supplier of an active award."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:12
+msgid "These tenderers are also flagged."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:14
+msgid "Example"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:17
+msgid ""
+"The submission deadline is March 15. The Public Works Department leaks "
+"information from the received bids to CorruptX Solutions, to give it a "
+"competitive advantage. CorruptX Solutions submits a bid on April 1. The "
+"Public Works Department accepts the bid and awards the contract to CorruptX "
+"Solutions."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:20
+msgid "Why is this a red flag?"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:23
+msgid ""
+"A corrupt buyer can award the pre-determined bidder by disregarding the "
+"submission deadline."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:26
+msgid ""
+"<small>Based on \"Bids after the deadline accepted\" in [*Corruption in "
+"Public Procurement: Finding the Right "
+"Indicators*](https://www.researchgate.net/publication/303359108_Corruption_in_Public_Procurement_Finding_the_Right_Indicators)"
+" and \"Late submissions accepted\" in [*Fraud in Public Procurement: A "
+"collection of Red Flags and Best "
+"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
+"public-procurement-final-20122017-ares20176254403.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:28
+msgid "Output"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:30
+msgid "The indicator's value is always 1.0."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:32
+msgid "If the ``--map`` command-line flag is set, the ``Maps`` key contains:"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:34
+msgid "ocid_tenderer_r030"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:35
+msgid "The flagged tenderers for each flagged `ocid`."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:37
+msgid "Configuration"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:39
+msgid "The indicator is not configurable."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:41
+msgid "Assumptions"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:43
+msgid ""
+"This indicator assumes that the tenderer didn't submit another valid bid "
+"before the submission deadline; in other words, its late bid is the winning "
+"bid."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:46
+msgid ""
+"Is this assumption not true for your data? Does your data set the "
+"`/awards[]/relatedBid` field? Please [create an issue on "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues)."
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:49
+msgid "Demonstration"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:51
+msgid "*Input*"
+msgstr ""
+
+#: ../../cli/indicators/R/030.md:57
+msgid "*Output*"
+msgstr ""

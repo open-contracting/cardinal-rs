@@ -25,4 +25,5 @@ If you are new to Rust, see the [Reference section](https://ocp-software-handboo
 :maxdepth: 1
 
 indicators
+translation
 :::

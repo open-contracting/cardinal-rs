@@ -35,3 +35,6 @@ html_static_path = ["_static"]
 myst_enable_extensions = ["colon_fence", "deflist", "dollarmath", "tasklist"]
 myst_enable_checkboxes = True
 myst_heading_anchors = 3
+
+locale_dirs = ["locale"]
+gettext_compact = False
