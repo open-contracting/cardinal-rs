@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../index.md:4
 msgid "Contents"
-msgstr ""
+msgstr "Contenidos"
 
 #: ../../../README.md:2
 msgid "OCDS Cardinal"
