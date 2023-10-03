@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Cardinal 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-20 16:40-0400\n"
+"POT-Creation-Date: 2023-10-02 22:15-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
 "Last-Translator: Camila Salazar, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
@@ -38,9 +38,21 @@ msgstr ""
 "CLI](https://developers.transifex.com/docs/cli):"
 
 #: ../../contributing/translation.md:15
-msgid "Configure Transifex"
-msgstr "Configurar Transifex"
+msgid "Create Transifex configuration:"
+msgstr ""
 
-#: ../../contributing/translation.md:26
+#: ../../contributing/translation.md:21
 msgid "Extract strings to translate"
 msgstr "Extraer strings para traducir"
+
+#: ../../contributing/translation.md:27
+msgid "Update Transifex configuration"
+msgstr ""
+
+#: ../../contributing/translation.md:37
+msgid "Push to Transifex"
+msgstr ""
+
+#: ../../contributing/translation.md:43
+msgid "Pull from Transifex"
+msgstr ""

@@ -5,15 +5,16 @@
 # 
 # Translators:
 # Camila Salazar, 2023
+# James McKinney, 2023
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Cardinal 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-20 16:40-0400\n"
+"POT-Creation-Date: 2023-10-02 22:15-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
-"Last-Translator: Camila Salazar, 2023\n"
+"Last-Translator: James McKinney, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -39,11 +40,11 @@ msgstr ""
 "Ejecute el comando `help` para leer su descripción, formato de salida y "
 "opciones:"
 
-#: ../../cli/prepare.md:41
+#: ../../cli/prepare.md:42
 msgid "Workflow"
 msgstr "Flujo de trabajo"
 
-#: ../../cli/prepare.md:44
+#: ../../cli/prepare.md:45
 msgid ""
 "Before following this command's workflow, follow the earlier steps in the "
 "{doc}`../../topics/workflow`."
@@ -51,11 +52,11 @@ msgstr ""
 "Antes de seguir el flujo de trabajo de este comando, siga los pasos "
 "anteriores en el {doc}`../../topics/workflow`."
 
-#: ../../cli/prepare.md:47
+#: ../../cli/prepare.md:48
 msgid "Initialize a `settings.ini` file, using the {doc}`init` command:"
 msgstr "Inicialice un archivo `settings.ini`, usando el comando {doc}`init`:"
 
-#: ../../cli/prepare.md:54
+#: ../../cli/prepare.md:55
 msgid ""
 "Run the `prepare` command. For example, if your data is in `input.jsonl`, "
 "this command writes the corrected data to `prepared.jsonl` and the quality "
@@ -65,7 +66,7 @@ msgstr ""
 "`input.jsonl`, este comando escribe los datos corregidos en `prepared.jsonl`"
 " y los problemas de calidad en `issues.csv`:"
 
-#: ../../cli/prepare.md:60
+#: ../../cli/prepare.md:61
 msgid ""
 "Review the quality issues in the `issues.csv` file. Don't worry if many "
 "issues are reported: most are repetitive and can be fixed at once. Read the "
@@ -76,7 +77,7 @@ msgstr ""
 "solucionarse de una vez. Lea la [demostración](#demonstration) para aprender"
 " a interpretar los resultados."
 
-#: ../../cli/prepare.md:62
+#: ../../cli/prepare.md:63
 msgid ""
 "Adjust the [configuration](#configuration) in the `settings.ini` file to fix"
 " the quality issues."
@@ -84,12 +85,12 @@ msgstr ""
 "Ajuste la [configuración](#configuration) en el archivo `settings.ini` para "
 "solucionar los problemas de calidad."
 
-#: ../../cli/prepare.md:64
+#: ../../cli/prepare.md:65
 msgid "Repeat the last three steps until you are satisfied with the results."
 msgstr ""
 "Repita los 3 últimos pasos hasta que esté satisfecho con los resultados. "
 
-#: ../../cli/prepare.md:67
+#: ../../cli/prepare.md:68
 msgid ""
 "This command is designed to only warn about quality issues (1) that it can "
 "fix and (2) that interfere with the calculation of {doc}`indicators/index`. "
@@ -106,15 +107,15 @@ msgstr ""
 "contracting.org/2020/01/28/meet-pelican-our-new-tool-for-assessing-the-"
 "quality-of-open-contracting-data/)."
 
-#: ../../cli/prepare.md:70
+#: ../../cli/prepare.md:71
 msgid "Demonstration"
 msgstr "Demonstración"
 
-#: ../../cli/prepare.md:72 ../../cli/prepare.md:241
+#: ../../cli/prepare.md:73 ../../cli/prepare.md:244
 msgid "Example"
 msgstr "Ejemplo"
 
-#: ../../cli/prepare.md:76
+#: ../../cli/prepare.md:77
 msgid ""
 "The bid status (`/bids/details[]/status`) is needed to determine whether a "
 "bid is {term}`submitted`, invited or withdrawn."
@@ -122,16 +123,16 @@ msgstr ""
 "El estado de la oferta (`/bids/details[]/status`) es necesario para "
 "determinar si una oferta ha sido {term}`submitted`, invitada o retirada."
 
-#: ../../cli/prepare.md:78
+#: ../../cli/prepare.md:79
 msgid "This simplified file contains a bid without a status:"
 msgstr "Este archivo simplificado contiene una oferta sin estado:"
 
-#: ../../cli/prepare.md:84
+#: ../../cli/prepare.md:85
 msgid "For this demonstration, write the quality issues to the console:"
 msgstr ""
 "Para esta demostración, escriba los problemas de calidad en la consola:"
 
-#: ../../cli/prepare.md:92
+#: ../../cli/prepare.md:93
 msgid ""
 "Quality issues are reported as CSV rows. Adding a header and rendering the "
 "row as a table produces:"
@@ -139,51 +140,51 @@ msgstr ""
 "Los problemas de calidad se notifican como filas CSV. Si se añade un "
 "encabezado y se representa la fila como una tabla, se produce:"
 
-#: ../../cli/prepare.md:97 ../../cli/prepare.md:110
+#: ../../cli/prepare.md:98 ../../cli/prepare.md:111
 msgid "line"
 msgstr "line"
 
-#: ../../cli/prepare.md:97 ../../cli/prepare.md:112
+#: ../../cli/prepare.md:98 ../../cli/prepare.md:113
 msgid "ocid"
 msgstr "ocid"
 
-#: ../../cli/prepare.md:97 ../../cli/prepare.md:114
+#: ../../cli/prepare.md:98 ../../cli/prepare.md:115
 msgid "path"
 msgstr "path"
 
-#: ../../cli/prepare.md:97 ../../cli/prepare.md:116
+#: ../../cli/prepare.md:98 ../../cli/prepare.md:117
 msgid "array indexes"
 msgstr "array indexes"
 
-#: ../../cli/prepare.md:97 ../../cli/prepare.md:118
+#: ../../cli/prepare.md:98 ../../cli/prepare.md:119
 msgid "incorrect value"
 msgstr "incorrect value"
 
-#: ../../cli/prepare.md:97 ../../cli/prepare.md:120
+#: ../../cli/prepare.md:98 ../../cli/prepare.md:121
 msgid "error description"
 msgstr "error description"
 
-#: ../../cli/prepare.md:97
+#: ../../cli/prepare.md:98
 msgid "1"
 msgstr "1"
 
-#: ../../cli/prepare.md:97
+#: ../../cli/prepare.md:98
 msgid "ocds-213czf-1"
 msgstr "ocds-213czf-1"
 
-#: ../../cli/prepare.md:97
+#: ../../cli/prepare.md:98
 msgid "/bids/details[]/status"
 msgstr "/bids/details[]/status"
 
-#: ../../cli/prepare.md:97
+#: ../../cli/prepare.md:98
 msgid "0"
 msgstr "0"
 
-#: ../../cli/prepare.md:97
+#: ../../cli/prepare.md:98
 msgid "not set"
 msgstr "not set"
 
-#: ../../cli/prepare.md:100
+#: ../../cli/prepare.md:101
 msgid ""
 "If you write the quality issues to a file instead of the console, you can "
 "open the CSV as a spreadsheet."
@@ -191,25 +192,25 @@ msgstr ""
 "Si escribe los problemas de calidad en un archivo en lugar de en la consola,"
 " puede abrir el CSV como una hoja de cálculo."
 
-#: ../../cli/prepare.md:103
+#: ../../cli/prepare.md:104
 msgid "Given the context of this example, the columns can be used as follows."
 msgstr ""
 "Teniendo en cuenta el contexto de este ejemplo, las columnas pueden "
 "utilizarse del siguiente modo."
 
-#: ../../cli/prepare.md:108
+#: ../../cli/prepare.md:109
 msgid "Column"
 msgstr "Columna"
 
-#: ../../cli/prepare.md:109
+#: ../../cli/prepare.md:110
 msgid "Use"
 msgstr "Uso"
 
-#: ../../cli/prepare.md:111
+#: ../../cli/prepare.md:112
 msgid "Find the problematic compiled release in the input file."
 msgstr "Busque la entrega compilada problemática en el archivo de entrada."
 
-#: ../../cli/prepare.md:113
+#: ../../cli/prepare.md:114
 msgid ""
 "Find the problematic compiled release in another system, like the data "
 "source."
@@ -217,7 +218,7 @@ msgstr ""
 "Busque la entrega compilada problemática en otro sistema, como la fuente de "
 "datos."
 
-#: ../../cli/prepare.md:115
+#: ../../cli/prepare.md:116
 msgid ""
 "Consult the field that has an issue. This column can be used to sort and "
 "filter the issues."
@@ -225,7 +226,7 @@ msgstr ""
 "Consulte el campo que tiene un error. Esta columna puede utilizarse para "
 "ordenar y filtrar los errores."
 
-#: ../../cli/prepare.md:117
+#: ../../cli/prepare.md:118
 msgid ""
 "Find the problematic array entry in the compiled release. If the *path* "
 "contains multiple arrays (`[]`), the indexes are separated by periods."
@@ -233,7 +234,7 @@ msgstr ""
 "Encuentra el array problemático en la entrega compilada. Si la *ruta* "
 "contiene varios arrays (`[]`), los índices se separan por puntos."
 
-#: ../../cli/prepare.md:119
+#: ../../cli/prepare.md:120
 msgid ""
 "Consult the value that caused the issue. If the issue is that the field "
 "isn't set, this is blank."
@@ -241,20 +242,20 @@ msgstr ""
 "Consulte el valor que causó el problema. Si el problema es que el campo no "
 "está configurado, está en blanco."
 
-#: ../../cli/prepare.md:121
+#: ../../cli/prepare.md:122
 msgid ""
 "Determine the potential solution to the issue. The possible values are:"
 msgstr "Determine la posible solución al problema. Los valores posibles son:"
 
-#: ../../cli/prepare.md:129
+#: ../../cli/prepare.md:131
 msgid "Configuration"
 msgstr "Configuración"
 
-#: ../../cli/prepare.md:131
+#: ../../cli/prepare.md:133
 msgid "Normalize ID fields"
 msgstr "Normalizar campos de ID "
 
-#: ../../cli/prepare.md:133
+#: ../../cli/prepare.md:135
 msgid ""
 "Some ID fields allow both strings (`\"1\"`) and integers (`1`): for example,"
 " an award's `id` and a contract's `awardID`. If the types are inconsistent, "
@@ -267,48 +268,48 @@ msgstr ""
 "ejemplo, recuperar la adjudicación de un contrato o la dirección de un "
 "proveedor."
 
-#: ../../cli/prepare.md:136
+#: ../../cli/prepare.md:138
 msgid ""
 "The command converts these ID fields to strings, in order to prevent this "
 "issue:"
 msgstr ""
 "El comando convierte estos campos ID en cadenas, para evitar este problema:"
 
-#: ../../cli/prepare.md:138 ../../cli/prepare.md:212
+#: ../../cli/prepare.md:140 ../../cli/prepare.md:215
 msgid "`/buyer/id`"
 msgstr "`/buyer/id`"
 
-#: ../../cli/prepare.md:139 ../../cli/prepare.md:213
+#: ../../cli/prepare.md:141 ../../cli/prepare.md:216
 msgid "`/tender/procuringEntity/id`"
 msgstr "`/tender/procuringEntity/id`"
 
-#: ../../cli/prepare.md:140 ../../cli/prepare.md:214
+#: ../../cli/prepare.md:142 ../../cli/prepare.md:217
 msgid "`/bids/details[]/tenderers[]/id`"
 msgstr "`/bids/details[]/tenderers[]/id`"
 
-#: ../../cli/prepare.md:141
+#: ../../cli/prepare.md:143
 msgid "`/awards[]/id`"
 msgstr "`/awards[]/id`"
 
-#: ../../cli/prepare.md:142 ../../cli/prepare.md:215
+#: ../../cli/prepare.md:144 ../../cli/prepare.md:218
 msgid "`/awards[]/suppliers[]/id`"
 msgstr "`/awards[]/suppliers[]/id`"
 
-#: ../../cli/prepare.md:143
+#: ../../cli/prepare.md:145
 msgid "`/awards[]/items[]/classification/id`"
 msgstr "`/awards[]/items[]/classification/id`"
 
-#: ../../cli/prepare.md:144
+#: ../../cli/prepare.md:146
 msgid "`/contracts[]/awardID`"
 msgstr "`/contracts[]/awardID`"
 
-#: ../../cli/prepare.md:146
+#: ../../cli/prepare.md:148
 msgid "As new indicators are added, additional ID fields will be converted."
 msgstr ""
 "A medida que se añadan nuevos indicadores, se convertirán los campos ID "
 "adicionales."
 
-#: ../../cli/prepare.md:149
+#: ../../cli/prepare.md:151
 msgid ""
 "This behavior can't be disabled. If you need to disable it, [create an issue"
 " on GitHub](https://github.com/open-contracting/cardinal-rs/issues)."
@@ -316,35 +317,35 @@ msgstr ""
 "Este comportamiento no puede desactivarse. Si necesita desactivarlo, [cree "
 "un issue en GitHub](https://github.com/open-contracting/cardinal-rs/issues)."
 
-#: ../../cli/prepare.md:152
+#: ../../cli/prepare.md:155
 msgid "Fill in missing values"
 msgstr "Llenar valores faltantes"
 
-#: ../../cli/prepare.md:154
+#: ../../cli/prepare.md:157
 msgid "The command supports filling in:"
 msgstr "El comando permite rellenar:"
 
-#: ../../cli/prepare.md:156
+#: ../../cli/prepare.md:159
 msgid "`/bids/details[]/value/currency`"
 msgstr "`/bids/details[]/value/currency`"
 
-#: ../../cli/prepare.md:157
+#: ../../cli/prepare.md:160
 msgid "`/bids/details[]/items[]/classification/scheme`"
 msgstr "`/bids/details[]/items[]/classification/scheme`"
 
-#: ../../cli/prepare.md:158
+#: ../../cli/prepare.md:161
 msgid "`/bids/details[]/status`"
 msgstr "`/bids/details[]/status`"
 
-#: ../../cli/prepare.md:159
+#: ../../cli/prepare.md:162
 msgid "`/awards[]/items[]/classification/scheme`"
 msgstr "`/awards[]/items[]/classification/scheme`"
 
-#: ../../cli/prepare.md:160
+#: ../../cli/prepare.md:163
 msgid "`/awards[]/status`"
 msgstr "`/awards[]/status`"
 
-#: ../../cli/prepare.md:162
+#: ../../cli/prepare.md:165
 msgid ""
 "To fill in one or more of these fields when the field isn't set, add a "
 "`[defaults]` section with relevant properties to your "
@@ -354,7 +355,7 @@ msgstr ""
 " añada una sección `[defaults]` con las propiedades relevantes a su "
 "{doc}`../topics/settings`. Por ejemplo:"
 
-#: ../../cli/prepare.md:172
+#: ../../cli/prepare.md:175
 msgid ""
 "As new indicators are added, additional currency and scheme fields will be "
 "filled in."
@@ -362,7 +363,7 @@ msgstr ""
 "A medida que se añadan nuevos indicadores, campos adicionales de moneda y "
 "esquema se rellenarán."
 
-#: ../../cli/prepare.md:175
+#: ../../cli/prepare.md:178
 msgid ""
 "Need to fill in other values? [Create an issue on "
 "GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
@@ -374,11 +375,11 @@ msgstr ""
 "a James McKinney](mailto:jmckinney@open-contracting.org), Head of Technology"
 " de OCP."
 
-#: ../../cli/prepare.md:178
+#: ../../cli/prepare.md:181
 msgid "Redact incorrect values"
 msgstr "Eliminar valores incorrectos"
 
-#: ../../cli/prepare.md:181
+#: ../../cli/prepare.md:184
 msgid ""
 "Need to redact other values? [Create an issue on "
 "GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
@@ -390,11 +391,11 @@ msgstr ""
 "a James McKinney](mailto:jmckinney@open-contracting.org), Head of Technology"
 " de OCP."
 
-#: ../../cli/prepare.md:184
+#: ../../cli/prepare.md:187
 msgid "Monetary amounts"
 msgstr "Montos monetatios"
 
-#: ../../cli/prepare.md:186
+#: ../../cli/prepare.md:189
 msgid ""
 "Indicators assume that amount values are accurate. If an amount field is "
 "assigned a placeholder value, this assumption fails. For example, if 0 is "
@@ -406,7 +407,7 @@ msgstr ""
 "ejemplo, si se utiliza 0 cuando el importe es confidencial o no se ha "
 "introducido, las ofertas más bajas podrían calcularse erróneamente."
 
-#: ../../cli/prepare.md:188
+#: ../../cli/prepare.md:191
 msgid ""
 "To redact an amount value, add a `[redactions]` section with an `amount` "
 "property to your {doc}`../topics/settings`. Its value is a pipe-separated "
@@ -416,19 +417,19 @@ msgstr ""
 " propiedad `amount` a su {doc}`../topics/settings`. Su valor es una lista "
 "separada por barras verticales (\"|\"). Por ejemplo:"
 
-#: ../../cli/prepare.md:195 ../../cli/prepare.md:210
+#: ../../cli/prepare.md:198 ../../cli/prepare.md:213
 msgid "This configuration supports redacting values from:"
 msgstr "Esta configuración permite eliminar valores de:"
 
-#: ../../cli/prepare.md:197
+#: ../../cli/prepare.md:200
 msgid "`/bids/details[]/value/amount`"
 msgstr "`/bids/details[]/value/amount`"
 
-#: ../../cli/prepare.md:199
+#: ../../cli/prepare.md:202
 msgid "Organization IDs"
 msgstr "IDs de organizaciones"
 
-#: ../../cli/prepare.md:201
+#: ../../cli/prepare.md:204
 msgid ""
 "Indicators assume that ID values represent distinct entities. If an ID field"
 " is assigned a placeholder value, this assumption fails. For example, if the"
@@ -440,7 +441,7 @@ msgstr ""
 "suposición falla. Por ejemplo, si el valor del marcador se utiliza con "
 "frecuencia, los proveedores principales podrían estar mal calculados."
 
-#: ../../cli/prepare.md:203
+#: ../../cli/prepare.md:206
 msgid ""
 "To redact an ID value from an organization reference, add a `[redactions]` "
 "section with an `organization_id` property to your "
@@ -451,25 +452,25 @@ msgstr ""
 "{doc}`../topics/settings`. Su valor es una lista separada por barras "
 "verticales (\"|\"). Por ejemplo:"
 
-#: ../../cli/prepare.md:217
+#: ../../cli/prepare.md:220
 msgid "Re-map invalid codes"
 msgstr "Re-mapear códigos inválidos "
 
-#: ../../cli/prepare.md:219
+#: ../../cli/prepare.md:222
 msgid "The command supports substituting codes in these codelist fields:"
 msgstr ""
 "El comando permite sustituir códigos en estos campos de la lista de códigos:"
 
-#: ../../cli/prepare.md:221
+#: ../../cli/prepare.md:224
 msgid "`/bids/details[]/status`, by adding a `[codelists.BidStatus]` section"
 msgstr ""
 "`/bids/details[]/status`, agregando una sección `[codelists.BidStatus]` "
 
-#: ../../cli/prepare.md:222
+#: ../../cli/prepare.md:225
 msgid "`/awards[]/status`, by adding a `[codelists.AwardStatus]` section"
 msgstr "`/awards[]/status`, agregando una sección `[codelists.AwardStatus]` "
 
-#: ../../cli/prepare.md:224
+#: ../../cli/prepare.md:227
 msgid ""
 "To replace a code, add a property under the relevant section, in which the "
 "code to replace is the name, and its replacement is the value. For example:"
@@ -478,7 +479,7 @@ msgstr ""
 " en la que el código a sustituir sea el nombre, y su sustitución sea el "
 "valor. Por ejemplo:"
 
-#: ../../cli/prepare.md:234
+#: ../../cli/prepare.md:237
 msgid ""
 "Need to re-map other values? [Create an issue on "
 "GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "
@@ -490,11 +491,11 @@ msgstr ""
 "a James McKinney](mailto:jmckinney@open-contracting.org), Head of Technology"
 " de OCP."
 
-#: ../../cli/prepare.md:237
+#: ../../cli/prepare.md:240
 msgid "Replace incorrect award statuses"
 msgstr "Reemplace valores incorrectos del estado de la adjudicación"
 
-#: ../../cli/prepare.md:239
+#: ../../cli/prepare.md:242
 msgid ""
 "In rare cases, it is appropriate to change an award's status according to "
 "its contracts' statuses."
@@ -502,7 +503,7 @@ msgstr ""
 "En raras ocasiones, conviene cambiar el estatus de una adjudicación en "
 "función del estatus de sus contratos."
 
-#: ../../cli/prepare.md:244
+#: ../../cli/prepare.md:247
 msgid ""
 "The Government of Ruritania bundles many decisions into one award object, "
 "and uses the contract object as a proxy for the individual decision. As "
@@ -519,7 +520,7 @@ msgstr ""
 "firmar el contrato), el estado del objeto de contrato cambia a anulado. El "
 "estado del objeto de adjudicación permanece activo."
 
-#: ../../cli/prepare.md:247
+#: ../../cli/prepare.md:250
 msgid ""
 "Indicators assume that awards, not contracts, represent individual decisions"
 " – in conformance with OCDS. In the example, to better satisfy this "
@@ -532,7 +533,7 @@ msgstr ""
 "cambiarse a cancelado si el estado de cada contrato relacionado es "
 "cancelado."
 
-#: ../../cli/prepare.md:249
+#: ../../cli/prepare.md:252
 msgid ""
 "To replace an award's status in this way, add a `[corrections]` section with"
 " a `award_status_by_contract_status` property to your "
@@ -542,7 +543,7 @@ msgstr ""
 " `[corrections]` con una propiedad `award_status_by_contract_status` a su "
 "{doc}`../topics/settings`. Su valor es un booleano. Por ejemplo:"
 
-#: ../../cli/prepare.md:257
+#: ../../cli/prepare.md:260
 msgid ""
 "Need to correct other values? [Create an issue on "
 "GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email "

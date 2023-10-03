@@ -5,15 +5,16 @@
 # 
 # Translators:
 # Camila Salazar, 2023
+# James McKinney, 2023
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Cardinal 0.0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-20 16:40-0400\n"
+"POT-Creation-Date: 2023-10-02 22:15-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
-"Last-Translator: Camila Salazar, 2023\n"
+"Last-Translator: James McKinney, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -123,13 +124,13 @@ msgstr "3. Explorar los datos"
 
 #: ../../topics/workflow.md:31
 msgid ""
-"To inform your {ref}`selection and configuration<indicators-workflow>` of indicators, you can "
-"explore your data using JSON processors like "
+"To inform your {ref}`selection and configuration<indicators-workflow>` of "
+"indicators, you can explore your data using JSON processors like "
 "[jaq](https://github.com/01mf02/jaq) (faster) or "
 "[jq](https://stedolan.github.io/jq/) (slower)."
 msgstr ""
-"Para informar su {ref}`selección y configuración<indicators-workflow>` de indicadores, puede "
-"explorar sus datos utilizando procesadores JSON como "
+"Para informar su {ref}`selección y configuración<indicators-workflow>` de "
+"indicadores, puede explorar sus datos utilizando procesadores JSON como "
 "[jaq](https://github.com/01mf02/jaq) (más rápido) o "
 "[jq](https://stedolan.github.io/jq/) (más lento)."
 
