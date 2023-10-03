@@ -117,7 +117,7 @@ All tests should pass! (with warnings about unused variables and imports)
 
 ## 4. Edit the settings in `src/indicators/mod.rs`
 
-The [configurations](../cli/indicators/index.md#configuration) for an indicator are represented as a field named after the indicator (`R999`) on the `Settings` struct, defined in `src/indicators/mod.rs`.
+The {ref}`configurations<indicators-config>` for an indicator are represented as a field named after the indicator (`R999`) on the `Settings` struct, defined in `src/indicators/mod.rs`.
 
 :::{literalinclude} ../../src/indicators/mod.rs
 :language: rust
@@ -306,13 +306,13 @@ echo '{}' | cargo run -- indicators --settings settings.ini -
 
 As described in the [overall workflow](../topics/workflow), data is prepared before it is processed. This avoids complicating the indicator calculations with many exceptions and edge cases.
 
-Also, as described in the [prepare workflow](../cli/prepare.md#workflow), the `prepare` command should only warn about quality issues that it can fix and that interfere with the indicator calculations.
+Also, as described in the {ref}`prepare workflow<prepare-workflow>`, the `prepare` command should only warn about quality issues that it can fix and that interfere with the indicator calculations.
 
 With that in mind, while you implement the indicator, think about whether:
 
-- An existing [configuration](../cli/prepare.md#configuration) of the `prepare` command should be edited to include additional fields.
+- An existing {ref}`configuration<prepare-config>` of the `prepare` command should be edited to include additional fields.
 
-  For example, at the time of writing, the `currency` property of the [`defaults`](../cli/prepare.md#fill-in-missing-values) section only applies to `/bids/details[]/value/currency`, because no indicator uses other currency fields yet.
+  For example, at the time of writing, the `currency` property of the {ref}`defaults<fill-in-missing-values>` section only applies to `/bids/details[]/value/currency`, because no indicator uses other currency fields yet.
 
 - A new configuration should be added, to address a quality issue you encountered.
 
@@ -343,7 +343,7 @@ Reduce
 Finalize
 : Use the intermediate results to write final results.
 
-Use the `set_result!` macro to write final results. It accepts an `item`, [group](../cli/indicators/index.md#demonstration) (`OCID`, `Tenderer`, `Buyer`, or `ProcuringEntity`), identifier, indicator code, and result as a decimal (`f64`). For example:
+Use the `set_result!` macro to write final results. It accepts an `item`, {ref}`group<indicators-demo>` (`OCID`, `Tenderer`, `Buyer`, or `ProcuringEntity`), identifier, indicator code, and result as a decimal (`f64`). For example:
 
 ```rust
 set_result!(item, OCID, ocid, R999, 1.0);
@@ -453,7 +453,7 @@ If you need guidance on this step, [create an issue on GitHub](https://github.co
 
 ## 7. Write the tests
 
-The test framework reads `*.jsonl` files in the `tests/fixtures/indicators/` directory. Each `*.jsonl` file is prefixed with an indicator code: for example, `R038.jsonl` and `R038_tenderer.jsonl`. The test framework runs the `indicators` command with that indicator [enabled](../cli/indicators/index.md#enable-an-indicator), and compares the output to the corresponding `*.expected` file: for example, `R038.expected` and `R038_tenderer.expected`.
+The test framework reads `*.jsonl` files in the `tests/fixtures/indicators/` directory. Each `*.jsonl` file is prefixed with an indicator code: for example, `R038.jsonl` and `R038_tenderer.jsonl`. The test framework runs the `indicators` command with that indicator {ref}`enabled<enable-an-indicator>`, and compares the output to the corresponding `*.expected` file: for example, `R038.expected` and `R038_tenderer.expected`.
 
 The test file(s) for an indicator should:
 

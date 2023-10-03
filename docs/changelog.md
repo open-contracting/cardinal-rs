@@ -76,7 +76,7 @@
 
 - Error on unknown configurations in the settings file.
 - {doc}`cli/indicators/index` command:
-  - [Enable](cli/indicators/index.md#enable-an-indicator) indicators in the settings file.
+  - {ref}`Enable<enable-an-indicator>` indicators in the settings file.
   - Rename indicators from `NF###` to `R###`.
   - Remove "OCID" from output if no OCIDs reported.
   - Split indicators into trait objects.

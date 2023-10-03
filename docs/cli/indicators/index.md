@@ -46,6 +46,7 @@ Options:
 
 ```
 
+(indicators-workflow)=
 ## Workflow
 
 :::{attention}
@@ -74,7 +75,7 @@ Repeat the last three steps until you are satisfied with the results.
 Have questions, concerns, or feedback? [Email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
 :::
 
-(demonstration)=
+(indicators-demo)=
 ## Demonstration
 
 A procurement indicator or red flag can be about a contracting process, buyer, procuring entity or tenderer. For example, a contracting process might have a suspicious feature, like all bids except the winner's being disqualified. Or, a buyer might exhibit suspicious behavior, like disqualifying a large number of bids across its contracting processes.
@@ -148,7 +149,7 @@ The JSON output also has a ``Meta`` key at the top level. Its value is an object
 }
 ```
 
-(configuration)=
+(indicators-config)=
 ## Configuration
 
 The page for each [indicator](#list) describes its individual settings.
@@ -159,6 +160,7 @@ All configuration is optional. Cardinal provides good defaults.
 An introduction to the {doc}`../../topics/settings`.
 :::
 
+(enable-an-indicator)=
 ### Enable an indicator
 
 To enable an indicator, start a section with its code, for example:

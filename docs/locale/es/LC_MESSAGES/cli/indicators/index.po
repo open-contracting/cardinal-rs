@@ -402,7 +402,7 @@ msgid ""
 "yet), valid (i.e. qualified), or disqualified. It is not submitted if its "
 "status is invited or withdrawn."
 msgstr ""
-"Se envía una {term}``oferta` si su estado es pendiente (es decir, aún no "
+"Se envía una {term}`bid` si su estado es pendiente (es decir, aún no "
 "evaluado), válido (es decir, calificado) o descalificado. No se presenta si "
 "su estatus es invitado o retirado."
 

@@ -120,7 +120,7 @@ msgid ""
 "bid is {term}`submitted`, invited or withdrawn."
 msgstr ""
 "El estado de la oferta (`/bids/details[]/status`) es necesario para "
-"determinar si una oferta ha sido {term}`presentada`, invitada o retirada."
+"determinar si una oferta ha sido {term}`submitted`, invitada o retirada."
 
 #: ../../cli/prepare.md:78
 msgid "This simplified file contains a bid without a status:"

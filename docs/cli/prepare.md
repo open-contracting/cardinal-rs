@@ -38,6 +38,7 @@ Options:
 
 ```
 
+(prepare-workflow)=
 ## Workflow
 
 :::{attention}
@@ -126,6 +127,7 @@ Given the context of this example, the columns can be used as follows.
     | invalid | The code isn't valid. To correct, [re-map incorrect codes](#re-map-invalid-codes). |
 :::
 
+(prepare-config)=
 ## Configuration
 
 ### Normalize ID fields

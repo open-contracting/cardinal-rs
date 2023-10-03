@@ -243,10 +243,10 @@ msgstr "Error en configuraciones desconocidas en el archivo de configuración."
 
 #: ../../changelog.md:80
 msgid ""
-"[Enable](cli/indicators/index.md#enable-an-indicator) indicators in the "
+"{ref}`Enable<enable-an-indicator>` indicators in the "
 "settings file."
 msgstr ""
-"[Habilitar](cli/indicators/index.md#enable-an-indicator) indicadores en el "
+"{ref}`Habilitar<enable-an-indicator>` indicadores en el "
 "archivo de configuración."
 
 #: ../../changelog.md:81
