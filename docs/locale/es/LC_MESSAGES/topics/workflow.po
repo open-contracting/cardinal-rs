@@ -57,7 +57,7 @@ msgid ""
 "Support Team](mailto:data@open-contracting.org) to see how we can help."
 msgstr ""
 "¿Los datos que le interesan no están en formato OCDS? Póngase en contacto "
-"con el [Equipo de datos] de OCP (mailto:data@open-contracting.org) para ver "
+"con el [Equipo de datos](mailto:data@open-contracting.org) de OCP para ver "
 "cómo podemos ayudarle."
 
 #: ../../topics/workflow.md:15

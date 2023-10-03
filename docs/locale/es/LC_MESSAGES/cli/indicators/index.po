@@ -115,7 +115,7 @@ msgid ""
 "McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology."
 msgstr ""
 "¿Tiene preguntas, inquietudes o comentarios? [Envíe un correo electrónico a "
-"James McKinney] (mailto:jmckinney@open-contracting.org), director de "
+"James McKinney](mailto:jmckinney@open-contracting.org), director de "
 "tecnología de OCP."
 
 #: ../../cli/indicators/index.md:79
@@ -483,7 +483,7 @@ msgid ""
 "Do you want to eliminate this exclusion? Please contributed to [GitHub issue"
 " #11](https://github.com/open-contracting/cardinal-rs/issues/11)."
 msgstr ""
-"¿Quieres eliminar esta exclusión? Contribuya al [issue 11 de GitHub] "
+"¿Quieres eliminar esta exclusión? Contribuya al [issue 11 de GitHub]"
 "(https://github.com/open-contracting/cardinal-rs/issues/11)."
 
 #: ../../cli/indicators/index.md:268
