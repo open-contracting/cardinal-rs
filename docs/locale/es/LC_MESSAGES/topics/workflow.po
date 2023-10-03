@@ -33,7 +33,7 @@ msgstr ""
 
 #: ../../topics/workflow.md:5
 msgid "1. Collect data"
-msgstr "1. Obtener los datos"
+msgstr "(1) Obtener los datos"
 
 #: ../../topics/workflow.md:7
 msgid "Collect the data you want to analyze in OCDS format."
@@ -62,7 +62,7 @@ msgstr ""
 
 #: ../../topics/workflow.md:15
 msgid "2. Prepare data"
-msgstr "2. Preparar los datos"
+msgstr "(2) Preparar los datos"
 
 #: ../../topics/workflow.md:17
 msgid "Format"
@@ -120,7 +120,7 @@ msgstr ""
 
 #: ../../topics/workflow.md:29
 msgid "3. Explore data"
-msgstr "3. Explorar los datos"
+msgstr "(3) Explorar los datos"
 
 #: ../../topics/workflow.md:31
 msgid ""
@@ -156,7 +156,7 @@ msgstr ""
 
 #: ../../topics/workflow.md:62
 msgid "4. Calculate indicators"
-msgstr "4. Calcular los indicadores"
+msgstr "(4) Calcular los indicadores"
 
 #: ../../topics/workflow.md:64
 msgid ""
@@ -176,7 +176,7 @@ msgstr ""
 
 #: ../../topics/workflow.md:68
 msgid "5. Analyze results"
-msgstr "5. Analizar los resultados"
+msgstr "(5) Analizar los resultados"
 
 #: ../../topics/workflow.md:70
 msgid "Coming soon"
