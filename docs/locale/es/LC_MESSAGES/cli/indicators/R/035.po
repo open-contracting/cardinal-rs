@@ -3,6 +3,9 @@
 # This file is distributed under the same license as the Cardinal package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
+# Translators:
+# Camila Salazar, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -10,6 +13,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-20 16:40-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Last-Translator: Camila Salazar, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,67 +23,76 @@ msgstr ""
 
 #: ../../cli/indicators/R/035.md:1
 msgid "All except winning bid disqualified (R035)"
-msgstr ""
+msgstr " Todas las ofertas son descalificadas excepto la ganadora (R035)"
 
 #: ../../cli/indicators/R/035.md:3
 msgid ""
 "Bids are disqualified if not submitted by the single tenderer of the winning"
 " bid."
-msgstr ""
+msgstr "Las ofertas presentadas son descalificadas excepto la ganadora."
 
 #: ../../cli/indicators/R/035.md:6
 msgid "{doc}`038`"
-msgstr ""
+msgstr "{doc}`038`"
 
 #: ../../cli/indicators/R/035.md:9
 msgid "Methodology"
-msgstr ""
+msgstr "Metodología"
 
 #: ../../cli/indicators/R/035.md:11
 msgid "A contracting process is flagged if:"
-msgstr ""
+msgstr "Un proceso de contratación  es señalado si:"
 
 #: ../../cli/indicators/R/035.md:13
 msgid ""
 "Exactly one tenderer submitted one or more bids that are valid (i.e. "
 "qualified)."
 msgstr ""
+"Exactamente on oferente presentó una o más ofertas válidas (calificadas)."
 
 #: ../../cli/indicators/R/035.md:14
 msgid ""
 "The tenderer of the valid bids and the suppliers of all active awards are "
 "the same."
 msgstr ""
+"El oferente de la oferta válida y los proveedores de todas las "
+"adjudicaciones activas son los mismos. "
 
 #: ../../cli/indicators/R/035.md:15
 msgid ""
 "At least 1 other tenderer submitted a bid that was disqualified. (1 is the "
 "**threshold**.)"
 msgstr ""
+"Al menos otro oferente presentó una oferta que fue descalificada. (el "
+"**umbral** es 1)"
 
 #: ../../cli/indicators/R/035.md:17
 msgid "The winner is also flagged."
-msgstr ""
+msgstr "El ganador también es señalado."
 
 #: ../../cli/indicators/R/035.md:19
 msgid "Example"
-msgstr ""
+msgstr "Ejemplo"
 
 #: ../../cli/indicators/R/035.md:22
 msgid ""
 "The National Rail Service receives five bids. It disqualifies four bids, and"
 " awards the contract to the remaining bid from CorruptX Solutions."
 msgstr ""
+"El Servicio Ferroviario Nacional recibe cinco ofertas. Descalifica cuatro "
+"ofertas y adjudica el contrato a la oferta restante de CorruptX Solutions."
 
 #: ../../cli/indicators/R/035.md:25
 msgid "Why is this a red flag?"
-msgstr ""
+msgstr "¿Por qué esto es una bandera roja?"
 
 #: ../../cli/indicators/R/035.md:28
 msgid ""
 "A corrupt buyer can award the pre-determined bidder by disqualifying other "
 "bidders' bids."
 msgstr ""
+"Un comprador corrupto puede adjudicar al oferente predeterminado "
+"descalificando ofertas de otros oferentes. "
 
 #: ../../cli/indicators/R/035.md:31
 msgid ""
@@ -87,36 +100,42 @@ msgid ""
 "collusive bidding in public procurement*](https://www.govtransparency.eu/wp-"
 "content/uploads/2015/11/GTI_WP2014_2_Toth_et_al_150413.pdf).</small>"
 msgstr ""
+"<small>Basado en \"Prevalence of faulty bids\" en [*Toolkit for detecting "
+"collusive bidding in public procurement*](https://www.govtransparency.eu/wp-"
+"content/uploads/2015/11/GTI_WP2014_2_Toth_et_al_150413.pdf).</small>"
 
 #: ../../cli/indicators/R/035.md:33
 msgid "Output"
-msgstr ""
+msgstr "Salida"
 
 #: ../../cli/indicators/R/035.md:35
 msgid ""
 "The indicator's value for the contracting process is the number of unique "
 "tenderers with disqualified bids."
 msgstr ""
+"El valor del indicador para el proceso de contratación es el número de "
+"oferentes únicos con ofertas descalificadas. "
 
 #: ../../cli/indicators/R/035.md:37
 msgid "The indicator's value for the tenderer is always 0.0."
-msgstr ""
+msgstr "El valor del indicador para un oferente es siempre 0.0."
 
 #: ../../cli/indicators/R/035.md:39
 msgid "If the ``--map`` command-line flag is set, the ``Maps`` key contains:"
 msgstr ""
+"Si el comando ``--map``  está configurado, la clave ``Maps`` contiene:"
 
 #: ../../cli/indicators/R/035.md:41
 msgid "ocid_tenderer_r035"
-msgstr ""
+msgstr "ocid_tenderer_r035"
 
 #: ../../cli/indicators/R/035.md:42
 msgid "The flagged tenderers for each flagged `ocid`."
-msgstr ""
+msgstr "Los oferentes señalados por cada  `ocid` señalado. "
 
 #: ../../cli/indicators/R/035.md:44
 msgid "Configuration"
-msgstr ""
+msgstr "Configuración"
 
 #: ../../cli/indicators/R/035.md:46
 msgid ""
@@ -125,27 +144,31 @@ msgid ""
 "threshold. To override the default **threshold**, add to your settings file,"
 " as a natural number:"
 msgstr ""
+"Toda la configuración es opcional. Si observa muchos falsos positivos en "
+"procesos de contratación con pocas ofertas presentadas, puede aumentar el "
+"umbral. Para cambiar el **umbral** predeterminado, agréguelo a su archivo de"
+" configuración, como un número natural:"
 
 #: ../../cli/indicators/R/035.md:53
 msgid "Exclusions"
-msgstr ""
+msgstr "Exclusiones"
 
 #: ../../cli/indicators/R/035.md:55
 msgid "A contracting process is excluded if:"
-msgstr ""
+msgstr "Se excluye un proceso de contratación si:"
 
 #: ../../cli/indicators/R/035.md:57
 msgid "An award's status is pending or invalid."
-msgstr ""
+msgstr "El estado de la adjudicación está pendiente o inválido."
 
 #: ../../cli/indicators/R/035.md:59
 msgid "Demonstration"
-msgstr ""
+msgstr "Demostración"
 
 #: ../../cli/indicators/R/035.md:61
 msgid "*Input*"
-msgstr ""
+msgstr "*Entrada*"
 
 #: ../../cli/indicators/R/035.md:67
 msgid "*Output*"
-msgstr ""
+msgstr "*Salida*"

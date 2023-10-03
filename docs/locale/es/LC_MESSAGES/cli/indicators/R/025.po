@@ -3,6 +3,9 @@
 # This file is distributed under the same license as the Cardinal package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
+# Translators:
+# Camila Salazar, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -10,6 +13,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-20 16:40-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Last-Translator: Camila Salazar, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,33 +23,39 @@ msgstr ""
 
 #: ../../cli/indicators/R/025.md:1
 msgid "Excessive unsuccessful bids (R025)"
-msgstr ""
+msgstr " Número excesivo de ofertas no exitosas (R025)"
 
 #: ../../cli/indicators/R/025.md:3
 msgid ""
 "The ratio of winning bids to submitted bids for a top tenderer is a low "
 "outlier."
 msgstr ""
+" La relación entre las ofertas ganadoras y las presentadas por un oferente "
+"es un valor atípico bajo"
 
 #: ../../cli/indicators/R/025.md:5
 msgid "Methodology"
-msgstr ""
+msgstr "Metodología"
 
 #: ../../cli/indicators/R/025.md:7
 msgid ""
 "For each tenderer, the **ratio** is calculated as $numberOfWinningBids "
 "\\over numberOfValidBids$ across all contracting processes."
 msgstr ""
+"Para cada oferente, la **razón** se calcula como $númeroDeOfertasGanadoras "
+"\\over númeroDeOfertasVálidas$ en todos los procesos de contratación."
 
 #: ../../cli/indicators/R/025.md:9
 msgid "A tenderer is flagged if:"
-msgstr ""
+msgstr "Un oferente es señalado si:"
 
 #: ../../cli/indicators/R/025.md:11
 msgid ""
 "Its number of valid bids is greater than or equal to the **upper fence** of "
 "the third quartile ($Q_3$) of the set of numbers of valid bids."
 msgstr ""
+"Su número de ofertas válidas es mayor o igual al **límite superior** del "
+"tercer cuartil ($Q_3$) del conjunto de números de ofertas válidas."
 
 #: ../../cli/indicators/R/025.md:12
 msgid ""
@@ -53,10 +63,13 @@ msgid ""
 "where $Q_1$ is the first quartile and $IQR$ is the interquartile range for "
 "the set of ratios."
 msgstr ""
+"Si la razón es menor o igual al **límite inferior** de $Q_1 - 1.5(IQR)$, "
+"donde $Q_1$ es el primer cuartil y $IQR$ es el rango intercuartílico del "
+"conjunto de diferencias"
 
 #: ../../cli/indicators/R/025.md:14
 msgid "Example"
-msgstr ""
+msgstr "Ejemplo"
 
 #: ../../cli/indicators/R/025.md:17
 msgid ""
@@ -64,6 +77,10 @@ msgid ""
 "Ltd. submitted 150 bids. This is greater than the upper fence of 100. "
 "Therefore, UnethicalBid Ltd. is a top tenderer."
 msgstr ""
+"El 75% ($Q_3$) de los oferentes en Atlantis presentaron como máximo 100 "
+"ofertas. UnethicalBid Ltd. presentó 150 ofertas. Esto es mayor que el límite"
+" superior de 100. Por lo tanto, UnethicalBid Ltd. es uno de los oferentes "
+"principales."
 
 #: ../../cli/indicators/R/025.md:19
 msgid ""
@@ -71,6 +88,10 @@ msgid ""
 "75% ($Q_3$) of bidders won at most three quarters (`0.75`) of their bids. "
 "This yields a lower fence of one eighth (`0.125`)."
 msgstr ""
+"El 25 % ($Q_1$) de los oferentes en Atlantis ganaron como máximo la mitad "
+"(`0,5`) de sus ofertas. El 75 % ($Q_3$) de los oferentes ganaron como máximo"
+" tres cuartas partes (`0,75`) de sus ofertas. Esto produce un límite "
+"inferior de un octavo (`0,125`)."
 
 #: ../../cli/indicators/R/025.md:21
 msgid ""
@@ -78,10 +99,13 @@ msgid ""
 " than the lower fence of one eighth. Therefore, UnethicalBid Ltd. is "
 "flagged."
 msgstr ""
+"UnethicalBid Ltd. ganó 15 de sus 150 ofertas, o una décima parte (`0,1`). "
+"Esto es menos que el límite inferior de un octavo. Por lo tanto, "
+"UnethicalBid Ltd. está señalado."
 
 #: ../../cli/indicators/R/025.md:24
 msgid "Why is this a red flag?"
-msgstr ""
+msgstr "¿Por qué esto es una bandera roja?"
 
 #: ../../cli/indicators/R/025.md:27
 msgid ""
@@ -89,6 +113,9 @@ msgid ""
 "bids (at inflated bid prices, for example) in contracting processes in which"
 " a colluding partner participates."
 msgstr ""
+"Un oferente colusorio puede imitar la competencia presentando ofertas "
+"deliberadamente perdedoras (a precios inflados, por ejemplo) en procesos de "
+"contratación en los que participa un socio colusorio."
 
 #: ../../cli/indicators/R/025.md:30
 msgid ""
@@ -98,83 +125,99 @@ msgid ""
 "losers\" in [*A decision support system for fraud detection in public "
 "procurement*](https://www.researchgate.net/publication/341703812_A_decision_support_system_for_fraud_detection_in_public_procurement).</small>"
 msgstr ""
+"<small>Basado en \"Superfluous losing bidders\" en [*Toolkit for detecting "
+"collusive bidding in public procurement*](https://www.govtransparency.eu/wp-"
+"content/uploads/2015/11/GTI_WP2014_2_Toth_et_al_150413.pdf) y \"Top losers\""
+" en [*A decision support system for fraud detection in public "
+"procurement*](https://www.researchgate.net/publication/341703812_A_decision_support_system_for_fraud_detection_in_public_procurement).</small>"
 
 #: ../../cli/indicators/R/025.md:32
 msgid "Output"
-msgstr ""
+msgstr "Salida"
 
 #: ../../cli/indicators/R/025.md:34
 msgid "The indicator's value is the **ratio**, as a decimal."
-msgstr ""
+msgstr "El valor del indicador es una **razón**, como un decimal."
 
 #: ../../cli/indicators/R/025.md:36
 msgid "Configuration"
-msgstr ""
+msgstr "Configuración"
 
 #: ../../cli/indicators/R/025.md:38
 msgid "All configuration is optional."
-msgstr ""
+msgstr "Toda configuración es opcional."
 
 #: ../../cli/indicators/R/025.md:40
 msgid ""
 "To override the default **upper fence**, add to your settings file, as a "
 "percentage:"
 msgstr ""
+"Toda configuración es opcional. Para modificar el **límite superior** "
+"predeterminado, añádalo a su archivo de configuración, como decimal:"
 
 #: ../../cli/indicators/R/025.md:47
 msgid ""
 "To override the default **lower fence**, add to your settings file, as a "
 "decimal:"
 msgstr ""
+"Toda configuración es opcional. Para modificar el **límite inferior** "
+"predeterminado, añádalo a su archivo de configuración, como decimal:"
 
 #: ../../cli/indicators/R/025.md:55
 msgid "Put all properties under one `[R025]` section."
-msgstr ""
+msgstr "Coloque todas las propiedades en una sección `[R025]`."
 
 #: ../../cli/indicators/R/025.md:58
 msgid "Exclusions"
-msgstr ""
+msgstr "Exclusiones"
 
 #: ../../cli/indicators/R/025.md:60
 msgid "A contracting process is excluded if:"
-msgstr ""
+msgstr "Se excluye un proceso de contratación si:"
 
 #: ../../cli/indicators/R/025.md:62
 msgid "An award's status is pending or invalid."
-msgstr ""
+msgstr "El estado de la adjudicación está pendiente o inválido."
 
 #: ../../cli/indicators/R/025.md:63
 msgid ""
 "There are multiple active awards (a.k.a. winning bids). "
 "[#14](https://github.com/open-contracting/cardinal-rs/issues/14)"
 msgstr ""
+"Hay múltiples adjudicaciones activas (ofertas ganadoras). "
+"[#14](https://github.com/open-contracting/cardinal-rs/issues/14)"
 
 #: ../../cli/indicators/R/025.md:64
 msgid ""
 "A bid is submitted by multiple tenderers. [#17](https://github.com/open-"
 "contracting/cardinal-rs/issues/17)"
 msgstr ""
+"Una oferta es presentada por múltiples oferentes. "
+"[#17](https://github.com/open-contracting/cardinal-rs/issues/17)"
 
 #: ../../cli/indicators/R/025.md:65
 msgid ""
 "An award is made to multiple suppliers. [#17](https://github.com/open-"
 "contracting/cardinal-rs/issues/17)"
 msgstr ""
+"Se otorga una adjudicación a múltiples proveedores.  "
+"[#17](https://github.com/open-contracting/cardinal-rs/issues/17)"
 
 #: ../../cli/indicators/R/025.md:68
 msgid ""
 "Do you want to eliminate an exclusion? Please contributed to the linked "
 "GitHub issue."
 msgstr ""
+"¿Quieres eliminar una exclusión? Contribuya al issue vinculado de GitHub."
 
 #: ../../cli/indicators/R/025.md:71
 msgid "Demonstration"
-msgstr ""
+msgstr "Demostración"
 
 #: ../../cli/indicators/R/025.md:73
 msgid "*Input*"
-msgstr ""
+msgstr "*Entrada*"
 
 #: ../../cli/indicators/R/025.md:79
 msgid "*Output*"
-msgstr ""
+msgstr "*Salida*"

@@ -3,6 +3,9 @@
 # This file is distributed under the same license as the Cardinal package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
+# Translators:
+# Camila Salazar, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -10,6 +13,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-20 16:40-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Last-Translator: Camila Salazar, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,31 +23,33 @@ msgstr ""
 
 #: ../../cli/indicators/R/023.md:1
 msgid "Fixed-multiple bid prices (R023)"
-msgstr ""
+msgstr "Diferencia similar entre precios de oferta (R023)"
 
 #: ../../cli/indicators/R/023.md:3
 msgid ""
 "The percentage difference between two tenderers' bid prices is the same in "
 "different contracting processes."
 msgstr ""
+" La diferencia porcentual entre los precios de oferta de dos oferentes es la"
+" misma en distintos procesos de contratación."
 
 #: ../../cli/indicators/R/023.md:5
 msgid "Methodology"
-msgstr ""
+msgstr "Metodología"
 
 #: ../../cli/indicators/R/023.md:7 ../../cli/indicators/R/023.md:12
 #: ../../cli/indicators/R/023.md:18 ../../cli/indicators/R/023.md:40
 #: ../../cli/indicators/R/023.md:44
 msgid "TODO"
-msgstr ""
+msgstr "Pendiente"
 
 #: ../../cli/indicators/R/023.md:9
 msgid "Example"
-msgstr ""
+msgstr "Ejemplo"
 
 #: ../../cli/indicators/R/023.md:15
 msgid "Why is this a red flag?"
-msgstr ""
+msgstr "¿Por qué esto es una bandera roja?"
 
 #: ../../cli/indicators/R/023.md:21
 msgid ""
@@ -55,19 +61,27 @@ msgid ""
 "Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
 "public-procurement-final-20122017-ares20176254403.pdf).</small>"
 msgstr ""
+"Basado en \"Concerted bids\" en [*A decision support system for fraud "
+"detection in public "
+"procurement*](https://www.researchgate.net/publication/341703812_A_decision_support_system_for_fraud_detection_in_public_procurement)"
+" y \"Bid prices differ by an equal amount or factor\" en [*Fraud in Public "
+"Procurement: A collection of Red Flags and Best "
+"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
+"public-procurement-final-20122017-ares20176254403.pdf)"
 
 #: ../../cli/indicators/R/023.md:23
 msgid "Output"
-msgstr ""
+msgstr "Salida"
 
 #: ../../cli/indicators/R/023.md:25
 msgid ""
 "The indicator's value is the number of times the **ratio** is the same."
 msgstr ""
+"El valor del indicador es el número de veces que la **razón** es la misma."
 
 #: ../../cli/indicators/R/023.md:27
 msgid "Configuration"
-msgstr ""
+msgstr "Configuración"
 
 #: ../../cli/indicators/R/023.md:29
 msgid ""
@@ -75,27 +89,30 @@ msgid ""
 "increase the threshold. To override the default **threshold**, add to your "
 "settings file, as a natural number:"
 msgstr ""
+"Toda la configuración es opcional. Si observa muchos falsos positivos, puede"
+" aumentar el umbral. Para cambiar el **umbral** predeterminado, agreguelo a "
+"su archivo de configuración, como un número natural:"
 
 #: ../../cli/indicators/R/023.md:36
 msgid "Exclusions"
-msgstr ""
+msgstr "Exclusiones"
 
 #: ../../cli/indicators/R/023.md:38
 msgid "A contracting process is excluded if:"
-msgstr ""
+msgstr "Se excluye un proceso de contratación si:"
 
 #: ../../cli/indicators/R/023.md:42
 msgid "Assumptions"
-msgstr ""
+msgstr "Supuestos"
 
 #: ../../cli/indicators/R/023.md:46
 msgid "Demonstration"
-msgstr ""
+msgstr "Demostración"
 
 #: ../../cli/indicators/R/023.md:48
 msgid "*Input*"
-msgstr ""
+msgstr "*Entrada*"
 
 #: ../../cli/indicators/R/023.md:54
 msgid "*Output*"
-msgstr ""
+msgstr "*Salida*"

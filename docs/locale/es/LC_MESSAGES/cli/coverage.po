@@ -3,6 +3,9 @@
 # This file is distributed under the same license as the Cardinal package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
+# Translators:
+# Camila Salazar, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -10,6 +13,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-20 16:40-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Last-Translator: Camila Salazar, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,50 +23,60 @@ msgstr ""
 
 #: ../../cli/coverage.md:1
 msgid "coverage"
-msgstr ""
+msgstr "coverage"
 
 #: ../../cli/coverage.md:3
 msgid ""
 "The `coverage` command counts the number of times each JSON field is non-"
 "empty."
 msgstr ""
+"El comando `coverage` cuenta el número de veces que cada campo JSON no está "
+"vacío."
 
 #: ../../cli/coverage.md:5
 msgid ""
 "Run the `help` command to read its description, output format and options:"
 msgstr ""
+"Ejecute el comando `help` para leer su descripción, formato de salida y "
+"opciones:"
 
 #: ../../cli/coverage.md:34
 msgid "Demonstration"
-msgstr ""
+msgstr "Demonstración"
 
 #: ../../cli/coverage.md:36
 msgid "Given this line-delimited JSON file:"
-msgstr ""
+msgstr "Dado este archivo JSON delimitado por líneas:"
 
 #: ../../cli/coverage.md:42
 msgid "The `coverage` command outputs:"
-msgstr ""
+msgstr "El comando `coverage` da como salida:"
 
 #: ../../cli/coverage.md:50
 msgid "Caveats"
-msgstr ""
+msgstr "Salvedades"
 
 #: ../../cli/coverage.md:53
 msgid "These edge cases are not expected to be encountered in real data."
-msgstr ""
+msgstr "No se espera encontrar estos casos extremos en los datos reales."
 
 #: ../../cli/coverage.md:56
 msgid "If a member name is duplicated, only the last duplicate is considered:"
 msgstr ""
+"Si el nombre de un miembro está duplicado, sólo se tiene en cuenta el último"
+" duplicado:"
 
 #: ../../cli/coverage.md:79
 msgid ""
 "If a member name is empty, its path is the same as its parent object's path:"
 msgstr ""
+"Si un nombre de miembro está vacío, su ruta es la misma que la de su objeto "
+"de nivel superior:"
 
 #: ../../cli/coverage.md:102
 msgid ""
 "If a member name ends with `[]`, its path can be the same as a matching "
 "sibling's path:"
 msgstr ""
+"Si el nombre de un miembro termina en `[]`, su ruta puede ser la misma que "
+"la de otro:"

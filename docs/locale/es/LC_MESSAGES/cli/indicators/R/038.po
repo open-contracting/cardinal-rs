@@ -3,6 +3,9 @@
 # This file is distributed under the same license as the Cardinal package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
+# Translators:
+# Camila Salazar, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -10,6 +13,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-20 16:40-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Last-Translator: Camila Salazar, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,21 +23,23 @@ msgstr ""
 
 #: ../../cli/indicators/R/038.md:1
 msgid "Excessive disqualified bids (R038)"
-msgstr ""
+msgstr " Alto número de ofertas descalificadas (R038)"
 
 #: ../../cli/indicators/R/038.md:3
 msgid ""
 "The ratio of disqualified bids to submitted bids is a high outlier per "
 "buyer, procuring entity or tenderer."
 msgstr ""
+"La relación de ofertas descalificadas y las presentadas es un valor atípico "
+"alto para un comprador o un oferente."
 
 #: ../../cli/indicators/R/038.md:6
 msgid "{doc}`035`"
-msgstr ""
+msgstr "{doc}`035`"
 
 #: ../../cli/indicators/R/038.md:9
 msgid "Methodology"
-msgstr ""
+msgstr "Metodología"
 
 #: ../../cli/indicators/R/038.md:11
 msgid ""
@@ -43,12 +49,20 @@ msgid ""
 "or equal to the **upper fence** of $Q_3 + 1.5(IQR)$, where $Q_3$ is the "
 "third quartile and $IQR$ is the interquartile range for the set of ratios."
 msgstr ""
+"Para cada comprador, la **proporción** se calcula como "
+"$númeroOfertasDescalificadasPorComprador \\over "
+"númeroOfertasPresentadasAlComprador$ en todos los procesos de contratación. "
+"Se señala a un comprador si su proporción es mayor o igual al **límite "
+"superior** de $Q_3 + 1.5(IQR)$, donde $Q_3$ es el tercer cuartil y $IQR$ es "
+"el rango intercuartílico para el conjunto de proporciones."
 
 #: ../../cli/indicators/R/038.md:13
 msgid ""
 "For each procuring entity, the **ratio** is calculated the same as for "
 "buyers."
 msgstr ""
+"Para cada entidad compradora, la **proporción** se calcula de la misma forma"
+" que para los compradores. "
 
 #: ../../cli/indicators/R/038.md:15
 msgid ""
@@ -59,10 +73,16 @@ msgid ""
 "$Q_3$ is the third quartile and $IQR$ is the interquartile range for the set"
 " of ratios."
 msgstr ""
+"Para cada oferente, la **proporción** se calcula como "
+"$númeroOfertasDescalificadasDelOferente \\over "
+"númeroOfertasPresentadasPorOferente$ en todos los procesos de contratación. "
+"Se señala a un oferente si su proporción es mayor o igual al **límite "
+"superior** de $Q_3 + 1.5(IQR)$, donde $Q_3$ es el tercer cuartil y $IQR$ es "
+"el rango intercuartílico para el conjunto de proporciones."
 
 #: ../../cli/indicators/R/038.md:17
 msgid "Example for a buyer or procuring entity"
-msgstr ""
+msgstr "Ejemplo para un comprador o una entidad compradora"
 
 #: ../../cli/indicators/R/038.md:20
 msgid ""
@@ -70,6 +90,9 @@ msgid ""
 "75% ($Q_3$) of buyers disqualify at most 22% of bids received. This yields "
 "an upper fence of 52%."
 msgstr ""
+"25% ($Q_1$) de los compradores en Atlantis descalifica a lo sumo 2% de las "
+"ofertas recibidas. 75% ($Q_3$) de los compradores descalifica a lo sumo 22% "
+"de las ofertas recibidas. Esto da un límite superior de 52%. "
 
 #: ../../cli/indicators/R/038.md:22
 msgid ""
@@ -77,10 +100,13 @@ msgid ""
 "than the upper fence of 52%. Therefore, the State Water Corporation is "
 "flagged."
 msgstr ""
+"La State Water Corporation descalificó el 59% de las ofertas recibidas. Esto"
+" es más que el límite superior del 52%. Por lo que se señala a State Water "
+"Corporation."
 
 #: ../../cli/indicators/R/038.md:25
 msgid "Example for a tenderer"
-msgstr ""
+msgstr "Ejemplo para un oferente"
 
 #: ../../cli/indicators/R/038.md:28
 msgid ""
@@ -88,28 +114,38 @@ msgid ""
 " bidders have at most 24% disqualified bids. This yields an upper fence of "
 "60%."
 msgstr ""
+"25% ($Q_1$) de los oferentes en Atlantis no tiene ofertas descalificadas. "
+"75% ($Q_3$) de los oferentes tiene a lo sumo 24% de las ofertas "
+"descalificadas. Esto da un límite superior de 60%. "
 
 #: ../../cli/indicators/R/038.md:30
 msgid ""
 "73% of the bids submitted by MisconductCorp were disqualified. This is "
 "higher than the upper fence of 60%. Therefore, MisconductCorp is flagged."
 msgstr ""
+"El 73% de las ofertas presentadas por MisconductCorp fueron descalificadas. "
+"Esto es más alto que el límite superior del 60%. Por lo tanto, "
+"MisconductCorp es señalado."
 
 #: ../../cli/indicators/R/038.md:33
 msgid "Why is this a red flag?"
-msgstr ""
+msgstr "¿Por qué esto es una bandera roja?"
 
 #: ../../cli/indicators/R/038.md:36
 msgid ""
 "A corrupt buyer or procuring entity can award pre-determined bidders by "
 "disqualifying other bidders' bids."
 msgstr ""
+"Un comprador corrupto puede adjudicar al oferente predeterminado "
+"descalificando las ofertas de otros oferentes. "
 
 #: ../../cli/indicators/R/038.md:38
 msgid ""
 "A colluding bidder can mimic competition by submitting deliberately "
 "unqualified bids."
 msgstr ""
+"Un oferente colusorio puede imitar la competencia presentando ofertas "
+"deliberadamente no calificadas."
 
 #: ../../cli/indicators/R/038.md:41
 msgid ""
@@ -121,50 +157,64 @@ msgid ""
 "content/uploads/2019/11/Behind-the-Scenes-of-ProZorro.-Does-Ukrainian-"
 "business-trust-public-procurement.pdf).</small>"
 msgstr ""
+"<small>Basado en \"Excluding Qualified Bidders\" en [*Guide to Combating "
+"Corruption & Fraud in Infrastructure Development "
+"Projects*](https://guide.iacrc.org/potential-scheme-excluding-qualified-"
+"bidders/) y [*Behind the Scenes of ProZorro: Does Ukrainian business trust "
+"public procurement?*](https://ti-ukraine.org/wp-"
+"content/uploads/2019/11/Behind-the-Scenes-of-ProZorro.-Does-Ukrainian-"
+"business-trust-public-procurement.pdf).</small>"
 
 #: ../../cli/indicators/R/038.md:43
 msgid "Output"
-msgstr ""
+msgstr "Salida"
 
 #: ../../cli/indicators/R/038.md:45
 msgid "The indicator's value is the **ratio**, as a decimal."
-msgstr ""
+msgstr "El valor del indicador es una **razón**, como un decimal."
 
 #: ../../cli/indicators/R/038.md:47
 msgid "If the ``--map`` command-line flag is set, the ``Maps`` key contains:"
 msgstr ""
+"Si el comando ``--map``  está configurado, la clave ``Maps`` contiene:"
 
 #: ../../cli/indicators/R/038.md:49
 msgid "ocid_buyer_r038"
-msgstr ""
+msgstr "ocid_buyer_r038"
 
 #: ../../cli/indicators/R/038.md:50
 msgid "The buyer for each `ocid` in which at least one bid is disqualified."
 msgstr ""
+"El comprador por cada `ocid` en la que al menos una oferta es descalificada."
+" "
 
 #: ../../cli/indicators/R/038.md:52
 msgid "ocid_procuringentity_r038"
-msgstr ""
+msgstr "ocid_procuringentity_r038"
 
 #: ../../cli/indicators/R/038.md:53
 msgid ""
 "The procuring entity for each `ocid` in which at least one bid is "
 "disqualified."
 msgstr ""
+"La entidad compradora por cada `ocid` en la que al menos una oferta es "
+"descalificada. "
 
 #: ../../cli/indicators/R/038.md:55
 msgid "Configuration"
-msgstr ""
+msgstr "Configuración"
 
 #: ../../cli/indicators/R/038.md:57
 msgid "All configuration is optional."
-msgstr ""
+msgstr "Toda configuración es opcional."
 
 #: ../../cli/indicators/R/038.md:59
 msgid ""
 "To override the default **upper fence**, add to your settings file, as a "
 "decimal:"
 msgstr ""
+"Para modificar el **límite superior** predeterminado, añádalo a su archivo "
+"de configuración, como decimal:"
 
 #: ../../cli/indicators/R/038.md:66
 msgid ""
@@ -173,6 +223,10 @@ msgid ""
 "this minimum. To override this minimum number, add to your settings file, as"
 " an integer:"
 msgstr ""
+"Se excluyen los oferentes con menos de 2 ofertas presentadas. Si observa "
+"muchos falsos positivos entre oferentes con pocas ofertas presentadas, puede"
+" aumentar este mínimo. Para modificar este número mínimo, modifíquelo en su "
+"archivo de configuración, como un número entero:"
 
 #: ../../cli/indicators/R/038.md:73
 msgid ""
@@ -181,35 +235,46 @@ msgid ""
 "contracting processes, you can increase this minimum. To override this "
 "minimum number, add to your settings file, as an integer:"
 msgstr ""
+"Se excluyen los compradores y entidades compradoras con menos de 2 ofertas "
+"presentadas. Si observa muchos falsos positivos entre compradores con pocos "
+"procesos de contratación, puede aumentar este mínimo. Para modificar este "
+"número mínimo, modifíquelo en su archivo de configuración, como un número "
+"entero:"
 
 #: ../../cli/indicators/R/038.md:81
 msgid "Put all properties under one `[R038]` section."
-msgstr ""
+msgstr "Coloque todas las propiedades en una sección `[R038]`."
 
 #: ../../cli/indicators/R/038.md:84
 msgid "Assumptions"
-msgstr ""
+msgstr "Supuestos"
 
 #: ../../cli/indicators/R/038.md:86
 msgid ""
 "This indicator assumes that `/buyer/id`, `/tender/procuringEntity/id` and "
 "`/bids/details[]/tenderers[]/id` are stable across contracting processes."
 msgstr ""
+"El indicador asume que `/buyer/id`, `/tender/procuringEntity/id` y "
+"`/bids/details[]/tenderers[]/id` son estables en todos los procesos de "
+"contratación. "
 
 #: ../../cli/indicators/R/038.md:89
 msgid ""
 "Is this assumption not true for your data? Please contribute to GitHub issue"
 " [#32](https://github.com/open-contracting/cardinal-rs/issues/32)."
 msgstr ""
+"¿El supuesto no es válido para su conjunto de datos? Por favor contribuya al"
+" GitHub issue [#32](https://github.com/open-contracting/cardinal-"
+"rs/issues/32)."
 
 #: ../../cli/indicators/R/038.md:92
 msgid "Demonstration"
-msgstr ""
+msgstr "Demostración"
 
 #: ../../cli/indicators/R/038.md:94
 msgid "*Input*"
-msgstr ""
+msgstr "*Entrada*"
 
 #: ../../cli/indicators/R/038.md:100
 msgid "*Output*"
-msgstr ""
+msgstr "*Salida*"

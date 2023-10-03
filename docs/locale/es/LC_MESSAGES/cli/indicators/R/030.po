@@ -3,6 +3,9 @@
 # This file is distributed under the same license as the Cardinal package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
+# Translators:
+# Camila Salazar, 2023
+# 
 #, fuzzy
 msgid ""
 msgstr ""
@@ -10,6 +13,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-20 16:40-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
+"Last-Translator: Camila Salazar, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,36 +23,40 @@ msgstr ""
 
 #: ../../cli/indicators/R/030.md:1
 msgid "Late bid won (R030)"
-msgstr ""
+msgstr " Oferta tardía gana (R030)"
 
 #: ../../cli/indicators/R/030.md:3
 msgid "The winning bid was received after the submission deadline."
 msgstr ""
+" La oferta ganadora se recibió después de la fecha límite de presentación."
 
 #: ../../cli/indicators/R/030.md:5
 msgid "Methodology"
-msgstr ""
+msgstr "Metodología"
 
 #: ../../cli/indicators/R/030.md:7
 msgid "A contracting process is flagged if:"
-msgstr ""
+msgstr "Un proceso de contratación  es señalado si:"
 
 #: ../../cli/indicators/R/030.md:9
 msgid "A valid bid's received date is after the submission deadline."
 msgstr ""
+" La oferta ganadora fue recibida después de la fecha límite de presentación."
 
 #: ../../cli/indicators/R/030.md:10
 msgid ""
 "At least one tenderer of the valid bid is the supplier of an active award."
 msgstr ""
+"Al menos un oferente con una oferta válida es el proveedor de una "
+"adjudicación activa. "
 
 #: ../../cli/indicators/R/030.md:12
 msgid "These tenderers are also flagged."
-msgstr ""
+msgstr "Estos oferentes también son señalados."
 
 #: ../../cli/indicators/R/030.md:14
 msgid "Example"
-msgstr ""
+msgstr "Ejemplo"
 
 #: ../../cli/indicators/R/030.md:17
 msgid ""
@@ -58,16 +66,23 @@ msgid ""
 "Public Works Department accepts the bid and awards the contract to CorruptX "
 "Solutions."
 msgstr ""
+"La fecha límite de presentación es el 15 de marzo. El Departamento de Obras "
+"Públicas filtra información de las ofertas recibidas a CorruptX Solutions, "
+"para darle una ventaja competitiva. CorruptX Solutions presenta una oferta "
+"el 1 de abril. El Departamento de Obras Públicas acepta la oferta y adjudica"
+" el contrato a CorruptX Solutions."
 
 #: ../../cli/indicators/R/030.md:20
 msgid "Why is this a red flag?"
-msgstr ""
+msgstr "¿Por qué esto es una bandera roja?"
 
 #: ../../cli/indicators/R/030.md:23
 msgid ""
 "A corrupt buyer can award the pre-determined bidder by disregarding the "
 "submission deadline."
 msgstr ""
+"Un comprador corrupto puede adjudicar al oferente predeterminado ignorando "
+"las fechas límite de presentación de ofertas. "
 
 #: ../../cli/indicators/R/030.md:26
 msgid ""
@@ -79,38 +94,46 @@ msgid ""
 "Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
 "public-procurement-final-20122017-ares20176254403.pdf).</small>"
 msgstr ""
+"<small>Basado en \"Bids after the deadline accepted\" en [*Corruption in "
+"Public Procurement: Finding the Right "
+"Indicators*](https://www.researchgate.net/publication/303359108_Corruption_in_Public_Procurement_Finding_the_Right_Indicators)"
+" y \"Late submissions accepted\" en [*Fraud in Public Procurement: A "
+"collection of Red Flags and Best "
+"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
+"public-procurement-final-20122017-ares20176254403.pdf).</small>"
 
 #: ../../cli/indicators/R/030.md:28
 msgid "Output"
-msgstr ""
+msgstr "Salida"
 
 #: ../../cli/indicators/R/030.md:30
 msgid "The indicator's value is always 1.0."
-msgstr ""
+msgstr "El valor del indicador es siempre 1.0."
 
 #: ../../cli/indicators/R/030.md:32
 msgid "If the ``--map`` command-line flag is set, the ``Maps`` key contains:"
 msgstr ""
+"Si el comando ``--map``  está configurado, la clave ``Maps`` contiene:"
 
 #: ../../cli/indicators/R/030.md:34
 msgid "ocid_tenderer_r030"
-msgstr ""
+msgstr "ocid_tenderer_r030"
 
 #: ../../cli/indicators/R/030.md:35
 msgid "The flagged tenderers for each flagged `ocid`."
-msgstr ""
+msgstr "Los oferentes señalados por cada  `ocid` señalado. "
 
 #: ../../cli/indicators/R/030.md:37
 msgid "Configuration"
-msgstr ""
+msgstr "Configuración"
 
 #: ../../cli/indicators/R/030.md:39
 msgid "The indicator is not configurable."
-msgstr ""
+msgstr "El indicador no es configurable."
 
 #: ../../cli/indicators/R/030.md:41
 msgid "Assumptions"
-msgstr ""
+msgstr "Supuestos"
 
 #: ../../cli/indicators/R/030.md:43
 msgid ""
@@ -118,6 +141,9 @@ msgid ""
 "before the submission deadline; in other words, its late bid is the winning "
 "bid."
 msgstr ""
+"Este indicador supone que el oferente no presentó otra oferta válida antes "
+"de la fecha límite de presentación; en otras palabras, su oferta tardía es "
+"la oferta ganadora."
 
 #: ../../cli/indicators/R/030.md:46
 msgid ""
@@ -125,15 +151,18 @@ msgid ""
 "`/awards[]/relatedBid` field? Please [create an issue on "
 "GitHub](https://github.com/open-contracting/cardinal-rs/issues)."
 msgstr ""
+"¿El supuesto no es válido para su conjunto de datos? ¿El dataset contiene el"
+" campo `/awards[]/relatedBid` ? Por favor [crea an issue en "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues)."
 
 #: ../../cli/indicators/R/030.md:49
 msgid "Demonstration"
-msgstr ""
+msgstr "Demostración"
 
 #: ../../cli/indicators/R/030.md:51
 msgid "*Input*"
-msgstr ""
+msgstr "*Entrada*"
 
 #: ../../cli/indicators/R/030.md:57
 msgid "*Output*"
-msgstr ""
+msgstr "*Salida*"
