@@ -335,7 +335,7 @@ msgstr "licitador"
 
 #: ../../cli/indicators/index.md:207
 msgid "Synonym of {term}`tenderer`."
-msgstr "Sinónimo de {term}`tenderer`."
+msgstr "Sinónimo de {term}`oferente`."
 
 #: ../../cli/indicators/index.md:8
 msgid "buyer"
@@ -403,7 +403,7 @@ msgid ""
 "yet), valid (i.e. qualified), or disqualified. It is not submitted if its "
 "status is invited or withdrawn."
 msgstr ""
-"Se envía una {term}`bid` si su estado es pendiente (es decir, aún no "
+"Se envía una {term}`oferta` si su estado es pendiente (es decir, aún no "
 "evaluado), válido (es decir, calificado) o descalificado. No se presenta si "
 "su estatus es invitado o retirado."
 
@@ -416,7 +416,7 @@ msgid ""
 "An {term}`economic operator` that {term}`submitted` one or more "
 "{term}`bids<bid>` as part of a {term}`contracting process`."
 msgstr ""
-"Un {term}`operador económico` que {term}`submitted` uno o más "
+"Un {term}`operador económico` que {term}`envió<enviado>` uno o más "
 "{term}`ofertas<bid>` como parte de un {term}`proceso de contratación`."
 
 #: ../../cli/indicators/index.md:32
@@ -425,7 +425,7 @@ msgstr "ganador"
 
 #: ../../cli/indicators/index.md:235
 msgid "A {term}`tenderer` that is awarded a contract."
-msgstr "Un {term}`tenderer` al que se le adjudica un contrato."
+msgstr "Un {term}`oferente` al que se le adjudica un contrato."
 
 #: ../../cli/indicators/index.md:239
 msgid "Indicators"
