@@ -7,3 +7,4 @@ Cargo.lock
 /issues.csv
 /results.json
 /results.csv
+*.mo

@@ -59,7 +59,7 @@ msgid ""
 "indicator) indicators as you wish."
 msgstr ""
 "**Seleccionar indicadores**. Si ejecutó el comando {doc}`../init` al "
-"preparar sus datos, ya tiene un {doc}`../ ../topics/settings` que habilita "
+"preparar sus datos, ya tiene un {doc}`../../topics/settings` que habilita "
 "todos los indicadores. [Habilitar](#enable-an-indicator) o "
 "[disable](#disable-an-indicator) indicadores como desee."
 
@@ -78,7 +78,7 @@ msgid ""
 "**Review the results**. Read the [demonstration](#demonstration) to learn "
 "about the output format."
 msgstr ""
-"**Revisar los resultados**. Lea la [demostración](#demostración) para "
+"**Revisar los resultados**. Lea la [demostración](#demonstration) para "
 "conocer el formato de salida."
 
 #: ../../cli/indicators/index.md:64
@@ -226,7 +226,7 @@ msgid ""
 "You can [consult](#list) the codes for all indicators, read the description "
 "of their outputs and see a demonstration of their calculation."
 msgstr ""
-"Puede [consultar](#listar) los códigos de todos los indicadores, leer la "
+"Puede [consultar](#list) los códigos de todos los indicadores, leer la "
 "descripción de sus resultados y ver una demostración de su cálculo."
 
 #: ../../cli/indicators/index.md:135
@@ -330,7 +330,7 @@ msgstr ""
 
 #: ../../cli/indicators/index.md:4
 msgid "bidder"
-msgstr "oferente"
+msgstr "licitador"
 
 #: ../../cli/indicators/index.md:203
 msgid "Synonym of {term}`tenderer`."
@@ -415,7 +415,7 @@ msgid ""
 "An {term}`economic operator` that {term}`submitted` one or more "
 "{term}`bids<bid>` as part of a {term}`contracting process`."
 msgstr ""
-"Un {term}`operador económico` que {term}`envió` uno o más "
+"Un {term}`operador económico` que {term}`submitted` uno o más "
 "{term}`ofertas<bid>` como parte de un {term}`proceso de contratación`."
 
 #: ../../cli/indicators/index.md:32
@@ -424,7 +424,7 @@ msgstr "ganador"
 
 #: ../../cli/indicators/index.md:231
 msgid "A {term}`tenderer` that is awarded a contract."
-msgstr "Un {term}`licitador` al que se le adjudica un contrato."
+msgstr "Un {term}`tenderer` al que se le adjudica un contrato."
 
 #: ../../cli/indicators/index.md:235
 msgid "Indicators"
