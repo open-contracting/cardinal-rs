@@ -6,6 +6,7 @@
 # Translators:
 # Camila Salazar, 2023
 # James McKinney, 2023
+# Yohanna Lisnichuk <ylisnichuk@open-contracting.org>, 2023
 # 
 #, fuzzy
 msgid ""
@@ -14,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-02 22:15-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
-"Last-Translator: James McKinney, 2023\n"
+"Last-Translator: Yohanna Lisnichuk <ylisnichuk@open-contracting.org>, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -24,7 +25,7 @@ msgstr ""
 
 #: ../../cli/indicators/index.md:1
 msgid "indicators"
-msgstr "indicadores"
+msgstr "indicators"
 
 #: ../../cli/indicators/index.md:3
 msgid ""
@@ -61,8 +62,8 @@ msgid ""
 msgstr ""
 "**Seleccionar indicadores**. Si ejecutó el comando {doc}`../init` al "
 "preparar sus datos, ya tiene un {doc}`../../topics/settings` que habilita "
-"todos los indicadores. [Habilitar](#enable-an-indicator) o "
-"[disable](#disable-an-indicator) indicadores como desee."
+"todos los indicadores. [Habilite](#enable-an-indicator) o "
+"[deshabilite](#disable-an-indicator) indicadores como desee."
 
 #: ../../cli/indicators/index.md:57
 msgid ""
@@ -403,9 +404,9 @@ msgid ""
 "yet), valid (i.e. qualified), or disqualified. It is not submitted if its "
 "status is invited or withdrawn."
 msgstr ""
-"Se envía una {term}`oferta` si su estado es pendiente (es decir, aún no "
-"evaluado), válido (es decir, calificado) o descalificado. No se presenta si "
-"su estatus es invitado o retirado."
+"Una {term}`oferta` se considera \"enviada\" si su estado es pendiente (es "
+"decir, aún no evaluada), válida (es decir, calificada) o descalificada. No "
+"se considera \"enviada\" si su estado es invitado o retirado."
 
 #: ../../cli/indicators/index.md:28
 msgid "tenderer"
@@ -416,7 +417,7 @@ msgid ""
 "An {term}`economic operator` that {term}`submitted` one or more "
 "{term}`bids<bid>` as part of a {term}`contracting process`."
 msgstr ""
-"Un {term}`operador económico` que {term}`envió<enviado>` uno o más "
+"Un {term}`operador económico` que {term}`envió<enviado>` una o más "
 "{term}`ofertas<bid>` como parte de un {term}`proceso de contratación`."
 
 #: ../../cli/indicators/index.md:32
@@ -483,8 +484,8 @@ msgid ""
 "Do you want to eliminate this exclusion? Please contributed to [GitHub issue"
 " #11](https://github.com/open-contracting/cardinal-rs/issues/11)."
 msgstr ""
-"¿Quieres eliminar esta exclusión? Contribuya al [issue 11 de GitHub]"
-"(https://github.com/open-contracting/cardinal-rs/issues/11)."
+"¿Quieres eliminar esta exclusión? Contribuya al [issue #11 de "
+"GitHub](https://github.com/open-contracting/cardinal-rs/issues/11)."
 
 #: ../../cli/indicators/index.md:268
 msgid "Red flags"

@@ -5,8 +5,8 @@
 # 
 # Translators:
 # Camila Salazar, 2023
-# Yohanna Lisnichuk <ylisnichuk@open-contracting.org>, 2023
 # James McKinney, 2023
+# Yohanna Lisnichuk <ylisnichuk@open-contracting.org>, 2023
 # 
 #, fuzzy
 msgid ""
@@ -15,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-02 22:15-0400\n"
 "PO-Revision-Date: 2023-09-20 20:42+0000\n"
-"Last-Translator: James McKinney, 2023\n"
+"Last-Translator: Yohanna Lisnichuk <ylisnichuk@open-contracting.org>, 2023\n"
 "Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -44,11 +44,11 @@ msgstr "comando {doc}`cli/prepare` :"
 #: ../../changelog.md:8
 msgid "Add `[redactions]` section. Warn about zero-value bids."
 msgstr ""
-"Agregar sección de `[ediciones]` . Advertir sobre ofertas con valor cero. "
+"Agregar sección de `[redactions]` . Advertir sobre ofertas con valor cero. "
 
 #: ../../changelog.md:9
 msgid "Add `[corrections]` section."
-msgstr "Agregar sección de  `[correcciones]`."
+msgstr "Agregar la sección de  `[corrections]`."
 
 #: ../../changelog.md:10 ../../changelog.md:22 ../../changelog.md:29
 #: ../../changelog.md:38 ../../changelog.md:50 ../../changelog.md:69
@@ -181,8 +181,8 @@ msgid ""
 "All `threshold` and `percentile` configurations are consistently interpreted"
 " as inclusive."
 msgstr ""
-"Todas las configuraciones de \"umbral (límites)\" y \"percentil\" se "
-"interpretan siempre como inclusivas."
+"Todas las configuraciones de `threshold` y `percentile` se interpretan "
+"siempre como inclusivas."
 
 #: ../../changelog.md:55
 msgid "0.0.4 (2023-05-30)"
@@ -270,7 +270,7 @@ msgstr "Conservar el orden de las claves en la salida JSON."
 
 #: ../../changelog.md:89
 msgid "Commands no longer error on `SIGPIPE` signal."
-msgstr "Los comandos ya no generar error con la señal `SIGPIPE`."
+msgstr "Los comandos ya no generan error con la señal `SIGPIPE`."
 
 #: ../../changelog.md:91
 msgid "0.0.2 (2023-02-13)"
