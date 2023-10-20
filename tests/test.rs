@@ -2,6 +2,7 @@ use assert_cmd::assert::Assert;
 use assert_cmd::Command;
 use predicates::prelude::*;
 use rstest::rstest;
+#[cfg(unix)]
 use tempfile::NamedTempFile;
 use trycmd;
 
