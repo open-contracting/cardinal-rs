@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 import csv
+import datetime
 import json
 import os.path
 import re
 import sys
 from collections import defaultdict
-from datetime import datetime
 from pathlib import Path
 from textwrap import dedent
 
@@ -36,7 +36,7 @@ def json_to_csv(infile, outfile):
             R058="ocid_tenderer_r058",
         ),
     }
-    created_at = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    created_at = datetime.datetime.now(tz=datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     exists = os.path.exists(outfile)
 
