@@ -749,53 +749,49 @@ mod tests {
         env::set_var("RAYON_NUM_THREADS", "1");
     }
 
-    fn reader(directory: &str, stem: &str, extension: &str) -> BufReader<File> {
-        let path = format!("tests/fixtures/{directory}/{stem}.{extension}");
+    fn reader(stem: &str, extension: &str) -> BufReader<File> {
+        let path = format!("tests/fixtures/{stem}.{extension}");
         let file = File::open(path).unwrap();
 
         BufReader::new(file)
     }
 
-    fn check_coverage(directory: &str, name: &str) {
-        let result = Coverage::run(reader(directory, name, "jsonl"));
-        let expected: IndexMap<String, u32> = serde_json::from_reader(reader(directory, name, "expected")).unwrap();
+    fn check_coverage(name: &str) {
+        let result = Coverage::run(reader(name, "jsonl"));
+        let expected: IndexMap<String, u32> = serde_json::from_reader(reader(name, "expected")).unwrap();
 
         assert_eq!(result.unwrap().counts, expected);
     }
 
-    fn check_prepare(directory: &str, name: &str) {
+    fn check_prepare(name: &str) {
         let mut output = vec![];
         let mut errors = vec![];
-        let basedir = Path::new("tests").join("fixtures").join(directory);
+        let basedir = Path::new("tests").join("fixtures");
         let source = config::File::from(basedir.join(format!("{name}.ini")));
 
         // Same as main.rs.
         let config = Config::builder().add_source(source).build().unwrap();
         let settings = serde_path_to_error::deserialize(config).unwrap();
 
-        let result = Prepare::run(reader(directory, name, "jsonl"), settings, &mut output, &mut errors);
+        let result = Prepare::run(reader(name, "jsonl"), settings, &mut output, &mut errors);
 
         let mut expected_output = String::new();
-        reader(directory, name, "output")
-            .read_to_string(&mut expected_output)
-            .unwrap();
+        reader(name, "output").read_to_string(&mut expected_output).unwrap();
         assert_eq!(String::from_utf8(output).unwrap(), expected_output);
 
         if basedir.join(format!("{name}.errors")).exists() {
             let mut expected_errors = String::new();
-            reader(directory, name, "errors")
-                .read_to_string(&mut expected_errors)
-                .unwrap();
+            reader(name, "errors").read_to_string(&mut expected_errors).unwrap();
             assert_eq!(String::from_utf8(errors).unwrap(), expected_errors);
         }
 
         assert!(result.is_ok());
     }
 
-    fn check_indicators(directory: &str, name: &str, settings: Settings) {
-        let result = Indicators::run(reader(directory, name, "jsonl"), settings, &false);
+    fn check_indicators(name: &str, settings: Settings) {
+        let result = Indicators::run(reader(name, "jsonl"), settings, &false);
         let expected: IndexMap<Group, IndexMap<String, HashMap<Indicator, f64>>> =
-            serde_json::from_reader(reader(directory, name, "expected")).unwrap();
+            serde_json::from_reader(reader(name, "expected")).unwrap();
 
         assert_eq!(result.unwrap().results, expected);
     }
