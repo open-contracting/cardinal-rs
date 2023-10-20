@@ -1,7 +1,7 @@
 # OCDS Cardinal
 
 [![crates.io Version](https://img.shields.io/crates/v/ocdscardinal.svg)](https://crates.io/crates/ocdscardinal)
-[![Build Status](https://github.com/open-contracting/cardinal-rs/workflows/CI/badge.svg)](https://github.com/open-contracting/cardinal-rs/actions?query=workflow%3ACI)
+[![Build Status](https://github.com/open-contracting/cardinal-rs/actions/workflows/ci.yml)](https://github.com/open-contracting/cardinal-rs/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/open-contracting/cardinal-rs/badge.svg?branch=main)](https://coveralls.io/github/open-contracting/cardinal-rs?branch=main)
 
 Measure red flags and procurement indicators using OCDS data.
