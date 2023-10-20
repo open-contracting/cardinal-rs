@@ -22,7 +22,7 @@ fn main() {
             file,
             r#"
 #[test]
-fn {name}() {{
+fn coverage_{name}() {{
     check_coverage("coverage/{name}")
 }}
 "#
@@ -38,7 +38,7 @@ fn {name}() {{
             file,
             r#"
 #[test]
-fn {name}() {{
+fn prepare_{name}() {{
     check_prepare("prepare/{name}")
 }}
 "#
