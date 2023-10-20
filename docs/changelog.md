@@ -8,10 +8,10 @@
   - Add `[redactions]` section. Warn about zero-value bids.
   - Add `[corrections]` section.
 - {doc}`cli/indicators/index` command:
-  - R028 (*Identical bid prices*).
-  - R030 (*Late bid won*).
-  - R048 (*Heterogeneous supplier*).
-  - R058 (*Heavily discounted bid*).
+  - [R028](cli/indicators/R/028): (*Identical bid prices*).
+  - [R030](cli/indicators/R/030): (*Late bid won*).
+  - [R048](cli/indicators/R/048): (*Heterogeneous supplier*).
+  - [R058](cli/indicators/R/058): (*Heavily discounted bid*).
   - `fixed_price_procurement_methods` configuration.
 
 ### Changed
@@ -28,6 +28,7 @@
 
 - {doc}`cli/indicators/index` command:
   - If the first quartile, third quartile and interquartile range are 0, skip the indicator to not flag 75% of cases.
+  - [R036](cli/indicators/R/036): Exclude contracting processes in which no valid bid has an amount.
 
 ## 0.0.5 (2023-06-14)
 

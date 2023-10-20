@@ -1,8 +1,9 @@
-{"ocid":"F","bids":{"details":[{"status":"disqualified","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
-{"ocid":"invited","bids":{"details":[{"status":"disqualified","value":{"amount":10,"currency":"USD"}},{"status":"invited","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
-{"ocid":"withdrawn","bids":{"details":[{"status":"disqualified","value":{"amount":10,"currency":"USD"}},{"status":"withdrawn","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
-{"ocid":"pending","bids":{"details":[{"status":"disqualified","value":{"amount":10,"currency":"USD"}},{"status":"pending","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
+{"ocid":"F","bids":{"details":[{"status":"disqualified","value":{"amount":1,"currency":"USD"}},{"status":"valid","value":{"amount":2,"currency":"USD"}}]},"awards":[{"status":"active"}]}
+{"ocid":"invited","bids":{"details":[{"status":"disqualified","value":{"amount":10,"currency":"USD"}},{"status":"valid","value":{"amount":20,"currency":"USD"}},{"status":"invited","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
+{"ocid":"withdrawn","bids":{"details":[{"status":"disqualified","value":{"amount":10,"currency":"USD"}},{"status":"valid","value":{"amount":20,"currency":"USD"}},{"status":"withdrawn","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
+{"ocid":"pending","bids":{"details":[{"status":"disqualified","value":{"amount":10,"currency":"USD"}},{"status":"valid","value":{"amount":20,"currency":"USD"}},{"status":"pending","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
 {"ocid":"valid","bids":{"details":[{"status":"disqualified","value":{"amount":10,"currency":"USD"}},{"status":"valid","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
 {"ocid":"equal","bids":{"details":[{"status":"disqualified","value":{"amount":1,"currency":"USD"}},{"status":"valid","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}]}
-{"ocid":"nonfinal","bids":{"details":[{"status":"disqualified","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"pending"}]}
-{"ocid":"cancelled tender","bids":{"details":[{"status":"disqualified","value":{"amount":1,"currency":"USD"}}]},"awards":[{"status":"active"}],"tender":{"status":"cancelled"}}
+{"ocid":"nonfinal","bids":{"details":[{"status":"disqualified","value":{"amount":1,"currency":"USD"}},{"status":"valid","value":{"amount":2,"currency":"USD"}}]},"awards":[{"status":"pending"}]}
+{"ocid":"cancelled tender","bids":{"details":[{"status":"disqualified","value":{"amount":1,"currency":"USD"}},{"status":"valid","value":{"amount":2,"currency":"USD"}}]},"awards":[{"status":"active"}],"tender":{"status":"cancelled"}}
+{"ocid":"missing amount","bids":{"details":[{"status":"disqualified","value":{"amount":1,"currency":"USD"}},{"status":"valid","value":{"currency":"USD"}}]},"awards":[{"status":"active"}]}

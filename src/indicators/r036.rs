@@ -26,6 +26,7 @@ impl Calculate for R036 {
 
         let mut lowest_amount = None;
         let mut lowest_amount_is_disqualified = false;
+        let mut has_valid_bid_with_amount = false;
 
         if let Some(Value::Array(awards)) = release.get("awards")
             // There are one or more complete awards.
@@ -52,6 +53,9 @@ impl Calculate for R036 {
                             lowest_amount = Some(amount);
                             lowest_amount_is_disqualified = status == "disqualified";
                         }
+                        if status == "valid" {
+                            has_valid_bid_with_amount = true;
+                        }
                     } else {
                         warn!("{} is not {:?}, skipping.", currency, item.currency);
                     }
@@ -59,7 +63,7 @@ impl Calculate for R036 {
             }
         }
 
-        if lowest_amount_is_disqualified {
+        if has_valid_bid_with_amount && lowest_amount_is_disqualified {
             set_result!(item, OCID, ocid, R036, 1.0);
         }
     }
