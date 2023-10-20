@@ -23,7 +23,7 @@ fn main() {
             r#"
 #[test]
 fn coverage_{name}() {{
-    check_coverage("coverage/{name}")
+    check_coverage("coverage", "{name}")
 }}
 "#
         )
@@ -39,7 +39,7 @@ fn coverage_{name}() {{
             r#"
 #[test]
 fn prepare_{name}() {{
-    check_prepare("prepare/{name}")
+    check_prepare("prepare", "{name}")
 }}
 "#
         )
@@ -64,7 +64,7 @@ fn prepare_{name}() {{
             r#"
 #[test]
 fn {function}() {{
-    check_indicators("indicators/{name}", Settings {{
+    check_indicators("indicators", "{name}", Settings {{
         {indicator}: Some({setting}),
         ..Default::default()
     }})
