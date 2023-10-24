@@ -7,6 +7,7 @@
 - {doc}`cli/prepare` command:
   - Add `[redactions]` section. Warn about zero-value bids.
   - Add `[corrections]` section.
+  - Add `[modifications.split]` section.
 - {doc}`cli/indicators/index` command:
   - [R028](cli/indicators/R/028): (*Identical bid prices*).
   - [R030](cli/indicators/R/030): (*Late bid won*).

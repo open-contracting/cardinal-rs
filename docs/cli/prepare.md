@@ -237,6 +237,25 @@ InTreatment = pending
 Need to re-map other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
 :::
 
+### Standardize unconstrained values
+
+Text fields with non-standardized values can be standardized to ease the configuration of {doc}`indicators<indicators/index>`. For example, if a value is formatted as `{mutual category} - {individual detail}`, you can split the value on the `-` separator and keep the `{mutual category}` prefix.
+
+To standardize a value by splitting it on a separator and keeping the prefix, add a `[modifications.split]` section with a `procurement_method_details` property to your {doc}`../topics/settings`. For example:
+
+```ini
+[modifications.split]
+procurement_method_details = -
+```
+
+This configuration supports standardizing values in:
+
+- `/tender/procurementMethodDetails`
+
+:::{tip}
+Need to standardize other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
+:::
+
 ### Replace incorrect award statuses
 
 In rare cases, it is appropriate to change an award's status according to its contracts' statuses.
