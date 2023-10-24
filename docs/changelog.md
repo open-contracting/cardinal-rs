@@ -18,6 +18,7 @@
 
 - {doc}`cli/prepare` command:
   - Warn about invalid default statuses.
+  - Use snake case (`[codelists.bid_status]`) in the settings file, instead of a mix of snake case and camel case (`[codelists.BidStatus]`).
   - Normalize `/awards[]/id` and `/contracts[]/awardID`.
 - {doc}`cli/indicators/index` command:
   - [R024](cli/indicators/R/024): Flag the winner and second-lowest bidder. Add `--map` key.

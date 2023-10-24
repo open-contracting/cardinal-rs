@@ -221,13 +221,13 @@ This configuration supports redacting values from:
 
 The command supports substituting codes in these codelist fields:
 
-- `/bids/details[]/status`, by adding a `[codelists.BidStatus]` section
-- `/awards[]/status`, by adding a `[codelists.AwardStatus]` section
+- `/bids/details[]/status`, by adding a `[codelists.bid_status]` section
+- `/awards[]/status`, by adding a `[codelists.award_status]` section
 
 To replace a code, add a property under the relevant section, in which the code to replace is the name, and its replacement is the value. For example:
 
 ```ini
-[codelists.BidStatus]
+[codelists.bid_status]
 Qualified = valid
 Disqualified = disqualified
 InTreatment = pending

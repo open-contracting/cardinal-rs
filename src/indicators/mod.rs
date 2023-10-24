@@ -20,6 +20,7 @@ use serde_json::{Map, Value};
 // Settings.
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
+#[serde(deny_unknown_fields, rename_all(deserialize = "snake_case"))]
 pub enum Codelist {
     BidStatus,
     AwardStatus,

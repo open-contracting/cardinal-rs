@@ -67,10 +67,10 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 [corrections]
 ; award_status_by_contract_status = true
 
-[codelists.BidStatus]
+[codelists.bid_status]
 ; qualified = valid
 
-[codelists.AwardStatus]
+[codelists.award_status]
 ; Active = active
 
 ; `indicators` command

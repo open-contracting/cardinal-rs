@@ -463,9 +463,9 @@ msgstr ""
 "El comando permite sustituir códigos en estos campos de la lista de códigos:"
 
 #: ../../cli/prepare.md:224
-msgid "`/bids/details[]/status`, by adding a `[codelists.BidStatus]` section"
+msgid "`/bids/details[]/status`, by adding a `[codelists.bid_status]` section"
 msgstr ""
-"`/bids/details[]/status`, agregando una sección `[codelists.BidStatus]` "
+"`/bids/details[]/status`, agregando una sección `[codelists.bid_status]` "
 
 #: ../../cli/prepare.md:225
 msgid "`/awards[]/status`, by adding a `[codelists.AwardStatus]` section"
