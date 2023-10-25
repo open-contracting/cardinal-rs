@@ -26,16 +26,6 @@ pub enum Codelist {
     AwardStatus,
 }
 
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize, Default)]
-#[serde(deny_unknown_fields, rename_all(deserialize = "snake_case"))]
-pub enum Modifications {
-    #[default]
-    None,
-    Split {
-        procurement_method_details: Option<String>,
-    },
-}
-
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Defaults {
@@ -56,6 +46,18 @@ pub struct Redactions {
 #[serde(deny_unknown_fields)]
 pub struct Corrections {
     pub award_status_by_contract_status: Option<bool>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ModificationsMove {
+    pub auctions: Option<bool>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ModificationsSplit {
+    pub procurement_method_details: Option<String>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -106,7 +108,8 @@ pub struct Settings {
     pub defaults: Option<Defaults>,
     pub redactions: Option<Redactions>,
     pub corrections: Option<Corrections>,
-    pub modifications: Option<Modifications>,
+    pub modifications_move: Option<ModificationsMove>,
+    pub modifications_split: Option<ModificationsSplit>,
     // indicators command.
     pub currency: Option<String>,
     pub fixed_price_procurement_methods: Option<String>,
