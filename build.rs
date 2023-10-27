@@ -54,7 +54,11 @@ fn prepare_{name}() {{
         let indicator = parts.next().unwrap();
 
         let setting = if let Some(field) = parts.next() && let Some(value) = parts.next() {
-            format!("indicators::{indicator} {{ {field}: Some({value}), ..Default::default() }}")
+            if value.as_bytes().iter().all(u8::is_ascii_digit) {
+                format!("indicators::{indicator} {{ {field}: Some({value}), ..Default::default() }}")
+            } else {
+                format!("indicators::{indicator} {{ {field}: Some(String::from(\"{value}\")), ..Default::default() }}")
+            }
         } else {
             "Default::default()".into()
         };
