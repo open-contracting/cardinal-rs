@@ -43,6 +43,14 @@ macro_rules! add_indicators {
     }
 }
 
+fn parse_pipe_separated_value(value: Option<String>) -> HashSet<String> {
+    value
+        .unwrap_or_default()
+        .split_terminator('|')
+        .map(str::to_string)
+        .collect()
+}
+
 ///
 /// # Errors
 ///
@@ -304,13 +312,7 @@ impl Indicators {
     }
 
     fn parse_fixed_price_procurement_methods(settings: &Settings) -> HashSet<String> {
-        settings
-            .fixed_price_procurement_methods
-            .clone()
-            .unwrap_or_default()
-            .split('|')
-            .map(str::to_string)
-            .collect()
+        parse_pipe_separated_value(settings.fixed_price_procurement_methods.clone())
     }
 
     fn is_cancelled_contracting_process(release: &Map<String, Value>) -> bool {
@@ -324,14 +326,11 @@ impl Indicators {
         }
     }
 
-    fn is_fixed_price_procurement_method(
-        release: &Map<String, Value>,
-        fixed_price_procurement_methods: &HashSet<String>,
-    ) -> bool {
-        if !fixed_price_procurement_methods.is_empty()
+    fn matches_procurement_method_details(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
+        if !set.is_empty()
             && let Some(Value::Object(tender)) = release.get("tender")
             && let Some(Value::String(procurement_method_details)) = tender.get("procurementMethodDetails")
-            && fixed_price_procurement_methods.contains(procurement_method_details)
+            && set.contains(procurement_method_details)
         {
             true
         } else {
@@ -460,15 +459,10 @@ impl Prepare {
         let mut redact_amount = redactions
             .amount
             .unwrap_or_default()
-            .split('|')
+            .split_terminator('|')
             .filter_map(|s| s.parse::<f64>().ok())
             .collect::<Vec<_>>();
-        let redact_organization_id = redactions
-            .organization_id
-            .unwrap_or_default()
-            .split('|')
-            .map(str::to_string)
-            .collect::<HashSet<_>>();
+        let redact_organization_id = parse_pipe_separated_value(redactions.organization_id);
         // https://doc.rust-lang.org/std/vec/struct.Vec.html#method.sort_by
         redact_amount.sort_by(|a, b| a.partial_cmp(b).unwrap());
 

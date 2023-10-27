@@ -46,7 +46,7 @@ impl Calculate for SecondLowestBidRatio {
     }
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
-        if Indicators::is_fixed_price_procurement_method(release, &self.fixed_price_procurement_methods) {
+        if Indicators::matches_procurement_method_details(release, &self.fixed_price_procurement_methods) {
             return;
         }
 
