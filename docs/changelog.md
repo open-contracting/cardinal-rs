@@ -30,6 +30,7 @@
 
 - {doc}`cli/indicators/index` command:
   - If the first quartile, third quartile and interquartile range are 0, skip the indicator to not flag 75% of cases.
+  - [R024](cli/indicators/R/024): Use the lowest bid submitted by the winner as the winning bid.
   - [R036](cli/indicators/R/036): Exclude contracting processes in which no valid bid has an amount.
 
 ## 0.0.5 (2023-06-14)

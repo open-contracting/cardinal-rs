@@ -76,8 +76,16 @@ impl Calculate for SecondLowestBidRatio {
                     )
                 ) {
                     if supplier_id == tenderer_id {
-                        winner = Some(tenderer_id);
-                        winner_amount = Some(amount);
+                        // If the winner submitted multiple bids, take the lowest bid.
+                        if let Some(other) = winner_amount {
+                            if amount < other {
+                                winner = Some(tenderer_id);
+                                winner_amount = Some(amount);
+                            }
+                        } else {
+                            winner = Some(tenderer_id);
+                            winner_amount = Some(amount);
+                        }
                     } else if let Some(other) = lowest_non_winner_amount {
                         if amount < other {
                             lowest_non_winner = Some(tenderer_id);
