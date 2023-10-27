@@ -58,6 +58,7 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
     let content = b"\
 ; currency = USD
 ; fixed_price_procurement_methods = Random Selection
+; price_comparison_procurement_methods = Reverse Auction
 
 ; `prepare` command
 ;
@@ -231,9 +232,7 @@ impl Indicators {
                     && !Self::is_cancelled_contracting_process(&release)
                 {
                     for indicator in &indicators {
-                        if indicator.include(&release) {
-                            indicator.fold(&mut item, &release, ocid);
-                        }
+                        indicator.fold(&mut item, &release, ocid);
                     }
                 }
 
@@ -311,10 +310,6 @@ impl Indicators {
         None
     }
 
-    fn parse_fixed_price_procurement_methods(settings: &Settings) -> HashSet<String> {
-        parse_pipe_separated_value(settings.fixed_price_procurement_methods.clone())
-    }
-
     fn is_cancelled_contracting_process(release: &Map<String, Value>) -> bool {
         if let Some(Value::Object(tender)) = release.get("tender")
             && let Some(Value::String(status)) = tender.get("status")
@@ -335,6 +330,14 @@ impl Indicators {
             true
         } else {
             false
+        }
+    }
+
+    fn not_matches_procurement_method_details(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
+        if set.is_empty() {
+            true
+        } else {
+            Self::matches_procurement_method_details(release, set)
         }
     }
 

@@ -193,6 +193,12 @@ fixed_price_procurement_methods = Random Selection|Sorteo de Obras
 
 Otherwise, price-based indicators will return false positives.
 
+Alternatively, or in addition to excluding procedures, you can include procedures, by adding to the top of your settings file, as a pipe-separated list, for example:
+
+```ini
+price_comparison_procurement_methods = Reverse Auction
+```
+
 ## Glossary
 
 % Do not add terms to the glossary that are not used in the documentation!

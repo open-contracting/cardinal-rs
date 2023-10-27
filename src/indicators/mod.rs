@@ -113,6 +113,7 @@ pub struct Settings {
     // indicators command.
     pub currency: Option<String>,
     pub fixed_price_procurement_methods: Option<String>,
+    pub price_comparison_procurement_methods: Option<String>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
     pub R028: Option<Empty>,
@@ -212,11 +213,6 @@ pub trait Calculate {
     fn new(settings: &mut Settings) -> Self
     where
         Self: Sized;
-
-    #[allow(unused_variables)]
-    fn include(&self, release: &Map<String, Value>) -> bool {
-        true
-    }
 
     #[allow(unused_variables)]
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {}

@@ -5,21 +5,30 @@ use ordered_float::OrderedFloat;
 use serde_json::{Map, Value};
 
 use crate::indicators::{reduce_map, set_result, set_tenderer_map, Calculate, Indicators, Settings};
+use crate::parse_pipe_separated_value;
 
 #[derive(Default)]
 pub struct R028 {
     fixed_price_procurement_methods: HashSet<String>,
+    price_comparison_procurement_methods: HashSet<String>,
 }
 
 impl Calculate for R028 {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            fixed_price_procurement_methods: Indicators::parse_fixed_price_procurement_methods(settings),
+            fixed_price_procurement_methods: parse_pipe_separated_value(
+                settings.fixed_price_procurement_methods.clone(),
+            ),
+            price_comparison_procurement_methods: parse_pipe_separated_value(
+                settings.price_comparison_procurement_methods.clone(),
+            ),
         }
     }
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
-        if Indicators::matches_procurement_method_details(release, &self.fixed_price_procurement_methods) {
+        if Indicators::matches_procurement_method_details(release, &self.fixed_price_procurement_methods)
+            || Indicators::not_matches_procurement_method_details(release, &self.price_comparison_procurement_methods)
+        {
             return;
         }
 

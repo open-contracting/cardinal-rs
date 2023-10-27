@@ -70,6 +70,7 @@ fn prepare_{name}() {{
 fn {function}() {{
     check_indicators("indicators/{name}", Settings {{
         {indicator}: Some({setting}),
+        price_comparison_procurement_methods: Some(String::from("R024|R028|R036|R058")),
         ..Default::default()
     }})
 }}

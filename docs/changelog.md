@@ -14,6 +14,7 @@
   - [R048](cli/indicators/R/048): (*Heterogeneous supplier*).
   - [R058](cli/indicators/R/058): (*Heavily discounted bid*).
   - `fixed_price_procurement_methods` configuration.
+  - `price_comparison_procurement_methods` configuration.
 
 ### Changed
 

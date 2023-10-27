@@ -4,6 +4,7 @@ use std::collections::HashSet;
 use serde_json::{Map, Value};
 
 use crate::indicators::{reduce_map, set_tenderer_map, Calculate, Indicators, Settings};
+use crate::parse_pipe_separated_value;
 
 #[derive(Default)]
 pub struct Tenderers {}
@@ -11,6 +12,7 @@ pub struct Tenderers {}
 #[derive(Default)]
 pub struct SecondLowestBidRatio {
     fixed_price_procurement_methods: HashSet<String>,
+    price_comparison_procurement_methods: HashSet<String>,
     currency: Option<String>,
 }
 
@@ -40,13 +42,20 @@ impl Calculate for Tenderers {
 impl Calculate for SecondLowestBidRatio {
     fn new(settings: &mut Settings) -> Self {
         Self {
-            fixed_price_procurement_methods: Indicators::parse_fixed_price_procurement_methods(settings),
+            fixed_price_procurement_methods: parse_pipe_separated_value(
+                settings.fixed_price_procurement_methods.clone(),
+            ),
+            price_comparison_procurement_methods: parse_pipe_separated_value(
+                settings.price_comparison_procurement_methods.clone(),
+            ),
             currency: settings.currency.clone(),
         }
     }
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
-        if Indicators::matches_procurement_method_details(release, &self.fixed_price_procurement_methods) {
+        if Indicators::matches_procurement_method_details(release, &self.fixed_price_procurement_methods)
+            || Indicators::not_matches_procurement_method_details(release, &self.price_comparison_procurement_methods)
+        {
             return;
         }
 
