@@ -223,7 +223,9 @@ impl Indicators {
                     && !Self::is_cancelled_contracting_process(&release)
                 {
                     for indicator in &indicators {
-                        indicator.fold(&mut item, &release, ocid);
+                        if indicator.include(&release) {
+                            indicator.fold(&mut item, &release, ocid);
+                        }
                     }
                 }
 

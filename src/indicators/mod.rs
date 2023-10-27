@@ -214,6 +214,11 @@ pub trait Calculate {
         Self: Sized;
 
     #[allow(unused_variables)]
+    fn include(&self, release: &Map<String, Value>) -> bool {
+        true
+    }
+
+    #[allow(unused_variables)]
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {}
 
     #[allow(unused_variables)]
