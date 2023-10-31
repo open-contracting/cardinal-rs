@@ -185,15 +185,17 @@ Now, the `indicators` command won't run this indicator.
 (global-configuration)=
 ### Global configuration
 
-If there are procedures (indicated by `/tender/procurementMethodDetails`) in which buyers predetermine prices, add to the top of your settings file, as a pipe-separated list, for example:
+Some indicators compares bid prices. However, for some procedures, it is inappropriate to compare bid prices; for example, if the buyer predetermines the price, then the indicator for prices close to the winning bid will return a false positive.
+
+Procedures can be included or excluded based on the value of `/tender/procurementMethodDetails`.
+
+To exclude procedures, add to the top of your settings file, as a pipe-separated list, for example:
 
 ```ini
-fixed_price_procurement_methods = Random Selection|Sorteo de Obras
+no_price_comparison_procurement_methods = Random Selection|Sorteo de Obras
 ```
 
-Otherwise, price-based indicators will return false positives.
-
-Alternatively, or in addition to excluding procedures, you can include procedures, by adding to the top of your settings file, as a pipe-separated list, for example:
+To include procedures, add to the top of your settings file, as a pipe-separated list, for example:
 
 ```ini
 price_comparison_procurement_methods = Reverse Auction

@@ -57,7 +57,7 @@ fn parse_pipe_separated_value(value: Option<String>) -> HashSet<String> {
 pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
     let content = b"\
 ; currency = USD
-; fixed_price_procurement_methods = Random Selection
+; no_price_comparison_procurement_methods = Random Selection
 ; price_comparison_procurement_methods = Reverse Auction
 
 ; `prepare` command

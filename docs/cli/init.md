@@ -39,7 +39,7 @@ Preview the content of the settings file:
 ```console
 $ ocdscardinal init -
 ; currency = USD
-; fixed_price_procurement_methods = Random Selection
+; no_price_comparison_procurement_methods = Random Selection
 ; price_comparison_procurement_methods = Reverse Auction
 
 ; `prepare` command

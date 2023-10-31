@@ -112,7 +112,7 @@ pub struct Settings {
     pub modifications_split: Option<ModificationsSplit>,
     // indicators command.
     pub currency: Option<String>,
-    pub fixed_price_procurement_methods: Option<String>,
+    pub no_price_comparison_procurement_methods: Option<String>,
     pub price_comparison_procurement_methods: Option<String>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
