@@ -14,10 +14,10 @@ jobs:
           key: ${{ matrix.os }}
       - id: changed-files
         uses: tj-actions/changed-files@v42
-      - uses: pre-commit/action@v3.0.0
+      - uses: pre-commit/action@v3.0.1
         with:
           extra_args: cargo-check --files ${{ steps.changed-files.outputs.all_changed_files }}
-      - uses: pre-commit/action@v3.0.0
+      - uses: pre-commit/action@v3.0.1
         with:
           extra_args: cargo-clippy --files ${{ steps.changed-files.outputs.all_changed_files }}
       - uses: taiki-e/install-action@cargo-udeps
