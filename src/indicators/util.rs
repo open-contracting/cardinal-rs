@@ -79,11 +79,11 @@ impl Calculate for SecondLowestBidRatio {
             for (tenderer_id, amount, currency) in Indicators::get_tenderer_and_value_of_valid_bids(details) {
                 // Exclude missing currencies and different currencies than the selected currency. If no currency
                 // is selected (`self.currency`), use the first observed currency.
-                if currency == item.currency.get_or_insert_with(||
-                    self.currency.as_ref().map_or_else(||
-                        currency.clone(), Clone::clone
-                    )
-                ) {
+                if currency
+                    == item
+                        .currency
+                        .get_or_insert_with(|| self.currency.as_ref().map_or_else(|| currency.clone(), Clone::clone))
+                {
                     if supplier_id == tenderer_id {
                         // If the winner submitted multiple bids, take the lowest bid.
                         if let Some(other) = winner_amount {
@@ -121,10 +121,8 @@ impl Calculate for SecondLowestBidRatio {
                 ocid.to_owned(),
                 (lowest_non_winner_amount - winner_amount) / winner_amount,
             );
-            item.winner_and_lowest_non_winner.insert(
-                ocid.to_owned(),
-                [winner.clone(), lowest_non_winner.clone()],
-            );
+            item.winner_and_lowest_non_winner
+                .insert(ocid.to_owned(), [winner.clone(), lowest_non_winner.clone()]);
         }
     }
 

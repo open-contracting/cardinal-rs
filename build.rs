@@ -53,7 +53,9 @@ fn prepare_{name}() {{
         let mut parts = name.splitn(3, '-');
         let indicator = parts.next().unwrap();
 
-        let setting = if let Some(field) = parts.next() && let Some(value) = parts.next() {
+        let setting = if let Some(field) = parts.next()
+            && let Some(value) = parts.next()
+        {
             if value.as_bytes().iter().all(u8::is_ascii_digit) {
                 format!("indicators::{indicator} {{ {field}: Some({value}), ..Default::default() }}")
             } else {

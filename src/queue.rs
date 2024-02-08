@@ -128,7 +128,7 @@ impl<W: Write> Drop for Handle<W> {
         inner.get(self.index).closed = true;
 
         // Write any closed buffers at the front of the queue.
-        while inner.pending.get(0).map_or(false, Output::is_closed) {
+        while inner.pending.front().map_or(false, Output::is_closed) {
             inner.popped += 1;
             let output = inner.pending.pop_front().unwrap();
             // https://github.com/BurntSushi/termcolor/blob/7f9c0307d774e04981312a2882e747d19ffdd9b2/src/lib.rs#L1023

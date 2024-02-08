@@ -41,7 +41,8 @@ impl Calculate for R048 {
                         if let Some(Value::Object(classification)) = item.get("classification")
                             && let Some(Value::String(classification_id)) = classification.get("id")
                         {
-                            let (count, codes) = accumulator.r048_classifications.entry(supplier_id.clone()).or_default();
+                            let (count, codes) =
+                                accumulator.r048_classifications.entry(supplier_id.clone()).or_default();
                             if !observed_supplier_ids.contains(supplier_id) {
                                 *count += 1;
                                 observed_supplier_ids.insert(supplier_id);

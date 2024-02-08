@@ -41,10 +41,15 @@ impl Calculate for R028 {
                 && let Some(Value::String(currency)) = value.get("currency")
                 && let Some(amount) = amount.as_f64()
             {
-                let ids = tenderers.iter().filter_map(|tenderer| tenderer.get("id")?.as_str()).collect::<HashSet<_>>();
+                let ids = tenderers
+                    .iter()
+                    .filter_map(|tenderer| tenderer.get("id")?.as_str())
+                    .collect::<HashSet<_>>();
                 if !ids.is_empty() {
                     let price = (OrderedFloat(amount), currency);
-                    if let Some(other) = prices.get(&price) && ids != *other {
+                    if let Some(other) = prices.get(&price)
+                        && ids != *other
+                    {
                         set_result!(item, OCID, ocid, R028, 1.0);
                         for id in chain!(&ids, other) {
                             set_result!(item, Tenderer, *id, R028, 1.0);

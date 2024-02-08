@@ -18,9 +18,9 @@ config = {version = "0.14", features = ["ini"], default-features = false }
 csv = "1.0"
 human-panic = "1.0"
 indexmap = { version = "2.0", features = ["serde"] }
-itertools = "0.11"
+itertools = "0.12"
 log = "0.4"
-ordered-float = "3.0"
+ordered-float = "4.0"
 pretty_env_logger = "0.5"
 rayon = "1.0"
 readonly = "0.2"
@@ -38,7 +38,7 @@ criterion = { version = "0.5", features = ["html_reports", "real_blackbox"] }
 criterion-macro = "0.4"
 ctor = "0.2"
 pretty_assertions = "1.0"
-predicates = "2.0"
+predicates = "3.0"
 rstest = "0.18"
 tempfile = "3.0"
 trycmd = { version = "0.14", features = ["color-auto", "diff"], default-features = false }

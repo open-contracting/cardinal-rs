@@ -48,11 +48,11 @@ impl Calculate for R036 {
                     && let Some(Value::String(currency)) = value.get("currency")
                     && let Some(amount) = amount.as_f64()
                 {
-                    if currency == item.currency.get_or_insert_with(||
-                        self.currency.as_ref().map_or_else(||
-                            currency.clone(), Clone::clone
-                        )
-                    ) {
+                    if currency
+                        == item.currency.get_or_insert_with(|| {
+                            self.currency.as_ref().map_or_else(|| currency.clone(), Clone::clone)
+                        })
+                    {
                         if let Some(other) = lowest_amount {
                             if amount < other {
                                 lowest_amount = Some(amount);
