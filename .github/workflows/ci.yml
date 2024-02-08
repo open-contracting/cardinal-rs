@@ -18,7 +18,7 @@ jobs:
       # https://github.com/Swatinem/rust-cache/issues/93#issuecomment-1321064841
       - run: cargo update
       - uses: taiki-e/install-action@cargo-llvm-cov
-      - run: cargo llvm-cov --lcov --output-path lcov.info
+      - run: cargo llvm-cov --lcov --output-path lcov.info --no-cfg-coverage-nightly
       - if: matrix.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@master
         with:
