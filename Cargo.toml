@@ -14,7 +14,7 @@ keywords = ["cli", "json"]
 [dependencies]
 anyhow = "1.0"
 clap = { version = "4.0", features = ["derive", "wrap_help"] }
-config = {version = "0.13", features = ["ini"], default-features = false }
+config = {version = "0.14", features = ["ini"], default-features = false }
 csv = "1.0"
 human-panic = "1.0"
 indexmap = { version = "2.0", features = ["serde"] }
