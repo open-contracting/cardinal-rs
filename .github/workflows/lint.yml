@@ -6,8 +6,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@nightly
+      - uses: dtolnay/rust-toolchain@master
         with:
+          # Need feature(stdsimd) until config-rs can be upgraded.
+          # https://github.com/mehcode/config-rs/issues/531
+          # https://github.com/rust-lang/rust/issues/27731#event-11707724027
+          toolchain: nightly-2024-01-01
           components: clippy
       - uses: Swatinem/rust-cache@v2
         with:

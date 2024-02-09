@@ -11,10 +11,12 @@ jobs:
       # Prevent Git from changing LF to CRLF, which affects test fixtures.
       - run: git config --global core.autocrlf false
       - uses: actions/checkout@v4
-      # Need feature(stdsimd) until config-rs can be upgraded.
-      # https://github.com/mehcode/config-rs/issues/531
-      # https://github.com/rust-lang/rust/issues/27731#event-11707724027
-      - uses: dtolnay/rust-toolchain@nightly-2024-01-01
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          # Need feature(stdsimd) until config-rs can be upgraded.
+          # https://github.com/mehcode/config-rs/issues/531
+          # https://github.com/rust-lang/rust/issues/27731#event-11707724027
+          toolchain: nightly-2024-01-01
       - uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.os }}
