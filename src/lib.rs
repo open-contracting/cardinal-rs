@@ -325,19 +325,10 @@ impl Indicators {
         if !set.is_empty()
             && let Some(Value::Object(tender)) = release.get("tender")
             && let Some(Value::String(procurement_method_details)) = tender.get("procurementMethodDetails")
-            && set.contains(procurement_method_details)
         {
-            true
+            set.contains(procurement_method_details)
         } else {
             false
-        }
-    }
-
-    fn not_matches_procurement_method_details(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
-        if set.is_empty() {
-            true
-        } else {
-            Self::matches_procurement_method_details(release, set)
         }
     }
 

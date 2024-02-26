@@ -29,7 +29,7 @@ impl Calculate for R058 {
 
         set_meta!(item, R058, "upper_fence", upper_fence);
 
-        // The percentage difference is non-negative.
+        // The percentage difference is always non-negative.
         // Skip if 75% of contracting processes have no percentage difference; otherwise, 75% are flagged.
         if upper_fence > 0.0 {
             for (ocid, ratio) in &item.second_lowest_bid_ratios {

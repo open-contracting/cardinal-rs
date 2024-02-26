@@ -28,7 +28,7 @@ impl Calculate for R036 {
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
         if Indicators::matches_procurement_method_details(release, &self.no_price_comparison_procurement_methods)
-            && Indicators::not_matches_procurement_method_details(release, &self.price_comparison_procurement_methods)
+            && !Indicators::matches_procurement_method_details(release, &self.price_comparison_procurement_methods)
         {
             return;
         }
