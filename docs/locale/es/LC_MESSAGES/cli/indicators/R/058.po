@@ -48,7 +48,7 @@ msgid ""
 msgstr ""
 "Para cada proceso de contratación, la **diferencia** es calculada como "
 "$(segundoMenorValorDeOfertaVálido- ValorOfertaGanadora) "
-"\\overValorOfertaGanadora$."
+"\\over ValorOfertaGanadora$."
 
 #: ../../cli/indicators/R/058.md:13
 msgid ""
