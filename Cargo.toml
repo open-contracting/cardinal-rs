@@ -13,6 +13,7 @@ keywords = ["cli", "json"]
 
 [dependencies]
 anyhow = "1.0"
+chrono = "0.4"
 clap = { version = "4.0", features = ["derive", "wrap_help"] }
 # https://github.com/mehcode/config-rs/issues/531
 config = {version = "0.13", features = ["ini"], default-features = false }

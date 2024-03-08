@@ -1,0 +1,5 @@
+{"ocid":"F","tender":{"tenderPeriod":{"startDate":"2020-08-03T18:00:00-05:00","endDate":"2020-08-04T18:00:00-05:00"},"procurementMethod":"open","procurementMethodDetails":"Open"}}
+{"ocid":"adequate tender period","tender":{"tenderPeriod":{"startDate":"2020-08-03T18:00:00-05:00","endDate":"2020-08-19T18:00:00-05:00"},"procurementMethod":"open","procurementMethodDetails":"Open"}}
+{"ocid":"no tender period start date","tender":{"tenderPeriod":{"startDate":"2020-08-03T18:00:00-05:00"},"procurementMethod":"open","procurementMethodDetails":"Open"}}
+{"ocid":"direct procurement method","tender":{"tenderPeriod":{"startDate":"2020-08-03T18:00:00-05:00","endDate":"2020-08-19T18:00:00-05:00"},"procurementMethod":"direct","procurementMethodDetails":"Direct"}}
+{"ocid":"no procurement method","tender":{"tenderPeriod":{"startDate":"2020-08-03T18:00:00-05:00","endDate":"2020-08-19T18:00:00-05:00"}}}

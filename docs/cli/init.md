@@ -71,6 +71,9 @@ $ ocdscardinal init -
 ; Read the documentation at:
 ; https://cardinal.readthedocs.io/en/latest/cli/indicators/
 
+[R003]
+; threshold = 15
+
 [R024]
 ; threshold = 0.05
 
