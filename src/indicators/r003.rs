@@ -5,7 +5,7 @@ use crate::indicators::{set_result, Calculate, Indicators, Settings};
 
 #[derive(Default)]
 pub struct R003 {
-    threshold: usize,
+    threshold: i64,
 }
 
 impl Calculate for R003 {
@@ -24,14 +24,12 @@ impl Calculate for R003 {
             && let Some(Value::Object(tender_period)) = tender.get("tenderPeriod")
             && let Some(Value::String(end_date)) = tender_period.get("endDate")
             && let Some(Value::String(start_date)) = tender_period.get("startDate")
+            && let Ok(start_date) = DateTime::parse_from_rfc3339(start_date)
+            && let Ok(end_date) = DateTime::parse_from_rfc3339(end_date)
+            && procurement_method == "open"
+            && (end_date - start_date).num_days() < self.threshold
         {
-            let start_date = DateTime::parse_from_rfc3339(start_date).unwrap();
-            let end_date = DateTime::parse_from_rfc3339(end_date).unwrap();
-            if procurement_method == "open"
-                && (end_date - start_date).num_days() < self.threshold.try_into().unwrap_or(15)
-            {
-                set_result!(item, OCID, ocid, R003, 1.0);
-            }
+            set_result!(item, OCID, ocid, R003, 1.0);
         }
     }
 }
