@@ -57,7 +57,7 @@ enum Commands {
     },
     /// Calculate procurement indicators from OCDS compiled releases in a line-delimited JSON file
     ///
-    /// The result is a JSON object, in which the keys are one of "OCID", "Buyer", "`ProcuringEntity`"
+    /// The result is a JSON object, in which the keys are one of "OCID", "Buyer", "ProcuringEntity"
     /// or "Tenderer". The values are JSON objects, in which the keys are identifiers (e.g. ocid)
     /// and values are results (of any indicators that returned a result).
     ///
