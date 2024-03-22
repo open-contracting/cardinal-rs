@@ -37,5 +37,7 @@ repos:
           # https://github.com/seanmonstar/pretty-env-logger/pull/49
           # https://github.com/eminence/terminal-size/pull/49
           "-Aclippy::multiple-crate-versions",
+          # Reports false positives
+          "-Aclippy::doc-markdown",
         ]
         pass_filenames: false
