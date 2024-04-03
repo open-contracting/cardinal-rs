@@ -31,7 +31,7 @@ pub enum Codelist {
 #[serde(deny_unknown_fields, rename_all(deserialize = "snake_case"))]
 pub enum R003Section {
     Default,
-    ProcurementMethodDetails,
+    ProcurementMethodDetailsThresholds,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -86,12 +86,6 @@ pub struct IntegerThreshold {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct R003 {
-    threshold: Option<i64>, // ratio
-}
-
-#[derive(Clone, Debug, Default, Deserialize)]
-#[serde(deny_unknown_fields)]
 pub struct R025 {
     percentile: Option<usize>,
     threshold: Option<f64>, // ratio
@@ -128,7 +122,7 @@ pub struct Settings {
     pub currency: Option<String>,
     pub no_price_comparison_procurement_methods: Option<String>,
     pub price_comparison_procurement_methods: Option<String>,
-    pub R003: Option<R003>,
+    pub R003: Option<HashMap<R003Section, HashMap<String, i64>>>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
     pub R028: Option<Empty>,
