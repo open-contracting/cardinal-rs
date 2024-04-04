@@ -9,12 +9,14 @@
   - Add `[corrections]` section.
   - Add `[modifications_split]` section.
 - {doc}`cli/indicators/index` command:
+  - [R003](cli/indicators/R/003): (*Short notice to bidders to submit expressions of interest or bids*).
   - [R028](cli/indicators/R/028): (*Identical bid prices*).
   - [R030](cli/indicators/R/030): (*Late bid won*).
   - [R048](cli/indicators/R/048): (*Heterogeneous supplier*).
   - [R058](cli/indicators/R/058): (*Heavily discounted bid*).
   - `no_price_comparison_procurement_methods` configuration.
   - `price_comparison_procurement_methods` configuration.
+
 
 ### Changed
 

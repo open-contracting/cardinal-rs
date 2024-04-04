@@ -281,6 +281,9 @@ R/index
 * - Code
   - Title
   - Description
+* - [R003](R/003)
+  - [Short notice to bidders to submit expressions of interest or bids](R/003)
+  - The bid period is less than expected per the procurement method used.
 * - [R024](R/024)
   - [Price close to winning bid](R/024)
   - The percentage difference between the winning bid and the second-lowest valid bid is a low outlier.
