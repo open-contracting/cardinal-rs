@@ -17,7 +17,10 @@ impl Calculate for R003 {
     fn new(settings: &mut Settings) -> Self {
         let default_threashold: HashMap<String, i64> = HashMap::from([(String::from("threshold"), 15)]);
         let default_procurement_methods = HashMap::new();
-        let r003_settings = std::mem::take(&mut settings.R003).unwrap_or_default();
+        let r003_settings = std::mem::take(&mut settings.R003)
+            .unwrap_or_default()
+            .threasholds
+            .unwrap_or_default();
         let default = r003_settings.get(&R003Section::Default).unwrap_or(&default_threashold)["threshold"];
         let procurement_methods_details_thresholds = r003_settings
             .get(&R003Section::ProcurementMethodDetailsThresholds)
