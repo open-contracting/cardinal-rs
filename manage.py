@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 import csv
 import datetime
 import json
@@ -9,20 +10,10 @@ from collections import defaultdict
 from pathlib import Path
 from textwrap import dedent
 
-import click
-
 directory = Path(__file__).resolve().parent
 
 
-@click.group()
-def cli():
-    pass
-
-
-@cli.command()
-@click.argument("infile", type=click.Path(exists=True, dir_okay=False))
-@click.argument("outfile", type=click.Path(dir_okay=False))
-def json_to_csv(infile, outfile):
+def json_to_csv(args):
     fieldnames = ["ocid", "subject", "code", "result", "buyer_id", "procuring_entity_id", "tenderer_id", "created_at"]
     subject_code_to_map_id = {
         "Buyer": {"R038": "ocid_buyer_r038"},
@@ -38,16 +29,16 @@ def json_to_csv(infile, outfile):
     }
     created_at = datetime.datetime.now(tz=datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    exists = os.path.exists(outfile)
+    exists = os.path.exists(args.outfile)
 
     seen = set()
     if exists:
-        with open(outfile) as f:
+        with open(args.outfile) as f:
             reader = csv.DictReader(f, fieldnames=fieldnames)
             for row in reader:
                 seen.add((row["ocid"], row["code"], row["buyer_id"], row["procuring_entity_id"], row["tenderer_id"]))
 
-    with open(infile) as f:
+    with open(args.infile) as f:
         data = json.load(f)
 
     identifier_to_ocid = defaultdict(lambda: defaultdict(list))
@@ -98,23 +89,21 @@ def json_to_csv(infile, outfile):
                             }
                         )
 
-    click.echo(f"Writing {len(rows)} rows")
-    with open(outfile, "a") as f:
+    print(f"Writing {len(rows)} rows")
+    with open(args.outfile, "a") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
         if not exists:
             writer.writeheader()
         writer.writerows(rows)
 
 
-@cli.command()
-@click.argument("code")
-def add_indicator(code):
+def add_indicator(args):
     """
     Add boilerplate for a new indicator.
     """
 
-    lower = code.lower()
-    upper = code.upper()
+    lower = args.code.lower()
+    upper = args.code.upper()
     letter, number = upper[0], upper[1:]
     templates = directory / "docs" / "contributing" / "templates"
 
@@ -187,5 +176,22 @@ def add_indicator(code):
             f.write("".join(lines))
 
 
+def main():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(required=True)
+
+    parser_json_to_csv = subparsers.add_parser("json-to-csv")
+    parser_json_to_csv.add_argument("infile")
+    parser_json_to_csv.add_argument("outfile")
+    parser_json_to_csv.set_defaults(func=json_to_csv)
+
+    parser_add_indicator = subparsers.add_parser("add-indicator")
+    parser_add_indicator.add_argument("code")
+    parser_add_indicator.set_defaults(func=add_indicator)
+
+    args = parser.parse_args()
+    args.func(args)
+
+
 if __name__ == "__main__":
-    cli()
+    main()
