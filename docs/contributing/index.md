@@ -19,6 +19,16 @@
 If you are new to Rust, see the [Reference section](https://ocp-software-handbook.readthedocs.io/en/latest/rust/#reference) of the Rust page of the OCP Software Development Handbook.
 :::
 
+## Benchmarks
+
+```bash
+cargo bench
+```
+
+:::{note}
+We can consider the [criterion](https://crates.io/crates/criterion) crate for additional benchmarks.
+:::
+
 ## Tasks
 
 :::{toctree}

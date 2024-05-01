@@ -148,6 +148,7 @@ where
     let item = buffer
         .lines()
         .enumerate()
+        // Other iterators might be faster. par_bridge preserves the index for debugging.
         .par_bridge()
         .fold(default, |mut item, (i, lines_result)| {
             match lines_result {
