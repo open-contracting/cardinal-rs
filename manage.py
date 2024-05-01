@@ -27,7 +27,7 @@ def json_to_csv(args):
             R058="ocid_tenderer_r058",
         ),
     }
-    created_at = datetime.datetime.now(tz=datetime.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    created_at = datetime.datetime.now(tz=datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     exists = os.path.exists(args.outfile)
 
