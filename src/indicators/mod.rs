@@ -81,6 +81,7 @@ pub struct IntegerThreshold {
 #[serde(deny_unknown_fields)]
 pub struct R003 {
     threshold: Option<i64>,
+    procurement_methods: Option<String>,
     procurement_method_details_thresholds: Option<HashMap<String, i64>>,
 }
 
