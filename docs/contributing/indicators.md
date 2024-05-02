@@ -521,6 +521,9 @@ test tests::r999 ... ok
 Open the documentation page (`docs/cli/indicators/R/999.md`, in this example) in a text editor.
 
 Title
+: Use at most five words to name the indicator. This title appears in the documentation's sidebar and is adopted by other tools, like business intelligence charts.
+
+Description
 : Write a concise, one-line sentence communicating the condition under which the red flag is raised. Read {ref}`other titles<list>` to match the word choice.
 
 Methodology

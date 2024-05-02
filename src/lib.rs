@@ -90,12 +90,12 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ; Read the documentation at:
 ; https://cardinal.readthedocs.io/en/latest/cli/indicators/
 
-[R003.default]
+[R003.defaults]
 ; threshold = 15
 
 [R003.procurement_method_details_thresholds]
-; Method1 = 7
-; Method2 = 10
+; emergency = 10
+; international = 25
 
 [R024]
 ; threshold = 0.05

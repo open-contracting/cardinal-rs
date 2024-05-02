@@ -30,7 +30,7 @@ pub enum Codelist {
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all(deserialize = "snake_case"))]
 pub enum R003Section {
-    Default,
+    Defaults,
     ProcurementMethodDetailsThresholds,
 }
 
@@ -87,7 +87,7 @@ pub struct IntegerThreshold {
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct R003 {
-    threasholds: Option<HashMap<R003Section, HashMap<String, i64>>>,
+    thresholds: Option<HashMap<R003Section, HashMap<String, i64>>>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
