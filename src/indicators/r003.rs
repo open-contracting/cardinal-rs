@@ -10,7 +10,7 @@ use crate::parse_pipe_separated_value;
 pub struct R003 {
     threshold: i64,
     procurement_methods: HashSet<String>,
-    procurement_method_details_thresholds: HashMap<String, i64>,
+    procurement_method_details: HashMap<String, i64>,
 }
 
 impl R003 {
@@ -32,7 +32,7 @@ impl Calculate for R003 {
         Self {
             threshold: setting.threshold.unwrap_or(15),
             procurement_methods: parse_pipe_separated_value(setting.procurement_methods.clone()),
-            procurement_method_details_thresholds: setting.procurement_method_details_thresholds.unwrap_or_default(),
+            procurement_method_details: setting.procurement_method_details.unwrap_or_default(),
         }
     }
 
@@ -48,9 +48,9 @@ impl Calculate for R003 {
             let duration = (end_date - start_date).num_days();
 
             let threshold = if let Some(Value::String(details)) = tender.get("procurementMethodDetails")
-                && self.procurement_method_details_thresholds.contains_key(details)
+                && self.procurement_method_details.contains_key(details)
             {
-                self.procurement_method_details_thresholds[details]
+                self.procurement_method_details[details]
             } else {
                 self.threshold
             };

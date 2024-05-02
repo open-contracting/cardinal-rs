@@ -82,7 +82,7 @@ pub struct IntegerThreshold {
 pub struct R003 {
     threshold: Option<i64>,
     procurement_methods: Option<String>,
-    procurement_method_details_thresholds: Option<HashMap<String, i64>>,
+    procurement_method_details: Option<HashMap<String, i64>>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]

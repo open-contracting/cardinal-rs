@@ -94,7 +94,7 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ; threshold = 15
 ; procurement_methods = open,selective,limited
 
-[R003.procurement_method_details_thresholds]
+[R003.procurement_method_details]
 ; emergency = 10
 ; international = 25
 
