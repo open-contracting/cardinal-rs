@@ -17,7 +17,6 @@
   - `no_price_comparison_procurement_methods` configuration.
   - `price_comparison_procurement_methods` configuration.
 
-
 ### Changed
 
 - {doc}`cli/prepare` command:
