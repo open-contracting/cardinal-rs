@@ -27,13 +27,6 @@ pub enum Codelist {
     AwardStatus,
 }
 
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
-#[serde(deny_unknown_fields, rename_all(deserialize = "snake_case"))]
-pub enum R003Section {
-    Defaults,
-    ProcurementMethodDetailsThresholds,
-}
-
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Defaults {
@@ -87,7 +80,8 @@ pub struct IntegerThreshold {
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct R003 {
-    thresholds: Option<HashMap<R003Section, HashMap<String, i64>>>,
+    threshold: Option<i64>,
+    procurement_method_details_thresholds: Option<HashMap<String, i64>>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]

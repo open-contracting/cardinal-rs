@@ -3,30 +3,21 @@ use std::collections::HashMap;
 use chrono::DateTime;
 use serde_json::{Map, Value};
 
-use crate::indicators::{set_result, Calculate, Indicators, R003Section, Settings};
+use crate::indicators::{set_result, Calculate, Indicators, Settings};
 
 #[derive(Default)]
 pub struct R003 {
-    default: i64,
+    threshold: i64,
     procurement_method_details_thresholds: HashMap<String, i64>,
 }
 
 impl Calculate for R003 {
     fn new(settings: &mut Settings) -> Self {
-        let default_threshold: HashMap<String, i64> = HashMap::from([(String::from("threshold"), 15)]);
-        let default_procurement_methods = HashMap::new();
-        let r003_settings = std::mem::take(&mut settings.R003)
-            .unwrap_or_default()
-            .thresholds
-            .unwrap_or_default();
-        let default = r003_settings.get(&R003Section::Defaults).unwrap_or(&default_threshold)["threshold"];
-        let procurement_method_details_thresholds = r003_settings
-            .get(&R003Section::ProcurementMethodDetailsThresholds)
-            .unwrap_or(&default_procurement_methods)
-            .clone();
+        let setting = std::mem::take(&mut settings.R003).unwrap_or_default();
+
         Self {
-            default,
-            procurement_method_details_thresholds,
+            threshold: setting.threshold.unwrap_or(15),
+            procurement_method_details_thresholds: setting.procurement_method_details_thresholds.unwrap_or_default(),
         }
     }
 
@@ -49,7 +40,7 @@ impl Calculate for R003 {
                 if tender_period < self.procurement_method_details_thresholds[procurement_method_details] {
                     set_result!(item, OCID, ocid, R003, 1.0);
                 }
-            } else if tender_period < self.default {
+            } else if tender_period < self.threshold {
                 set_result!(item, OCID, ocid, R003, 1.0);
             }
         }
