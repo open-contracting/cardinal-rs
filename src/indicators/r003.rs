@@ -20,7 +20,7 @@ impl R003 {
         } else if let Some(Value::String(procurement_method)) = tender.get("procurementMethod") {
             self.procurement_methods.contains(procurement_method)
         } else {
-            false
+            false // don't match if filtering out procurement methods
         }
     }
 }
@@ -46,15 +46,16 @@ impl Calculate for R003 {
             && let Ok(end_date) = DateTime::parse_from_rfc3339(end_date)
         {
             let duration = (end_date - start_date).num_days();
-            if let Some(Value::String(procurement_method_details)) = tender.get("procurementMethodDetails")
-                && self
-                    .procurement_method_details_thresholds
-                    .contains_key(procurement_method_details)
+
+            let threshold = if let Some(Value::String(details)) = tender.get("procurementMethodDetails")
+                && self.procurement_method_details_thresholds.contains_key(details)
             {
-                if duration < self.procurement_method_details_thresholds[procurement_method_details] {
-                    set_result!(item, OCID, ocid, R003, 1.0);
-                }
-            } else if duration < self.threshold {
+                self.procurement_method_details_thresholds[details]
+            } else {
+                self.threshold
+            };
+
+            if duration < threshold {
                 set_result!(item, OCID, ocid, R003, 1.0);
             }
         }
