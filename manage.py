@@ -89,7 +89,8 @@ def json_to_csv(args):
                             }
                         )
 
-    print(f"Writing {len(rows)} rows")
+    if not args.quiet:
+        print(f"Writing {len(rows)} rows")
     with open(args.outfile, "a") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
         if not exists:
@@ -183,6 +184,7 @@ def main():
     parser_json_to_csv = subparsers.add_parser("json-to-csv")
     parser_json_to_csv.add_argument("infile")
     parser_json_to_csv.add_argument("outfile")
+    parser_json_to_csv.add_argument("-q", "--quiet", action="store_true")
     parser_json_to_csv.set_defaults(func=json_to_csv)
 
     parser_add_indicator = subparsers.add_parser("add-indicator")
