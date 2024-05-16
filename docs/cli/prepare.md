@@ -130,6 +130,19 @@ Given the context of this example, the columns can be used as follows.
 (prepare-config)=
 ## Configuration
 
+### Correct structural errors
+
+If a value is an object where OCDS expects an array, then calculations fail.
+
+The command replaces each such object with an array containing the object. The command supports replacing:
+
+- `/bids/details[]/tenderers`
+- `/awards/suppliers`
+
+:::{note}
+This behavior can't be disabled. If you need to disable it, [create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues).
+:::
+
 ### Normalize ID fields
 
 Some ID fields allow both strings (`"1"`) and integers (`1`): for example, an award's `id` and a contract's `awardID`.

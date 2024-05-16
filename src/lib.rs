@@ -157,6 +157,7 @@ where
     let item = buffer
         .lines()
         .enumerate()
+        // Other iterators might be faster. par_bridge preserves the index for debugging.
         .par_bridge()
         .fold(default, |mut item, (i, lines_result)| {
             match lines_result {
@@ -409,6 +410,14 @@ macro_rules! prepare_id_object {
 
 macro_rules! prepare_id_array {
     ( $field:ident , $key:expr , $redact:ident ) => {
+        // Coerce objects into arrays.
+        if let Some(value) = $field.get_mut($key)
+            && value.is_object()
+        {
+            let value = std::mem::take(value);
+            $field[$key] = Value::Array(vec![value]);
+        }
+
         if let Some(Value::Array(array)) = $field.get_mut($key) {
             for entry in array {
                 if let Value::Object(object) = entry {
@@ -545,10 +554,10 @@ impl Prepare {
                         for auction in auctions.iter_mut() {
                             if let Some(Value::Array(stages)) = auction.get_mut("stages") {
                                 for stage in stages.iter_mut() {
-                                    if let Some(stage) = stage.as_object_mut()
-                                        && let Some(Value::Array(bids)) = stage.remove("bids")
+                                    if let Some(object) = stage.as_object_mut()
+                                        && let Some(Value::Array(auctions_bids)) = object.remove("bids")
                                     {
-                                        details.extend(bids);
+                                        details.extend(auctions_bids);
                                     }
                                 }
                             }
