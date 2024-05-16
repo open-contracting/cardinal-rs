@@ -1,125 +1,10 @@
-# Add an indicator
+# Code an indicator
 
-You can use the check marks to track your progress (do not reload the page).
-
-In this tutorial, the example indicator is given the code R999. Its methodology is "A competition completed with few submitted bids," with the default for "few" being 1 bid.
-
-## 1. Develop the methodology
-
-All fences are inclusive in Cardinal, to be consistent and to be easy to interpret. However, this means that, if the methodology identifies outliers using the interquartile range, and if the interquartile range is zero, then the indicator will always return a result. Therefore, the methodology must guard against this by returning nothing if the interquartile range is zero.
-
-## 2. Assign a code
-
-When adding an indicator that is not assigned a code among the [resources](https://www.open-contracting.org/resources/) of the Open Contracting Partnership (or if you don't know):
-
-- [ ] [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues) to be assigned a code.
-
-(indicators-boilerplate)=
-## 3. Add boilerplate content
-
-:::{admonition} One-time setup
-To install the requirements for automation, create a Python virtual environment and run:
-
-```bash
-pip install click
-```
-:::
-
-To perform these steps, run, replacing `r999`:
-
-```bash
-./manage.py add-indicator r999
-```
-
-The files created are explained in the next sections.
-
-- [ ] Create the new module, `src/indicators/r999.rs`:
-
-  :::{literalinclude} templates/rs
-  :language: rust
-  :::
-
-- [ ] Create the test input, `tests/fixtures/indicators/R999.jsonl`:
-
-  :::{literalinclude} templates/jsonl
-  :language: json
-  :::
-
-- [ ] Create the test output, `tests/fixtures/indicators/R999.expected`:
-
-  :::{literalinclude} templates/expected
-  :language: json
-  :::
-
-- [ ] Create the documentation page, `docs/cli/indicators/R/999.md`:
-
-  :::{literalinclude} templates/md
-  :language: md
-  :::
-
-- [ ] Create the demonstration input, `docs/examples/R/999.jsonl`:
-
-  :::{literalinclude} templates/demo
-  :language: json
-  :::
-
-- In `src/indicators/mod.rs`:
-
-  - [ ] Declare the new module in alphabetical order at the top of the file:
-
-    ```rust
-    pub mod r999;
-    ```
-
-  - [ ] Add a field to the `Settings` struct. This field is explained in the next section.
-
-    ```rust
-        pub R999: Option<Empty>,
-    ```
-
-  - [ ] Add a variant to the `Indicator` enum. The variants are keys in the JSON output of the {doc}`../cli/indicators/index` command:
-
-    ```rust
-        R999,
-    ```
-
-- In `src/lib.rs`:
-
-  - [ ] Import the new struct from the new module in alphabetical order at the top of the file:
-
-    ```rust
-    use crate::indicators::r999::R999;
-    ```
-
-  - [ ] Add the new struct in alphabetical order to the ``add_indicators!`` macro call:
-
-    ```rust
-                R999,
-    ```
-
-- [ ] In `docs/examples/settings.ini`, add a section for the new indicator in alphabetical order:
-
-    ```ini
-    [R999]
-    ```
-
-:::{admonition} Try it!
-:class: tip
-
-If you run:
-
-```bash
-cargo test
-```
-
-All tests should pass! (with warnings about unused variables and imports)
-:::
-
-## 4. Edit the settings in `src/indicators/mod.rs`
+## Edit the settings in `src/indicators/mod.rs`
 
 The {ref}`configurations<indicators-config>` for an indicator are represented as a field named after the indicator (`R999`) on the `Settings` struct, defined in `src/indicators/mod.rs`.
 
-:::{literalinclude} ../../src/indicators/mod.rs
+:::{literalinclude} ../../../src/indicators/mod.rs
 :language: rust
 :start-at: struct Settings
 :end-at: "}"
@@ -129,13 +14,13 @@ In Cardinal, all configurations are optional. So, the field must be an [`Option<
 
 If the indicator's only configuration is a threshold (integer or decimal), then the `IntegerThreshold` or `FloatThreshold` struct can be used, shown below for easy reference.
 
-:::{literalinclude} ../../src/indicators/mod.rs
+:::{literalinclude} ../../../src/indicators/mod.rs
 :language: rust
 :start-at: struct IntegerThreshold
 :end-at: "}"
 :::
 
-:::{literalinclude} ../../src/indicators/mod.rs
+:::{literalinclude} ../../../src/indicators/mod.rs
 :language: rust
 :start-at: struct FloatThreshold
 :end-at: "}"
@@ -143,7 +28,7 @@ If the indicator's only configuration is a threshold (integer or decimal), then 
 
 If the indicator has no configuration, the `Empty` struct can be used, which has no fields.
 
-:::{literalinclude} ../../src/indicators/mod.rs
+:::{literalinclude} ../../../src/indicators/mod.rs
 :language: rust
 :start-at: struct Empty
 :end-at: "}"
@@ -182,7 +67,7 @@ The number of submitted bids can be represented as an integer. To parse a proper
     pub R999: Option<IntegerThreshold>,
 ```
 
-Users can now configure R999's threshold, using the {doc}`../topics/settings`. For example:
+Users can now configure R999's threshold, using the {doc}`../../topics/settings`. For example:
 
 ```ini
 [R999]
@@ -202,7 +87,7 @@ echo '{}' | cargo run -- indicators --settings settings.ini -
 The output should be `{}`, with no errors about unknown fields!
 :::
 
-## 5. Write the module
+## Write the module
 
 Open the new module (`src/indicators/r999.rs`, in this example) in a text editor.
 
@@ -304,7 +189,7 @@ echo '{}' | cargo run -- indicators --settings settings.ini -
 
 ### How data is prepared
 
-As described in the [overall workflow](../topics/workflow), data is prepared before it is processed. This avoids complicating the indicator calculations with many exceptions and edge cases.
+As described in the [overall workflow](../../topics/workflow), data is prepared before it is processed. This avoids complicating the indicator calculations with many exceptions and edge cases.
 
 Also, as described in the {ref}`prepare workflow<prepare-workflow>`, the `prepare` command should only warn about quality issues that it can fix and that interfere with the indicator calculations.
 
@@ -326,7 +211,7 @@ Each method accepts an `item` argument, whose type is `Indicators` (named after 
 
 The `Indicators` struct has a `results` field for the final results, and other fields – whose names are prefixed by indicator codes – for intermediate results:
 
-:::{literalinclude} ../../src/indicators/mod.rs
+:::{literalinclude} ../../../src/indicators/mod.rs
 :language: rust
 :start-at: struct Indicators
 :end-at: "}"
@@ -446,131 +331,11 @@ If the indicator considers and flags a subset of tenderers, buyers, or procuring
 If you need guidance on this step, [create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues).
 :::
 
-## 6. Update the `init` command
+## Update the `init` command
 
 - [ ] In `src/lib.rs`, edit the multiline string at the top of the `init` function to include a section for the new indicator, and any configurations as comments.
 - [ ] In `docs/cli/init.md`, edit the command's output at the bottom of the file to match the multiline string.
 
-## 7. Write the tests
-
-The test framework reads `*.jsonl` files in the `tests/fixtures/indicators/` directory. Each `*.jsonl` file is prefixed with an indicator code: for example, `R038.jsonl` and `R038_tenderer.jsonl`. The test framework runs the `indicators` command with that indicator {ref}`enabled<enable-an-indicator>`, and compares the output to the corresponding `*.expected` file: for example, `R038.expected` and `R038_tenderer.expected`.
-
-The test file(s) for an indicator should:
-
-- Cause the indicator to return a result (to test for true positives)
-- Include data that covers any {ref}`exclusions<indicators-exclusions>` or edge cases (to test against false positives)
-- Not include data that is irrelevant to the indicator (to make the test readable)
-
-You can use the `ocid` field to describe each compiled release.
-
-You can use single letters for identifiers, for example:
-
-:::{hlist}
-:columns: 2
-
-- Identifier to be **F**lagged
-- **B**uyer
-- **P**rocuring entity
-- **S**upplier of an active award
-- Supplier of a **C**ancelled award
-- Supplier of an **U**nsuccessful award
-- Tenderer of a **I**nvited bid
-- Tenderer of a **P**ending bid
-- Tenderer of a **V**alid bid
-- Tenderer of a **D**isqualified bid
-- **W**inning tenderer
-- **L**osing tenderer
+:::{admonition} Next step
+Now, you can {doc}`write the tests<test>`.
 :::
-
-:::{admonition} Example
-:class: seealso
-
-Edit the `R999.jsonl` and `R999.expected` files in the `tests/fixtures/indicators/` directory from {ref}`indicators-boilerplate`. To only test whether the indicator returns a result, replace the contents of the files with:
-
-```json
-{"ocid":"F","bids":{"details":[{"status":"valid"}]},"awards":[{"status":"active"}]}
-```
-
-And:
-
-```json
-{"OCID":{"F":{"R999":1.0}}}
-```
-:::
-
-:::{admonition} Try it!
-:class: tip
-
-If you run:
-
-```bash
-cargo test
-```
-
-All tests should pass, including:
-
-```none
-test tests::r999 ... ok
-```
-:::
-
-## 8. Add documentation
-
-### Document the indicator
-
-Open the documentation page (`docs/cli/indicators/R/999.md`, in this example) in a text editor.
-
-Title
-: Use at most five words to name the indicator. This title appears in the documentation's sidebar and is adopted by other tools, like business intelligence charts.
-
-Description
-: Write a concise, one-line sentence communicating the condition under which the red flag is raised. Read {ref}`other titles<list>` to match the word choice.
-
-Methodology
-: - Read {ref}`other methodologies<list>`, to match the word choice, sentence construction, and use of bullet lists and paragraph breaks.
-  - Bold the first occurrence of each word in the methodology that can be configured (*Configuration*) or interpreted (*Output*).
-  - Write a brief example containing names and numbers, to ease the interpretation of the methodology.
-  - Explain why the methodology indicates a red flag.
-
-Output
-: Bold the word for the concept from the methodology to which the output corresponds. Declare the type of the output if it is ambiguous.
-
-Configuration
-: Read {ref}`other configurations<list>`, to match the phrasing and styling. Bold the words for the concepts from the methodology that are configurable. Declare the type of the configuration.
-
-  If there is no configuration, delete this section.
-
-(indicators-exclusions)=
-Exclusions
-: Describe any features that cause the indicator to skip a compiled release, as a bullet list.
-
-  If there are no exclusions, delete this section.
-
-Assumptions
-: Mention any assumptions made by the methodology. (In general, there should be none.)
-
-  If there are no assumptions, delete this section.
-
-Demonstration
-: Adapt your test files to update the `docs/examples/R/999.jsonl` file with a minimal input, and the `console` code block with the corresponding output. Run `cargo test` to check the output.
-
-### Update the list of indicators and the changelog
-
-- [ ] In `docs/cli/indicators/index.md`, add the indicator in alphabetical order to the relevant table:
-
-  ```md
-  * - [R999](R/999)
-    - [The title of the indicator](R/999)
-    - The description of the indicator.
-  ```
-
-- [ ] In `docs/changelog.md`, add a changelog entry for the indicator:
-
-  ```md
-  ### Added
-
-  - {doc}`cli/indicators/index` command:
-    - R999 (*The title of the indicator*).
-  ```
-
-**You're done!** 🎉 We welcome all new indicators as pull requests on [GitHub](https://github.com/open-contracting/cardinal-rs).

@@ -34,6 +34,6 @@ We can consider the [criterion](https://crates.io/crates/criterion) crate for ad
 :::{toctree}
 :maxdepth: 1
 
-indicators
+indicators/index
 translation
 :::
