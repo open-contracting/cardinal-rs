@@ -24,6 +24,7 @@ fn bench(c: &mut Criterion) {
             let _ = Indicators::run(
                 black_box(BufReader::new(file)),
                 Settings {
+                    R003: Some(Default::default()),
                     R024: Some(Default::default()),
                     R025: Some(Default::default()),
                     R028: Some(Default::default()),
