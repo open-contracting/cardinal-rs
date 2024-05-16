@@ -1,5 +1,6 @@
 # Code an indicator
 
+(indicators-settings)=
 ## Edit the settings in `src/indicators/mod.rs`
 
 The {ref}`configurations<indicators-config>` for an indicator are represented as a field named after the indicator (`R999`) on the `Settings` struct, defined in `src/indicators/mod.rs`.

@@ -52,7 +52,7 @@ fn prepare_{name}() {{
     for entry in glob("tests/fixtures/indicators/*.jsonl").expect("Failed to read glob pattern") {
         let path = entry.unwrap();
         let name = path.file_stem().unwrap().to_str().unwrap();
-        let function = name.to_ascii_lowercase().replace(['-', '+'], "_");
+        let function = name.to_ascii_lowercase().replace(['-', '+'], "_").replace('+', "|");
         let mut parts = name.split('-').collect::<VecDeque<_>>();
         let ident = parts.pop_front().unwrap();
 
@@ -60,7 +60,7 @@ fn prepare_{name}() {{
             Ordering::Less => "Default::default()".into(),
             Ordering::Equal => {
                 let field = parts[0];
-                let value = parts[1].replace('+', "|");
+                let value = parts[1];
                 if value.as_bytes().iter().all(u8::is_ascii_digit) {
                     format!("indicators::{ident} {{ {field}: Some({value}), ..Default::default() }}")
                 } else {
