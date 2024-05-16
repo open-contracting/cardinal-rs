@@ -80,9 +80,9 @@ pub struct IntegerThreshold {
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct R003 {
-    threshold: Option<i64>,
-    procurement_methods: Option<String>,
-    procurement_method_details: Option<HashMap<String, i64>>,
+    pub threshold: Option<i64>,
+    pub procurement_methods: Option<String>,
+    pub procurement_method_details: Option<HashMap<String, i64>>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
