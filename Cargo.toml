@@ -33,6 +33,7 @@ statrs = "0.16"
 
 [build-dependencies]
 glob = "0.3"
+itertools = "0.12"
 
 [dev-dependencies]
 assert_cmd = "2.0"
