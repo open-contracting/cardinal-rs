@@ -52,8 +52,9 @@ fn prepare_{name}() {{
     for entry in glob("tests/fixtures/indicators/*.jsonl").expect("Failed to read glob pattern") {
         let path = entry.unwrap();
         let name = path.file_stem().unwrap().to_str().unwrap();
-        let function = name.to_ascii_lowercase().replace(['-', '+'], "_").replace('+', "|");
-        let mut parts = name.split('-').collect::<VecDeque<_>>();
+        let function = name.to_ascii_lowercase().replace(['-', '+'], "_");
+        let parts = name.replace('+', "|");
+        let mut parts = parts.split('-').collect::<VecDeque<_>>();
         let ident = parts.pop_front().unwrap();
 
         let setting = match parts.len().cmp(&2) {
