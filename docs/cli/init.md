@@ -73,7 +73,7 @@ $ ocdscardinal init -
 
 [R003]
 ; threshold = 15
-; procurement_methods = open,selective,limited
+; procurement_methods = open|selective|limited
 
 [R003.procurement_method_details]
 ; emergency = 10
