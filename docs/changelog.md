@@ -8,6 +8,7 @@
   - Add `[redactions]` section. Warn about zero-value bids.
   - Add `[corrections]` section.
   - Add `[modifications_split]` section.
+  - Normalize `/bids/details[]/tenderers` and `/awards/suppliers` to arrays.
 - {doc}`cli/indicators/index` command:
   - [R028](cli/indicators/R/028): (*Identical bid prices*).
   - [R030](cli/indicators/R/030): (*Late bid won*).
@@ -21,7 +22,7 @@
 - {doc}`cli/prepare` command:
   - Warn about invalid default statuses.
   - Use snake case (`[codelists.bid_status]`) in the settings file, instead of a mix of snake case and camel case (`[codelists.BidStatus]`).
-  - Normalize `/awards[]/id` and `/contracts[]/awardID`.
+  - Normalize `/awards[]/id` and `/contracts[]/awardID` to strings.
 - {doc}`cli/indicators/index` command:
   - [R024](cli/indicators/R/024): Flag the winner and second-lowest bidder. Add `--map` key.
   - [R035](cli/indicators/R/035): Flag the winner. Add `--map` key.
