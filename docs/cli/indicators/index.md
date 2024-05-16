@@ -281,6 +281,9 @@ R/index
 * - Code
   - Title
   - Description
+* - [R003](R/003)
+  - [Short submission period](R/003)
+  - The submission period is shorter than a threshold.
 * - [R024](R/024)
   - [Price close to winning bid](R/024)
   - The percentage difference between the winning bid and the second-lowest valid bid is a low outlier.

@@ -1,3 +1,4 @@
+pub mod r003;
 pub mod r024;
 pub mod r025;
 pub mod r028;
@@ -78,6 +79,14 @@ pub struct IntegerThreshold {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct R003 {
+    pub threshold: Option<i64>,
+    pub procurement_methods: Option<String>,
+    pub procurement_method_details: Option<HashMap<String, i64>>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct R025 {
     percentile: Option<usize>,
     threshold: Option<f64>, // ratio
@@ -114,6 +123,7 @@ pub struct Settings {
     pub currency: Option<String>,
     pub no_price_comparison_procurement_methods: Option<String>,
     pub price_comparison_procurement_methods: Option<String>,
+    pub R003: Option<R003>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
     pub R028: Option<Empty>,
@@ -137,6 +147,7 @@ pub enum Group {
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
 pub enum Indicator {
+    R003,
     R024,
     R025,
     R028,

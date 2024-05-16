@@ -71,6 +71,14 @@ $ ocdscardinal init -
 ; Read the documentation at:
 ; https://cardinal.readthedocs.io/en/latest/cli/indicators/
 
+[R003]
+; threshold = 15
+; procurement_methods = open|selective|limited
+
+[R003.procurement_method_details]
+; emergency = 10
+; international = 25
+
 [R024]
 ; threshold = 0.05
 

@@ -17,6 +17,7 @@ use rayon::prelude::*;
 use serde_json::{Map, Value};
 
 use crate::indicators::is_status;
+use crate::indicators::r003::R003;
 use crate::indicators::r024::R024;
 use crate::indicators::r025::R025;
 use crate::indicators::r028::R028;
@@ -88,6 +89,14 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ;
 ; Read the documentation at:
 ; https://cardinal.readthedocs.io/en/latest/cli/indicators/
+
+[R003]
+; threshold = 15
+; procurement_methods = open|selective|limited
+
+[R003.procurement_method_details]
+; emergency = 10
+; international = 25
 
 [R024]
 ; threshold = 0.05
@@ -207,6 +216,7 @@ impl Indicators {
         add_indicators!(
             indicators,
             settings,
+            R003,
             R024,
             R025,
             R028,

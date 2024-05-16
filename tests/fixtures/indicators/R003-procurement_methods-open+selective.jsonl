@@ -1,0 +1,5 @@
+{"ocid":"open","tender":{"tenderPeriod":{"startDate":"2000-01-01T18:00:00Z","endDate":"2000-01-16T17:59:59Z"},"procurementMethod":"open"}}
+{"ocid":"selective","tender":{"tenderPeriod":{"startDate":"2000-01-01T18:00:00Z","endDate":"2000-01-16T17:59:59Z"},"procurementMethod":"selective"}}
+{"ocid":"limited","tender":{"tenderPeriod":{"startDate":"2000-01-01T18:00:00Z","endDate":"2000-01-16T17:59:59Z"},"procurementMethod":"limited"}}
+{"ocid":"direct","tender":{"tenderPeriod":{"startDate":"2000-01-01T18:00:00Z","endDate":"2000-01-16T17:59:59Z"},"procurementMethod":"direct"}}
+{"ocid":"missing","tender":{"tenderPeriod":{"startDate":"2000-01-01T18:00:00Z","endDate":"2000-01-16T17:59:59Z"}}}

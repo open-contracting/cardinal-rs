@@ -10,6 +10,7 @@
   - Add `[modifications_split]` section.
   - Normalize `/bids/details[]/tenderers` and `/awards/suppliers` to arrays.
 - {doc}`cli/indicators/index` command:
+  - [R003](cli/indicators/R/003): (*Short submission period*).
   - [R028](cli/indicators/R/028): (*Identical bid prices*).
   - [R030](cli/indicators/R/030): (*Late bid won*).
   - [R048](cli/indicators/R/048): (*Heterogeneous supplier*).
