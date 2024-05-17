@@ -48,6 +48,7 @@ impl Calculate for R028 {
                 if !ids.is_empty() {
                     let price = (OrderedFloat(amount), currency);
                     if let Some(other) = prices.get(&price)
+                        // A tenderer is allowed to submit additional bids with the same price.
                         && ids != *other
                     {
                         set_result!(item, OCID, ocid, R028, 1.0);
@@ -56,6 +57,11 @@ impl Calculate for R028 {
                             set_tenderer_map!(item, ocid_tenderer_r028, ocid.to_owned(), (*id).to_string());
                         }
                     }
+                    // Prices are re-assigned each time. This works, because the indicator's value is always 1.0.
+                    //
+                    // If values incremented: With bids from tenderers "A", "B", and "A", the values for "A" and "B"
+                    // would be 2.0, 2.0 with re-assigning and 1.0, 1.0 without re-assigning. Similarly, with "A", "B"
+                    // and "B", the values would be 1.0, 1.0 with re-assigning and 2.0, 2.0 without re-assigning.
                     prices.insert(price, ids);
                 }
             }
