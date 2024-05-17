@@ -106,7 +106,7 @@ def add_indicator(args):
     lower = args.code.lower()
     upper = args.code.upper()
     letter, number = upper[0], upper[1:]
-    templates = directory / "docs" / "contributing" / "templates"
+    templates = directory / "docs" / "contributing" / "indicators" / "templates"
 
     for path in (
         directory / "tests" / "fixtures" / "indicators" / f"{upper}.jsonl",
