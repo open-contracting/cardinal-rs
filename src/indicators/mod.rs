@@ -63,6 +63,12 @@ pub struct ModificationsSplit {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct Exclusions {
+    pub procurement_method_details: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Empty {}
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -123,6 +129,7 @@ pub struct Settings {
     pub currency: Option<String>,
     pub no_price_comparison_procurement_methods: Option<String>,
     pub price_comparison_procurement_methods: Option<String>,
+    pub exclusions: Option<Exclusions>,
     pub R003: Option<R003>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,

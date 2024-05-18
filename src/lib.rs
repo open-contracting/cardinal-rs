@@ -29,7 +29,7 @@ use crate::indicators::r048::R048;
 use crate::indicators::r058::R058;
 use crate::indicators::util::{SecondLowestBidRatio, Tenderers};
 pub use crate::indicators::{
-    Calculate, Codelist, Group, Indicator, Indicators, ModificationsMove, ModificationsSplit, Settings,
+    Calculate, Codelist, Exclusions, Group, Indicator, Indicators, ModificationsMove, ModificationsSplit, Settings,
 };
 use crate::queue::Job;
 use crate::standard::{AWARD_STATUS, BID_STATUS};
@@ -89,6 +89,9 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ;
 ; Read the documentation at:
 ; https://cardinal.readthedocs.io/en/latest/cli/indicators/
+
+[exclusions]
+; procurement_method_details = Random Selection
 
 [R003]
 ; threshold = 15
@@ -205,6 +208,10 @@ impl Indicators {
     pub fn run(buffer: impl BufRead + Send, mut settings: Settings, map: &bool) -> Result<Self> {
         let mut indicators: Vec<Box<dyn Calculate + Sync>> = vec![];
 
+        // [exclusions]
+        let exclusions = std::mem::take(&mut settings.exclusions).unwrap_or_default();
+        let exclude_procurement_method_details = parse_pipe_separated_value(exclusions.procurement_method_details);
+
         // is_some() must run before indicator initialization, which mutates settings.
         if *map && (settings.R025.is_some() || settings.R038.is_some() || settings.R048.is_some()) {
             indicators.push(Box::new(Tenderers::new(&mut settings)));
@@ -241,6 +248,7 @@ impl Indicators {
                 if let Value::Object(release) = value
                     && let Some(Value::String(ocid)) = release.get("ocid")
                     && !Self::is_cancelled_contracting_process(&release)
+                    && !Self::matches_procurement_method_details(&release, &exclude_procurement_method_details)
                 {
                     for indicator in &indicators {
                         indicator.fold(&mut item, &release, ocid);

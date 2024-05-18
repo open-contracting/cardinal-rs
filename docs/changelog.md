@@ -15,8 +15,9 @@
   - [R030](cli/indicators/R/030): (*Late bid won*).
   - [R048](cli/indicators/R/048): (*Heterogeneous supplier*).
   - [R058](cli/indicators/R/058): (*Heavily discounted bid*).
-  - `no_price_comparison_procurement_methods` configuration.
-  - `price_comparison_procurement_methods` configuration.
+  - Add `no_price_comparison_procurement_methods` configuration.
+  - Add `price_comparison_procurement_methods` configuration.
+  - Add `[exclusions]` section.
 
 ### Changed
 

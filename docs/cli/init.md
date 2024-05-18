@@ -71,6 +71,9 @@ $ ocdscardinal init -
 ; Read the documentation at:
 ; https://cardinal.readthedocs.io/en/latest/cli/indicators/
 
+[exclusions]
+; procurement_method_details = Random Selection
+
 [R003]
 ; threshold = 15
 ; procurement_methods = open|selective|limited
