@@ -1,4 +1,5 @@
 pub mod r003;
+pub mod r018;
 pub mod r024;
 pub mod r025;
 pub mod r028;
@@ -124,6 +125,7 @@ pub struct Settings {
     pub no_price_comparison_procurement_methods: Option<String>,
     pub price_comparison_procurement_methods: Option<String>,
     pub R003: Option<R003>,
+    pub R018: Option<Empty>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
     pub R028: Option<Empty>,
@@ -148,6 +150,7 @@ pub enum Group {
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
 pub enum Indicator {
     R003,
+    R018,
     R024,
     R025,
     R028,

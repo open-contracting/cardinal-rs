@@ -79,6 +79,8 @@ $ ocdscardinal init -
 ; emergency = 10
 ; international = 25
 
+[R018]
+
 [R024]
 ; threshold = 0.05
 

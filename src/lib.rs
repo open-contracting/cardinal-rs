@@ -18,6 +18,7 @@ use serde_json::{Map, Value};
 
 use crate::indicators::is_status;
 use crate::indicators::r003::R003;
+use crate::indicators::r018::R018;
 use crate::indicators::r024::R024;
 use crate::indicators::r025::R025;
 use crate::indicators::r028::R028;
@@ -97,6 +98,8 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 [R003.procurement_method_details]
 ; emergency = 10
 ; international = 25
+
+[R018]
 
 [R024]
 ; threshold = 0.05
@@ -217,6 +220,7 @@ impl Indicators {
             indicators,
             settings,
             R003,
+            R018,
             R024,
             R025,
             R028,
