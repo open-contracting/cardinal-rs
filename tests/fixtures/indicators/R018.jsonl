@@ -1,3 +1,4 @@
 {"ocid": "F","tender": {"numberOfTenderers": 1, "procurementMethod": "open"}}
 {"ocid": "D","tender": {"procurementMethod": "direct"}}
 {"ocid": "N","tender": {"procurementMethod": "open"}}
+{"ocid": "M","tender": {"numberOfTenderers": 2, "procurementMethod": "open"}}
