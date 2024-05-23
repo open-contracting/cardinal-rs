@@ -74,6 +74,8 @@
 
 - {doc}`cli/init` command.
 - {doc}`cli/prepare` command.
+  - `[defaults]` section.
+  - `[codelists.*]` sections.
 - {doc}`cli/indicators/index` command:
   - [R025](cli/indicators/R/025) (*Excessive unsuccessful bids*).
   - [R036](cli/indicators/R/036) (*Lowest bid disqualified*).
