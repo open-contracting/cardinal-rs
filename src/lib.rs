@@ -29,9 +29,7 @@ use crate::indicators::r038::R038;
 use crate::indicators::r048::R048;
 use crate::indicators::r058::R058;
 use crate::indicators::util::{SecondLowestBidRatio, Tenderers};
-pub use crate::indicators::{
-    Calculate, Codelist, Group, Indicator, Indicators, ModificationsMove, ModificationsSplit, Settings,
-};
+pub use crate::indicators::{Calculate, Codelist, Exclusions, Group, Indicator, Indicators, Modifications, Settings};
 use crate::queue::Job;
 use crate::standard::{AWARD_STATUS, BID_STATUS};
 
@@ -80,6 +78,10 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 [corrections]
 ; award_status_by_contract_status = true
 
+[modifications]
+; move_auctions = true
+; split_procurement_method_details = -
+
 [codelists.bid_status]
 ; qualified = valid
 
@@ -90,6 +92,9 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ;
 ; Read the documentation at:
 ; https://cardinal.readthedocs.io/en/latest/cli/indicators/
+
+[exclusions]
+; procurement_method_details = Random Selection
 
 [R003]
 ; threshold = 15
@@ -208,6 +213,10 @@ impl Indicators {
     pub fn run(buffer: impl BufRead + Send, mut settings: Settings, map: &bool) -> Result<Self> {
         let mut indicators: Vec<Box<dyn Calculate + Sync>> = vec![];
 
+        // [exclusions]
+        let exclusions = std::mem::take(&mut settings.exclusions).unwrap_or_default();
+        let exclude_procurement_method_details = parse_pipe_separated_value(exclusions.procurement_method_details);
+
         // is_some() must run before indicator initialization, which mutates settings.
         if *map && (settings.R025.is_some() || settings.R038.is_some() || settings.R048.is_some()) {
             indicators.push(Box::new(Tenderers::new(&mut settings)));
@@ -245,6 +254,7 @@ impl Indicators {
                 if let Value::Object(release) = value
                     && let Some(Value::String(ocid)) = release.get("ocid")
                     && !Self::is_cancelled_contracting_process(&release)
+                    && !Self::matches_procurement_method_details(&release, &exclude_procurement_method_details)
                 {
                     for indicator in &indicators {
                         indicator.fold(&mut item, &release, ocid);
@@ -487,13 +497,10 @@ impl Prepare {
         let corrections = settings.corrections.unwrap_or_default();
         let award_status_by_contract_status = corrections.award_status_by_contract_status.unwrap_or_default();
 
-        // [modifications_move]
-        let modifications_move = settings.modifications_move.unwrap_or_default();
-        let auctions_mov = modifications_move.auctions.unwrap_or_default();
-
-        // [modifications_split]
-        let modifications_split = settings.modifications_split.unwrap_or_default();
-        let procurement_method_details_pat = modifications_split.procurement_method_details;
+        // [modifications]
+        let modifications = settings.modifications.unwrap_or_default();
+        let move_auctions = modifications.move_auctions.unwrap_or_default();
+        let split_procurement_method_details = modifications.split_procurement_method_details;
 
         // [codelists.*]
         let codelists = settings.codelists.unwrap_or_default();
@@ -539,7 +546,7 @@ impl Prepare {
                 if let Some(Value::Object(tender)) = release.get_mut("tender") {
                     prepare_id_object!(tender, "procuringEntity", redact_organization_id);
 
-                    if let Some(pat) = &procurement_method_details_pat
+                    if let Some(pat) = &split_procurement_method_details
                         && let Some(Value::String(procurement_method_details)) =
                             tender.get_mut("procurementMethodDetails")
                     {
@@ -549,7 +556,7 @@ impl Prepare {
                 }
 
                 // /auctions
-                if auctions_mov {
+                if move_auctions {
                     if release.contains_key("auctions") && release.contains_key("bids") {
                         warn!("Can't move /auctions, because /bids is occupied.");
                     } else if let Some(Value::Array(auctions)) = release.get_mut("auctions") {
@@ -629,7 +636,7 @@ impl Prepare {
                         }
                         if let Some(Value::String(status)) = bid.get_mut("status") {
                             if bid_status.contains_key(status) {
-                                *status = bid_status[status].clone();
+                                status.clone_from(&bid_status[status]);
                             }
                             if !BID_STATUS.contains(status.as_str()) {
                                 rows.serialize((i + 1, &ocid, "/bids/details[]/status", j, status, "invalid"))?;
@@ -693,7 +700,7 @@ impl Prepare {
                         }
                         if let Some(Value::String(status)) = award.get_mut("status") {
                             if award_status.contains_key(status) {
-                                *status = award_status[status].clone();
+                                status.clone_from(&award_status[status]);
                             }
                             if !AWARD_STATUS.contains(status.as_str()) {
                                 rows.serialize((i + 1, &ocid, "/awards[]/status", j, status, "invalid"))?;

@@ -52,13 +52,14 @@ pub struct Corrections {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct ModificationsMove {
-    pub auctions: Option<bool>,
+pub struct Modifications {
+    pub move_auctions: Option<bool>,
+    pub split_procurement_method_details: Option<String>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct ModificationsSplit {
+pub struct Exclusions {
     pub procurement_method_details: Option<String>,
 }
 
@@ -118,12 +119,12 @@ pub struct Settings {
     pub defaults: Option<Defaults>,
     pub redactions: Option<Redactions>,
     pub corrections: Option<Corrections>,
-    pub modifications_move: Option<ModificationsMove>,
-    pub modifications_split: Option<ModificationsSplit>,
+    pub modifications: Option<Modifications>,
     // indicators command.
     pub currency: Option<String>,
     pub no_price_comparison_procurement_methods: Option<String>,
     pub price_comparison_procurement_methods: Option<String>,
+    pub exclusions: Option<Exclusions>,
     pub R003: Option<R003>,
     pub R018: Option<Empty>,
     pub R024: Option<FloatThreshold>, // ratio

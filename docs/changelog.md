@@ -7,7 +7,7 @@
 - {doc}`cli/prepare` command:
   - Add `[redactions]` section. Warn about zero-value bids.
   - Add `[corrections]` section.
-  - Add `[modifications_split]` section.
+  - Add `[modifications]` section.
   - Normalize `/bids/details[]/tenderers` and `/awards/suppliers` to arrays.
 - {doc}`cli/indicators/index` command:
   - [R003](cli/indicators/R/003): (*Short submission period*).
@@ -16,8 +16,9 @@
   - [R030](cli/indicators/R/030): (*Late bid won*).
   - [R048](cli/indicators/R/048): (*Heterogeneous supplier*).
   - [R058](cli/indicators/R/058): (*Heavily discounted bid*).
-  - `no_price_comparison_procurement_methods` configuration.
-  - `price_comparison_procurement_methods` configuration.
+  - Add `no_price_comparison_procurement_methods` configuration.
+  - Add `price_comparison_procurement_methods` configuration.
+  - Add `[exclusions]` section.
 
 ### Changed
 

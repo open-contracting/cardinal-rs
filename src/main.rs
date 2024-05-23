@@ -1,5 +1,3 @@
-#![feature(unix_sigpipe)]
-
 use std::fs::File;
 use std::io::{self, BufReader, Read, Write};
 use std::path::{Path, PathBuf};
@@ -57,8 +55,8 @@ enum Commands {
     },
     /// Calculate procurement indicators from OCDS compiled releases in a line-delimited JSON file
     ///
-    /// The result is a JSON object, in which the keys are one of "OCID", "Buyer", "ProcuringEntity"
-    /// or "Tenderer". The values are JSON objects, in which the keys are identifiers (e.g. ocid)
+    /// The result is a JSON object, in which the keys are one of `OCID`, `Buyer`, `ProcuringEntity`
+    /// or `Tenderer`. The values are JSON objects, in which the keys are identifiers (e.g. ocid)
     /// and values are results (of any indicators that returned a result).
     ///
     /// Unless --no-meta is set, the result has a "Meta" key, with information about the quartiles
@@ -134,7 +132,6 @@ fn create(file: &PathBuf) -> Box<dyn Write + Send> {
     }
 }
 
-#[unix_sigpipe = "sig_dfl"]
 fn main() {
     setup_panic!();
 

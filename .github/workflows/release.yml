@@ -61,7 +61,9 @@ jobs:
         with:
           targets: ${{ matrix.target }}
       - run: cargo install cross --git https://github.com/cross-rs/cross
-      - run: ${{ matrix.command }} build --release --target ${{ matrix.target }}
+      - env:
+          RUSTFLAGS: -Zon-broken-pipe=kill
+        run: ${{ matrix.command }} build --release --target ${{ matrix.target }}
       # 7z is available on all runners.
       # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#preinstalled-software
       - name: Create archive

@@ -11,19 +11,19 @@ jobs:
       # Prevent Git from changing LF to CRLF, which affects test fixtures.
       - run: git config --global core.autocrlf false
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          # Need feature(stdsimd) until config-rs can be upgraded.
-          # https://github.com/mehcode/config-rs/issues/531
-          # https://github.com/rust-lang/rust/issues/27731#event-11707724027
-          toolchain: nightly-2024-01-01
+      # Need feature(stdsimd) until config-rs can be upgraded.
+      # https://github.com/mehcode/config-rs/issues/531
+      # https://github.com/rust-lang/rust/issues/27731#event-11707724027
+      - uses: dtolnay/rust-toolchain@nightly
       - uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.os }}
       # https://github.com/Swatinem/rust-cache/issues/93#issuecomment-1321064841
       - run: cargo update
       - uses: taiki-e/install-action@cargo-llvm-cov
-      - run: cargo llvm-cov --lcov --output-path lcov.info --no-cfg-coverage-nightly
+      - env:
+          RUSTFLAGS: -Zon-broken-pipe=kill
+        run: cargo llvm-cov --lcov --output-path lcov.info --no-cfg-coverage-nightly
       - if: matrix.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@master
         with:

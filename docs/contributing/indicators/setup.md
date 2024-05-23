@@ -2,7 +2,12 @@
 
 ## Develop the methodology
 
-All fences are inclusive in Cardinal, to be consistent and to be easy to interpret. However, this means that, if the methodology identifies outliers using the interquartile range, and if the interquartile range is zero, then the indicator will always return a result. Therefore, the methodology must guard against this by returning nothing if the interquartile range is zero.
+:::{admonition} To do
+:class: caution
+This section is a stub.
+:::
+
+All fences (thresholds) are inclusive (rather than exclusive) in Cardinal, to be consistent and to be easy to interpret. However, this means that, if the methodology identifies outliers using the interquartile range, and if the interquartile range is zero, then the indicator will always return a result. Therefore, the methodology must guard against this by returning nothing if the interquartile range is zero.
 
 ## Assign a code
 

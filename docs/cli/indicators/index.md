@@ -8,8 +8,8 @@ Run the `help` command to read its description, output format and options:
 $ ocdscardinal help indicators
 Calculate procurement indicators from OCDS compiled releases in a line-delimited JSON file
 
-The result is a JSON object, in which the keys are one of "OCID", "Buyer", "ProcuringEntity" or
-"Tenderer". The values are JSON objects, in which the keys are identifiers (e.g. ocid) and values
+The result is a JSON object, in which the keys are one of `OCID`, `Buyer`, `ProcuringEntity` or
+`Tenderer`. The values are JSON objects, in which the keys are identifiers (e.g. ocid) and values
 are results (of any indicators that returned a result).
 
 Unless --no-meta is set, the result has a "Meta" key, with information about the quartiles and
@@ -185,17 +185,24 @@ Now, the `indicators` command won't run this indicator.
 (global-configuration)=
 ### Global configuration
 
+You might want to exclude some procedures from all indicators, whether for methodological reasons or due to quality issues. To exclude procedures based on the value of `/tender/procurementMethodDetails`, add to your settings file, as a pipe-separated list, for example:
+
+```ini
+[exclusions]
+procurement_method_details = Random Selection|Sorteo de Obras
+```
+
 Some indicators compares bid prices. However, for some procedures, it is inappropriate to compare bid prices; for example, if the buyer predetermines the price, then the indicator for prices close to the winning bid will return a false positive.
 
 Procedures can be included or excluded based on the value of `/tender/procurementMethodDetails`.
 
-To exclude procedures, add to the top of your settings file, as a pipe-separated list, for example:
+To exclude procedures from price comparisons, add to the top of your settings file, as a pipe-separated list, for example:
 
 ```ini
 no_price_comparison_procurement_methods = Random Selection|Sorteo de Obras
 ```
 
-To include procedures, add to the top of your settings file, as a pipe-separated list, for example:
+To include procedures in price comparisons, add to the top of your settings file, as a pipe-separated list, for example:
 
 ```ini
 price_comparison_procurement_methods = Reverse Auction
