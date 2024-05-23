@@ -60,6 +60,10 @@ $ ocdscardinal init -
 [corrections]
 ; award_status_by_contract_status = true
 
+[modifications]
+; move_auctions = true
+; split_procurement_method_details = -
+
 [codelists.bid_status]
 ; qualified = valid
 
