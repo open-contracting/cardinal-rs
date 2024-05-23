@@ -28,9 +28,7 @@ use crate::indicators::r038::R038;
 use crate::indicators::r048::R048;
 use crate::indicators::r058::R058;
 use crate::indicators::util::{SecondLowestBidRatio, Tenderers};
-pub use crate::indicators::{
-    Calculate, Codelist, Exclusions, Group, Indicator, Indicators, ModificationsMove, ModificationsSplit, Settings,
-};
+pub use crate::indicators::{Calculate, Codelist, Exclusions, Group, Indicator, Indicators, Modifications, Settings};
 use crate::queue::Job;
 use crate::standard::{AWARD_STATUS, BID_STATUS};
 
@@ -491,13 +489,10 @@ impl Prepare {
         let corrections = settings.corrections.unwrap_or_default();
         let award_status_by_contract_status = corrections.award_status_by_contract_status.unwrap_or_default();
 
-        // [modifications_move]
-        let modifications_move = settings.modifications_move.unwrap_or_default();
-        let auctions_mov = modifications_move.auctions.unwrap_or_default();
-
-        // [modifications_split]
-        let modifications_split = settings.modifications_split.unwrap_or_default();
-        let procurement_method_details_pat = modifications_split.procurement_method_details;
+        // [modifications]
+        let modifications = settings.modifications.unwrap_or_default();
+        let move_auctions = modifications.move_auctions.unwrap_or_default();
+        let split_procurement_method_details = modifications.split_procurement_method_details;
 
         // [codelists.*]
         let codelists = settings.codelists.unwrap_or_default();
@@ -543,7 +538,7 @@ impl Prepare {
                 if let Some(Value::Object(tender)) = release.get_mut("tender") {
                     prepare_id_object!(tender, "procuringEntity", redact_organization_id);
 
-                    if let Some(pat) = &procurement_method_details_pat
+                    if let Some(pat) = &split_procurement_method_details
                         && let Some(Value::String(procurement_method_details)) =
                             tender.get_mut("procurementMethodDetails")
                     {
@@ -553,7 +548,7 @@ impl Prepare {
                 }
 
                 // /auctions
-                if auctions_mov {
+                if move_auctions {
                     if release.contains_key("auctions") && release.contains_key("bids") {
                         warn!("Can't move /auctions, because /bids is occupied.");
                     } else if let Some(Value::Array(auctions)) = release.get_mut("auctions") {

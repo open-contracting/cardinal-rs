@@ -7,7 +7,7 @@
 - {doc}`cli/prepare` command:
   - Add `[redactions]` section. Warn about zero-value bids.
   - Add `[corrections]` section.
-  - Add `[modifications_split]` section.
+  - Add `[modifications]` section.
   - Normalize `/bids/details[]/tenderers` and `/awards/suppliers` to arrays.
 - {doc}`cli/indicators/index` command:
   - [R003](cli/indicators/R/003): (*Short submission period*).
