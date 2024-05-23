@@ -53,6 +53,8 @@ pub struct Corrections {
 #[serde(deny_unknown_fields)]
 pub struct Modifications {
     pub move_auctions: Option<bool>,
+    pub prefix_buyer_or_procuring_entity_id: Option<String>,
+    pub prefix_tenderer_or_supplier_id: Option<String>,
     pub split_procurement_method_details: Option<String>,
 }
 

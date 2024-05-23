@@ -62,6 +62,8 @@ $ ocdscardinal init -
 
 [modifications]
 ; move_auctions = true
+; prefix_buyer_or_procuring_entity_id = DO-UC-
+; prefix_tenderer_or_supplier_id = DO-RPE-
 ; split_procurement_method_details = -
 
 [codelists.bid_status]

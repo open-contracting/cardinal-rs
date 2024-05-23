@@ -1,0 +1,3 @@
+{"buyer":{"id":"DO-UC-1"},"tender":{"procuringEntity":{"id":"DO-UC-2"}},"bids":{"details":[{"tenderers":[{"id":"DO-RPE-1"},{}]},{"tenderers":[{"id":"DO-RPE-2"}]}]},"awards":[{"suppliers":[{"id":"DO-RPE-3"},{"id":"DO-RPE-4"}]}]}
+{"buyer":{"id":"DO-UC-1"},"tender":{"procuringEntity":{"id":"DO-UC-2"}},"bids":{"details":[{"tenderers":[{"id":"DO-RPE-1"}]},{"tenderers":[{"id":"DO-RPE-2"}]}]},"awards":[{"suppliers":[{"id":"DO-RPE-3"},{"id":"DO-RPE-4"}]}]}
+{"buyer":{"id":"DO-UC-1"},"tender":{"procuringEntity":{"id":"DO-UC-2"}},"bids":{"details":[{"tenderers":[{"id":"DO-RPE-1"}]},{"tenderers":[{"id":"DO-RPE-2"}]}]},"awards":[{"suppliers":[{"id":"DO-RPE-3"},{"id":"DO-RPE-4"}]}]}

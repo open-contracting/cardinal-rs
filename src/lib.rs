@@ -79,6 +79,8 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 
 [modifications]
 ; move_auctions = true
+; prefix_buyer_or_procuring_entity_id = DO-UC-
+; prefix_tenderer_or_supplier_id = DO-RPE-
 ; split_procurement_method_details = -
 
 [codelists.bid_status]
@@ -404,14 +406,17 @@ macro_rules! stringify {
 }
 
 macro_rules! prepare_id_object {
-    ( $field:ident , $key:expr , $redact:ident ) => {
+    ( $field:ident , $key:expr , $redact:ident , $prefix:expr ) => {
         if let Some(Value::Object(object)) = $field.get_mut($key) {
             if let Some(Value::Number(id)) = object.get_mut("id") {
                 object["id"] = Value::String(id.to_string());
             }
-            if let Some(Value::String(id)) = object.get("id") {
+            if let Some(Value::String(id)) = object.get_mut("id") {
                 if $redact.contains(id) {
                     object.remove("id");
+                } else if !id.starts_with($prefix) {
+                    id.insert_str(0, &$prefix);
+                    object["id"] = Value::String(id.to_string());
                 }
             }
         }
@@ -419,7 +424,7 @@ macro_rules! prepare_id_object {
 }
 
 macro_rules! prepare_id_array {
-    ( $field:ident , $key:expr , $redact:ident ) => {
+    ( $field:ident , $key:expr , $redact:ident , $prefix:expr ) => {
         // Coerce objects into arrays.
         if let Some(value) = $field.get_mut($key)
             && value.is_object()
@@ -434,9 +439,12 @@ macro_rules! prepare_id_array {
                     if let Some(Value::Number(id)) = object.get_mut("id") {
                         object["id"] = Value::String(id.to_string());
                     }
-                    if let Some(Value::String(id)) = object.get("id") {
+                    if let Some(Value::String(id)) = object.get_mut("id") {
                         if $redact.contains(id) {
                             object.remove("id");
+                        } else if !id.starts_with($prefix) {
+                            id.insert_str(0, &$prefix);
+                            object["id"] = Value::String(id.to_string());
                         }
                     }
                 }
@@ -496,6 +504,10 @@ impl Prepare {
         // [modifications]
         let modifications = settings.modifications.unwrap_or_default();
         let move_auctions = modifications.move_auctions.unwrap_or_default();
+        let binding = modifications.prefix_buyer_or_procuring_entity_id.unwrap_or_default();
+        let prefix_buyer_or_procuring_entity_id = binding.as_str();
+        let binding = modifications.prefix_tenderer_or_supplier_id.unwrap_or_default();
+        let prefix_tenderer_or_supplier_id = binding.as_str();
         let split_procurement_method_details = modifications.split_procurement_method_details;
 
         // [codelists.*]
@@ -536,11 +548,21 @@ impl Prepare {
                     .get("ocid")
                     .map_or_else(|| Value::Null, std::clone::Clone::clone);
 
-                prepare_id_object!(release, "buyer", redact_organization_id);
+                prepare_id_object!(
+                    release,
+                    "buyer",
+                    redact_organization_id,
+                    prefix_buyer_or_procuring_entity_id
+                );
 
                 // /tender
                 if let Some(Value::Object(tender)) = release.get_mut("tender") {
-                    prepare_id_object!(tender, "procuringEntity", redact_organization_id);
+                    prepare_id_object!(
+                        tender,
+                        "procuringEntity",
+                        redact_organization_id,
+                        prefix_buyer_or_procuring_entity_id
+                    );
 
                     if let Some(pat) = &split_procurement_method_details
                         && let Some(Value::String(procurement_method_details)) =
@@ -639,7 +661,7 @@ impl Prepare {
                             }
                         }
 
-                        prepare_id_array!(bid, "tenderers", redact_organization_id);
+                        prepare_id_array!(bid, "tenderers", redact_organization_id, prefix_tenderer_or_supplier_id);
                     }
                 }
 
@@ -665,7 +687,7 @@ impl Prepare {
 
                         if let Some(Value::Array(items)) = award.get_mut("items") {
                             for (k, item) in items.iter_mut().enumerate() {
-                                prepare_id_object!(item, "classification", empty_set);
+                                prepare_id_object!(item, "classification", empty_set, "");
 
                                 if let Some(Value::Object(classification)) = item.get_mut("classification")
                                     && !classification.contains_key("scheme")
@@ -709,7 +731,12 @@ impl Prepare {
                             award["status"] = Value::String("cancelled".into());
                         }
 
-                        prepare_id_array!(award, "suppliers", redact_organization_id);
+                        prepare_id_array!(
+                            award,
+                            "suppliers",
+                            redact_organization_id,
+                            prefix_tenderer_or_supplier_id
+                        );
                     }
                 }
 
