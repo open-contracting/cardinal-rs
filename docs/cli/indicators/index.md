@@ -8,8 +8,8 @@ Run the `help` command to read its description, output format and options:
 $ ocdscardinal help indicators
 Calculate procurement indicators from OCDS compiled releases in a line-delimited JSON file
 
-The result is a JSON object, in which the keys are one of "OCID", "Buyer", "ProcuringEntity" or
-"Tenderer". The values are JSON objects, in which the keys are identifiers (e.g. ocid) and values
+The result is a JSON object, in which the keys are one of `OCID`, `Buyer`, `ProcuringEntity` or
+`Tenderer`. The values are JSON objects, in which the keys are identifiers (e.g. ocid) and values
 are results (of any indicators that returned a result).
 
 Unless --no-meta is set, the result has a "Meta" key, with information about the quartiles and
