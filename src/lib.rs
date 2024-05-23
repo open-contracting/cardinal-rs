@@ -633,7 +633,7 @@ impl Prepare {
                         }
                         if let Some(Value::String(status)) = bid.get_mut("status") {
                             if bid_status.contains_key(status) {
-                                *status = bid_status[status].clone();
+                                status.clone_from(&bid_status[status]);
                             }
                             if !BID_STATUS.contains(status.as_str()) {
                                 rows.serialize((i + 1, &ocid, "/bids/details[]/status", j, status, "invalid"))?;
@@ -697,7 +697,7 @@ impl Prepare {
                         }
                         if let Some(Value::String(status)) = award.get_mut("status") {
                             if award_status.contains_key(status) {
-                                *status = award_status[status].clone();
+                                status.clone_from(&award_status[status]);
                             }
                             if !AWARD_STATUS.contains(status.as_str()) {
                                 rows.serialize((i + 1, &ocid, "/awards[]/status", j, status, "invalid"))?;
