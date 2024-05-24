@@ -1,1 +1,4 @@
 {"bids":{"details":[{"items":[{"classification":{"id":"100000000"}}],"value":{"amount":1}}]},"awards":[{"items":[{"classification":{"id":"10000000"}}]}]}
+{"parties":[{"id":"B","roles":["custom"]},{"id":"T","roles":["enquirer"]}],"buyer":{"id":"B"},"tender":{"procuringEntity":{"id":"B"}},"bids":{"details":[{"tenderers":[{"id":"T"}]}]},"awards":[{"suppliers":{"id":"T"}}]}
+{"parties":[{"id":"B"},{"id":"T"}],"buyer":{"id":"B"},"tender":{"procuringEntity":{"id":"P"}},"bids":{"details":[{"tenderers":[{"id":"T"}]}]},"awards":[{"suppliers":{"id":"S"}}]}
+{"parties":[{"id":"B"},{"id":"B"},{"id":"X"}],"buyer":{"id":"B"}}

@@ -155,6 +155,7 @@ If the types are inconsistent, then lookups fail: for example, retrieving a cont
 
 The command converts these ID fields to strings, in order to prevent this issue:
 
+- `/parties[]/id`
 - `/buyer/id`
 - `/tender/procuringEntity/id`
 - `/bids/details[]/tenderers[]/id`
@@ -177,6 +178,7 @@ The command supports filling in:
 - `/bids/details[]/status`
 - `/awards[]/items[]/classification/scheme`
 - `/awards[]/status`
+- `/parties[]/roles[]`
 
 To fill in one or more of these fields when the field isn't set, add a `[defaults]` section with relevant properties to your {doc}`../topics/settings`. For example:
 
@@ -186,7 +188,15 @@ currency = USD
 item_classification_scheme = UNSPSC
 bid_status = valid
 award_status = active
+party_roles = true
 ```
+
+Every organization reference (like `/buyer/id`) should have a corresponding value (like 'buyer') in the `/parties[]/roles[]` array. If the corresponding value is missing, set `party_roles = true`. This supports:
+
+- `/buyer/id` for the 'buyer' role
+- `/tender/procuringEntity/id` for the 'procuringEntity' role
+- `/bids/details[]/tenderers[]/id` for the 'tenderer' role
+- `/awards[]/suppliers[]/id` for the 'supplier' role
 
 :::{tip}
 Need to fill in other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
@@ -227,6 +237,7 @@ organization_id = my-placeholder|dummy-value
 
 This configuration supports redacting values from:
 
+- `/parties[]/id`
 - `/buyer/id`
 - `/tender/procuringEntity/id`
 - `/bids/details[]/tenderers[]/id`

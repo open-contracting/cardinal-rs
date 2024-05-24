@@ -5,6 +5,7 @@
 ### Added
 
 - {doc}`cli/prepare` command:
+  - Add `party_roles` configuration to `[defaults]` section.
   - Add `[redactions]` section. Warn about zero-value bids.
   - Add `[corrections]` section.
   - Add `[modifications]` section.

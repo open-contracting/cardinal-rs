@@ -34,6 +34,7 @@ pub struct Defaults {
     pub item_classification_scheme: Option<String>,
     pub bid_status: Option<String>,
     pub award_status: Option<String>,
+    pub party_roles: Option<bool>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]

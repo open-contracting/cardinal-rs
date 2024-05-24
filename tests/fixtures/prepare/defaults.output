@@ -1,1 +1,4 @@
 {"bids":{"details":[{"items":[{"classification":{"id":"100000000","scheme":"UNSPSC"}}],"value":{"amount":1,"currency":"USD"},"status":"valid"}]},"awards":[{"items":[{"classification":{"id":"10000000","scheme":"UNSPSC"}}],"status":"active"}]}
+{"parties":[{"id":"B","roles":["buyer","custom","procuringEntity"]},{"id":"T","roles":["enquirer","supplier","tenderer"]}],"buyer":{"id":"B"},"tender":{"procuringEntity":{"id":"B"}},"bids":{"details":[{"tenderers":[{"id":"T"}],"status":"valid"}]},"awards":[{"suppliers":[{"id":"T"}],"status":"active"}]}
+{"parties":[{"id":"B","roles":["buyer"]},{"id":"T","roles":["tenderer"]}],"buyer":{"id":"B"},"tender":{"procuringEntity":{"id":"P"}},"bids":{"details":[{"tenderers":[{"id":"T"}],"status":"valid"}]},"awards":[{"suppliers":[{"id":"S"}],"status":"active"}]}
+{"parties":[{"id":"B","roles":["buyer"]},{"id":"B","roles":["buyer"]},{"id":"X"}],"buyer":{"id":"B"}}

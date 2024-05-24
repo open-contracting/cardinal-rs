@@ -52,6 +52,7 @@ $ ocdscardinal init -
 ; item_classification_scheme = UNSPSC
 ; bid_status = valid
 ; award_status = active
+; party_roles = true
 
 [redactions]
 ; amount = 0
