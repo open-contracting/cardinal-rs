@@ -125,7 +125,10 @@ Given the context of this example, the columns can be used as follows.
     | - | - |
     | not set | The field isn't set. To correct, [fill in missing values](#fill-in-missing-values). |
     | invalid | The code isn't valid. To correct, [re-map incorrect codes](#re-map-invalid-codes). |
+    | is zero | The bid's value is zero. To correct, [redact incorrect values](#redact-incorrect-values). |
 :::
+
+This command logs a warning if a JSON text isn't valid or isn't an object.
 
 (prepare-config)=
 ## Configuration
@@ -189,6 +192,7 @@ award_status = active
 Need to fill in other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
 :::
 
+(redact-incorrect-values)=
 ### Redact incorrect values
 
 :::{tip}
@@ -258,6 +262,8 @@ To move auction bids to the standard location, add a `[modifications]` section w
 [modifications]
 move_auctions = true
 ```
+
+If enabled, this configuration logs a warning if both `/auctions` and `/bids` are present.
 
 ### Prefix organization IDs
 
