@@ -414,7 +414,6 @@ macro_rules! prepare_id_object {
                     object.remove("id");
                 } else if !id.starts_with($prefix) {
                     id.insert_str(0, &$prefix);
-                    object["id"] = Value::String(id.to_string());
                 }
             }
         }
@@ -440,7 +439,6 @@ macro_rules! prepare_id_array {
                             object.remove("id");
                         } else if !id.starts_with($prefix) {
                             id.insert_str(0, &$prefix);
-                            object["id"] = Value::String(id.to_string());
                         }
                     }
                 }
