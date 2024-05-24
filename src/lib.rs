@@ -399,7 +399,7 @@ impl Indicators {
 
 macro_rules! stringify {
     ( $object:ident , $key:expr ) => {
-        if let Some(Value::Number(id)) = $object.get_mut($key) {
+        if let Some(Value::Number(id)) = $object.get($key) {
             $object[$key] = Value::String(id.to_string());
         }
     };
@@ -408,9 +408,7 @@ macro_rules! stringify {
 macro_rules! prepare_id_object {
     ( $field:ident , $key:expr , $redact:ident , $prefix:expr ) => {
         if let Some(Value::Object(object)) = $field.get_mut($key) {
-            if let Some(Value::Number(id)) = object.get_mut("id") {
-                object["id"] = Value::String(id.to_string());
-            }
+            stringify!(object, "id");
             if let Some(Value::String(id)) = object.get_mut("id") {
                 if $redact.contains(id) {
                     object.remove("id");
@@ -436,9 +434,7 @@ macro_rules! prepare_id_array {
         if let Some(Value::Array(array)) = $field.get_mut($key) {
             for entry in array {
                 if let Value::Object(object) = entry {
-                    if let Some(Value::Number(id)) = object.get_mut("id") {
-                        object["id"] = Value::String(id.to_string());
-                    }
+                    stringify!(object, "id");
                     if let Some(Value::String(id)) = object.get_mut("id") {
                         if $redact.contains(id) {
                             object.remove("id");
