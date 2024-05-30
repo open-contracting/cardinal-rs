@@ -202,11 +202,16 @@ To exclude procedures from price comparisons, add to the top of your settings fi
 no_price_comparison_procurement_methods = Random Selection|Sorteo de Obras
 ```
 
-To include procedures in price comparisons, add to the top of your settings file, as a pipe-separated list, for example:
+Alternatively, to include procedures in price comparisons, add to the top of your settings file, as a pipe-separated list, for example:
 
 ```ini
 price_comparison_procurement_methods = Reverse Auction
 ```
+
+A procedure is excluded if either:
+
+-  `no_price_comparison_procurement_methods` is set, and `/tender/procurementMethodDetails` is set and matches
+-  `price_comparison_procurement_methods` is set, and `/tender/procurementMethodDetails` isn't set or doesn't match
 
 ## Glossary
 

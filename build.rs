@@ -86,7 +86,6 @@ fn prepare_{name}() {{
 fn {function}() {{
     check_indicators("indicators/{name}", Settings {{
         {ident}: Some({setting}),
-        price_comparison_procurement_methods: Some(String::from("R024|R028|R036|R058")),
         no_price_comparison_procurement_methods: Some(String::from("NPC")),
         exclusions: Some(Exclusions {{ procurement_method_details: Some(String::from("EXC")) }}),
         ..Default::default()
