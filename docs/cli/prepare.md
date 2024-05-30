@@ -125,10 +125,15 @@ Given the context of this example, the columns can be used as follows.
     | - | - |
     | not set | The field isn't set. To correct, [fill in missing values](#fill-in-missing-values). |
     | invalid | The code isn't valid. To correct, [re-map incorrect codes](#re-map-invalid-codes). |
+    | is zero | The bid's value is zero. To correct, [redact incorrect values](#redact-incorrect-values). |
 :::
+
+This command logs a warning if a JSON text isn't valid or isn't an object.
 
 (prepare-config)=
 ## Configuration
+
+For each configuration, additional fields will be supported as new indicators are added.
 
 ### Correct structural errors
 
@@ -150,6 +155,7 @@ If the types are inconsistent, then lookups fail: for example, retrieving a cont
 
 The command converts these ID fields to strings, in order to prevent this issue:
 
+- `/parties[]/id`
 - `/buyer/id`
 - `/tender/procuringEntity/id`
 - `/bids/details[]/tenderers[]/id`
@@ -157,8 +163,6 @@ The command converts these ID fields to strings, in order to prevent this issue:
 - `/awards[]/suppliers[]/id`
 - `/awards[]/items[]/classification/id`
 - `/contracts[]/awardID`
-
-As new indicators are added, additional ID fields will be converted.
 
 :::{note}
 This behavior can't be disabled. If you need to disable it, [create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues).
@@ -174,6 +178,7 @@ The command supports filling in:
 - `/bids/details[]/status`
 - `/awards[]/items[]/classification/scheme`
 - `/awards[]/status`
+- `/parties[]/roles[]`
 
 To fill in one or more of these fields when the field isn't set, add a `[defaults]` section with relevant properties to your {doc}`../topics/settings`. For example:
 
@@ -183,14 +188,21 @@ currency = USD
 item_classification_scheme = UNSPSC
 bid_status = valid
 award_status = active
+party_roles = true
 ```
 
-As new indicators are added, additional currency and scheme fields will be filled in.
+Every organization reference (like `/buyer/id`) should have a corresponding value (like 'buyer') in the `/parties[]/roles[]` array. If the corresponding value is missing, set `party_roles = true`. This supports:
+
+- `/buyer/id` for the 'buyer' role
+- `/tender/procuringEntity/id` for the 'procuringEntity' role
+- `/bids/details[]/tenderers[]/id` for the 'tenderer' role
+- `/awards[]/suppliers[]/id` for the 'supplier' role
 
 :::{tip}
 Need to fill in other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
 :::
 
+(redact-incorrect-values)=
 ### Redact incorrect values
 
 :::{tip}
@@ -225,6 +237,7 @@ organization_id = my-placeholder|dummy-value
 
 This configuration supports redacting values from:
 
+- `/parties[]/id`
 - `/buyer/id`
 - `/tender/procuringEntity/id`
 - `/bids/details[]/tenderers[]/id`
@@ -260,6 +273,29 @@ To move auction bids to the standard location, add a `[modifications]` section w
 [modifications]
 move_auctions = true
 ```
+
+If enabled, this configuration logs a warning if both `/auctions` and `/bids` are present.
+
+### Prefix organization IDs
+
+If the `id` field of an organization reference (like `/buyer/id`) doesn't match the `id` field of a `/parties[]` entry, then lookups fail. For example, `/parties[]/id` might include the identifier scheme (like "DO-RPE-1422"), but `/bids/details[]/tenderers[]/id` might use the identifier alone (like "1422").
+
+To prefix text to the `id` field of an organization reference, add a `[modifications]` section with `prefix_buyer_or_procuring_entity_id` and/or `prefix_tenderer_or_supplier_id` properties to your {doc}`../topics/settings`. For example:
+
+```ini
+[modifications]
+prefix_buyer_or_procuring_entity_id = DO-UC-
+prefix_tenderer_or_supplier_id = DO-RPE-
+```
+
+These configurations support prefixing text to:
+
+- `/buyer/id`
+- `/tender/procuringEntity/id`
+- `/bids/details[]/tenderers[]/id`
+- `/awards[]/suppliers[]/id`
+
+Text isn't prefixed if the `id` field is [redacted](#redact-incorrect-values) or if it starts with the text.
 
 ### Standardize unconstrained values
 

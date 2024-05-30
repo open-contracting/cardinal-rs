@@ -70,6 +70,7 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ; item_classification_scheme = UNSPSC
 ; bid_status = valid
 ; award_status = active
+; party_roles = true
 
 [redactions]
 ; amount = 0
@@ -80,6 +81,8 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 
 [modifications]
 ; move_auctions = true
+; prefix_buyer_or_procuring_entity_id = DO-UC-
+; prefix_tenderer_or_supplier_id = DO-RPE-
 ; split_procurement_method_details = -
 
 [codelists.bid_status]
@@ -346,6 +349,18 @@ impl Indicators {
         }
     }
 
+    fn matches_procurement_method(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
+        if set.is_empty() {
+            true // match if not filtering out procurement methods
+        } else if let Some(Value::Object(tender)) = release.get("tender")
+            && let Some(Value::String(procurement_method)) = tender.get("procurementMethod")
+        {
+            set.contains(procurement_method)
+        } else {
+            false // don't match if filtering out procurement methods
+        }
+    }
+
     fn matches_procurement_method_details(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
         if !set.is_empty()
             && let Some(Value::Object(tender)) = release.get("tender")
@@ -401,21 +416,26 @@ impl Indicators {
 
 macro_rules! stringify {
     ( $object:ident , $key:expr ) => {
-        if let Some(Value::Number(id)) = $object.get_mut($key) {
+        if let Some(Value::Number(id)) = $object.get($key) {
             $object[$key] = Value::String(id.to_string());
         }
     };
 }
 
 macro_rules! prepare_id_object {
-    ( $field:ident , $key:expr , $redact:ident ) => {
+    ( $field:ident , $key:expr , $redact:ident , $prefix:expr , $lookup:expr , $role:expr ) => {
         if let Some(Value::Object(object)) = $field.get_mut($key) {
-            if let Some(Value::Number(id)) = object.get_mut("id") {
-                object["id"] = Value::String(id.to_string());
-            }
-            if let Some(Value::String(id)) = object.get("id") {
+            stringify!(object, "id");
+            if let Some(Value::String(id)) = object.get_mut("id") {
                 if $redact.contains(id) {
                     object.remove("id");
+                } else {
+                    if !id.starts_with($prefix) {
+                        id.insert_str(0, &$prefix);
+                    }
+                    if let Some(roles) = $lookup.get_mut(id) {
+                        roles.insert($role.into());
+                    }
                 }
             }
         }
@@ -423,7 +443,7 @@ macro_rules! prepare_id_object {
 }
 
 macro_rules! prepare_id_array {
-    ( $field:ident , $key:expr , $redact:ident ) => {
+    ( $field:ident , $key:expr , $redact:ident , $prefix:expr , $lookup:expr , $role:expr ) => {
         // Coerce objects into arrays.
         if let Some(value) = $field.get_mut($key)
             && value.is_object()
@@ -435,12 +455,17 @@ macro_rules! prepare_id_array {
         if let Some(Value::Array(array)) = $field.get_mut($key) {
             for entry in array {
                 if let Value::Object(object) = entry {
-                    if let Some(Value::Number(id)) = object.get_mut("id") {
-                        object["id"] = Value::String(id.to_string());
-                    }
-                    if let Some(Value::String(id)) = object.get("id") {
+                    stringify!(object, "id");
+                    if let Some(Value::String(id)) = object.get_mut("id") {
                         if $redact.contains(id) {
                             object.remove("id");
+                        } else {
+                            if !id.starts_with($prefix) {
+                                id.insert_str(0, &$prefix);
+                            }
+                            if let Some(roles) = $lookup.get_mut(id) {
+                                roles.insert($role.into());
+                            }
                         }
                     }
                 }
@@ -480,6 +505,7 @@ impl Prepare {
         let item_classification_scheme_default = defaults.item_classification_scheme.map(Value::String);
         let bid_status_default = defaults.bid_status.map(Value::String);
         let award_status_default = defaults.award_status.map(Value::String);
+        let party_roles_default = defaults.party_roles.unwrap_or_default();
 
         // [redactions]
         let redactions = settings.redactions.unwrap_or_default();
@@ -500,6 +526,10 @@ impl Prepare {
         // [modifications]
         let modifications = settings.modifications.unwrap_or_default();
         let move_auctions = modifications.move_auctions.unwrap_or_default();
+        let binding = modifications.prefix_buyer_or_procuring_entity_id.unwrap_or_default();
+        let prefix_buyer_or_procuring_entity_id = binding.as_str();
+        let binding = modifications.prefix_tenderer_or_supplier_id.unwrap_or_default();
+        let prefix_tenderer_or_supplier_id = binding.as_str();
         let split_procurement_method_details = modifications.split_procurement_method_details;
 
         // [codelists.*]
@@ -536,15 +566,60 @@ impl Prepare {
 
                 let mut award_id_contracts_cancelled = HashMap::new();
 
+                // /ocid
                 let ocid = release
                     .get("ocid")
                     .map_or_else(|| Value::Null, std::clone::Clone::clone);
 
-                prepare_id_object!(release, "buyer", redact_organization_id);
+                // /parties
+                prepare_id_array!(
+                    release,
+                    "parties",
+                    redact_organization_id,
+                    "",
+                    HashMap::<String, HashSet<String>>::new(),
+                    ""
+                );
+
+                let mut party_roles_lookup = HashMap::new();
+                if party_roles_default {
+                    if let Some(Value::Array(parties)) = release.get("parties") {
+                        for party in parties {
+                            if let Some(Value::String(id)) = party.get("id") {
+                                let mut set = HashSet::new();
+                                if let Some(Value::Array(roles)) = party.get("roles") {
+                                    for role in roles {
+                                        if let Value::String(string) = role {
+                                            set.insert(string.clone());
+                                        }
+                                    }
+                                }
+                                party_roles_lookup.insert(id.clone(), set);
+                            }
+                        }
+                    }
+                }
+
+                // /buyer
+                prepare_id_object!(
+                    release,
+                    "buyer",
+                    redact_organization_id,
+                    prefix_buyer_or_procuring_entity_id,
+                    party_roles_lookup,
+                    "buyer"
+                );
 
                 // /tender
                 if let Some(Value::Object(tender)) = release.get_mut("tender") {
-                    prepare_id_object!(tender, "procuringEntity", redact_organization_id);
+                    prepare_id_object!(
+                        tender,
+                        "procuringEntity",
+                        redact_organization_id,
+                        prefix_buyer_or_procuring_entity_id,
+                        party_roles_lookup,
+                        "procuringEntity"
+                    );
 
                     if let Some(pat) = &split_procurement_method_details
                         && let Some(Value::String(procurement_method_details)) =
@@ -643,7 +718,14 @@ impl Prepare {
                             }
                         }
 
-                        prepare_id_array!(bid, "tenderers", redact_organization_id);
+                        prepare_id_array!(
+                            bid,
+                            "tenderers",
+                            redact_organization_id,
+                            prefix_tenderer_or_supplier_id,
+                            party_roles_lookup,
+                            "tenderer"
+                        );
                     }
                 }
 
@@ -669,7 +751,14 @@ impl Prepare {
 
                         if let Some(Value::Array(items)) = award.get_mut("items") {
                             for (k, item) in items.iter_mut().enumerate() {
-                                prepare_id_object!(item, "classification", empty_set);
+                                prepare_id_object!(
+                                    item,
+                                    "classification",
+                                    empty_set,
+                                    "",
+                                    HashMap::<String, HashSet<String>>::new(),
+                                    ""
+                                );
 
                                 if let Some(Value::Object(classification)) = item.get_mut("classification")
                                     && !classification.contains_key("scheme")
@@ -713,7 +802,29 @@ impl Prepare {
                             award["status"] = Value::String("cancelled".into());
                         }
 
-                        prepare_id_array!(award, "suppliers", redact_organization_id);
+                        prepare_id_array!(
+                            award,
+                            "suppliers",
+                            redact_organization_id,
+                            prefix_tenderer_or_supplier_id,
+                            party_roles_lookup,
+                            "supplier"
+                        );
+                    }
+                }
+
+                if party_roles_default {
+                    if let Some(Value::Array(parties)) = release.get_mut("parties") {
+                        for party in parties.iter_mut() {
+                            if let Some(Value::String(id)) = party.get("id") {
+                                // Don't `std::mem::take` in case `/parties[]/id` repeats.
+                                let mut roles: Vec<_> = party_roles_lookup[id].clone().into_iter().collect();
+                                if !roles.is_empty() {
+                                    roles.sort_unstable();
+                                    party["roles"] = Value::Array(roles.into_iter().map(Value::String).collect());
+                                }
+                            }
+                        }
                     }
                 }
 

@@ -52,6 +52,7 @@ $ ocdscardinal init -
 ; item_classification_scheme = UNSPSC
 ; bid_status = valid
 ; award_status = active
+; party_roles = true
 
 [redactions]
 ; amount = 0
@@ -62,6 +63,8 @@ $ ocdscardinal init -
 
 [modifications]
 ; move_auctions = true
+; prefix_buyer_or_procuring_entity_id = DO-UC-
+; prefix_tenderer_or_supplier_id = DO-RPE-
 ; split_procurement_method_details = -
 
 [codelists.bid_status]

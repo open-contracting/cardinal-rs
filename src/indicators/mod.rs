@@ -35,6 +35,7 @@ pub struct Defaults {
     pub item_classification_scheme: Option<String>,
     pub bid_status: Option<String>,
     pub award_status: Option<String>,
+    pub party_roles: Option<bool>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -54,6 +55,8 @@ pub struct Corrections {
 #[serde(deny_unknown_fields)]
 pub struct Modifications {
     pub move_auctions: Option<bool>,
+    pub prefix_buyer_or_procuring_entity_id: Option<String>,
+    pub prefix_tenderer_or_supplier_id: Option<String>,
     pub split_procurement_method_details: Option<String>,
 }
 
