@@ -51,6 +51,14 @@ fn parse_pipe_separated_value(value: Option<String>) -> HashSet<String> {
         .collect()
 }
 
+fn parse_pipe_separated_value_with_default(value: Option<String>, default: String) -> HashSet<String> {
+    value
+        .unwrap_or(default)
+        .split_terminator('|')
+        .map(str::to_string)
+        .collect()
+}
+
 ///
 /// # Errors
 ///
@@ -108,6 +116,7 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ; international = 25
 
 [R018]
+; procurement_methods = open|selective
 
 [R024]
 ; threshold = 0.05
@@ -354,15 +363,15 @@ impl Indicators {
         }
     }
 
-    fn matches_procurement_method(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
+    fn matches_procurement_method(tender: &Map<String, Value>, set: &HashSet<String>) -> bool {
         if set.is_empty() {
-            true // match if not filtering out procurement methods
-        } else if let Some(Value::Object(tender)) = release.get("tender")
-            && let Some(Value::String(procurement_method)) = tender.get("procurementMethod")
-        {
+            // Match if not filtering out procurement methods.
+            true
+        } else if let Some(Value::String(procurement_method)) = tender.get("procurementMethod") {
             set.contains(procurement_method)
         } else {
-            false // don't match if filtering out procurement methods
+            // Don't match if filtering out procurement methods.
+            false
         }
     }
 

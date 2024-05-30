@@ -90,6 +90,7 @@ $ ocdscardinal init -
 ; international = 25
 
 [R018]
+; procurement_methods = open|selective
 
 [R024]
 ; threshold = 0.05

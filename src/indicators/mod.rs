@@ -92,6 +92,12 @@ pub struct R003 {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct R018 {
+    pub procurement_methods: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct R025 {
     percentile: Option<usize>,
     threshold: Option<f64>, // ratio
@@ -129,7 +135,7 @@ pub struct Settings {
     pub price_comparison_procurement_methods: Option<String>,
     pub exclusions: Option<Exclusions>,
     pub R003: Option<R003>,
-    pub R018: Option<Empty>,
+    pub R018: Option<R018>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
     pub R028: Option<Empty>,
