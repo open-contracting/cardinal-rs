@@ -296,6 +296,9 @@ R/index
 * - [R003](R/003)
   - [Short submission period](R/003)
   - The submission period is too short.
+* - [R018](R/018)
+  - [Single bid received](R/018)
+  - Only one tenderer submitted a bid.
 * - [R024](R/024)
   - [Price close to winning bid](R/024)
   - The percentage difference between the winning bid and the second-lowest valid bid is a low outlier.

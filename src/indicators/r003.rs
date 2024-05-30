@@ -19,17 +19,14 @@ impl Calculate for R003 {
 
         Self {
             threshold: setting.threshold.unwrap_or(15),
-            procurement_methods: parse_pipe_separated_value(setting.procurement_methods.clone()),
+            procurement_methods: parse_pipe_separated_value(setting.procurement_methods),
             procurement_method_details: setting.procurement_method_details.unwrap_or_default(),
         }
     }
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
-        if !Indicators::matches_procurement_method(release, &self.procurement_methods) {
-            return;
-        }
-
         if let Some(Value::Object(tender)) = release.get("tender")
+            && Indicators::matches_procurement_method(tender, &self.procurement_methods)
             && let Some(Value::Object(tender_period)) = tender.get("tenderPeriod")
             && let Some(Value::String(start_date)) = tender_period.get("startDate")
             && let Some(Value::String(end_date)) = tender_period.get("endDate")

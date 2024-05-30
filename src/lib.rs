@@ -18,6 +18,7 @@ use serde_json::{Map, Value};
 
 use crate::indicators::is_status;
 use crate::indicators::r003::R003;
+use crate::indicators::r018::R018;
 use crate::indicators::r024::R024;
 use crate::indicators::r025::R025;
 use crate::indicators::r028::R028;
@@ -45,6 +46,14 @@ macro_rules! add_indicators {
 fn parse_pipe_separated_value(value: Option<String>) -> HashSet<String> {
     value
         .unwrap_or_default()
+        .split_terminator('|')
+        .map(str::to_string)
+        .collect()
+}
+
+fn parse_pipe_separated_value_with_default(value: Option<String>, default: String) -> HashSet<String> {
+    value
+        .unwrap_or(default)
         .split_terminator('|')
         .map(str::to_string)
         .collect()
@@ -105,6 +114,9 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 [R003.procurement_method_details]
 ; emergency = 10
 ; international = 25
+
+[R018]
+; procurement_methods = open|selective
 
 [R024]
 ; threshold = 0.05
@@ -234,6 +246,7 @@ impl Indicators {
             indicators,
             settings,
             R003,
+            R018,
             R024,
             R025,
             R028,
@@ -350,15 +363,15 @@ impl Indicators {
         }
     }
 
-    fn matches_procurement_method(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
+    fn matches_procurement_method(tender: &Map<String, Value>, set: &HashSet<String>) -> bool {
         if set.is_empty() {
-            true // match if not filtering out procurement methods
-        } else if let Some(Value::Object(tender)) = release.get("tender")
-            && let Some(Value::String(procurement_method)) = tender.get("procurementMethod")
-        {
+            // Match if not filtering out procurement methods.
+            true
+        } else if let Some(Value::String(procurement_method)) = tender.get("procurementMethod") {
             set.contains(procurement_method)
         } else {
-            false // don't match if filtering out procurement methods
+            // Don't match if filtering out procurement methods.
+            false
         }
     }
 
