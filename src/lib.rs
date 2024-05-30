@@ -211,6 +211,7 @@ impl Indicators {
     ///
     #[rustfmt::skip]
     pub fn run(buffer: impl BufRead + Send, mut settings: Settings, map: &bool) -> Result<Self> {
+        let empty_set: HashSet<String> = HashSet::new();
         let mut indicators: Vec<Box<dyn Calculate + Sync>> = vec![];
 
         // [exclusions]
@@ -257,7 +258,7 @@ impl Indicators {
                 if let Value::Object(release) = value
                     && let Some(Value::String(ocid)) = release.get("ocid")
                     && !Self::is_cancelled_contracting_process(&release)
-                    && !Self::matches_procurement_method_details(&release, &exclude_procurement_method_details)
+                    && Self::matches_procurement_method_details(&release, &empty_set, &exclude_procurement_method_details)
                 {
                     for indicator in &indicators {
                         indicator.fold(&mut item, &release, ocid);
@@ -361,14 +362,24 @@ impl Indicators {
         }
     }
 
-    fn matches_procurement_method_details(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
-        if !set.is_empty()
-            && let Some(Value::Object(tender)) = release.get("tender")
+    fn matches_procurement_method_details(
+        release: &Map<String, Value>,
+        include: &HashSet<String>,
+        exclude: &HashSet<String>,
+    ) -> bool {
+        if let Some(Value::Object(tender)) = release.get("tender")
             && let Some(Value::String(procurement_method_details)) = tender.get("procurementMethodDetails")
         {
-            set.contains(procurement_method_details)
+            // A deny list can work even if empty.
+            if include.is_empty() {
+                !exclude.contains(procurement_method_details)
+            // An allow list only works if non-empty.
+            } else {
+                include.contains(procurement_method_details)
+            }
         } else {
-            false
+            // If the field isn't set, it matches only if using a deny list.
+            include.is_empty()
         }
     }
 
@@ -996,13 +1007,13 @@ mod tests {
 
     #[rstest]
     #[case("X", false, false, true)]
-    // #[case("X", true, false, false)]
+    #[case("X", true, false, false)]
     #[case("X", false, true, true)]
     #[case("Y", false, false, true)]
     #[case("Y", true, false, true)]
     #[case("Y", false, true, true)]
     #[case("N", false, false, true)]
-    // #[case("N", true, false, false)]
+    #[case("N", true, false, false)]
     #[case("N", false, true, false)]
     fn matches_procurement_method_details(
         #[case] value: &str,
