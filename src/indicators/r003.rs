@@ -13,18 +13,6 @@ pub struct R003 {
     procurement_method_details: HashMap<String, i64>,
 }
 
-impl R003 {
-    fn matches_procurement_method(&self, tender: &Map<String, Value>) -> bool {
-        if self.procurement_methods.is_empty() {
-            true // match if not filtering out procurement methods
-        } else if let Some(Value::String(procurement_method)) = tender.get("procurementMethod") {
-            self.procurement_methods.contains(procurement_method)
-        } else {
-            false // don't match if filtering out procurement methods
-        }
-    }
-}
-
 impl Calculate for R003 {
     fn new(settings: &mut Settings) -> Self {
         let setting = std::mem::take(&mut settings.R003).unwrap_or_default();
@@ -37,8 +25,11 @@ impl Calculate for R003 {
     }
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
+        if !Indicators::matches_procurement_method(release, &self.procurement_methods) {
+            return;
+        }
+
         if let Some(Value::Object(tender)) = release.get("tender")
-            && self.matches_procurement_method(tender)
             && let Some(Value::Object(tender_period)) = tender.get("tenderPeriod")
             && let Some(Value::String(start_date)) = tender_period.get("startDate")
             && let Some(Value::String(end_date)) = tender_period.get("endDate")

@@ -345,6 +345,18 @@ impl Indicators {
         }
     }
 
+    fn matches_procurement_method(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
+        if set.is_empty() {
+            true // match if not filtering out procurement methods
+        } else if let Some(Value::Object(tender)) = release.get("tender")
+            && let Some(Value::String(procurement_method)) = tender.get("procurementMethod")
+        {
+            set.contains(procurement_method)
+        } else {
+            false // don't match if filtering out procurement methods
+        }
+    }
+
     fn matches_procurement_method_details(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
         if !set.is_empty()
             && let Some(Value::Object(tender)) = release.get("tender")
