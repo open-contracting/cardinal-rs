@@ -1,0 +1,7 @@
+{"ocid":"open","tender":{"numberOfTenderers":1,"procurementMethod":"open"}}
+{"ocid":"selective","tender":{"numberOfTenderers":1,"procurementMethod":"selective"}}
+{"ocid":"limited","tender":{"numberOfTenderers":1,"procurementMethod":"limited"}}
+{"ocid":"direct","tender":{"numberOfTenderers":1,"procurementMethod":"direct"}}
+{"ocid":"missing","tender":{"numberOfTenderers":1}}
+{"ocid":"multiple","tender":{"numberOfTenderers":2,"procurementMethod":"open"}}
+{"ocid":"negative","tender":{"numberOfTenderers":-1,"procurementMethod":"open"}}

@@ -18,6 +18,7 @@ use serde_json::{Map, Value};
 
 use crate::indicators::is_status;
 use crate::indicators::r003::R003;
+use crate::indicators::r018::R018;
 use crate::indicators::r024::R024;
 use crate::indicators::r025::R025;
 use crate::indicators::r028::R028;
@@ -46,6 +47,14 @@ macro_rules! add_indicators {
 fn parse_pipe_separated_value(value: Option<String>) -> HashSet<String> {
     value
         .unwrap_or_default()
+        .split_terminator('|')
+        .map(str::to_string)
+        .collect()
+}
+
+fn parse_pipe_separated_value_with_default(value: Option<String>, default: String) -> HashSet<String> {
+    value
+        .unwrap_or(default)
         .split_terminator('|')
         .map(str::to_string)
         .collect()
@@ -106,6 +115,9 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 [R003.procurement_method_details]
 ; emergency = 10
 ; international = 25
+
+[R018]
+; procurement_methods = open|selective
 
 [R024]
 ; threshold = 0.05
@@ -214,6 +226,7 @@ impl Indicators {
     ///
     #[rustfmt::skip]
     pub fn run(buffer: impl BufRead + Send, mut settings: Settings, map: &bool) -> Result<Self> {
+        let empty_set: HashSet<String> = HashSet::new();
         let mut indicators: Vec<Box<dyn Calculate + Sync>> = vec![];
 
         // [exclusions]
@@ -228,10 +241,15 @@ impl Indicators {
             indicators.push(Box::new(SecondLowestBidRatio::new(&mut settings)));
         }
 
+        if settings.no_price_comparison_procurement_methods.is_some() && settings.price_comparison_procurement_methods.is_some() {
+            warn!("no_price_comparison_procurement_methods has no effect if price_comparison_procurement_methods is set.");
+        }
+
         add_indicators!(
             indicators,
             settings,
             R003,
+            R018,
             R024,
             R025,
             R028,
@@ -257,7 +275,7 @@ impl Indicators {
                 if let Value::Object(release) = value
                     && let Some(Value::String(ocid)) = release.get("ocid")
                     && !Self::is_cancelled_contracting_process(&release)
-                    && !Self::matches_procurement_method_details(&release, &exclude_procurement_method_details)
+                    && Self::matches_procurement_method_details(&release, &empty_set, &exclude_procurement_method_details)
                 {
                     for indicator in &indicators {
                         indicator.fold(&mut item, &release, ocid);
@@ -349,14 +367,36 @@ impl Indicators {
         }
     }
 
-    fn matches_procurement_method_details(release: &Map<String, Value>, set: &HashSet<String>) -> bool {
-        if !set.is_empty()
-            && let Some(Value::Object(tender)) = release.get("tender")
+    fn matches_procurement_method(tender: &Map<String, Value>, set: &HashSet<String>) -> bool {
+        if set.is_empty() {
+            // Match if not filtering out procurement methods.
+            true
+        } else if let Some(Value::String(procurement_method)) = tender.get("procurementMethod") {
+            set.contains(procurement_method)
+        } else {
+            // Don't match if filtering out procurement methods.
+            false
+        }
+    }
+
+    fn matches_procurement_method_details(
+        release: &Map<String, Value>,
+        include: &HashSet<String>,
+        exclude: &HashSet<String>,
+    ) -> bool {
+        if let Some(Value::Object(tender)) = release.get("tender")
             && let Some(Value::String(procurement_method_details)) = tender.get("procurementMethodDetails")
         {
-            set.contains(procurement_method_details)
+            // A deny list can work even if empty.
+            if include.is_empty() {
+                !exclude.contains(procurement_method_details)
+            // An allow list only works if non-empty.
+            } else {
+                include.contains(procurement_method_details)
+            }
         } else {
-            false
+            // If the field isn't set, it matches only if using a deny list.
+            include.is_empty()
         }
     }
 
@@ -925,6 +965,8 @@ mod tests {
 
     use config::Config;
     use pretty_assertions::assert_eq;
+    use rstest::rstest;
+    use serde_json::json;
 
     #[cfg(test)]
     #[ctor::ctor]
@@ -978,6 +1020,77 @@ mod tests {
             serde_json::from_reader(reader(name, "expected")).unwrap();
 
         assert_eq!(result.unwrap().results, expected);
+    }
+
+    #[rstest]
+    #[case("X", false, false, true)]
+    #[case("X", true, false, false)]
+    #[case("X", false, true, true)]
+    #[case("Y", false, false, true)]
+    #[case("Y", true, false, true)]
+    #[case("Y", false, true, true)]
+    #[case("N", false, false, true)]
+    #[case("N", true, false, false)]
+    #[case("N", false, true, false)]
+    fn matches_procurement_method_details(
+        #[case] value: &str,
+        #[case] include: bool,
+        #[case] exclude: bool,
+        #[case] flagged: bool,
+    ) {
+        let data = json!({
+            "ocid": "F",
+            "bids": {
+                "details": [
+                    {
+                        "status": "disqualified",
+                        "value": {
+                            "amount": 1,
+                            "currency": "USD"
+                        }
+                    },
+                    {
+                        "status": "valid",
+                        "value": {
+                            "amount": 2,
+                            "currency": "USD"
+                        }
+                    }
+                ]
+            },
+            "awards": [
+                {
+                    "status": "active"
+                }
+            ],
+            "tender": {
+                "procurementMethodDetails": value
+            }
+        });
+
+        let settings = Settings {
+            price_comparison_procurement_methods: if include { Some(String::from("Y")) } else { None },
+            no_price_comparison_procurement_methods: if exclude { Some(String::from("N")) } else { None },
+            R036: Some(Default::default()),
+            ..Default::default()
+        };
+
+        let mut bytes: Vec<u8> = vec![];
+        serde_json::to_writer(&mut bytes, &data).unwrap();
+
+        let result = Indicators::run(BufReader::new(&*bytes), settings, &false);
+
+        assert_eq!(
+            result.unwrap().results,
+            if flagged {
+                IndexMap::from([(
+                    Group::OCID,
+                    IndexMap::from([(String::from("F"), HashMap::from([(Indicator::R036, 1.0)]))]),
+                )])
+            } else {
+                IndexMap::new()
+            }
+        );
     }
 
     include!(concat!(env!("OUT_DIR"), "/lib.include"));

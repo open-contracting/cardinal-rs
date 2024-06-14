@@ -13,32 +13,20 @@ pub struct R003 {
     procurement_method_details: HashMap<String, i64>,
 }
 
-impl R003 {
-    fn matches_procurement_method(&self, tender: &Map<String, Value>) -> bool {
-        if self.procurement_methods.is_empty() {
-            true // match if not filtering out procurement methods
-        } else if let Some(Value::String(procurement_method)) = tender.get("procurementMethod") {
-            self.procurement_methods.contains(procurement_method)
-        } else {
-            false // don't match if filtering out procurement methods
-        }
-    }
-}
-
 impl Calculate for R003 {
     fn new(settings: &mut Settings) -> Self {
         let setting = std::mem::take(&mut settings.R003).unwrap_or_default();
 
         Self {
             threshold: setting.threshold.unwrap_or(15),
-            procurement_methods: parse_pipe_separated_value(setting.procurement_methods.clone()),
+            procurement_methods: parse_pipe_separated_value(setting.procurement_methods),
             procurement_method_details: setting.procurement_method_details.unwrap_or_default(),
         }
     }
 
     fn fold(&self, item: &mut Indicators, release: &Map<String, Value>, ocid: &str) {
         if let Some(Value::Object(tender)) = release.get("tender")
-            && self.matches_procurement_method(tender)
+            && Indicators::matches_procurement_method(tender, &self.procurement_methods)
             && let Some(Value::Object(tender_period)) = tender.get("tenderPeriod")
             && let Some(Value::String(start_date)) = tender_period.get("startDate")
             && let Some(Value::String(end_date)) = tender_period.get("endDate")

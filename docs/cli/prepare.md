@@ -295,6 +295,8 @@ These configurations support prefixing text to:
 - `/bids/details[]/tenderers[]/id`
 - `/awards[]/suppliers[]/id`
 
+Text isn't prefixed if the `id` field is [redacted](#redact-incorrect-values) or if it starts with the text.
+
 ### Standardize unconstrained values
 
 Text fields with non-standardized values can be standardized to ease the configuration of {doc}`indicators<indicators/index>`. For example, if a value is formatted as `{mutual category} - {individual detail}`, you can split the value on the `-` separator and keep the `{mutual category}` prefix.
