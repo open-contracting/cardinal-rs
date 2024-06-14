@@ -1,1 +1,4 @@
-{}
+{"ocid":"F1","parties":[{"address":{"streetAddress":"Street ABC","locality":"Atlantis City","region":"Moorland","postalCode":"1234","countryName":"Atlantis"},"roles":["tenderer"],"id":"GB-COH-09506232"},{"address":{"streetAddress":"Street ABC","locality":"Atlantis City","region":"Moorland","postalCode":"1234","countryName":"Atlantis"},"roles":["tenderer"],"id":"GB-COH-09506234"}]}
+{"ocid":"F2","parties":[{"address":{"streetAddress":"Street ABC"},"roles":["tenderer"],"id":"GB-COH-09506232"},{"address":{"streetAddress":"Street ABC"},"roles":["tenderer"],"id":"GB-COH-09506234"}]}
+{"ocid":"Same country only","parties":[{"address":{"countryName":"Atlantis"},"roles":["tenderer"],"id":"GB-COH-09506232"},{"address":{"countryName":"Atlantis"},"roles":["tenderer"],"id":"GB-COH-09506234"}]}
+{"ocid":"No address","parties":[{"roles":["tenderer"],"id":"GB-COH-09506232"},{"roles":["tenderer"],"id":"GB-COH-09506234"}]}
