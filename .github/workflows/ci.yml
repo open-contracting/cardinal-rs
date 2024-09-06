@@ -23,9 +23,6 @@ jobs:
       - uses: taiki-e/install-action@cargo-llvm-cov
       - env:
           RUSTFLAGS: -Zon-broken-pipe=kill
-        run: cargo llvm-cov --lcov --output-path lcov.info --no-cfg-coverage-nightly
+        run: cargo llvm-cov --lcov --output-path coverage/lcov.info --no-cfg-coverage-nightly
       - if: matrix.os == 'ubuntu-latest'
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: lcov.info
+        uses: coverallsapp/github-action@v2
