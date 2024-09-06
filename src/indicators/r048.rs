@@ -44,9 +44,8 @@ impl Calculate for R048 {
                             let (count, codes) =
                                 accumulator.r048_classifications.entry(supplier_id.clone()).or_default();
                             // A supplier is observed in a contracting process (ocid) at most once.
-                            if !observed_supplier_ids.contains(supplier_id) {
+                            if observed_supplier_ids.insert(supplier_id) {
                                 *count += 1;
-                                observed_supplier_ids.insert(supplier_id);
                             }
                             codes.insert(classification_id.chars().take(self.digits).collect());
                         }

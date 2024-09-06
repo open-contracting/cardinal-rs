@@ -18,7 +18,7 @@ clap = { version = "4.0", features = ["derive", "wrap_help"] }
 # https://github.com/mehcode/config-rs/issues/531
 config = {version = "0.13", features = ["ini"], default-features = false }
 csv = "1.0"
-human-panic = "1.0"
+human-panic = "2.0"
 indexmap = { version = "2.0", features = ["serde"] }
 itertools = "0.12"
 log = "0.4"
