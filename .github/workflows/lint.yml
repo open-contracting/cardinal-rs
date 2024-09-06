@@ -11,7 +11,7 @@ jobs:
           # Need feature(stdsimd) until config-rs can be upgraded.
           # https://github.com/mehcode/config-rs/issues/531
           # https://github.com/rust-lang/rust/issues/27731#event-11707724027
-          toolchain: nightly-2024-01-01
+          toolchain: nightly-2024-09-01
           components: clippy
       - uses: Swatinem/rust-cache@v2
         with:
