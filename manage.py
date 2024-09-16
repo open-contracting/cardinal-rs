@@ -44,9 +44,7 @@ def json_to_csv(args):
     for map_id, mapping in data["Maps"].items():
         for ocid, identifiers in mapping.items():
             # ocid_buyer* and ocid_procuringentity* are `str`.
-            if not isinstance(identifiers, list):
-                identifiers = [identifiers]
-            for identifier in identifiers:
+            for identifier in (identifiers if isinstance(identifiers, list) else [identifiers]):
                 identifier_to_ocid[map_id][identifier].append(ocid)
 
     rows = []
