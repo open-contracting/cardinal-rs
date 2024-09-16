@@ -27,16 +27,18 @@ def json_to_csv(args):
     }
     created_at = datetime.datetime.now(tz=datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    exists = os.path.exists(args.outfile)
+    infile = Path(args.infile)
+    outfile = Path(args.outfile)
+    exists = outfile.exists()
 
     seen = set()
     if exists:
-        with open(args.outfile) as f:
+        with outfile.open() as f:
             reader = csv.DictReader(f, fieldnames=fieldnames)
             for row in reader:
                 seen.add((row["ocid"], row["code"], row["buyer_id"], row["procuring_entity_id"], row["tenderer_id"]))
 
-    with open(args.infile) as f:
+    with infile.open() as f:
         data = json.load(f)
 
     identifier_to_ocid = defaultdict(lambda: defaultdict(list))
@@ -87,7 +89,7 @@ def json_to_csv(args):
 
     if not args.quiet:
         print(f"Writing {len(rows)} rows")
-    with open(args.outfile, "a") as f:
+    with outfile.open("a") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
         if not exists:
             writer.writeheader()
