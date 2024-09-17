@@ -3,7 +3,6 @@ import argparse
 import csv
 import datetime
 import json
-import os.path
 import re
 from collections import defaultdict
 from pathlib import Path
