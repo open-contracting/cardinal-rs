@@ -33,8 +33,7 @@ def json_to_csv(args):
     seen = set()
     if exists:
         with outfile.open() as f:
-            reader = csv.DictReader(f, fieldnames=fieldnames)
-            for row in reader:
+            for row in csv.DictReader(f, fieldnames=fieldnames):
                 seen.add((row["ocid"], row["code"], row["buyer_id"], row["procuring_entity_id"], row["tenderer_id"]))
 
     with infile.open() as f:
