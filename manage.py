@@ -40,7 +40,7 @@ def json_to_csv(args):
         data = json.load(f)
 
     identifier_to_ocid = defaultdict(lambda: defaultdict(list))
-    # > {"Maps": {"ocid_tenderer": {"an-ocid": ["a-tenderer-id"]}}}
+    # Looks like: {"Maps": {"ocid_tenderer": {"an-ocid": ["a-tenderer-id"]}}}
     for map_id, mapping in data["Maps"].items():
         for ocid, identifiers in mapping.items():
             # ocid_buyer* and ocid_procuringentity* are `str`.
@@ -66,7 +66,7 @@ def json_to_csv(args):
         ("ProcuringEntity", 3, "procuring_entity_id"),
         ("Tenderer", 4, "tenderer_id"),
     ):
-        # > {"Tenderer": {"a-tenderer-id": {"R038": 0.1}}}
+        # Looks like: {"Tenderer": {"a-tenderer-id": {"R038": 0.1}}}
         for identifier, results in data.get(subject, {}).items():
             for code, result in results.items():
                 map_id = subject_code_to_map_id[subject][code]
