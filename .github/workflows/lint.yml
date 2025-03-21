@@ -13,15 +13,15 @@ jobs:
           # https://github.com/rust-lang/rust/issues/27731#event-11707724027
           toolchain: nightly-2024-09-01
           components: clippy
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2.7.8
         with:
           key: ${{ matrix.os }}
       - id: changed-files
-        uses: tj-actions/changed-files@v45
-      - uses: pre-commit/action@v3.0.1
+        uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
+      - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
         with:
           extra_args: cargo-check --files ${{ steps.changed-files.outputs.all_changed_files }}
-      - uses: pre-commit/action@v3.0.1
+      - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
         with:
           extra_args: cargo-clippy --files ${{ steps.changed-files.outputs.all_changed_files }}
       - uses: taiki-e/install-action@cargo-udeps

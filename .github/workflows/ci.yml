@@ -15,7 +15,7 @@ jobs:
       # https://github.com/mehcode/config-rs/issues/531
       # https://github.com/rust-lang/rust/issues/27731#event-11707724027
       - uses: dtolnay/rust-toolchain@nightly
-      - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2.7.8
         with:
           key: ${{ matrix.os }}
       # https://github.com/Swatinem/rust-cache/issues/93#issuecomment-1321064841
