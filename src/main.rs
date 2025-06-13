@@ -149,8 +149,8 @@ fn main() {
 
     match &cli.command {
         Commands::Init { file, force } => match ocdscardinal::init(file, force) {
-            Err(e) => eprintln!("Error writing to {file:?}: {e}"),
-            Ok(false) => println!("Settings written to {file:?}."),
+            Err(e) => eprintln!("Error writing to {}: {e}", file.display()),
+            Ok(false) => println!("Settings written to {}.", file.display()),
             Ok(true) => {} // written to standard output
         },
         Commands::Coverage { file } => match ocdscardinal::Coverage::run(reader(file)) {

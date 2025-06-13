@@ -156,7 +156,7 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
     } else if !exists || *force {
         let mut file = File::create(path)?;
         file.write_all(content)?;
-    };
+    }
 
     Ok(stdout)
 }
@@ -568,7 +568,10 @@ impl Prepare {
                 // Use guard clauses to reduce indentation and ease readabaility.
                 let string = match lines {
                     Ok(string) => string,
-                    Err(e) => return Ok(warn!("Line {} caused an I/O error, skipping. [{e}]", i + 1)),
+                    Err(e) => {
+                        warn!("Line {} caused an I/O error, skipping. [{e}]", i + 1);
+                        return Ok(());
+                    }
                 };
 
                 let mut value: Value = match serde_json::from_str(&string) {
@@ -582,7 +585,8 @@ impl Prepare {
                 };
 
                 let Some(release) = value.as_object_mut() else {
-                    return Ok(warn!("Line {} is not a JSON object, skipping.", i + 1));
+                    warn!("Line {} is not a JSON object, skipping.", i + 1);
+                    return Ok(());
                 };
 
                 let mut rows = csv::Writer::from_writer(errors.new_task());
