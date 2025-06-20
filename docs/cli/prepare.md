@@ -49,7 +49,7 @@ Before following this command's workflow, follow the earlier steps in the {doc}`
 
    ```console
    $ ocdscardinal init settings.ini
-   Settings written to "settings.ini".
+   Settings written to settings.ini.
    ```
 
 1. Run the `prepare` command. For example, if your data is in `input.jsonl`, this command writes the corrected data to `prepared.jsonl` and the quality issues to `issues.csv`:

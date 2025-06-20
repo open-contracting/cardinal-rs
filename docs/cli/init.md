@@ -30,7 +30,7 @@ Write a settings file to `settings.ini`:
 
 ```console
 $ ocdscardinal init settings.ini
-Settings written to "settings.ini".
+Settings written to settings.ini.
 
 ```
 
