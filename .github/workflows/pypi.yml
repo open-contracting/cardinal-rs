@@ -112,7 +112,7 @@ jobs:
           MATURIN_PYPI_TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
         with:
           command: upload
-          args: --non-interactive --skip-existing wheels-*/* --repository-url https://test.pypi.org/legacy/
+          args: --non-interactive --skip-existing wheels-*/* --repository-url=https://test.pypi.org/legacy/
 
   release:
     if: startsWith(github.ref, 'refs/tags/')
