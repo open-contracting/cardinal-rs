@@ -14,6 +14,9 @@ use itertools::Itertools;
 // See https://github.com/la10736/rstest/issues/163
 // https://stackoverflow.com/a/49056967/244258
 fn main() {
+    // https://pyo3.rs/v0.25.1/building-and-distribution.html#macos
+    pyo3_build_config::add_extension_module_link_args();
+
     let path = Path::new(&env::var("OUT_DIR").unwrap()).join("lib.include");
     let mut file = File::create(path).unwrap();
 

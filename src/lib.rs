@@ -6,12 +6,14 @@ pub mod standard;
 
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
-use std::io::{self, BufRead, BufWriter, Write};
+use std::io::{self, BufRead, BufReader, BufWriter, Write};
 use std::path::PathBuf;
 
 use anyhow::Result;
 use indexmap::IndexMap;
 use log::warn;
+use pyo3::prelude::*;
+use pyo3::types::PyDict;
 use rayon::prelude::*;
 use serde_json::{Map, Value};
 
@@ -31,6 +33,28 @@ use crate::indicators::util::{SecondLowestBidRatio, Tenderers};
 pub use crate::indicators::{Calculate, Codelist, Exclusions, Group, Indicator, Indicators, Modifications, Settings};
 use crate::queue::Job;
 use crate::standard::{AWARD_STATUS, BID_STATUS};
+
+#[pyfunction]
+fn coverage(py: Python<'_>, file: &str) -> PyResult<PyObject> {
+    let file = File::open(file).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(format!("{e:#}")))?;
+
+    match Coverage::run(BufReader::new(file)) {
+        Ok(item) => {
+            let dict = PyDict::new(py);
+            for (key, value) in item.results() {
+                dict.set_item(key, value).unwrap();
+            }
+            Ok(dict.into())
+        }
+        Err(e) => Err(pyo3::exceptions::PyRuntimeError::new_err(format!("{e:#}"))),
+    }
+}
+
+#[pymodule]
+fn ocdscardinal(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_function(wrap_pyfunction!(coverage, m)?)?;
+    Ok(())
+}
 
 macro_rules! add_indicators {
     ( $indicators:ident , $settings:ident , $( $indicator:ident ) ,* , ) => {
