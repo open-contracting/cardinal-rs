@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.7 (2025-06-20)
+
+### Added
+
+- `ocdscardinal` Python package.
+
 ## 0.0.6 (2024-08-23)
 
 ### Added
