@@ -1,4 +1,5 @@
 /target
+/python/*.so
 Cargo.lock
 *.profraw
 /docs/_build
