@@ -35,6 +35,21 @@ use crate::queue::Job;
 use crate::standard::{AWARD_STATUS, BID_STATUS};
 
 #[pyfunction]
+/// Count the number of times each field is non-empty in a line-delimited JSON file
+///
+/// The command walks the JSON tree, counting non-empty nodes. Empty nodes are "", [], {} and null, and any nodes
+/// containing only empty nodes.
+///
+/// The result is a JSON object, in which keys are paths and values are counts.
+///
+/// The "" path corresponds to a line. A path ending with / corresponds to an object. A path ending with []
+/// corresponds to an array element. Other paths correspond to object members.
+///
+/// Args:
+///     file (str): The path to the file, in which each line is JSON text
+///
+/// Returns:
+///     dict: A dictionary mapping paths to counts
 fn coverage(py: Python<'_>, file: &str) -> PyResult<PyObject> {
     let file = File::open(file).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(format!("{e:#}")))?;
 
