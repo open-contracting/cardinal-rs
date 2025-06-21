@@ -7,6 +7,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
+        python-version: [3.9, '3.10', '3.11', '3.12']
     steps:
       # Prevent Git from changing LF to CRLF, which affects test fixtures.
       - run: git config --global core.autocrlf false
@@ -26,3 +27,8 @@ jobs:
         run: cargo llvm-cov --lcov --output-path .coverage --no-cfg-coverage-nightly
       - if: matrix.os == 'ubuntu-latest'
         uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2.3.6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install .[test]
+      - run: pytest -W error
