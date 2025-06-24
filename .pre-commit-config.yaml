@@ -10,7 +10,7 @@ repos:
         language: rust
         types: [rust]
         args: ["--all", "--"]
-        language_version: nightly
+        language_version: default
       - id: cargo-check
         name: cargo check
         entry: cargo check
