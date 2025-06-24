@@ -6,10 +6,11 @@ repos:
     hooks:
       - id: cargo-fmt
         name: cargo fmt
-        entry: cargo +nightly fmt
+        entry: cargo fmt
         language: rust
         types: [rust]
         args: ["--all", "--"]
+        language_version: nightly
       - id: cargo-check
         name: cargo check
         entry: cargo check
