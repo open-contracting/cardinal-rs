@@ -6,7 +6,7 @@ repos:
     hooks:
       - id: cargo-fmt
         name: cargo fmt
-        entry: cargo fmt
+        entry: cargo +nightly fmt
         language: rust
         types: [rust]
         args: ["--all", "--"]
@@ -32,7 +32,7 @@ repos:
           "-Dclippy::cargo",
           # "Expect many false positives" https://rust-lang.github.io/rust-clippy/master/index.html#must_use_candidate
           "-Aclippy::must_use_candidate",
-          # "It’s not bad at all." https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+          # "It's not bad at all." https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
           "-Aclippy::cast-precision-loss",
           # https://github.com/seanmonstar/pretty-env-logger/pull/49
           # https://github.com/eminence/terminal-size/pull/49
