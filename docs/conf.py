@@ -36,9 +36,13 @@ html_theme = "furo"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 
-myst_enable_extensions = ["colon_fence", "deflist", "dollarmath", "tasklist"]
-myst_enable_checkboxes = True
-myst_heading_anchors = 3
+# -- Options for internationalization ----------------------------------------
 
 locale_dirs = ["locale"]
 gettext_compact = False
+
+# -- Extension configuration -------------------------------------------------
+
+myst_enable_extensions = ["colon_fence", "deflist", "dollarmath", "tasklist"]
+myst_enable_checkboxes = True
+myst_heading_anchors = 3
