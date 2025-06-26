@@ -21,11 +21,11 @@ classifiers = [
     "Programming Language :: Rust",
 ]
 
-[tool.maturin]
-python-source = "python"
-module-name = "ocdscardinal"
-
 [project.optional-dependencies]
 test = [
     "pytest",
 ]
+
+[tool.maturin]
+python-source = "python"
+module-name = "ocdscardinal"
