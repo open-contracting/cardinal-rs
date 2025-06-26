@@ -11,4 +11,4 @@ contributing/index
 changelog
 :::
 
-Copyright (c) 2022 Open Contracting Partnership, released under the BSD license
+Copyright (c) 2022 Open Contracting Partnership, released under the MIT license

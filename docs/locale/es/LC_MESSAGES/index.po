@@ -75,8 +75,8 @@ msgstr ""
 
 #: ../../index.md:14
 msgid ""
-"Copyright (c) 2022 Open Contracting Partnership, released under the BSD "
+"Copyright (c) 2022 Open Contracting Partnership, released under the MIT "
 "license"
 msgstr ""
 "Copyright (c) 2022 Open Contracting Partnership, lanzado bajo la licencia "
-"BSD"
+"MIT"
