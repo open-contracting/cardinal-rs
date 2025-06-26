@@ -12,10 +12,10 @@ sys.path.insert(0, Path("..").resolve())
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "Cardinal"
-copyright = "2002, Open Contracting Partnership"
+copyright = "2022, Open Contracting Partnership"
 author = "Open Contracting Partnership"
 
-version = "0.0.5"
+version = "0.0.7"
 release = version
 
 # -- General configuration ---------------------------------------------------
