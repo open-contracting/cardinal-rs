@@ -8,13 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@master
+      # cargo udeps uses `-Z binary-dep-depinfo`
+      # "the option `Z` is only accepted on the nightly compiler"
+      - uses: dtolnay/rust-toolchain@nightly
         with:
-          # Need feature(stdsimd) until config-rs can be upgraded.
-          # https://github.com/mehcode/config-rs/issues/531
-          # https://github.com/rust-lang/rust/issues/27731#event-11707724027
-          toolchain: nightly-2024-09-01
-          components: clippy
+          components: clippy, rustfmt
       - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2.7.8
         with:
           key: ${{ matrix.os }}
