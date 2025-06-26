@@ -59,6 +59,9 @@ jobs:
             command: cross
     steps:
       - uses: actions/checkout@v4
+      # Need feature(stdsimd) until config-rs can be upgraded.
+      # https://github.com/mehcode/config-rs/issues/531
+      # https://github.com/rust-lang/rust/issues/27731#event-11707724027
       - uses: dtolnay/rust-toolchain@nightly
         with:
           targets: ${{ matrix.target }}

@@ -1,8 +1,7 @@
 /target
-/python/**/*.so
+/docs/_build
 Cargo.lock
 *.profraw
-/docs/_build
 *.mo
 # Test outputs
 prepared.jsonl
