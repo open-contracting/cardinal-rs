@@ -29,3 +29,6 @@ test = [
 [tool.maturin]
 python-source = "python"
 module-name = "ocdscardinal"
+
+[tool.uv]
+cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/*.rs"}]
