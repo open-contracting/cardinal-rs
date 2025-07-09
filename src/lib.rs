@@ -1,5 +1,3 @@
-#![feature(let_chains)]
-
 pub mod indicators;
 mod queue;
 pub mod standard;
@@ -648,20 +646,18 @@ impl Prepare {
                 );
 
                 let mut party_roles_lookup = HashMap::new();
-                if party_roles_default {
-                    if let Some(Value::Array(parties)) = release.get("parties") {
-                        for party in parties {
-                            if let Some(Value::String(id)) = party.get("id") {
-                                let mut set = HashSet::new();
-                                if let Some(Value::Array(roles)) = party.get("roles") {
-                                    for role in roles {
-                                        if let Value::String(string) = role {
-                                            set.insert(string.clone());
-                                        }
+                if party_roles_default && let Some(Value::Array(parties)) = release.get("parties") {
+                    for party in parties {
+                        if let Some(Value::String(id)) = party.get("id") {
+                            let mut set = HashSet::new();
+                            if let Some(Value::Array(roles)) = party.get("roles") {
+                                for role in roles {
+                                    if let Value::String(string) = role {
+                                        set.insert(string.clone());
                                     }
                                 }
-                                party_roles_lookup.insert(id.clone(), set);
                             }
+                            party_roles_lookup.insert(id.clone(), set);
                         }
                     }
                 }
@@ -879,16 +875,14 @@ impl Prepare {
                     }
                 }
 
-                if party_roles_default {
-                    if let Some(Value::Array(parties)) = release.get_mut("parties") {
-                        for party in parties.iter_mut() {
-                            if let Some(Value::String(id)) = party.get("id") {
-                                // Don't `std::mem::take` in case `/parties[]/id` repeats.
-                                let mut roles: Vec<_> = party_roles_lookup[id].clone().into_iter().collect();
-                                if !roles.is_empty() {
-                                    roles.sort_unstable();
-                                    party["roles"] = Value::Array(roles.into_iter().map(Value::String).collect());
-                                }
+                if party_roles_default && let Some(Value::Array(parties)) = release.get_mut("parties") {
+                    for party in parties.iter_mut() {
+                        if let Some(Value::String(id)) = party.get("id") {
+                            // Don't `std::mem::take` in case `/parties[]/id` repeats.
+                            let mut roles: Vec<_> = party_roles_lookup[id].clone().into_iter().collect();
+                            if !roles.is_empty() {
+                                roles.sort_unstable();
+                                party["roles"] = Value::Array(roles.into_iter().map(Value::String).collect());
                             }
                         }
                     }

@@ -2,7 +2,7 @@
 name = "ocdscardinal"
 version = "0.0.7"
 authors = ["Open Contracting Partnership <data@open-contracting.org>"]
-edition = "2021"
+edition = "2024"
 description = "Measure red flags and procurement indicators using OCDS data."
 homepage = "https://github.com/open-contracting/cardinal-rs"
 repository = "https://github.com/open-contracting/cardinal-rs"

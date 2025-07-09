@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 use serde_json::{Map, Value};
 
-use crate::indicators::{reduce_map, set_result, set_tenderer_map, Calculate, Indicators, Settings};
+use crate::indicators::{Calculate, Indicators, Settings, reduce_map, set_result, set_tenderer_map};
 
 #[derive(Default)]
 pub struct R030 {}
@@ -43,12 +43,12 @@ impl Calculate for R030 {
                     && date > end_date
                 {
                     for tenderer in tenderers {
-                        if let Some(Value::String(id)) = tenderer.get("id") {
-                            if award_supplier_ids.contains(id) {
-                                set_result!(item, OCID, ocid, R030, 1.0);
-                                set_result!(item, Tenderer, id, R030, 1.0);
-                                set_tenderer_map!(item, ocid_tenderer_r030, ocid.to_owned(), id.clone());
-                            }
+                        if let Some(Value::String(id)) = tenderer.get("id")
+                            && award_supplier_ids.contains(id)
+                        {
+                            set_result!(item, OCID, ocid, R030, 1.0);
+                            set_result!(item, Tenderer, id, R030, 1.0);
+                            set_tenderer_map!(item, ocid_tenderer_r030, ocid.to_owned(), id.clone());
                         }
                     }
                 }

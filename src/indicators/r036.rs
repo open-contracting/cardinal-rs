@@ -3,7 +3,7 @@ use std::collections::HashSet;
 
 use serde_json::{Map, Value};
 
-use crate::indicators::{is_status, set_result, Calculate, Indicators, Settings};
+use crate::indicators::{Calculate, Indicators, Settings, is_status, set_result};
 use crate::parse_pipe_separated_value;
 
 #[derive(Default)]

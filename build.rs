@@ -1,5 +1,3 @@
-#![feature(let_chains)]
-
 use std::cmp::Ordering;
 use std::collections::VecDeque;
 use std::env;

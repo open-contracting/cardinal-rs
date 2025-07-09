@@ -3,7 +3,7 @@ use std::collections::HashSet;
 
 use serde_json::{Map, Value};
 
-use crate::indicators::{reduce_map, set_result, set_tenderer_map, Calculate, Indicators, Settings};
+use crate::indicators::{Calculate, Indicators, Settings, reduce_map, set_result, set_tenderer_map};
 
 #[derive(Default)]
 pub struct R035 {

@@ -4,7 +4,7 @@ use serde_json::{Map, Value};
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-use crate::indicators::{fraction, reduce_map, set_meta, set_result, sum, Calculate, Indicators, Settings};
+use crate::indicators::{Calculate, Indicators, Settings, fraction, reduce_map, set_meta, set_result, sum};
 
 macro_rules! flag {
     ( $self:ident , $item:ident , $field:ident , $minimum:expr , $group:ident ) => {

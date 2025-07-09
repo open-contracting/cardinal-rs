@@ -1,7 +1,7 @@
 use serde_json::{Map, Value};
 use std::collections::HashSet;
 
-use crate::indicators::{set_result, Calculate, Indicators, Settings};
+use crate::indicators::{Calculate, Indicators, Settings, set_result};
 use crate::parse_pipe_separated_value_with_default;
 
 #[derive(Default)]

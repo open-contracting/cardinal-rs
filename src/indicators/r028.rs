@@ -4,7 +4,7 @@ use itertools::chain;
 use ordered_float::OrderedFloat;
 use serde_json::{Map, Value};
 
-use crate::indicators::{reduce_map, set_result, set_tenderer_map, Calculate, Indicators, Settings};
+use crate::indicators::{Calculate, Indicators, Settings, reduce_map, set_result, set_tenderer_map};
 use crate::parse_pipe_separated_value;
 
 #[derive(Default)]

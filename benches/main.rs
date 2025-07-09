@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::BufReader;
 use std::time::Duration;
 
-use criterion::{black_box, Criterion};
+use criterion::{Criterion, black_box};
 use criterion_macro::criterion;
 
 use ocdscardinal::{Indicators, Settings};

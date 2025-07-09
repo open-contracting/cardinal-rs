@@ -4,7 +4,7 @@ use serde_json::{Map, Value};
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-use crate::indicators::{fraction, set_meta, set_result, sum, Calculate, Indicators, Settings};
+use crate::indicators::{Calculate, Indicators, Settings, fraction, set_meta, set_result, sum};
 
 #[derive(Default)]
 pub struct R025 {

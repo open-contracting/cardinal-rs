@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 use chrono::DateTime;
 use serde_json::{Map, Value};
 
-use crate::indicators::{set_result, Calculate, Indicators, Settings};
+use crate::indicators::{Calculate, Indicators, Settings, set_result};
 use crate::parse_pipe_separated_value;
 
 #[derive(Default)]

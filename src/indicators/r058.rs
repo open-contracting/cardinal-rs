@@ -1,7 +1,7 @@
 use statrs::statistics::Data;
 use statrs::statistics::OrderStatistics;
 
-use crate::indicators::{set_meta, set_result, set_tenderer_map, Calculate, Indicators, Settings};
+use crate::indicators::{Calculate, Indicators, Settings, set_meta, set_result, set_tenderer_map};
 
 #[derive(Default)]
 pub struct R058 {
