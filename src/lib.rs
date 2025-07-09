@@ -1004,7 +1004,9 @@ mod tests {
     #[ctor::ctor]
     fn setup() {
         // Consistent `prepare` output.
-        env::set_var("RAYON_NUM_THREADS", "1");
+        unsafe {
+            env::set_var("RAYON_NUM_THREADS", "1");
+        }
     }
 
     fn reader(stem: &str, extension: &str) -> BufReader<File> {
