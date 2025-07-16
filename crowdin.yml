@@ -1,0 +1,151 @@
+{
+  "project_id": 809364,
+  "preserve_hierarchy": true,
+  "files": [
+    {
+      "source": "/docs/_build/gettext/changelog.pot",
+      "dest": "changelog.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/changelog.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/coverage.pot",
+      "dest": "cli/coverage.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/coverage.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/index.pot",
+      "dest": "cli/index.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/index.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/003.pot",
+      "dest": "cli/indicators/R/003.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/003.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/018.pot",
+      "dest": "cli/indicators/R/018.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/018.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/024.pot",
+      "dest": "cli/indicators/R/024.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/024.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/025.pot",
+      "dest": "cli/indicators/R/025.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/025.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/028.pot",
+      "dest": "cli/indicators/R/028.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/028.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/030.pot",
+      "dest": "cli/indicators/R/030.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/030.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/035.pot",
+      "dest": "cli/indicators/R/035.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/035.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/036.pot",
+      "dest": "cli/indicators/R/036.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/036.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/038.pot",
+      "dest": "cli/indicators/R/038.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/038.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/048.pot",
+      "dest": "cli/indicators/R/048.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/048.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/058.pot",
+      "dest": "cli/indicators/R/058.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/058.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/R/index.pot",
+      "dest": "cli/indicators/R/index.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/R/index.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/indicators/index.pot",
+      "dest": "cli/indicators/index.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/indicators/index.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/init.pot",
+      "dest": "cli/init.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/init.po"
+    },
+    {
+      "source": "/docs/_build/gettext/cli/prepare.pot",
+      "dest": "cli/prepare.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/cli/prepare.po"
+    },
+    {
+      "source": "/docs/_build/gettext/contributing/index.pot",
+      "dest": "contributing/index.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/contributing/index.po"
+    },
+    {
+      "source": "/docs/_build/gettext/contributing/indicators/code.pot",
+      "dest": "contributing/indicators/code.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/contributing/indicators/code.po"
+    },
+    {
+      "source": "/docs/_build/gettext/contributing/indicators/docs.pot",
+      "dest": "contributing/indicators/docs.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/contributing/indicators/docs.po"
+    },
+    {
+      "source": "/docs/_build/gettext/contributing/indicators/index.pot",
+      "dest": "contributing/indicators/index.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/contributing/indicators/index.po"
+    },
+    {
+      "source": "/docs/_build/gettext/contributing/indicators/setup.pot",
+      "dest": "contributing/indicators/setup.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/contributing/indicators/setup.po"
+    },
+    {
+      "source": "/docs/_build/gettext/contributing/indicators/test.pot",
+      "dest": "contributing/indicators/test.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/contributing/indicators/test.po"
+    },
+    {
+      "source": "/docs/_build/gettext/contributing/translation.pot",
+      "dest": "contributing/translation.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/contributing/translation.po"
+    },
+    {
+      "source": "/docs/_build/gettext/index.pot",
+      "dest": "index.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/index.po"
+    },
+    {
+      "source": "/docs/_build/gettext/topics/index.pot",
+      "dest": "topics/index.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/topics/index.po"
+    },
+    {
+      "source": "/docs/_build/gettext/topics/settings.pot",
+      "dest": "topics/settings.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/topics/settings.po"
+    },
+    {
+      "source": "/docs/_build/gettext/topics/workflow.pot",
+      "dest": "topics/workflow.pot",
+      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/topics/workflow.po"
+    }
+  ]
+}

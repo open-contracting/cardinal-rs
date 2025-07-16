@@ -2,21 +2,18 @@
 
 ## Install dependencies
 
-Install Sphinx, sphinx-intl and [Transifex CLI](https://developers.transifex.com/docs/cli):
+1. Install Sphinx, sphinx-intl and [Crowdin CLI](https://support.crowdin.com/cli-tool/):
 
-```bash
-pip install sphinx sphinx-intl
-```
+    ```bash
+    pip install -r docs/requirements.txt sphinx-intl
+    npm install -g @crowdin/cli
+    ```
 
-```bash
-curl -o- https://raw.githubusercontent.com/transifex/cli/master/install.sh | bash
-```
+1. Set the Crowdin [personal access token](https://support.crowdin.com/enterprise/account-settings/#creating-a-personal-access-token) in the `.crowdin.yml` file in your home directory:
 
-Create Transifex configuration:
-
-```bash
-sphinx-intl create-txconfig
-```
+    ```yaml
+    api_token: ...
+    ```
 
 ## Extract strings to translate
 
@@ -24,24 +21,22 @@ sphinx-intl create-txconfig
 sphinx-build -nW --keep-going -q -b gettext docs/ docs/_build/gettext
 ```
 
-## Update Transifex configuration
+## Update Crowdin configuration
+
+Using `manage.py` from [data-support](https://github.com/open-contracting/data-support/blob/main/manage.py):
 
 ```bash
-sphinx-intl update-txconfig-resources \
-    --pot-dir docs/_build/gettext \
-    --locale-dir docs/locale \
-    --transifex-organization-name open-contracting-partnership-1 \
-    --transifex-project-name cardinal
+manage.py update-crowdinyml-files
 ```
 
-## Push to Transifex
+## Push to Crowdin
 
 ```bash
-tx push -s
+crowdin push sources
 ```
 
-## Pull from Transifex
+## Pull from Crowdin
 
 ```bash
-tx pull -f -a
+crowdin pull translations
 ```
