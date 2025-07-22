@@ -95,10 +95,6 @@ def json_to_csv(args):
 
 
 def add_indicator(args):
-    """
-    Add boilerplate for a new indicator.
-    """
-
     lower = args.code.lower()
     upper = args.code.upper()
     letter, number = upper[0], upper[1:]
@@ -177,13 +173,13 @@ def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(required=True)
 
-    parser_json_to_csv = subparsers.add_parser("json-to-csv")
+    parser_json_to_csv = subparsers.add_parser("json-to-csv", help="Convert output of the indicators command to CSV")
     parser_json_to_csv.add_argument("infile")
     parser_json_to_csv.add_argument("outfile")
     parser_json_to_csv.add_argument("-q", "--quiet", action="store_true")
     parser_json_to_csv.set_defaults(func=json_to_csv)
 
-    parser_add_indicator = subparsers.add_parser("add-indicator")
+    parser_add_indicator = subparsers.add_parser("add-indicator", help="Add boilerplate for a new indicator")
     parser_add_indicator.add_argument("code")
     parser_add_indicator.set_defaults(func=add_indicator)
 

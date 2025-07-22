@@ -30,5 +30,28 @@ test = [
 python-source = "python"
 module-name = "ocdscardinal"
 
+[tool.ruff]
+line-length = 119
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "ANN", "C901", "COM812", "D203", "D212", "D415", "EM", "ISC001", "PERF203", "PLR091", "Q000",
+]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["copyright"]
+
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = true
+
+[tool.ruff.lint.per-file-ignores]
+"docs/conf.py" = ["D100", "INP001"]
+"manage.py" = ["D1", "T201"]  # print
+"tests/*" = [
+    "ARG001", "D", "FBT003", "INP001", "PLR2004", "S", "TRY003",
+]
+
 [tool.uv]
 cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/*.rs"}]
