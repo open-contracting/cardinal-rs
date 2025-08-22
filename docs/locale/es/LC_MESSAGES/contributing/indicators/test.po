@@ -1,0 +1,163 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ocds-cardinal\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-15 17:53-0400\n"
+"PO-Revision-Date: 2025-08-22 20:37\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: ocds-cardinal\n"
+"X-Crowdin-Project-ID: 809364\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /contributing/indicators/test.pot\n"
+"X-Crowdin-File-ID: 126\n"
+"Language: es_ES\n"
+
+#: ../../contributing/indicators/test.md:1
+msgid "Write the tests"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:3
+msgid "The test framework (in `build.rs`) reads `*.jsonl` files in the `tests/fixtures/indicators/` directory. Each `*.jsonl` file is prefixed with an indicator code: for example, `R038.jsonl` and `R038-tenderer.jsonl`. The test framework runs the `indicators` command with that indicator {ref}`enabled<enable-an-indicator>`, and compares the output to the corresponding `*.expected` file: for example, `R038.expected` and `R038-tenderer.expected`."
+msgstr ""
+
+#: ../../contributing/indicators/test.md:5
+msgid "The test file(s) for an indicator should:"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:7
+msgid "Cause the indicator to return a result (to test for true positives)"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:8
+msgid "Include data that covers any {ref}`exclusions<indicators-exclusions>` or edge cases (to test against false positives)"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:9
+msgid "Not include data that is irrelevant to the indicator (to make the test readable)"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:11
+msgid "You can use the `ocid` field to describe each compiled release."
+msgstr ""
+
+#: ../../contributing/indicators/test.md:13
+msgid "You can use single letters for identifiers, for example:"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:18
+msgid "Identifier to be **F**lagged"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:19
+msgid "**B**uyer"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:20
+msgid "**P**rocuring entity"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:21
+msgid "**S**upplier of an active award"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:22
+msgid "Supplier of a **C**ancelled award"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:23
+msgid "Supplier of an **U**nsuccessful award"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:24
+msgid "Tenderer of a **I**nvited bid"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:25
+msgid "Tenderer of a **P**ending bid"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:26
+msgid "Tenderer of a **V**alid bid"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:27
+msgid "Tenderer of a **D**isqualified bid"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:28
+msgid "**W**inning tenderer"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:29
+msgid "**L**osing tenderer"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:32
+msgid "Example"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:35
+msgid "Edit the `R999.jsonl` and `R999.expected` files in the `tests/fixtures/indicators/` directory from {ref}`indicators-boilerplate`. To only test whether the indicator returns a result, replace the contents of the files with:"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:41
+msgid "And:"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:48
+msgid "Try it!"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:51
+msgid "If you run:"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:57
+msgid "All tests should pass, including:"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:64
+msgid "Advanced tests"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:66
+msgid "If the indicator has many {ref}`configurations<indicators-boilerplate>`, add test files for each configuration."
+msgstr ""
+
+#: ../../contributing/indicators/test.md:68
+msgid "When the test framework reads `*.jsonl` files in the `tests/fixtures/indicators/` directory, it splits the basename on hyphens (`-`) into parts. The first part is the indicator code."
+msgstr ""
+
+#: ../../contributing/indicators/test.md:70
+msgid "If one part remains, this last part is ignored. It serves only to describe the test case. Example:"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:76
+msgid "If two parts remain, the second part is the configuration field, and the third part is the configuration value. If the third part is only digits, it is used as an integer. Otherwise, it is used as a string."
+msgstr ""
+
+#: ../../contributing/indicators/test.md:82
+msgid "If more than two parts remain, the second part is the configuration field. The remaining parts are key-value pairs for a HashMap, in which the keys are strings and the values are integers."
+msgstr ""
+
+#: ../../contributing/indicators/test.md:89
+msgid "To use a pipe-separated list, replace the pipe with a plus sign (`+`)."
+msgstr ""
+
+#: ../../contributing/indicators/test.md:97
+msgid "If you need more flexibility (for example, `f64`), [create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues)."
+msgstr ""
+
+#: ../../contributing/indicators/test.md:100
+msgid "Next step"
+msgstr ""
+
+#: ../../contributing/indicators/test.md:101
+msgid "Finally, you can {doc}`add documentation<docs>`."
+msgstr ""
+

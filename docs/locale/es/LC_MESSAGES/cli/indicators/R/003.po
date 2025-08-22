@@ -1,0 +1,103 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ocds-cardinal\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-15 17:53-0400\n"
+"PO-Revision-Date: 2025-08-22 20:37\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: ocds-cardinal\n"
+"X-Crowdin-Project-ID: 809364\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /cli/indicators/R/003.pot\n"
+"X-Crowdin-File-ID: 124\n"
+"Language: es_ES\n"
+
+#: ../../cli/indicators/R/003.md:1
+msgid "Short submission period (R003)"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:3
+msgid "The submission period is too short."
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:5
+msgid "The submission period starts with contracting documents being available to potential suppliers and ends with the submission deadline for expressions of interest or bids."
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:7
+msgid "Methodology"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:9
+msgid "For each contracting process, the **submission period** is calculated as $(/tender/tenderPeriod/endDate - /tender/tenderPeriod/startDate)$ in whole days."
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:11
+msgid "A contracting process is flagged if the submission period is shorter than the **threshold** of 15 whole days."
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:13
+msgid "Example"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:16
+msgid "The National Rail Service publishes a tender notice on March 15 with a submission deadline of March 20."
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:19
+msgid "Why is this a red flag?"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:22
+msgid "A corrupt buyer can give the pre-determined bidder an unfair advantage by privately informing the pre-determined bidder of the opportunity in advance, and by giving other bidders less time to prepare competitive bids."
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:25
+msgid "<small>Based on \"Shortened time span for bidding process\" in [*Corruption in Public Procurement: Finding the Right Indicators*](https://www.researchgate.net/publication/303359108_Corruption_in_Public_Procurement_Finding_the_Right_Indicators), \"Short submission period\" in [*An Objective Corruption Risk Index Using Public Procurement Data*](https://www.researchgate.net/publication/301646354_An_Objective_Corruption_Risk_Index_Using_Public_Procurement_Data), \"Short or inadequate notice to bidders\" in [*Guide to Combating Corruption & Fraud in Infrastructure Development Projects*](https://guide.iacrc.org/red-flag-short-or-inadequate-notice-to-bidders/), and \"Deadline for submitting bids is very short\" in [*Fraud in Public Procurement: A collection of Red Flags and Best Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-public-procurement-final-20122017-ares20176254403.pdf).</small>"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:27
+msgid "Output"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:29
+msgid "The indicator's value is always 1.0."
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:31
+msgid "Configuration"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:33
+msgid "All configuration is optional."
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:35
+msgid "To override the default **threshold**, add to your settings file, as a natural number:"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:42
+msgid "To set the **threshold** per procurement method details (`/tender/procurementMethodDetails`), add a `[R003.procurement_method_details]` section to your settings file, in which the property name is a `/tender/procurementMethodDetails` value, and the property value is a natural number. For example, you can assign the minimum periods per legislation:"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:51
+msgid "To calculate this indicator for some procurement methods only (`/tender/procurementMethod`), add to your settings file, as a pipe-separated list, for example:"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:58
+msgid "Demonstration"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:60
+msgid "*Input*"
+msgstr ""
+
+#: ../../cli/indicators/R/003.md:66
+msgid "*Output*"
+msgstr ""
+

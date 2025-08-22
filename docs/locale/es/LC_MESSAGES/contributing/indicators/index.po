@@ -1,0 +1,31 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ocds-cardinal\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-15 17:53-0400\n"
+"PO-Revision-Date: 2025-08-22 20:37\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: ocds-cardinal\n"
+"X-Crowdin-Project-ID: 809364\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /contributing/indicators/index.pot\n"
+"X-Crowdin-File-ID: 112\n"
+"Language: es_ES\n"
+
+#: ../../contributing/indicators/index.md:1
+msgid "Add an indicator"
+msgstr ""
+
+#: ../../contributing/indicators/index.md:3
+msgid "In this tutorial, the example indicator is given the code R999. Its methodology is \"A competition completed with few submitted bids,\" with the default for \"few\" being 1 bid."
+msgstr ""
+
+#: ../../contributing/indicators/index.md:5
+msgid "You can use the check marks to track your progress (do not reload the page)."
+msgstr ""
+

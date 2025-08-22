@@ -1,0 +1,143 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ocds-cardinal\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-15 17:53-0400\n"
+"PO-Revision-Date: 2025-08-22 20:37\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: ocds-cardinal\n"
+"X-Crowdin-Project-ID: 809364\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /contributing/indicators/setup.pot\n"
+"X-Crowdin-File-ID: 98\n"
+"Language: es_ES\n"
+
+#: ../../contributing/indicators/setup.md:1
+msgid "Setup the repository"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:3
+msgid "Develop the methodology"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:5
+msgid "To do"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:7
+msgid "This section is a stub."
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:10
+msgid "All fences (thresholds) are inclusive (rather than exclusive) in Cardinal, to be consistent and to be easy to interpret. However, this means that, if the methodology identifies outliers using the interquartile range, and if the interquartile range is zero, then the indicator will always return a result. Therefore, the methodology must guard against this by returning nothing if the interquartile range is zero."
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:12
+msgid "Assign a code"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:14
+msgid "When adding an indicator that is not assigned a code among the [resources](https://www.open-contracting.org/resources/) of the Open Contracting Partnership (or if you don't know):"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:16
+msgid "[Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues) to be assigned a code."
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:19
+msgid "Add boilerplate content"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:21
+msgid "One-time setup"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:22
+msgid "To install the requirements for automation, create a Python virtual environment and run:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:29
+msgid "To perform these steps, run, replacing `r999`:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:35
+msgid "The files created are explained in the next sections."
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:37
+msgid "Create the new module, `src/indicators/r999.rs`:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:43
+msgid "Create the test input, `tests/fixtures/indicators/R999.jsonl`:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:49
+msgid "Create the test output, `tests/fixtures/indicators/R999.expected`:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:55
+msgid "Create the documentation page, `docs/cli/indicators/R/999.md`:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:61
+msgid "Create the demonstration input, `docs/examples/R/999.jsonl`:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:67
+msgid "In `src/indicators/mod.rs`:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:69
+msgid "Declare the new module in alphabetical order at the top of the file:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:75
+msgid "Add a field to the `Settings` struct. This field is explained in the next section."
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:81
+msgid "Add a variant to the `Indicator` enum. The variants are keys in the JSON output of the {doc}`../../cli/indicators/index` command:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:87
+msgid "In `src/lib.rs`:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:89
+msgid "Import the new struct from the new module in alphabetical order at the top of the file:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:95
+msgid "Add the new struct in alphabetical order to the ``add_indicators!`` macro call:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:101
+msgid "In `docs/examples/settings.ini`, add a section for the new indicator in alphabetical order:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:107
+msgid "Try it!"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:110
+msgid "If you run:"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:116
+msgid "All tests should pass! (with warnings about unused variables and imports)"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:119
+msgid "Next step"
+msgstr ""
+
+#: ../../contributing/indicators/setup.md:120
+msgid "Now, you can {doc}`code the indicator<code>`."
+msgstr ""
+
