@@ -1,40 +1,29 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2002, Open Contracting Partnership
-# This file is distributed under the same license as the Cardinal package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-# Translators:
-# Camila Salazar, 2023
-# 
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Cardinal 0.0.5\n"
+"Project-Id-Version: ocds-cardinal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-20 16:40-0400\n"
-"PO-Revision-Date: 2023-09-20 20:42+0000\n"
-"Last-Translator: Camila Salazar, 2023\n"
-"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"POT-Creation-Date: 2025-07-15 17:53-0400\n"
+"PO-Revision-Date: 2025-08-22 20:37\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: ocds-cardinal\n"
+"X-Crowdin-Project-ID: 809364\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /topics/settings.pot\n"
+"X-Crowdin-File-ID: 114\n"
+"Language: es_ES\n"
 
 #: ../../topics/settings.md:1
 msgid "Settings file"
 msgstr "Archivo de configuración"
 
 #: ../../topics/settings.md:3
-msgid ""
-"A settings file can be used to configure the behavior of the "
-"{doc}`../cli/prepare` and {doc}`../cli/indicators/index` commands, using the"
-" `--settings` option to provide the path to the settings file."
-msgstr ""
-"Se puede utilizar un archivo de configuración para configurar el "
-"comportamiento de los comandos {doc}`../cli/prepare` y "
-"{doc}`../cli/indicators/index`, utilizando la opción `--settings` para "
-"proporcionar la ruta al archivo de configuración."
+msgid "A settings file can be used to configure the behavior of the {doc}`../cli/prepare` and {doc}`../cli/indicators/index` commands, using the `--settings` option to provide the path to the settings file."
+msgstr "Se puede utilizar un archivo de configuración para configurar el comportamiento de los comandos {doc}`../cli/prepare` y {doc}`../cli/indicators/index`, utilizando la opción `--settings` para proporcionar la ruta al archivo de configuración."
 
 #: ../../topics/settings.md:5
 msgid "File format"
@@ -42,17 +31,11 @@ msgstr "Formato del archivo"
 
 #: ../../topics/settings.md:7
 msgid "The settings file is in INI format (don't worry – it's simple)."
-msgstr ""
-"El archivo de configuración está en formato INI (no se preocupe, es "
-"sencillo)."
+msgstr "El archivo de configuración está en formato INI (no se preocupe, es sencillo)."
 
 #: ../../topics/settings.md:9
-msgid ""
-"The file is split into sections. A section starts with a name in square "
-"brackets, like this:"
-msgstr ""
-"El archivo se divide en secciones. Una sección empieza con un nombre entre "
-"corchetes, así:"
+msgid "The file is split into sections. A section starts with a name in square brackets, like this:"
+msgstr "El archivo se divide en secciones. Una sección empieza con un nombre entre corchetes, así:"
 
 #: ../../topics/settings.md:15
 msgid "A section can contain zero or more properties, like this:"
@@ -60,21 +43,13 @@ msgstr "Una sección puede contener cero o más propiedades, así:"
 
 #: ../../topics/settings.md:22
 msgid "A property is a name and a value, with an equals sign (=) in between."
-msgstr ""
-"Una propiedad es un nombre y un valor, con un signo igual (=) en medio."
+msgstr "Una propiedad es un nombre y un valor, con un signo igual (=) en medio."
 
 #: ../../topics/settings.md:24
-msgid ""
-"You can document your configuration by starting a line with a semi-colon "
-"(;), like this:"
-msgstr ""
-"Puede documentar su configuración comenzando una línea con un punto y coma "
-"(;), de la siguiente manera:"
+msgid "You can document your configuration by starting a line with a semi-colon (;), like this:"
+msgstr "Puede documentar su configuración comenzando una línea con un punto y coma (;), de la siguiente manera:"
 
 #: ../../topics/settings.md:32
-msgid ""
-"These lines are known as *comments*. (You can also use a number sign (#) "
-"instead of a semi-colon.)"
-msgstr ""
-"Estas líneas se conocen como *comentarios*. (También puede utilizar un signo"
-" de número (#) en lugar de un punto y coma)."
+msgid "These lines are known as *comments*. (You can also use a number sign (#) instead of a semi-colon.)"
+msgstr "Estas líneas se conocen como *comentarios*. (También puede utilizar un signo de número (#) en lugar de un punto y coma)."
+

@@ -1,26 +1,21 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2002, Open Contracting Partnership
-# This file is distributed under the same license as the Cardinal package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-# Translators:
-# Camila Salazar, 2023
-# James McKinney, 2023
-# 
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Cardinal 0.0.5\n"
+"Project-Id-Version: ocds-cardinal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-02 22:15-0400\n"
-"PO-Revision-Date: 2023-09-20 20:42+0000\n"
-"Last-Translator: James McKinney, 2023\n"
-"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"POT-Creation-Date: 2025-07-15 17:53-0400\n"
+"PO-Revision-Date: 2025-08-22 20:37\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: ocds-cardinal\n"
+"X-Crowdin-Project-ID: 809364\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /topics/workflow.pot\n"
+"X-Crowdin-File-ID: 96\n"
+"Language: es_ES\n"
 
 #: ../../topics/workflow.md:1
 msgid "Overall workflow"
@@ -28,8 +23,7 @@ msgstr "Flujo de trabajo general"
 
 #: ../../topics/workflow.md:3
 msgid "This page describes the general workflow when using Cardinal."
-msgstr ""
-"Esta página describe el flujo de trabajo general al utilizar Cardinal. "
+msgstr "Esta página describe el flujo de trabajo general al utilizar Cardinal. "
 
 #: ../../topics/workflow.md:5
 msgid "1. Collect data"
@@ -40,25 +34,12 @@ msgid "Collect the data you want to analyze in OCDS format."
 msgstr "Obtenga los datos que desea analizar en formato OCDS."
 
 #: ../../topics/workflow.md:9
-msgid ""
-"You can use the [OCP Data Registry](https://data.open-contracting.org) to "
-"download data from over 50 publishers. The Registry provides data as OCDS "
-"compiled releases in line-delimited JSON files (the same format expected by "
-"Cardinal)."
-msgstr ""
-"Puede utilizar el [Registro de datos OCP](https://data.open-contracting.org)"
-" para descargar datos de más de 50 publicadores. El Registro proporciona "
-"datos como versiones compiladas de OCDS en archivos JSON delimitados por "
-"líneas (el mismo formato que espera Cardinal)."
+msgid "You can use the [OCP Data Registry](https://data.open-contracting.org) to download data from over 50 publishers. The Registry provides data as OCDS compiled releases in line-delimited JSON files (the same format expected by Cardinal)."
+msgstr "Puede utilizar el [Registro de datos OCP](https://data.open-contracting.org) para descargar datos de más de 50 publicadores. El Registro proporciona datos como versiones compiladas de OCDS en archivos JSON delimitados por líneas (el mismo formato que espera Cardinal)."
 
 #: ../../topics/workflow.md:12
-msgid ""
-"Is the data you're interested in not in OCDS format? Contact OCP's [Data "
-"Support Team](mailto:data@open-contracting.org) to see how we can help."
-msgstr ""
-"¿Los datos que le interesan no están en formato OCDS? Póngase en contacto "
-"con el [Equipo de datos](mailto:data@open-contracting.org) de OCP para ver "
-"cómo podemos ayudarle."
+msgid "Is the data you're interested in not in OCDS format? Contact OCP's [Data Support Team](mailto:data@open-contracting.org) to see how we can help."
+msgstr "¿Los datos que le interesan no están en formato OCDS? Póngase en contacto con el [Equipo de datos](mailto:data@open-contracting.org) de OCP para ver cómo podemos ayudarle."
 
 #: ../../topics/workflow.md:15
 msgid "2. Prepare data"
@@ -69,110 +50,52 @@ msgid "Format"
 msgstr "Formato"
 
 #: ../../topics/workflow.md:19
-msgid ""
-"If you are *not* using data from the Registry, ensure that the [releases or "
-"records](https://standard.open-"
-"contracting.org/latest/en/primer/releases_and_records/) are merged into "
-"compiled releases, and that the compiled releases are upgraded to OCDS 1.1 "
-"(the version since 2017)."
-msgstr ""
-"Si *no* utiliza datos del Registro, asegúrese de que las [entregas o "
-"registros](https://standard.open-"
-"contracting.org/latest/en/primer/releases_and_records/) se fusionan en "
-"versiones compiladas, y de que las versiones compiladas se actualizan a OCDS"
-" 1.1 (la versión desde 2017)."
+msgid "If you are *not* using data from the Registry, ensure that the [releases or records](https://standard.open-contracting.org/latest/en/primer/releases_and_records/) are merged into compiled releases, and that the compiled releases are upgraded to OCDS 1.1 (the version since 2017)."
+msgstr "Si *no* utiliza datos del Registro, asegúrese de que las [entregas o registros](https://standard.open-contracting.org/latest/en/primer/releases_and_records/) se fusionan en versiones compiladas, y de que las versiones compiladas se actualizan a OCDS 1.1 (la versión desde 2017)."
 
 #: ../../topics/workflow.md:21
-msgid ""
-"You can use [OCDS Kit](https://ocdskit.readthedocs.io/en/latest/)'s command-"
-"line interface to "
-"[compile](https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#compile) "
-"and "
-"[upgrade](https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#upgrade) "
-"the OCDS data."
-msgstr ""
-"Puede utilizar la interfaz de la línea de comando de [OCDS "
-"Kit](https://ocdskit.readthedocs.io/en/latest/)para "
-"[compilar](https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#compile) y"
-" "
-"[actualizar](https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#upgrade)"
-" los datos OCDS."
+msgid "You can use [OCDS Kit](https://ocdskit.readthedocs.io/en/latest/)'s command-line interface to [compile](https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#compile) and [upgrade](https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#upgrade) the OCDS data."
+msgstr "Puede utilizar la interfaz de la línea de comando de [OCDS Kit](https://ocdskit.readthedocs.io/en/latest/)para [compilar](https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#compile) y [actualizar](https://ocdskit.readthedocs.io/en/latest/cli/ocds.html#upgrade) los datos OCDS."
 
 #: ../../topics/workflow.md:23
 msgid "Quality"
 msgstr "Calidad"
 
 #: ../../topics/workflow.md:25
-msgid ""
-"For the indicator results to be reliable, the input data must be good "
-"quality."
-msgstr ""
-"Para que los resultados del indicador sean fiables, los datos de entrada "
-"deben ser de buena calidad."
+msgid "For the indicator results to be reliable, the input data must be good quality."
+msgstr "Para que los resultados del indicador sean fiables, los datos de entrada deben ser de buena calidad."
 
 #: ../../topics/workflow.md:27
-msgid ""
-"You can use the {doc}`../cli/prepare` command to identify and correct "
-"quality issues."
-msgstr ""
-"Puede utilizar el comando {doc}`../cli/prepare` para identificar y corregir "
-"problemas de calidad. "
+msgid "You can use the {doc}`../cli/prepare` command to identify and correct quality issues."
+msgstr "Puede utilizar el comando {doc}`../cli/prepare` para identificar y corregir problemas de calidad. "
 
 #: ../../topics/workflow.md:29
 msgid "3. Explore data"
 msgstr "(3) Explorar los datos"
 
 #: ../../topics/workflow.md:31
-msgid ""
-"To inform your {ref}`selection and configuration<indicators-workflow>` of "
-"indicators, you can explore your data using JSON processors like "
-"[jaq](https://github.com/01mf02/jaq) (faster) or "
-"[jq](https://stedolan.github.io/jq/) (slower)."
-msgstr ""
-"Para informar su {ref}`selección y configuración<indicators-workflow>` de "
-"indicadores, puede explorar sus datos utilizando procesadores JSON como "
-"[jaq](https://github.com/01mf02/jaq) (más rápido) o "
-"[jq](https://stedolan.github.io/jq/) (más lento)."
+msgid "To inform your {ref}`selection and configuration<indicators-workflow>` of indicators, you can explore your data using JSON processors like [jaq](https://github.com/01mf02/jaq) (faster) or [jq](https://stedolan.github.io/jq/) (slower)."
+msgstr "Para informar su {ref}`selección y configuración<indicators-workflow>` de indicadores, puede explorar sus datos utilizando procesadores JSON como [jaq](https://github.com/01mf02/jaq) (más rápido) o [jq](https://stedolan.github.io/jq/) (más lento)."
 
 #: ../../topics/workflow.md:33
-msgid ""
-"For example, if the publisher uses `/tender/procurementMethodDetails` for "
-"the local name of the procurement method, you can count the occurrences of "
-"each procurement method with:"
-msgstr ""
-"Por ejemplo, si el editor utiliza `/tender/procurementMethodDetails` para el"
-" nombre local del método de adquisición, puede contar las apariciones de "
-"cada método de adquisición con:"
+msgid "For example, if the publisher uses `/tender/procurementMethodDetails` for the local name of the procurement method, you can count the occurrences of each procurement method with:"
+msgstr "Por ejemplo, si el editor utiliza `/tender/procurementMethodDetails` para el nombre local del método de adquisición, puede contar las apariciones de cada método de adquisición con:"
 
 #: ../../topics/workflow.md:50
-msgid ""
-"If the publisher uses a classification system for products and services, "
-"like UNSPSC or CPV, you can count the occurrences of each segment/division "
-"of the classification with:"
-msgstr ""
-"Si el publicador utiliza un sistema de clasificación de productos y "
-"servicios, como UNSPSC o CPV, puede contar las apariciones de cada "
-"segmento/división de la clasificación con:"
+msgid "If the publisher uses a classification system for products and services, like UNSPSC or CPV, you can count the occurrences of each segment/division of the classification with:"
+msgstr "Si el publicador utiliza un sistema de clasificación de productos y servicios, como UNSPSC o CPV, puede contar las apariciones de cada segmento/división de la clasificación con:"
 
 #: ../../topics/workflow.md:62
 msgid "4. Calculate indicators"
 msgstr "(4) Calcular los indicadores"
 
 #: ../../topics/workflow.md:64
-msgid ""
-"Use the {doc}`../cli/indicators/index` command to calculate procurement "
-"indicators and red flags."
-msgstr ""
-"Utilice le comando {doc}`../cli/indicators/index` para calcular los "
-"indicadores y banderas rojas."
+msgid "Use the {doc}`../cli/indicators/index` command to calculate procurement indicators and red flags."
+msgstr "Utilice le comando {doc}`../cli/indicators/index` para calcular los indicadores y banderas rojas."
 
 #: ../../topics/workflow.md:66
-msgid ""
-"Additional information on this step is provided in the [command's "
-"documentation](../cli/indicators/index)."
-msgstr ""
-"Información  adicional de este paso está disponible en  la [documentación "
-"del comando](../cli/indicators/index)."
+msgid "Additional information on this step is provided in the [command's documentation](../cli/indicators/index)."
+msgstr "Información  adicional de este paso está disponible en  la [documentación del comando](../cli/indicators/index)."
 
 #: ../../topics/workflow.md:68
 msgid "5. Analyze results"
@@ -183,17 +106,10 @@ msgid "Coming soon"
 msgstr "Próximamente"
 
 #: ../../topics/workflow.md:72
-msgid ""
-"The Open Contracting Partnership is building business intelligence tools, "
-"using the indicator results from Cardinal."
-msgstr ""
-"La Open Contracting Partnership está creando herramientas de inteligencia de"
-" negocios a partir de los resultados de los indicadores de Cardinal."
+msgid "The Open Contracting Partnership is building business intelligence tools, using the indicator results from Cardinal."
+msgstr "La Open Contracting Partnership está creando herramientas de inteligencia de negocios a partir de los resultados de los indicadores de Cardinal."
 
 #: ../../topics/workflow.md:74
-msgid ""
-"Are you interested? Contact OCP's [Data Support Team](mailto:data@open-"
-"contracting.org)."
-msgstr ""
-"¿Está interesado? Contacte al  [Equipo de datos de OCP](mailto:data@open-"
-"contracting.org)."
+msgid "Are you interested? Contact OCP's [Data Support Team](mailto:data@open-contracting.org)."
+msgstr "¿Está interesado? Contacte al  [Equipo de datos de OCP](mailto:data@open-contracting.org)."
+
