@@ -1,143 +1,81 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2002, Open Contracting Partnership
-# This file is distributed under the same license as the Cardinal package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-# Translators:
-# Camila Salazar, 2023
-# 
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Cardinal 0.0.5\n"
+"Project-Id-Version: ocds-cardinal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-20 16:40-0400\n"
-"PO-Revision-Date: 2023-09-20 20:42+0000\n"
-"Last-Translator: Camila Salazar, 2023\n"
-"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"POT-Creation-Date: 2025-07-15 17:53-0400\n"
+"PO-Revision-Date: 2025-08-22 20:37\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: ocds-cardinal\n"
+"X-Crowdin-Project-ID: 809364\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /cli/indicators/R/024.pot\n"
+"X-Crowdin-File-ID: 136\n"
+"Language: es_ES\n"
 
 #: ../../cli/indicators/R/024.md:1
 msgid "Price close to winning bid (R024)"
 msgstr "Precio cercano a la oferta ganadora (R024)"
 
 #: ../../cli/indicators/R/024.md:3
-msgid ""
-"The percentage difference between the winning bid and the second-lowest "
-"valid bid is a low outlier."
-msgstr ""
-"La diferencia porcentual entre la oferta ganadora y la segunda oferta válida"
-" más baja es un valor atípico bajo"
+msgid "The percentage difference between the winning bid and the second-lowest valid bid is a low outlier."
+msgstr "La diferencia porcentual entre la oferta ganadora y la segunda oferta válida más baja es un valor atípico bajo"
 
 #: ../../cli/indicators/R/024.md:6
 msgid "{doc}`058`"
-msgstr "{doc}`058`"
+msgstr ""
 
 #: ../../cli/indicators/R/024.md:9
 msgid "Methodology"
 msgstr "Metodología"
 
 #: ../../cli/indicators/R/024.md:11
-msgid ""
-"For each contracting process, the **difference** is calculated as "
-"$(secondLowestValidBidAmount - winningBidAmount) \\over winningBidAmount$."
-msgstr ""
-"Para cada proceso de contratación, la **diferencia** es calculada como "
-"$(segundoMenorValorDeOfertaVálido- ValorOfertaGanadora) "
-"\\over ValorOfertaGanadora$."
+msgid "For each contracting process, the **difference** is calculated as $(secondLowestValidBidAmount - winningBidAmount) \\over winningBidAmount$."
+msgstr "Para cada proceso de contratación, la **diferencia** es calculada como $(segundoMenorValorDeOfertaVálido- ValorOfertaGanadora) \\over ValorOfertaGanadora$."
 
 #: ../../cli/indicators/R/024.md:13
-msgid ""
-"A contracting process is flagged if the difference is less than or equal to "
-"the **lower fence** of $Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile "
-"and $IQR$ is the interquartile range for the set of differences."
-msgstr ""
-"Se marca un proceso de contratación si la diferencia es menor o igual al "
-"**límite inferior** de $Q_1 - 1.5(IQR)$, donde $Q_1$ es el primer cuartil y "
-"$IQR$ es el rango intercuartílico del conjunto de diferencias"
+msgid "A contracting process is flagged if the difference is less than or equal to the **lower fence** of $Q_1 - 1.5(IQR)$, where $Q_1$ is the first quartile and $IQR$ is the interquartile range for the set of differences."
+msgstr "Se marca un proceso de contratación si la diferencia es menor o igual al **límite inferior** de $Q_1 - 1.5(IQR)$, donde $Q_1$ es el primer cuartil y $IQR$ es el rango intercuartílico del conjunto de diferencias"
 
 #: ../../cli/indicators/R/024.md:15
 msgid "The winner and second-lowest bidder are also flagged."
-msgstr ""
-"El ganador y el oferente de la segunda oferta más baja son señalados. "
+msgstr "El ganador y el oferente de la segunda oferta más baja son señalados. "
 
 #: ../../cli/indicators/R/024.md:17
 msgid "Example"
 msgstr "Ejemplo"
 
 #: ../../cli/indicators/R/024.md:20
-msgid ""
-"In 25% ($Q_1$) of contracting processes in Atlantis, the second-lowest valid"
-" bid is at most 5% greater than the winning bid. In 75% ($Q_3$) of "
-"contracting processes, it is at most 7% greater. This yields a lower fence "
-"of 2% (`0.02`)."
-msgstr ""
-"En el 25% ($Q_1$) de los procesos de contratación en Atlantis, la segunda "
-"oferta válida más baja es como máximo un 5% mayor que la oferta ganadora. En"
-" el 75% ($Q_3$) de los procesos de contratación es como máximo un 7% mayor."
-"  Esto produce un límite inferior del 2% (`0,02`)."
+msgid "In 25% ($Q_1$) of contracting processes in Atlantis, the second-lowest valid bid is at most 5% greater than the winning bid. In 75% ($Q_3$) of contracting processes, it is at most 7% greater. This yields a lower fence of 2% (`0.02`)."
+msgstr "En el 25% ($Q_1$) de los procesos de contratación en Atlantis, la segunda oferta válida más baja es como máximo un 5% mayor que la oferta ganadora. En el 75% ($Q_3$) de los procesos de contratación es como máximo un 7% mayor.  Esto produce un límite inferior del 2% (`0,02`)."
 
 #: ../../cli/indicators/R/024.md:22
-msgid ""
-"In a contracting process, CollusionCorp won with a bid of \\$100,000, and "
-"ProcureManipulate lost with the second-lowest bid of \\$101,000. The "
-"difference is 1% (`0.01`). This is less than the lower fence of 2%. "
-"Therefore, the process is flagged."
-msgstr ""
-"En un proceso de contratación, CollusionCorp ganó con una oferta \\$100,000 "
-"y ProcureManipulate perdió con la segunda oferta más baja de \\$101,000. La "
-"diferencia es del 1% (`0,01`). Esto es menos que el límite inferior del 2%. "
-"Por lo tanto, el proceso es marcado. "
+msgid "In a contracting process, CollusionCorp won with a bid of \\$100,000, and ProcureManipulate lost with the second-lowest bid of \\$101,000. The difference is 1% (`0.01`). This is less than the lower fence of 2%. Therefore, the process is flagged."
+msgstr "En un proceso de contratación, CollusionCorp ganó con una oferta \\$100,000 y ProcureManipulate perdió con la segunda oferta más baja de \\$101,000. La diferencia es del 1% (`0,01`). Esto es menos que el límite inferior del 2%. Por lo tanto, el proceso es marcado. "
 
 #: ../../cli/indicators/R/024.md:25
 msgid "Why is this a red flag?"
 msgstr "¿Por qué esto es una bandera roja?"
 
 #: ../../cli/indicators/R/024.md:28
-msgid ""
-"A colluding bidder can mimic competition by submitting a bid that is similar"
-" in price (but different in quality, for example) from its colluding "
-"partner."
-msgstr ""
-"Un oferente colusorio puede imitar la competencia presentando una oferta de "
-"precio similar (pero diferente en calidad, por ejemplo) a la de su socio "
-"colusorio."
+msgid "A colluding bidder can mimic competition by submitting a bid that is similar in price (but different in quality, for example) from its colluding partner."
+msgstr "Un oferente colusorio puede imitar la competencia presentando una oferta de precio similar (pero diferente en calidad, por ejemplo) a la de su socio colusorio."
 
 #: ../../cli/indicators/R/024.md:31
-msgid ""
-"<small>Based on \"Difference between first and second relative offer "
-"prices\" in [*Toolkit for detecting collusive bidding in public "
-"procurement*](https://www.govtransparency.eu/wp-"
-"content/uploads/2015/11/GTI_WP2014_2_Toth_et_al_150413.pdf) and \"Winning "
-"tender just below the next lowest bid\" in [*Fraud in Public Procurement: A "
-"collection of Red Flags and Best "
-"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
-"public-procurement-final-20122017-ares20176254403.pdf).</small>"
-msgstr ""
-"<small>Basado en \"Difference between first and second relative offer "
-"prices\" en [*Toolkit for detecting collusive bidding in public "
-"procurement*](https://www.govtransparency.eu/wp-"
-"content/uploads/2015/11/GTI_WP2014_2_Toth_et_al_150413.pdf) y \"Winning "
-"tender just below the next lowest bid\" en [*Fraud in Public Procurement: A "
-"collection of Red Flags and Best "
-"Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-"
-"public-procurement-final-20122017-ares20176254403.pdf).</small>"
+msgid "<small>Based on \"Difference between first and second relative offer prices\" in [*Toolkit for detecting collusive bidding in public procurement*](https://www.govtransparency.eu/wp-content/uploads/2015/11/GTI_WP2014_2_Toth_et_al_150413.pdf) and \"Winning tender just below the next lowest bid\" in [*Fraud in Public Procurement: A collection of Red Flags and Best Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-public-procurement-final-20122017-ares20176254403.pdf).</small>"
+msgstr "<small>Basado en \"Difference between first and second relative offer prices\" en [*Toolkit for detecting collusive bidding in public procurement*](https://www.govtransparency.eu/wp-content/uploads/2015/11/GTI_WP2014_2_Toth_et_al_150413.pdf) y \"Winning tender just below the next lowest bid\" en [*Fraud in Public Procurement: A collection of Red Flags and Best Practices*](https://ec.europa.eu/sfc/system/files/documents/sfc-files/fraud-public-procurement-final-20122017-ares20176254403.pdf).</small>"
 
 #: ../../cli/indicators/R/024.md:33
 msgid "Output"
 msgstr "Salida"
 
 #: ../../cli/indicators/R/024.md:35
-msgid ""
-"The indicator's value for the contracting process is the **difference**, as "
-"a decimal."
-msgstr ""
-"El valor del indicador para el proceso de contratación es la **diferencia**,"
-" en formato decimal."
+msgid "The indicator's value for the contracting process is the **difference**, as a decimal."
+msgstr "El valor del indicador para el proceso de contratación es la **diferencia**, en formato decimal."
 
 #: ../../cli/indicators/R/024.md:37
 msgid "The indicator's value for the tenderer is always 0.0."
@@ -145,12 +83,11 @@ msgstr "El valor del indicador para un oferente es siempre 0.0."
 
 #: ../../cli/indicators/R/024.md:39
 msgid "If the ``--map`` command-line flag is set, the ``Maps`` key contains:"
-msgstr ""
-"Si el comando ``--map``  está configurado, la clave ``Maps`` contiene:"
+msgstr "Si el comando ``--map``  está configurado, la clave ``Maps`` contiene:"
 
 #: ../../cli/indicators/R/024.md:41
 msgid "ocid_tenderer_r024"
-msgstr "ocid_tenderer_r024"
+msgstr ""
 
 #: ../../cli/indicators/R/024.md:42
 msgid "The flagged tenderers for each flagged `ocid`."
@@ -161,16 +98,12 @@ msgid "Configuration"
 msgstr "Configuración"
 
 #: ../../cli/indicators/R/024.md:46
-msgid ""
-"All configuration is optional. To override the default **lower fence**, add "
-"to your settings file, as a decimal:"
-msgstr ""
-"Toda configuración es opcional. Para modificar el **límite inferior** "
-"predeterminado, añádalo a su archivo de configuración, como decimal:"
+msgid "All configuration is optional. To override the default **lower fence**, add to your settings file, as a decimal:"
+msgstr "Toda configuración es opcional. Para modificar el **límite inferior** predeterminado, añádalo a su archivo de configuración, como decimal:"
 
 #: ../../cli/indicators/R/024.md:54
-msgid "`fixed_price_procurement_methods` in {ref}`global-configuration`"
-msgstr "`fixed_price_procurement_methods` en {ref}`global-configuration`"
+msgid "`no_price_comparison_procurement_methods` and `price_comparison_procurement_methods` in {ref}`global-configuration`"
+msgstr ""
 
 #: ../../cli/indicators/R/024.md:57
 msgid "Exclusions"
@@ -185,55 +118,32 @@ msgid "An award's status is pending or invalid."
 msgstr "El estado de la adjudicación está pendiente o inválido."
 
 #: ../../cli/indicators/R/024.md:62
-msgid ""
-"The winning bid is not the lowest bid. (This indicator requires the award "
-"criteria to be price-only.)"
-msgstr ""
-"La oferta ganadora no es la de menor precio. (Este indicador requiere que el"
-" criterio de adjudicación sea únicamente precio)."
+msgid "The winning bid is not the lowest bid. (This indicator requires the award criteria to be price-only.)"
+msgstr "La oferta ganadora no es la de menor precio. (Este indicador requiere que el criterio de adjudicación sea únicamente precio)."
 
 #: ../../cli/indicators/R/024.md:63
-msgid ""
-"There are multiple active awards (a.k.a. winning bids). "
-"[#14](https://github.com/open-contracting/cardinal-rs/issues/14)"
-msgstr ""
-"Hay múltiples adjudicaciones activas (a.k.a. ofertas ganadoras). "
-"[#14](https://github.com/open-contracting/cardinal-rs/issues/14)"
+msgid "There are multiple active awards (a.k.a. winning bids). [#14](https://github.com/open-contracting/cardinal-rs/issues/14)"
+msgstr "Hay múltiples adjudicaciones activas (a.k.a. ofertas ganadoras). [#14](https://github.com/open-contracting/cardinal-rs/issues/14)"
 
 #: ../../cli/indicators/R/024.md:64
-msgid ""
-"A bid is submitted by multiple tenderers. [#17](https://github.com/open-"
-"contracting/cardinal-rs/issues/17)"
-msgstr ""
-"Una oferta es presentada por múltiples oferentes. "
-"[#17](https://github.com/open-contracting/cardinal-rs/issues/17)"
+msgid "A bid is submitted by multiple tenderers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)"
+msgstr "Una oferta es presentada por múltiples oferentes. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)"
 
 #: ../../cli/indicators/R/024.md:65
-msgid ""
-"An award is made to multiple suppliers. [#17](https://github.com/open-"
-"contracting/cardinal-rs/issues/17)"
-msgstr ""
-"Se otorga una adjudicación a múltiples proveedores.  "
-"[#17](https://github.com/open-contracting/cardinal-rs/issues/17)"
+msgid "An award is made to multiple suppliers. [#17](https://github.com/open-contracting/cardinal-rs/issues/17)"
+msgstr "Se otorga una adjudicación a múltiples proveedores.  [#17](https://github.com/open-contracting/cardinal-rs/issues/17)"
 
 #: ../../cli/indicators/R/024.md:68
-msgid ""
-"Do you want to eliminate an exclusion? Please contributed to the linked "
-"GitHub issue."
-msgstr ""
-"¿Quieres eliminar una exclusión? Contribuya al issue vinculado de GitHub."
+msgid "Do you want to eliminate an exclusion? Please contributed to the linked GitHub issue."
+msgstr "¿Quieres eliminar una exclusión? Contribuya al issue vinculado de GitHub."
 
 #: ../../cli/indicators/R/024.md:71
 msgid "Assumptions"
 msgstr "Supuestos"
 
 #: ../../cli/indicators/R/024.md:73
-msgid ""
-"This indicator assumes that the tenderer of the winning bid didn't submit "
-"another valid bid."
-msgstr ""
-"Este indicador supone que el oferente de la oferta ganadora no presentó otra"
-" oferta válida."
+msgid "This indicator assumes that the tenderer of the winning bid didn't submit another valid bid."
+msgstr "Este indicador supone que el oferente de la oferta ganadora no presentó otra oferta válida."
 
 #: ../../cli/indicators/R/024.md:75
 msgid "Demonstration"
@@ -246,3 +156,4 @@ msgstr "*Entrada*"
 #: ../../cli/indicators/R/024.md:83
 msgid "*Output*"
 msgstr "*Salida*"
+

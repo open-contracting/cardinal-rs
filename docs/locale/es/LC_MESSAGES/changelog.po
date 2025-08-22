@@ -1,303 +1,326 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2002, Open Contracting Partnership
-# This file is distributed under the same license as the Cardinal package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-# Translators:
-# Camila Salazar, 2023
-# James McKinney, 2023
-# Yohanna Lisnichuk <ylisnichuk@open-contracting.org>, 2023
-# 
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Cardinal 0.0.5\n"
+"Project-Id-Version: ocds-cardinal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-02 22:15-0400\n"
-"PO-Revision-Date: 2023-09-20 20:42+0000\n"
-"Last-Translator: Yohanna Lisnichuk <ylisnichuk@open-contracting.org>, 2023\n"
-"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"POT-Creation-Date: 2025-07-15 17:53-0400\n"
+"PO-Revision-Date: 2025-08-22 21:05\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: ocds-cardinal\n"
+"X-Crowdin-Project-ID: 809364\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: changelog.pot\n"
+"X-Crowdin-File-ID: 128\n"
+"Language: es_ES\n"
 
 #: ../../changelog.md:1
 msgid "Changelog"
 msgstr "Registro de cambios"
 
 #: ../../changelog.md:3
-msgid "0.0.6 (Unreleased)"
-msgstr "0.0.6 (Sin publicar)"
+msgid "0.0.7 (2025-06-20)"
+msgstr "0.0.7 (2025-06-20)"
 
-#: ../../changelog.md:5 ../../changelog.md:34 ../../changelog.md:65
-#: ../../changelog.md:93
+#: ../../changelog.md:5
+#: ../../changelog.md:11
+#: ../../changelog.md:50
+#: ../../changelog.md:81
+#: ../../changelog.md:111
 msgid "Added"
 msgstr "Agregado"
 
-#: ../../changelog.md:7 ../../changelog.md:19 ../../changelog.md:48
-#: ../../changelog.md:59
-msgid "{doc}`cli/prepare` command:"
-msgstr "comando {doc}`cli/prepare` :"
-
-#: ../../changelog.md:8
-msgid "Add `[redactions]` section. Warn about zero-value bids."
+#: ../../changelog.md:7
+msgid "`ocdscardinal` Python package."
 msgstr ""
-"Agregar sección de `[redactions]` . Advertir sobre ofertas con valor cero. "
 
 #: ../../changelog.md:9
-msgid "Add `[corrections]` section."
-msgstr "Agregar la sección de  `[corrections]`."
+msgid "0.0.6 (2024-08-23)"
+msgstr "0.0.6 (2024-08-23)"
 
-#: ../../changelog.md:10 ../../changelog.md:22 ../../changelog.md:29
-#: ../../changelog.md:38 ../../changelog.md:50 ../../changelog.md:69
-#: ../../changelog.md:78 ../../changelog.md:95
+#: ../../changelog.md:13
+#: ../../changelog.md:32
+#: ../../changelog.md:64
+#: ../../changelog.md:75
+msgid "{doc}`cli/prepare` command:"
+msgstr "comando {doc}`cli/prepare`:"
+
+#: ../../changelog.md:14
+msgid "Add `party_roles` configuration to `[defaults]` section."
+msgstr ""
+
+#: ../../changelog.md:15
+msgid "Add `[redactions]` section. Warn about zero-value bids."
+msgstr "Agregar sección de `[redactions]`. Advertir sobre ofertas con valor cero."
+
+#: ../../changelog.md:16
+msgid "Add `[corrections]` section."
+msgstr "Agregar la sección de `[corrections]`."
+
+#: ../../changelog.md:17
+msgid "Add `[modifications]` section."
+msgstr "Agregar la sección de `[modifications]`."
+
+#: ../../changelog.md:18
+msgid "Normalize `/bids/details[]/tenderers` and `/awards/suppliers` to arrays."
+msgstr ""
+
+#: ../../changelog.md:19
+#: ../../changelog.md:36
+#: ../../changelog.md:43
+#: ../../changelog.md:54
+#: ../../changelog.md:66
+#: ../../changelog.md:87
+#: ../../changelog.md:96
+#: ../../changelog.md:113
 msgid "{doc}`cli/indicators/index` command:"
 msgstr "Comando {doc}`cli/indicators/index`:"
 
-#: ../../changelog.md:11
-msgid "R028 (*Identical bid prices*)."
-msgstr "R028 (*Precios de oferta idénticos*)."
+#: ../../changelog.md:20
+msgid "[R003](cli/indicators/R/003): (*Short submission period*)."
+msgstr ""
 
-#: ../../changelog.md:12
-msgid "R030 (*Late bid won*)."
-msgstr "R030 (*Oferta tardía gana*)."
+#: ../../changelog.md:21
+msgid "[R018](cli/indicators/R/018): (*Single bid received*)."
+msgstr ""
 
-#: ../../changelog.md:13
-msgid "R048 (*Heterogeneous supplier*)."
-msgstr "R048 (*Proveedor multiprósito*)."
+#: ../../changelog.md:22
+msgid "[R028](cli/indicators/R/028): (*Identical bid prices*)."
+msgstr "[R028](cli/indicators/R/028): (*Precios de oferta idénticos*)."
 
-#: ../../changelog.md:14
-msgid "R058 (*Heavily discounted bid*)."
-msgstr "R058 (* Oferta con precio muy bajo*)."
+#: ../../changelog.md:23
+msgid "[R030](cli/indicators/R/030): (*Late bid won*)."
+msgstr "[R030](cli/indicators/R/030): (*Oferta tardía gana*)."
 
-#: ../../changelog.md:15
-msgid "`fixed_price_procurement_methods` configuration."
-msgstr "configuración `fixed_price_procurement_methods`."
+#: ../../changelog.md:24
+msgid "[R048](cli/indicators/R/048): (*Heterogeneous supplier*)."
+msgstr "[R048](cli/indicators/R/048): (*Proveedor multipropósito*)."
 
-#: ../../changelog.md:17 ../../changelog.md:43 ../../changelog.md:57
-#: ../../changelog.md:75
+#: ../../changelog.md:25
+msgid "[R058](cli/indicators/R/058): (*Heavily discounted bid*)."
+msgstr "[R058](cli/indicators/R/058): (*Oferta con precio muy bajo*)."
+
+#: ../../changelog.md:26
+msgid "Add `no_price_comparison_procurement_methods` configuration."
+msgstr "Agregar configuración `no_price_comparison_procurement_methods`."
+
+#: ../../changelog.md:27
+msgid "Add `price_comparison_procurement_methods` configuration."
+msgstr "Agregar configuración `price_comparison_procurement_methods`."
+
+#: ../../changelog.md:28
+msgid "Add `[exclusions]` section."
+msgstr "Agregar sección de  `[exclusions]`."
+
+#: ../../changelog.md:30
+#: ../../changelog.md:59
+#: ../../changelog.md:73
+#: ../../changelog.md:93
 msgid "Changed"
 msgstr "Cambios"
 
-#: ../../changelog.md:20
+#: ../../changelog.md:33
 msgid "Warn about invalid default statuses."
 msgstr "Alertar sobre estados predeterminados inválidos."
 
-#: ../../changelog.md:21
-msgid "Normalize `/awards[]/id` and `/contracts[]/awardID`."
-msgstr "Normalizar `/awards[]/id` y `/contracts[]/awardID`."
-
-#: ../../changelog.md:23
-msgid ""
-"[R024](cli/indicators/R/024): Flag the winner and second-lowest bidder. Add "
-"`--map` key."
+#: ../../changelog.md:34
+msgid "Use snake case (`[codelists.bid_status]`) in the settings file, instead of a mix of snake case and camel case (`[codelists.BidStatus]`)."
 msgstr ""
-"[R024](cli/indicators/R/024): Señalar al ganador y al oferente de la segunda"
-" oferta más baja. Agregar la clave `--map`."
 
-#: ../../changelog.md:24
+#: ../../changelog.md:35
+msgid "Normalize `/awards[]/id` and `/contracts[]/awardID` to strings."
+msgstr ""
+
+#: ../../changelog.md:37
+msgid "[R024](cli/indicators/R/024): Flag the winner and second-lowest bidder. Add `--map` key."
+msgstr "[R024](cli/indicators/R/024): Señalar al ganador y al oferente de la segunda oferta más baja. Agregar la clave `--map`."
+
+#: ../../changelog.md:38
 msgid "[R035](cli/indicators/R/035): Flag the winner. Add `--map` key."
-msgstr ""
-"[R035](cli/indicators/R/035): Señalar al ganador. Agregar la clave `--map`."
+msgstr "[R035](cli/indicators/R/035): Señalar al ganador. Agregar la clave `--map`."
 
-#: ../../changelog.md:25
+#: ../../changelog.md:39
 msgid "Add global exclusion for cancelled `/tender/status`."
 msgstr "Agregar exclusión global para `/tender/status` cancelado."
 
-#: ../../changelog.md:27 ../../changelog.md:87
+#: ../../changelog.md:41
+#: ../../changelog.md:105
 msgid "Fixed"
 msgstr "Corregido"
 
-#: ../../changelog.md:30
-msgid ""
-"If the first quartile, third quartile and interquartile range are 0, skip "
-"the indicator to not flag 75% of cases."
-msgstr ""
-"Si el primer cuartil, el tercer cuartil y el rango intercuartílico son 0, "
-"omitir el indicador para no señalar el 75% de los casos."
+#: ../../changelog.md:44
+msgid "If the first quartile, third quartile and interquartile range are 0, skip the indicator to not flag 75% of cases."
+msgstr "Si el primer cuartil, el tercer cuartil y el rango intercuartílico son 0, omitir el indicador para no señalar el 75% de los casos."
 
-#: ../../changelog.md:32
+#: ../../changelog.md:45
+msgid "[R024](cli/indicators/R/024): Use the lowest bid submitted by the winner as the winning bid."
+msgstr ""
+
+#: ../../changelog.md:46
+msgid "[R036](cli/indicators/R/036): Exclude contracting processes in which no valid bid has an amount."
+msgstr ""
+
+#: ../../changelog.md:48
 msgid "0.0.5 (2023-06-14)"
 msgstr "0.0.5 (2023-06-14)"
 
-#: ../../changelog.md:36 ../../changelog.md:46
+#: ../../changelog.md:52
+#: ../../changelog.md:62
 msgid "{doc}`cli/init` command:"
-msgstr "comando {doc}`cli/init` :"
+msgstr "comando {doc}`cli/init`:"
 
-#: ../../changelog.md:37
+#: ../../changelog.md:53
 msgid "Add `--force` (`-f`) option to overwrite an existing file."
-msgstr ""
-"Agregar opción  `--force` (`-f`) para sobrescribir un archivo existente."
+msgstr "Agregar opción `--force` (`-f`) para sobrescribir un archivo existente."
 
-#: ../../changelog.md:39
+#: ../../changelog.md:55
 msgid "Add `--map` option to include the `Maps` key."
 msgstr "Agregar opción `--map` para incluir la clave `Maps`."
 
-#: ../../changelog.md:40
+#: ../../changelog.md:56
 msgid "Add `--no-meta` option to omit the `Meta` key."
 msgstr "Agregar opción `--no-meta` para omitir la clave `Meta`."
 
-#: ../../changelog.md:41
-msgid ""
-"[R038](cli/indicators/R/038): Add `minimum_submitted_bids` and "
-"`minimum_contracting_processes` configurations."
-msgstr ""
-"[R038](cli/indicators/R/038): Agregar configuraciones "
-"`minimum_submitted_bids` y `minimum_contracting_processes`."
+#: ../../changelog.md:57
+msgid "[R038](cli/indicators/R/038): Add `minimum_submitted_bids` and `minimum_contracting_processes` configurations."
+msgstr "[R038](cli/indicators/R/038): Agregar configuraciones `minimum_submitted_bids` y `minimum_contracting_processes`."
 
-#: ../../changelog.md:45
-msgid ""
-"Prefix an error about an unknown property in the settings file with the path"
-" at which it occurred."
-msgstr ""
-"Prefija un error sobre una propiedad desconocida en el archivo de "
-"configuración con la ruta en la que se produjo."
+#: ../../changelog.md:61
+msgid "Prefix an error about an unknown property in the settings file with the path at which it occurred."
+msgstr "Prefija un error sobre una propiedad desconocida en el archivo de configuración con la ruta en la que se produjo."
 
-#: ../../changelog.md:47
+#: ../../changelog.md:63
 msgid "Add `currency` property to default file."
-msgstr "Agregar propiedad `currency`  al archivo de configuración."
+msgstr "Agregar propiedad `currency` al archivo de configuración."
 
-#: ../../changelog.md:49
+#: ../../changelog.md:65
 msgid "Improve write performance."
 msgstr "Mejora el rendimiento."
 
-#: ../../changelog.md:51
+#: ../../changelog.md:67
 msgid "Add `Meta` key to assist interpretation of results."
-msgstr ""
-"Agregar clave  `Meta` para asistir en la interpretación de los resultados."
+msgstr "Agregar clave `Meta` para asistir en la interpretación de los resultados."
 
-#: ../../changelog.md:52
-msgid ""
-"The `--count` option writes to standard error instead of standard output, to"
-" not mix outputs."
-msgstr ""
-"La opción `--count` escribe en el error estándar en lugar de en la salida "
-"estándar, para no mezclar las salidas."
+#: ../../changelog.md:68
+msgid "The `--count` option writes to standard error instead of standard output, to not mix outputs."
+msgstr "La opción `--count` escribe en el error estándar en lugar de en la salida estándar, para no mezclar las salidas."
 
-#: ../../changelog.md:53
-msgid ""
-"All `threshold` and `percentile` configurations are consistently interpreted"
-" as inclusive."
-msgstr ""
-"Todas las configuraciones de `threshold` y `percentile` se interpretan "
-"siempre como inclusivas."
+#: ../../changelog.md:69
+msgid "All `threshold` and `percentile` configurations are consistently interpreted as inclusive."
+msgstr "Todas las configuraciones de `threshold` y `percentile` se interpretan siempre como inclusivas."
 
-#: ../../changelog.md:55
+#: ../../changelog.md:71
 msgid "0.0.4 (2023-05-30)"
 msgstr "0.0.4 (2023-05-30)"
 
-#: ../../changelog.md:60
-msgid ""
-"Add `--output` (`-o`) and `--errors` (`-e`) options, instead of using shell "
-"redirection."
-msgstr ""
-"Agregar opciones `--output` (`-o`) y `--errors` (`-e`), en lugar de usar "
-"redirección de shell. "
+#: ../../changelog.md:76
+msgid "Add `--output` (`-o`) and `--errors` (`-e`) options, instead of using shell redirection."
+msgstr "Agregar opciones `--output` (`-o`) y `--errors` (`-e`), en lugar de usar redirección de shell. "
 
-#: ../../changelog.md:61
-msgid ""
-"Fill in `/awards[]/items[]/classification/scheme` with "
-"`item_classification_scheme`."
-msgstr ""
-"Llenar `/awards[]/items[]/classification/scheme` con "
-"`item_classification_scheme`."
+#: ../../changelog.md:77
+msgid "Fill in `/awards[]/items[]/classification/scheme` with `item_classification_scheme`."
+msgstr "Llenar `/awards[]/items[]/classification/scheme` con `item_classification_scheme`."
 
-#: ../../changelog.md:63
+#: ../../changelog.md:79
 msgid "0.0.3 (2023-05-29)"
 msgstr "0.0.3 (2023-05-29)"
 
-#: ../../changelog.md:67
+#: ../../changelog.md:83
 msgid "{doc}`cli/init` command."
 msgstr "comando {doc}`cli/init` :"
 
-#: ../../changelog.md:68
+#: ../../changelog.md:84
 msgid "{doc}`cli/prepare` command."
 msgstr "comando {doc}`cli/prepare` :"
 
-#: ../../changelog.md:70
-msgid "[R025](cli/indicators/R/025) (*Excessive unsuccessful bids*)."
-msgstr ""
-"[R025](cli/indicators/R/025) (*Número excesivo de ofertas no exitosas*)."
+#: ../../changelog.md:85
+msgid "`[defaults]` section."
+msgstr "Sección de `[defaults]`."
 
-#: ../../changelog.md:71
+#: ../../changelog.md:86
+msgid "`[codelists.*]` sections."
+msgstr "Sección de `[codelists.*]`."
+
+#: ../../changelog.md:88
+msgid "[R025](cli/indicators/R/025) (*Excessive unsuccessful bids*)."
+msgstr "[R025](cli/indicators/R/025) (*Número excesivo de ofertas no exitosas*)."
+
+#: ../../changelog.md:89
 msgid "[R036](cli/indicators/R/036) (*Lowest bid disqualified*)."
 msgstr "[R036](cli/indicators/R/036) (*Oferta más baja descalificada*)."
 
-#: ../../changelog.md:72
+#: ../../changelog.md:90
 msgid "[R038](cli/indicators/R/038) (*Excessive disqualified bids*)."
-msgstr ""
-"[R038](cli/indicators/R/038) (*Alto número de ofertas descalificadas*)."
+msgstr "[R038](cli/indicators/R/038) (*Alto número de ofertas descalificadas*)."
 
-#: ../../changelog.md:73
+#: ../../changelog.md:91
 msgid "Expand documentation."
 msgstr "Expandir la documentación."
 
-#: ../../changelog.md:77
+#: ../../changelog.md:95
 msgid "Error on unknown configurations in the settings file."
 msgstr "Error en configuraciones desconocidas en el archivo de configuración."
 
-#: ../../changelog.md:79
+#: ../../changelog.md:97
 msgid "{ref}`Enable<enable-an-indicator>` indicators in the settings file."
-msgstr ""
-"{ref}`Habilitar<enable-an-indicator>` indicadores en el archivo de "
-"configuración."
+msgstr "{ref}`Habilitar<enable-an-indicator>` indicadores en el archivo de configuración."
 
-#: ../../changelog.md:80
+#: ../../changelog.md:98
 msgid "Rename indicators from `NF###` to `R###`."
 msgstr "Renombrar indicadores de `NF###` a `R###`."
 
-#: ../../changelog.md:81
+#: ../../changelog.md:99
 msgid "Remove \"OCID\" from output if no OCIDs reported."
 msgstr "Eliminar \"OCID\" de la salida si no hay OCIDs reportadas."
 
-#: ../../changelog.md:82
+#: ../../changelog.md:100
 msgid "Split indicators into trait objects."
 msgstr "Dividir los indicadores en objetos trait."
 
-#: ../../changelog.md:83
+#: ../../changelog.md:101
 msgid "Preserve top-level key order in the JSON output."
 msgstr "Conservar el orden de las claves de nivel superior en la salida JSON."
 
-#: ../../changelog.md:84
+#: ../../changelog.md:102
 msgid "{doc}`cli/coverage` command:"
 msgstr "comando {doc}`cli/coverage` :"
 
-#: ../../changelog.md:85
+#: ../../changelog.md:103
 msgid "Preserve JSON path key order in the JSON output."
 msgstr "Conservar el orden de las claves en la salida JSON."
 
-#: ../../changelog.md:89
+#: ../../changelog.md:107
 msgid "Commands no longer error on `SIGPIPE` signal."
 msgstr "Los comandos ya no generan error con la señal `SIGPIPE`."
 
-#: ../../changelog.md:91
+#: ../../changelog.md:109
 msgid "0.0.2 (2023-02-13)"
 msgstr "0.0.2 (2023-02-13)"
 
-#: ../../changelog.md:96
+#: ../../changelog.md:114
 msgid "[R035](cli/indicators/R/035) (*All except winning bid disqualified*)."
-msgstr ""
-"[R035](cli/indicators/R/035) (*Todas las ofertas son descalificadas excepto "
-"la ganadora*)."
+msgstr "[R035](cli/indicators/R/035) (*Todas las ofertas son descalificadas excepto la ganadora*)."
 
-#: ../../changelog.md:97
+#: ../../changelog.md:115
 msgid "Add `--settings SETTINGS` option for the settings file."
 msgstr "Agregar opción `--settings SETTINGS` en el archivo de configuración"
 
-#: ../../changelog.md:98
+#: ../../changelog.md:116
 msgid "Add documentation."
 msgstr "Agregar la documentación."
 
-#: ../../changelog.md:100
+#: ../../changelog.md:118
 msgid "0.0.1 (2023-02-13)"
 msgstr "0.0.1 (2023-02-13)"
 
-#: ../../changelog.md:102
+#: ../../changelog.md:120
 msgid "First release, including:"
 msgstr "Primer lanzamiento, incluyendo:"
 
-#: ../../changelog.md:104
+#: ../../changelog.md:122
 msgid "[R024](cli/indicators/R/024) (*Price close to winning bid*)."
 msgstr "[R024](cli/indicators/R/024) (*Precio cercano a la oferta ganadora*)."
+

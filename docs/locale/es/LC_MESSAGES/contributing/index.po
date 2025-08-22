@@ -1,25 +1,21 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2002, Open Contracting Partnership
-# This file is distributed under the same license as the Cardinal package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-# Translators:
-# Camila Salazar, 2023
-# 
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Cardinal 0.0.5\n"
+"Project-Id-Version: ocds-cardinal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-20 16:40-0400\n"
-"PO-Revision-Date: 2023-09-20 20:42+0000\n"
-"Last-Translator: Camila Salazar, 2023\n"
-"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"POT-Creation-Date: 2025-07-15 17:53-0400\n"
+"PO-Revision-Date: 2025-08-22 20:37\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: ocds-cardinal\n"
+"X-Crowdin-Project-ID: 809364\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /contributing/index.pot\n"
+"X-Crowdin-File-ID: 142\n"
+"Language: es_ES\n"
 
 #: ../../contributing/index.md:1
 msgid "Contributing"
@@ -38,15 +34,18 @@ msgid "[Install the nightly release of Rust](https://rustup.rs):"
 msgstr "[Instalar la versión nocturna de Rust](https://rustup.rs):"
 
 #: ../../contributing/index.md:19
-msgid ""
-"If you are new to Rust, see the [Reference section](https://ocp-software-"
-"handbook.readthedocs.io/en/latest/rust/#reference) of the Rust page of the "
-"OCP Software Development Handbook."
-msgstr ""
-"Si es nuevo a  Rust, vea la [sección de referencia](https://ocp-software-"
-"handbook.readthedocs.io/en/latest/rust/#reference) de la página Rust del OCP"
-" Software Development Handbook."
+msgid "If you are new to Rust, see the [Reference section](https://ocp-software-handbook.readthedocs.io/en/latest/rust/#reference) of the Rust page of the OCP Software Development Handbook."
+msgstr "Si es nuevo a  Rust, vea la [sección de referencia](https://ocp-software-handbook.readthedocs.io/en/latest/rust/#reference) de la página Rust del OCP Software Development Handbook."
 
 #: ../../contributing/index.md:22
+msgid "Benchmarks"
+msgstr ""
+
+#: ../../contributing/index.md:29
+msgid "We can consider the [criterion](https://crates.io/crates/criterion) crate for additional benchmarks."
+msgstr ""
+
+#: ../../contributing/index.md:32
 msgid "Tasks"
 msgstr "Tareas"
+

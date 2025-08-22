@@ -1,163 +1,89 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2002, Open Contracting Partnership
-# This file is distributed under the same license as the Cardinal package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-# Translators:
-# Camila Salazar, 2023
-# James McKinney, 2023
-# Yohanna Lisnichuk <ylisnichuk@open-contracting.org>, 2023
-# 
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Cardinal 0.0.5\n"
+"Project-Id-Version: ocds-cardinal\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-02 22:15-0400\n"
-"PO-Revision-Date: 2023-09-20 20:42+0000\n"
-"Last-Translator: Yohanna Lisnichuk <ylisnichuk@open-contracting.org>, 2023\n"
-"Language-Team: Spanish (https://app.transifex.com/open-contracting-partnership-1/teams/123427/es/)\n"
+"POT-Creation-Date: 2025-07-15 17:53-0400\n"
+"PO-Revision-Date: 2025-08-22 20:37\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: ocds-cardinal\n"
+"X-Crowdin-Project-ID: 809364\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /cli/indicators/index.pot\n"
+"X-Crowdin-File-ID: 134\n"
+"Language: es_ES\n"
 
 #: ../../cli/indicators/index.md:1
 msgid "indicators"
-msgstr "indicators"
+msgstr ""
 
 #: ../../cli/indicators/index.md:3
-msgid ""
-"The `indicators` command calculates procurement indicators and red flags."
-msgstr ""
-"El comando  `indicators` calcula los indicadores de adquisiciones y las "
-"señales de alerta."
+msgid "The `indicators` command calculates procurement indicators and red flags."
+msgstr "El comando  `indicators` calcula los indicadores de adquisiciones y las señales de alerta."
 
 #: ../../cli/indicators/index.md:5
-msgid ""
-"Run the `help` command to read its description, output format and options:"
-msgstr ""
-"Ejecute el comando `help` para leer su descripción, formato de salida y "
-"opciones:"
+msgid "Run the `help` command to read its description, output format and options:"
+msgstr "Ejecute el comando `help` para leer su descripción, formato de salida y opciones:"
 
 #: ../../cli/indicators/index.md:50
 msgid "Workflow"
 msgstr "Flujo de trabajo"
 
 #: ../../cli/indicators/index.md:53
-msgid ""
-"Before following this command's workflow, follow the earlier steps in the "
-"{doc}`../../topics/workflow`."
-msgstr ""
-"Antes de seguir el flujo de trabajo de este comando, siga los pasos "
-"anteriores en {doc}`../../topics/workflow`."
+msgid "Before following this command's workflow, follow the earlier steps in the {doc}`../../topics/workflow`."
+msgstr "Antes de seguir el flujo de trabajo de este comando, siga los pasos anteriores en {doc}`../../topics/workflow`."
 
 #: ../../cli/indicators/index.md:56
-msgid ""
-"**Select indicators**. If you ran the {doc}`../init` command when preparing "
-"your data, you already have a {doc}`../../topics/settings` that enables all "
-"indicators. [Enable](#enable-an-indicator) or [disable](#disable-an-"
-"indicator) indicators as you wish."
-msgstr ""
-"**Seleccionar indicadores**. Si ejecutó el comando {doc}`../init` al "
-"preparar sus datos, ya tiene un {doc}`../../topics/settings` que habilita "
-"todos los indicadores. [Habilite](#enable-an-indicator) o "
-"[deshabilite](#disable-an-indicator) indicadores como desee."
+msgid "**Select indicators**. If you ran the {doc}`../init` command when preparing your data, you already have a {doc}`../../topics/settings` that enables all indicators. [Enable](#enable-an-indicator) or [disable](#disable-an-indicator) indicators as you wish."
+msgstr "**Seleccionar indicadores**. Si ejecutó el comando {doc}`../init` al preparar sus datos, ya tiene un {doc}`../../topics/settings` que habilita todos los indicadores. [Habilite](#enable-an-indicator) o [deshabilite](#disable-an-indicator) indicadores como desee."
 
 #: ../../cli/indicators/index.md:57
-msgid ""
-"**Run the command**. For example, if your settings are in `settings.ini` and"
-" your data is in `prepared.jsonl`, this command writes the output to "
-"`results.json`:"
-msgstr ""
-"**Ejecute el comando**. Por ejemplo, si su configuración está en "
-"`settings.ini` y sus datos están en `prepared.jsonl`, este comando escribe "
-"la salida en `results.json`:"
+msgid "**Run the command**. For example, if your settings are in `settings.ini` and your data is in `prepared.jsonl`, this command writes the output to `results.json`:"
+msgstr "**Ejecute el comando**. Por ejemplo, si su configuración está en `settings.ini` y sus datos están en `prepared.jsonl`, este comando escribe la salida en `results.json`:"
 
 #: ../../cli/indicators/index.md:63
-msgid ""
-"**Review the results**. Read the [demonstration](#demonstration) to learn "
-"about the output format."
-msgstr ""
-"**Revisar los resultados**. Lea la [demostración](#demonstration) para "
-"conocer el formato de salida."
+msgid "**Review the results**. Read the [demonstration](#demonstration) to learn about the output format."
+msgstr "**Revisar los resultados**. Lea la [demostración](#demonstration) para conocer el formato de salida."
 
 #: ../../cli/indicators/index.md:65
 msgid "To do"
 msgstr "Pendiente"
 
 #: ../../cli/indicators/index.md:67
-msgid ""
-"This section will expand on the interpretation of results. See GitHub issue "
-"[#40](https://github.com/open-contracting/cardinal-rs/issues/40)."
-msgstr ""
-"Esta sección ampliará en la interpretación de los resultados. Consulte el "
-"issue de GitHub [#40](https://github.com/open-contracting/cardinal-"
-"rs/issues/40)."
+msgid "This section will expand on the interpretation of results. See GitHub issue [#40](https://github.com/open-contracting/cardinal-rs/issues/40)."
+msgstr "Esta sección ampliará en la interpretación de los resultados. Consulte el issue de GitHub [#40](https://github.com/open-contracting/cardinal-rs/issues/40)."
 
 #: ../../cli/indicators/index.md:70
-msgid ""
-"**Edit the settings**. Adjust the configuration of the [indicators](#list) "
-"based on your review of the results, in order to reduce false positives."
-msgstr ""
-"**Edite la configuración**. Ajuste la configuración de los "
-"[indicadores](#list) en función de su revisión de los resultados, para "
-"reducir los falsos positivos."
+msgid "**Edit the settings**. Adjust the configuration of the [indicators](#list) based on your review of the results, in order to reduce false positives."
+msgstr "**Edite la configuración**. Ajuste la configuración de los [indicadores](#list) en función de su revisión de los resultados, para reducir los falsos positivos."
 
 #: ../../cli/indicators/index.md:72
 msgid "Repeat the last three steps until you are satisfied with the results."
-msgstr ""
-"Repita los últimos tres pasos hasta que esté satisfecho con los resultados."
+msgstr "Repita los últimos tres pasos hasta que esté satisfecho con los resultados."
 
 #: ../../cli/indicators/index.md:75
-msgid ""
-"Have questions, concerns, or feedback? [Email James "
-"McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology."
-msgstr ""
-"¿Tiene preguntas, inquietudes o comentarios? [Envíe un correo electrónico a "
-"James McKinney](mailto:jmckinney@open-contracting.org), director de "
-"tecnología de OCP."
+msgid "Have questions, concerns, or feedback? [Email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology."
+msgstr "¿Tiene preguntas, inquietudes o comentarios? [Envíe un correo electrónico a James McKinney](mailto:jmckinney@open-contracting.org), director de tecnología de OCP."
 
 #: ../../cli/indicators/index.md:79
 msgid "Demonstration"
 msgstr "Demostración"
 
 #: ../../cli/indicators/index.md:81
-msgid ""
-"A procurement indicator or red flag can be about a contracting process, "
-"buyer, procuring entity or tenderer. For example, a contracting process "
-"might have a suspicious feature, like all bids except the winner's being "
-"disqualified. Or, a buyer might exhibit suspicious behavior, like "
-"disqualifying a large number of bids across its contracting processes."
-msgstr ""
-"Un indicador o una bandera roja puede calcularse para un proceso de "
-"contratación, un comprador, una entidad contratante o un oferente Por "
-"ejemplo, un proceso de contratación puede tener una característica "
-"sospechosa, como que todas las ofertas excepto la del ganador sean "
-"descalificadas. O bien, un comprador podría exhibir un comportamiento "
-"sospechoso, como descalificar una gran cantidad de ofertas en sus procesos "
-"de contratación."
+msgid "A procurement indicator or red flag can be about a contracting process, buyer, procuring entity or tenderer. For example, a contracting process might have a suspicious feature, like all bids except the winner's being disqualified. Or, a buyer might exhibit suspicious behavior, like disqualifying a large number of bids across its contracting processes."
+msgstr "Un indicador o una bandera roja puede calcularse para un proceso de contratación, un comprador, una entidad contratante o un oferente Por ejemplo, un proceso de contratación puede tener una característica sospechosa, como que todas las ofertas excepto la del ganador sean descalificadas. O bien, un comprador podría exhibir un comportamiento sospechoso, como descalificar una gran cantidad de ofertas en sus procesos de contratación."
 
 #: ../../cli/indicators/index.md:83
-msgid ""
-"The JSON output is therefore organized as an object in which the key is a "
-"**group**: \"OCID\" (the unique identifier of a contracting process), "
-"\"Buyer\", \"ProcuringEntity\" or \"Tenderer\". For example:"
-msgstr ""
-"La salida JSON se organiza como un objeto en el que la clave es un "
-"**grupo**: \"OCID\" (el identificador único de un proceso de contratación), "
-"\"Buyer\", \"ProcuringEntity\" o \"Tenderer\". Por ejemplo:"
+msgid "The JSON output is therefore organized as an object in which the key is a **group**: \"OCID\" (the unique identifier of a contracting process), \"Buyer\", \"ProcuringEntity\" or \"Tenderer\". For example:"
+msgstr "La salida JSON se organiza como un objeto en el que la clave es un **grupo**: \"OCID\" (el identificador único de un proceso de contratación), \"Buyer\", \"ProcuringEntity\" o \"Tenderer\". Por ejemplo:"
 
 #: ../../cli/indicators/index.md:94
-msgid ""
-"Each value at the *top* level is an object representing the results within "
-"that **group**, in which the key is an **identifier** extracted from the "
-"input data:"
-msgstr ""
-"Cada valor en el nivel *superior* es un objeto que representa los resultados"
-" dentro de ese **grupo**, en el que la clave es un **identificador** "
-"extraído de los datos de entrada:"
+msgid "Each value at the *top* level is an object representing the results within that **group**, in which the key is an **identifier** extracted from the input data:"
+msgstr "Cada valor en el nivel *superior* es un objeto que representa los resultados dentro de ese **grupo**, en el que la clave es un **identificador** extraído de los datos de entrada:"
 
 #: ../../cli/indicators/index.md:74
 msgid "Group"
@@ -169,94 +95,67 @@ msgstr "Identificador"
 
 #: ../../cli/indicators/index.md:74
 msgid "OCID"
-msgstr "OCID"
+msgstr ""
 
 #: ../../cli/indicators/index.md:74
 msgid "`/ocid`"
-msgstr "`/ocid`"
+msgstr ""
 
 #: ../../cli/indicators/index.md:74
 msgid "Buyer"
-msgstr "Buyer"
+msgstr ""
 
 #: ../../cli/indicators/index.md:74
 msgid "`/buyer/id`"
-msgstr "`/buyer/id`"
+msgstr ""
 
 #: ../../cli/indicators/index.md:74
 msgid "ProcuringEntity"
-msgstr "ProcuringEntity"
+msgstr ""
 
 #: ../../cli/indicators/index.md:74
 msgid "`/tender/procuringEntity/id`"
-msgstr "`/tender/procuringEntity/id`"
+msgstr ""
 
 #: ../../cli/indicators/index.md:74
 msgid "Tenderer"
-msgstr "Tenderer"
+msgstr ""
 
 #: ../../cli/indicators/index.md:74
 msgid "`/bids/details[]/tenderers[]/id`"
-msgstr "`/bids/details[]/tenderers[]/id`"
+msgstr ""
 
 #: ../../cli/indicators/index.md:103
 msgid "For example:"
 msgstr "Por ejemplo:"
 
 #: ../../cli/indicators/index.md:116
-msgid ""
-"Each value at the *second* level is an object representing the results "
-"relating to that **identifier**, in which the key is the **code** for an "
-"indicator, and the value is the **output** of that indicator. For example:"
-msgstr ""
-"Cada valor en el *segundo* nivel es un objeto que representa los resultados "
-"relacionados con ese **identificador**, en el que la clave es el **código** "
-"de un indicador, y el valor es la **salida** de ese indicador. Por ejemplo:"
+msgid "Each value at the *second* level is an object representing the results relating to that **identifier**, in which the key is the **code** for an indicator, and the value is the **output** of that indicator. For example:"
+msgstr "Cada valor en el *segundo* nivel es un objeto que representa los resultados relacionados con ese **identificador**, en el que la clave es el **código** de un indicador, y el valor es la **salida** de ese indicador. Por ejemplo:"
 
 #: ../../cli/indicators/index.md:133
-msgid ""
-"The **output** of an indicator is always a decimal. If an indicator didn't "
-"produce an output – either because it couldn't be calculated, or because no "
-"red flag was raised – then its code won't appear."
-msgstr ""
-"La **salida** de un indicador es siempre un decimal. Si un indicador no "
-"produjo resultados (ya sea porque no se pudo calcular o porque no se activó "
-"ninguna señal de alerta), entonces su código no aparecerá."
+msgid "The **output** of an indicator is always a decimal. If an indicator didn't produce an output – either because it couldn't be calculated, or because no red flag was raised – then its code won't appear."
+msgstr "La **salida** de un indicador es siempre un decimal. Si un indicador no produjo resultados (ya sea porque no se pudo calcular o porque no se activó ninguna señal de alerta), entonces su código no aparecerá."
 
 #: ../../cli/indicators/index.md:135
-msgid ""
-"You can [consult](#list) the codes for all indicators, read the description "
-"of their outputs and see a demonstration of their calculation."
-msgstr ""
-"Puede [consultar](#list) los códigos de todos los indicadores, leer la "
-"descripción de sus resultados y ver una demostración de su cálculo."
+msgid "You can [consult](#list) the codes for all indicators, read the description of their outputs and see a demonstration of their calculation."
+msgstr "Puede [consultar](#list) los códigos de todos los indicadores, leer la descripción de sus resultados y ver una demostración de su cálculo."
 
 #: ../../cli/indicators/index.md:137
-msgid ""
-"The JSON output also has a ``Meta`` key at the top level. Its value is an "
-"object with information about the quartiles and fences used to calculate the"
-" results, rounded to 4 decimals. For example:"
-msgstr ""
-"La salida JSON también tiene una clave ``Meta`` en el nivel superior. Su "
-"valor es un objeto con información sobre los cuartiles y umbrales utilizados"
-" para calcular los resultados, redondeado a 4 decimales. Por ejemplo:"
+msgid "The JSON output also has a ``Meta`` key at the top level. Its value is an object with information about the quartiles and fences used to calculate the results, rounded to 4 decimals. For example:"
+msgstr "La salida JSON también tiene una clave ``Meta`` en el nivel superior. Su valor es un objeto con información sobre los cuartiles y umbrales utilizados para calcular los resultados, redondeado a 4 decimales. Por ejemplo:"
 
 #: ../../cli/indicators/index.md:153
 msgid "Configuration"
 msgstr "Configuración"
 
 #: ../../cli/indicators/index.md:155
-msgid ""
-"The page for each [indicator](#list) describes its individual settings."
-msgstr ""
-"La página para cada [indicador](#list) describe sus configuraciones "
-"individuales."
+msgid "The page for each [indicator](#list) describes its individual settings."
+msgstr "La página para cada [indicador](#list) describe sus configuraciones individuales."
 
 #: ../../cli/indicators/index.md:157
 msgid "All configuration is optional. Cardinal provides good defaults."
-msgstr ""
-"Toda la configuración es opcional. Cardinal proporciona buenos valores "
-"predeterminados."
+msgstr "Toda la configuración es opcional. Cardinal proporciona buenos valores predeterminados."
 
 #: ../../cli/indicators/index.md:160
 msgid "An introduction to the {doc}`../../topics/settings`."
@@ -268,26 +167,19 @@ msgstr "Habilitar un indicador"
 
 #: ../../cli/indicators/index.md:166
 msgid "To enable an indicator, start a section with its code, for example:"
-msgstr ""
-"Para habilitar un indicador, inicie una sección con su código, por ejemplo:"
+msgstr "Para habilitar un indicador, inicie una sección con su código, por ejemplo:"
 
 #: ../../cli/indicators/index.md:172
-msgid ""
-"You don't need to set properties in this section. (Only if you want to!)"
-msgstr ""
-"No es necesario establecer propiedades en esta sección. (¡Sólo si lo desea!)"
+msgid "You don't need to set properties in this section. (Only if you want to!)"
+msgstr "No es necesario establecer propiedades en esta sección. (¡Sólo si lo desea!)"
 
 #: ../../cli/indicators/index.md:174
 msgid "Disable an indicator"
 msgstr "Deshabilitar un indicador"
 
 #: ../../cli/indicators/index.md:176
-msgid ""
-"The disable an indicator, either delete its section and properties, or "
-"comment them out, for example:"
-msgstr ""
-"Para desactivar un indicador, puede eliminar su sección y propiedades, o "
-"comentarlas, por ejemplo:"
+msgid "The disable an indicator, either delete its section and properties, or comment them out, for example:"
+msgstr "Para desactivar un indicador, puede eliminar su sección y propiedades, o comentarlas, por ejemplo:"
 
 #: ../../cli/indicators/index.md:183
 msgid "Now, the `indicators` command won't run this indicator."
@@ -298,23 +190,38 @@ msgid "Global configuration"
 msgstr "Configuración global"
 
 #: ../../cli/indicators/index.md:188
-msgid ""
-"If there are procedures (indicated by `/tender/procurementMethodDetails`) in"
-" which buyers predetermine prices, add to the top of your settings file, as "
-"a pipe-separated list, for example:"
+msgid "You might want to exclude some procedures from all indicators, whether for methodological reasons or due to quality issues. To exclude procedures based on the value of `/tender/procurementMethodDetails`, add to your settings file, as a pipe-separated list, for example:"
 msgstr ""
-"Si hay procedimientos (indicados por `/tender/procurementMethodDetails`) en "
-"los que los compradores predeterminan los precios, agréguelos al principio "
-"de su archivo de configuración, como una lista separada por barras "
-"verticales, por ejemplo:"
 
-#: ../../cli/indicators/index.md:194
-msgid "Otherwise, price-based indicators will return false positives."
+#: ../../cli/indicators/index.md:195
+msgid "Some indicators compares bid prices. However, for some procedures, it is inappropriate to compare bid prices; for example, if the buyer predetermines the price, then the indicator for prices close to the winning bid will return a false positive."
 msgstr ""
-"De lo contrario, los indicadores basados en precios arrojarán falsos "
-"positivos."
 
-#: ../../cli/indicators/index.md:196
+#: ../../cli/indicators/index.md:197
+msgid "Procedures can be included or excluded based on the value of `/tender/procurementMethodDetails`."
+msgstr ""
+
+#: ../../cli/indicators/index.md:199
+msgid "To exclude procedures from price comparisons, add to the top of your settings file, as a pipe-separated list, for example:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:205
+msgid "Alternatively, to include procedures in price comparisons, add to the top of your settings file, as a pipe-separated list, for example:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:211
+msgid "A procedure is excluded if either:"
+msgstr ""
+
+#: ../../cli/indicators/index.md:213
+msgid "`no_price_comparison_procurement_methods` is set, and `/tender/procurementMethodDetails` is set and matches"
+msgstr ""
+
+#: ../../cli/indicators/index.md:214
+msgid "`price_comparison_procurement_methods` is set, and `/tender/procurementMethodDetails` isn't set or doesn't match"
+msgstr ""
+
+#: ../../cli/indicators/index.md:216
 msgid "Glossary"
 msgstr "Glosario"
 
@@ -322,19 +229,15 @@ msgstr "Glosario"
 msgid "bid"
 msgstr "oferta"
 
-#: ../../cli/indicators/index.md:203
-msgid ""
-"An offer made by an {term}`economic operator` as part of a "
-"{term}`contracting process`. Also known as a *tender*."
-msgstr ""
-"Una oferta realizada por un {term}`operador económico` como parte de un "
-"{term}`proceso de contratación`. También conocido como *licitación*."
+#: ../../cli/indicators/index.md:223
+msgid "An offer made by an {term}`economic operator` as part of a {term}`contracting process`. Also known as a *tender*."
+msgstr "Una oferta realizada por un {term}`operador económico` como parte de un {term}`proceso de contratación`. También conocido como *licitación*."
 
 #: ../../cli/indicators/index.md:4
 msgid "bidder"
 msgstr "licitador"
 
-#: ../../cli/indicators/index.md:207
+#: ../../cli/indicators/index.md:227
 msgid "Synonym of {term}`tenderer`."
 msgstr "Sinónimo de {term}`oferente`."
 
@@ -342,297 +245,243 @@ msgstr "Sinónimo de {term}`oferente`."
 msgid "buyer"
 msgstr "comprador"
 
-#: ../../cli/indicators/index.md:211
-msgid ""
-"The organization aiming to conclude a contract with an {term}`economic "
-"operator` or to use the goods, services or works resulting from the "
-"contract, as part of a {term}`contracting process`."
-msgstr ""
-"La organización que tiene como objetivo celebrar un contrato con un "
-"{term}`operador económico` o utilizar los bienes, servicios u obras "
-"resultantes del contrato, como parte de un {term}`proceso de contratación`."
+#: ../../cli/indicators/index.md:231
+msgid "The organization aiming to conclude a contract with an {term}`economic operator` or to use the goods, services or works resulting from the contract, as part of a {term}`contracting process`."
+msgstr "La organización que tiene como objetivo celebrar un contrato con un {term}`operador económico` o utilizar los bienes, servicios u obras resultantes del contrato, como parte de un {term}`proceso de contratación`."
 
 #: ../../cli/indicators/index.md:12
 msgid "contracting process"
 msgstr "proceso de contratación"
 
-#: ../../cli/indicators/index.md:215
-msgid ""
-"All the actions aimed at implementing one or more contracts. This covers "
-"tendering, awarding, contracting and implementation. Also known as a "
-"*procedure*."
-msgstr ""
-"Todas las actuaciones encaminadas a la ejecución de uno o más contratos. "
-"Esto abarca la licitación, adjudicación, contratación y ejecución. También "
-"conocido como *procedimiento*."
+#: ../../cli/indicators/index.md:235
+msgid "All the actions aimed at implementing one or more contracts. This covers tendering, awarding, contracting and implementation. Also known as a *procedure*."
+msgstr "Todas las actuaciones encaminadas a la ejecución de uno o más contratos. Esto abarca la licitación, adjudicación, contratación y ejecución. También conocido como *procedimiento*."
 
 #: ../../cli/indicators/index.md:16
 msgid "economic operator"
 msgstr "operador económico"
 
-#: ../../cli/indicators/index.md:219
-msgid ""
-"A person or organization – or group of people or organizations – that offers"
-" goods, services or works. Also known as a *business*, *contractor*, "
-"*service provider*, *supplier* or *undertaking*."
-msgstr ""
-"Una persona u organización –o grupo de personas u organizaciones– que ofrece"
-" bienes, servicios u obras. También conocido como *negocio*, *contratista*, "
-"*proveedor de servicios*, *proveedor* o *emprendimiento*."
+#: ../../cli/indicators/index.md:239
+msgid "A person or organization – or group of people or organizations – that offers goods, services or works. Also known as a *business*, *contractor*, *service provider*, *supplier* or *undertaking*."
+msgstr "Una persona u organización –o grupo de personas u organizaciones– que ofrece bienes, servicios u obras. También conocido como *negocio*, *contratista*, *proveedor de servicios*, *proveedor* o *emprendimiento*."
 
 #: ../../cli/indicators/index.md:20
 msgid "procuring entity"
 msgstr "entidad contratante"
 
-#: ../../cli/indicators/index.md:223
-msgid ""
-"The organization managing the {term}`contracting process`. An organization "
-"can be both a {term}`buyer` and a procuring entity (like in a simple "
-"contracting process)."
-msgstr ""
-"La organización que gestiona el {term}`proceso de contratación`. Una "
-"organización puede ser a la vez un {term}`comprador` y una entidad "
-"contratante (como en un proceso de contratación simple)."
+#: ../../cli/indicators/index.md:243
+msgid "The organization managing the {term}`contracting process`. An organization can be both a {term}`buyer` and a procuring entity (like in a simple contracting process)."
+msgstr "La organización que gestiona el {term}`proceso de contratación`. Una organización puede ser a la vez un {term}`comprador` y una entidad contratante (como en un proceso de contratación simple)."
 
 #: ../../cli/indicators/index.md:24
 msgid "submitted"
 msgstr "enviado"
 
-#: ../../cli/indicators/index.md:227
-msgid ""
-"A {term}`bid` is submitted if its status is pending (i.e. not evaluated "
-"yet), valid (i.e. qualified), or disqualified. It is not submitted if its "
-"status is invited or withdrawn."
-msgstr ""
-"Una {term}`oferta` se considera \"enviada\" si su estado es pendiente (es "
-"decir, aún no evaluada), válida (es decir, calificada) o descalificada. No "
-"se considera \"enviada\" si su estado es invitado o retirado."
+#: ../../cli/indicators/index.md:247
+msgid "A {term}`bid` is submitted if its status is pending (i.e. not evaluated yet), valid (i.e. qualified), or disqualified. It is not submitted if its status is invited or withdrawn."
+msgstr "Una {term}`oferta` se considera \"enviada\" si su estado es pendiente (es decir, aún no evaluada), válida (es decir, calificada) o descalificada. No se considera \"enviada\" si su estado es invitado o retirado."
 
 #: ../../cli/indicators/index.md:28
 msgid "tenderer"
 msgstr "oferente"
 
-#: ../../cli/indicators/index.md:231
-msgid ""
-"An {term}`economic operator` that {term}`submitted` one or more "
-"{term}`bids<bid>` as part of a {term}`contracting process`."
-msgstr ""
-"Un {term}`operador económico` que {term}`envió<enviado>` una o más "
-"{term}`ofertas<bid>` como parte de un {term}`proceso de contratación`."
+#: ../../cli/indicators/index.md:251
+msgid "An {term}`economic operator` that {term}`submitted` one or more {term}`bids<bid>` as part of a {term}`contracting process`."
+msgstr "Un {term}`operador económico` que {term}`envió<enviado>` una o más {term}`ofertas<bid>` como parte de un {term}`proceso de contratación`."
 
 #: ../../cli/indicators/index.md:32
 msgid "winner"
 msgstr "ganador"
 
-#: ../../cli/indicators/index.md:235
+#: ../../cli/indicators/index.md:255
 msgid "A {term}`tenderer` that is awarded a contract."
 msgstr "Un {term}`oferente` al que se le adjudica un contrato."
 
-#: ../../cli/indicators/index.md:239
+#: ../../cli/indicators/index.md:259
 msgid "Indicators"
 msgstr "Indicadores"
 
-#: ../../cli/indicators/index.md:241
-msgid ""
-"Indicators are assigned codes for easy reference: for example, `R001`. The "
-"first letter indicates the category: **R**ed flag or **U**se case."
-msgstr ""
-"A los indicadores se les asignan códigos para facilitar su consulta: por "
-"ejemplo, \"R001\". La primera letra indica la categoría: **R**ed flag "
-"(bandera roja) o **U**se case (caso de uso)."
+#: ../../cli/indicators/index.md:261
+msgid "Indicators are assigned codes for easy reference: for example, `R001`. The first letter indicates the category: **R**ed flag or **U**se case."
+msgstr "A los indicadores se les asignan códigos para facilitar su consulta: por ejemplo, \"R001\". La primera letra indica la categoría: **R**ed flag (bandera roja) o **U**se case (caso de uso)."
 
-#: ../../cli/indicators/index.md:243
-msgid ""
-"The page for each indicator describes its individual methodology. For all "
-"indicators, a contracting process is excluded if:"
-msgstr ""
-"La página de cada indicador describe su metodología individual. Para todos "
-"los indicadores, se excluye un proceso de contratación si:"
+#: ../../cli/indicators/index.md:263
+msgid "The page for each indicator describes its individual methodology. For all indicators, a contracting process is excluded if:"
+msgstr "La página de cada indicador describe su metodología individual. Para todos los indicadores, se excluye un proceso de contratación si:"
 
-#: ../../cli/indicators/index.md:245
+#: ../../cli/indicators/index.md:265
 msgid "The `ocid` isn't a string."
 msgstr "El \"ocid\" no es una cadena."
 
-#: ../../cli/indicators/index.md:246
+#: ../../cli/indicators/index.md:266
 msgid "The contracting process (`/tender/status`) is cancelled."
 msgstr "Se cancela el proceso de contratación (`/tender/status`)."
 
-#: ../../cli/indicators/index.md:247
+#: ../../cli/indicators/index.md:267
 msgid "The relevant organization references don't set an `id`."
 msgstr "Las referencias de organizaciones relevantes no establecen una \"id\"."
 
-#: ../../cli/indicators/index.md:248
-msgid "Monetary values, where relevant, don't use the main currency."
-msgstr ""
-"Los valores monetarios, cuando sea relevante, no utilizan la moneda "
-"principal."
-
-#: ../../cli/indicators/index.md:250
-msgid "To configure the main currency, add to the top of your settings file:"
-msgstr ""
-"Para configurar la moneda principal, agregue en la parte superior de su "
-"archivo de configuración:"
-
-#: ../../cli/indicators/index.md:256
-msgid "Otherwise, the main currency is set to the first observed currency."
-msgstr ""
-"De lo contrario, la moneda principal se establece en la primera moneda "
-"observada."
-
-#: ../../cli/indicators/index.md:259
-msgid ""
-"Do you want to eliminate this exclusion? Please contributed to [GitHub issue"
-" #11](https://github.com/open-contracting/cardinal-rs/issues/11)."
-msgstr ""
-"¿Quieres eliminar esta exclusión? Contribuya al [issue #11 de "
-"GitHub](https://github.com/open-contracting/cardinal-rs/issues/11)."
-
 #: ../../cli/indicators/index.md:268
+msgid "Monetary values, where relevant, don't use the main currency."
+msgstr "Los valores monetarios, cuando sea relevante, no utilizan la moneda principal."
+
+#: ../../cli/indicators/index.md:270
+msgid "To configure the main currency, add to the top of your settings file:"
+msgstr "Para configurar la moneda principal, agregue en la parte superior de su archivo de configuración:"
+
+#: ../../cli/indicators/index.md:276
+msgid "Otherwise, the main currency is set to the first observed currency."
+msgstr "De lo contrario, la moneda principal se establece en la primera moneda observada."
+
+#: ../../cli/indicators/index.md:279
+msgid "Do you want to eliminate this exclusion? Please contributed to [GitHub issue #11](https://github.com/open-contracting/cardinal-rs/issues/11)."
+msgstr "¿Quieres eliminar esta exclusión? Contribuya al [issue #11 de GitHub](https://github.com/open-contracting/cardinal-rs/issues/11)."
+
+#: ../../cli/indicators/index.md:288
 msgid "Red flags"
 msgstr "Banderas rojas"
 
-#: ../../cli/indicators/index.md:273
+#: ../../cli/indicators/index.md:293
 msgid "Code"
 msgstr "Código"
 
-#: ../../cli/indicators/index.md:274
+#: ../../cli/indicators/index.md:294
 msgid "Title"
 msgstr "Título"
 
-#: ../../cli/indicators/index.md:275
+#: ../../cli/indicators/index.md:295
 msgid "Description"
 msgstr "Descripción"
 
-#: ../../cli/indicators/index.md:276
-msgid "[R024](R/024)"
-msgstr "[R024](R/024)"
+#: ../../cli/indicators/index.md:296
+msgid "[R003](R/003)"
+msgstr ""
 
-#: ../../cli/indicators/index.md:277
+#: ../../cli/indicators/index.md:297
+msgid "[Short submission period](R/003)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:298
+msgid "The submission period is too short."
+msgstr ""
+
+#: ../../cli/indicators/index.md:299
+msgid "[R018](R/018)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:300
+msgid "[Single bid received](R/018)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:301
+msgid "Only one tenderer submitted a bid."
+msgstr ""
+
+#: ../../cli/indicators/index.md:302
+msgid "[R024](R/024)"
+msgstr ""
+
+#: ../../cli/indicators/index.md:303
 msgid "[Price close to winning bid](R/024)"
 msgstr "[Precio cercano a la oferta ganadora](R/024)"
 
-#: ../../cli/indicators/index.md:278
-msgid ""
-"The percentage difference between the winning bid and the second-lowest "
-"valid bid is a low outlier."
-msgstr ""
-"La diferencia porcentual entre la oferta ganadora y la segunda oferta válida"
-" más baja es un valor atípico bajo."
+#: ../../cli/indicators/index.md:304
+msgid "The percentage difference between the winning bid and the second-lowest valid bid is a low outlier."
+msgstr "La diferencia porcentual entre la oferta ganadora y la segunda oferta válida más baja es un valor atípico bajo."
 
-#: ../../cli/indicators/index.md:279
+#: ../../cli/indicators/index.md:305
 msgid "[R025](R/025)"
-msgstr "[R025](R/025)"
+msgstr ""
 
-#: ../../cli/indicators/index.md:280
+#: ../../cli/indicators/index.md:306
 msgid "[Excessive unsuccessful bids](R/025)"
 msgstr "[Número excesivo de ofertas no exitosas](R/025)"
 
-#: ../../cli/indicators/index.md:281
-msgid ""
-"The ratio of winning bids to submitted bids for a top tenderer is a low "
-"outlier."
-msgstr ""
-" La relación entre las ofertas ganadoras y las presentadas por un oferente "
-"es un valor atípico bajo"
+#: ../../cli/indicators/index.md:307
+msgid "The ratio of winning bids to submitted bids for a top tenderer is a low outlier."
+msgstr " La relación entre las ofertas ganadoras y las presentadas por un oferente es un valor atípico bajo"
 
-#: ../../cli/indicators/index.md:282
+#: ../../cli/indicators/index.md:308
 msgid "[R028](R/028)"
-msgstr "[R028](R/028)"
+msgstr ""
 
-#: ../../cli/indicators/index.md:283
+#: ../../cli/indicators/index.md:309
 msgid "[Identical bid prices](R/028)"
 msgstr "[Precios de oferta idénticos](R/028)"
 
-#: ../../cli/indicators/index.md:284
+#: ../../cli/indicators/index.md:310
 msgid "Different tenderers submitted bids with the same price."
-msgstr ""
-" Dos ofertas presentadas por diferentes oferentes tienen el mismo precio"
+msgstr " Dos ofertas presentadas por diferentes oferentes tienen el mismo precio"
 
-#: ../../cli/indicators/index.md:285
+#: ../../cli/indicators/index.md:311
 msgid "[R030](R/030)"
-msgstr "[R030](R/030)"
+msgstr ""
 
-#: ../../cli/indicators/index.md:286
+#: ../../cli/indicators/index.md:312
 msgid "[Late bid won](R/030)"
 msgstr "[Oferta tardía gana](R/030)"
 
-#: ../../cli/indicators/index.md:287
+#: ../../cli/indicators/index.md:313
 msgid "The winning bid was received after the submission deadline."
-msgstr ""
-"La oferta ganadora se recibió después de la fecha límite de presentación."
+msgstr "La oferta ganadora se recibió después de la fecha límite de presentación."
 
-#: ../../cli/indicators/index.md:288
+#: ../../cli/indicators/index.md:314
 msgid "[R035](R/035)"
-msgstr "[R035](R/035)"
+msgstr ""
 
-#: ../../cli/indicators/index.md:289
+#: ../../cli/indicators/index.md:315
 msgid "[All except winning bid disqualified](R/035)"
 msgstr "[Todas las ofertas son descalificadas excepto la ganadora](R/035)"
 
-#: ../../cli/indicators/index.md:290
-msgid ""
-"Bids are disqualified if not submitted by the single tenderer of the winning"
-" bid."
+#: ../../cli/indicators/index.md:316
+msgid "Bids are disqualified if not submitted by the single tenderer of the winning bid."
 msgstr "Las ofertas presentadas son descalificadas excepto la ganadora."
 
-#: ../../cli/indicators/index.md:291
+#: ../../cli/indicators/index.md:317
 msgid "[R036](R/036)"
-msgstr "[R036](R/036)"
+msgstr ""
 
-#: ../../cli/indicators/index.md:292
+#: ../../cli/indicators/index.md:318
 msgid "[Lowest bid disqualified](R/036)"
 msgstr "[Oferta más baja descalificada](R/036)"
 
-#: ../../cli/indicators/index.md:293
-msgid ""
-"The lowest submitted bid is disqualified, while the award criterion is price"
-" only."
-msgstr ""
-"La oferta más baja es descalificada cuando el criterio de adjudicación es "
-"solo precio."
+#: ../../cli/indicators/index.md:319
+msgid "The lowest submitted bid is disqualified, while the award criterion is price only."
+msgstr "La oferta más baja es descalificada cuando el criterio de adjudicación es solo precio."
 
-#: ../../cli/indicators/index.md:294
+#: ../../cli/indicators/index.md:320
 msgid "[R038](R/038)"
-msgstr "[R038](R/038)"
+msgstr ""
 
-#: ../../cli/indicators/index.md:295
+#: ../../cli/indicators/index.md:321
 msgid "[Excessive disqualified bids](R/038)"
 msgstr "[Alto número de ofertas descalificadas](R/038)"
 
-#: ../../cli/indicators/index.md:296
-msgid ""
-"The ratio of disqualified bids to submitted bids is a high outlier per "
-"buyer, procuring entity or tenderer."
-msgstr ""
-"La relación de ofertas descalificadas y las presentadas es un valor atípico "
-"alto para un comprador o un oferente."
+#: ../../cli/indicators/index.md:322
+msgid "The ratio of disqualified bids to submitted bids is a high outlier per buyer, procuring entity or tenderer."
+msgstr "La relación de ofertas descalificadas y las presentadas es un valor atípico alto para un comprador o un oferente."
 
-#: ../../cli/indicators/index.md:297
+#: ../../cli/indicators/index.md:323
 msgid "[R048](R/048)"
-msgstr "[R048](R/048)"
+msgstr ""
 
-#: ../../cli/indicators/index.md:298
+#: ../../cli/indicators/index.md:324
 msgid "[Heterogeneous supplier](R/048)"
 msgstr "[Proveedor multipropósito](R/048)"
 
-#: ../../cli/indicators/index.md:299
+#: ../../cli/indicators/index.md:325
 msgid "The variety of items supplied by a tenderer is a high outlier."
-msgstr ""
-"La variedad de artículos suministrados por un oferente es un valor atípico "
-"alto."
+msgstr "La variedad de artículos suministrados por un oferente es un valor atípico alto."
 
-#: ../../cli/indicators/index.md:300
+#: ../../cli/indicators/index.md:326
 msgid "[R058](R/058)"
-msgstr "[R058](R/058)"
+msgstr ""
 
-#: ../../cli/indicators/index.md:301
+#: ../../cli/indicators/index.md:327
 msgid "[Heavily discounted bid](R/058)"
 msgstr "[Oferta con precio muy bajo](R/058)"
 
-#: ../../cli/indicators/index.md:302
-msgid ""
-"The percentage difference between the winning bid and the second-lowest "
-"valid bid is a high outlier."
-msgstr ""
-"La diferencia porcentual entre la oferta ganadora y la segunda oferta válida"
-" más baja es un valor atípico alto"
+#: ../../cli/indicators/index.md:328
+msgid "The percentage difference between the winning bid and the second-lowest valid bid is a high outlier."
+msgstr "La diferencia porcentual entre la oferta ganadora y la segunda oferta válida más baja es un valor atípico alto"
+
