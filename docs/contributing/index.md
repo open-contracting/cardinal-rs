@@ -35,5 +35,4 @@ We can consider the [criterion](https://crates.io/crates/criterion) crate for ad
 :maxdepth: 1
 
 indicators/index
-translation
 :::

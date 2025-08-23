@@ -123,11 +123,6 @@
       "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/contributing/indicators/test.po"
     },
     {
-      "source": "/docs/_build/gettext/contributing/translation.pot",
-      "dest": "contributing/translation.pot",
-      "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/contributing/translation.po"
-    },
-    {
       "source": "/docs/_build/gettext/index.pot",
       "dest": "index.pot",
       "translation": "/docs/locale/%two_letters_code%/LC_MESSAGES/index.po"
