@@ -2,10 +2,11 @@
 #![test_runner(criterion::runner)]
 
 use std::fs::File;
+use std::hint::black_box;
 use std::io::BufReader;
 use std::time::Duration;
 
-use criterion::{Criterion, black_box};
+use criterion::Criterion;
 use criterion_macro::criterion;
 
 use ocdscardinal::{Indicators, Settings};

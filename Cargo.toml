@@ -44,9 +44,9 @@ pyo3-build-config = "0.25"
 
 [dev-dependencies]
 assert_cmd = "2.0"
-criterion = { version = "0.5", features = ["html_reports", "real_blackbox"] }
+criterion = { version = "0.7" }
 criterion-macro = "0.4"
-ctor = "0.2"
+ctor = "0.5"
 pretty_assertions = "1.0"
 predicates = "3.0"
 rstest = "0.18"
