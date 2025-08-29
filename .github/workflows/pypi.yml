@@ -111,8 +111,6 @@ jobs:
         with:
           subject-path: 'wheels-*/*'
       - uses: PyO3/maturin-action@v1
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.TEST_PYPI_API_TOKEN }}
         with:
           command: upload
           args: --non-interactive --skip-existing wheels-*/* --repository-url=https://test.pypi.org/legacy/
@@ -130,8 +128,6 @@ jobs:
         with:
           subject-path: 'wheels-*/*'
       - uses: PyO3/maturin-action@v1
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         with:
           command: upload
           args: --non-interactive --skip-existing wheels-*/*
