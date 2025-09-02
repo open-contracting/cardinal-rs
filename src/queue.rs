@@ -113,8 +113,6 @@ impl<W: Write> Write for Task<W> {
         self.apply(|w| w.write(b))
     }
 
-    // https://github.com/rust-lang/rust-clippy/issues/9900
-    #[allow(clippy::redundant_closure_for_method_calls)]
     fn flush(&mut self) -> Result<()> {
         self.apply(|w| w.flush())
     }
