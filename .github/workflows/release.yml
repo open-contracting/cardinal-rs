@@ -76,7 +76,7 @@ jobs:
       - env:
           RUSTFLAGS: -Zon-broken-pipe=kill
           PYO3_NO_PYTHON: 1
-        run: ${{ matrix.command }} build --release --target ${{ matrix.target }}
+        run: ${{ matrix.command }} build --release --target ${{ matrix.target }} --bin ocdscardinal
       # 7z is available on all runners.
       # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#preinstalled-software
       - name: Create archive
