@@ -13,7 +13,10 @@ use itertools::Itertools;
 // https://stackoverflow.com/a/49056967/244258
 fn main() {
     // https://pyo3.rs/v0.25.1/building-and-distribution.html#macos
-    pyo3_build_config::add_extension_module_link_args();
+    // Skip PyO3 configuration when PYO3_NO_PYTHON is set (e.g., during cross-compilation)
+    if env::var("PYO3_NO_PYTHON").is_err() {
+        pyo3_build_config::add_extension_module_link_args();
+    }
 
     let path = Path::new(&env::var("OUT_DIR").unwrap()).join("lib.include");
     let mut file = File::create(path).unwrap();
