@@ -68,6 +68,7 @@ jobs:
       - run: cargo install cross --git https://github.com/cross-rs/cross
       - env:
           RUSTFLAGS: -Zon-broken-pipe=kill
+          PYO3_NO_PYTHON: 1
         run: ${{ matrix.command }} build --release --target ${{ matrix.target }}
       # 7z is available on all runners.
       # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#preinstalled-software
