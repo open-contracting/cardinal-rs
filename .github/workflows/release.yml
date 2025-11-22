@@ -3,6 +3,12 @@ on:
   push:
     tags:
       - "[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag name (like 0.0.1)'
+        required: true
+        type: string
 permissions:
   contents: write
 jobs:
@@ -10,9 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - env:
+      - if: github.event_name == 'push'
+        env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create ${{ github.ref_name }}
+        run: gh release create ${{ inputs.tag || github.ref_name }}
   assets:
     needs: release
     runs-on: ${{ matrix.os }}
@@ -76,7 +83,7 @@ jobs:
         id: archive
         shell: bash
         run: |
-          DIRECTORY="ocdscardinal-${{ github.ref_name }}-${{ matrix.build }}"
+          DIRECTORY="ocdscardinal-${{ inputs.tag || github.ref_name }}-${{ matrix.build }}"
           if [[ "${{ matrix.target }}" =~ "-pc-windows-" ]]; then
             SUFFIX=".exe"
           else
@@ -88,4 +95,4 @@ jobs:
           echo "path=$DIRECTORY.zip" >> $GITHUB_OUTPUT
       - env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload ${{ github.ref_name }} ${{ steps.archive.outputs.path }}
+        run: gh release upload ${{ inputs.tag || github.ref_name }} ${{ steps.archive.outputs.path }}
