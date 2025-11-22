@@ -1,4 +1,4 @@
-use log::warn;
+use log::{info, warn};
 use std::collections::HashSet;
 
 use serde_json::{Map, Value};
@@ -14,6 +14,7 @@ pub struct SecondLowestBidRatio {
     no_price_comparison_procurement_methods: HashSet<String>,
     price_comparison_procurement_methods: HashSet<String>,
     currency: Option<String>,
+    info_currency_mismatches: bool,
 }
 
 impl Calculate for Tenderers {
@@ -49,6 +50,11 @@ impl Calculate for SecondLowestBidRatio {
                 settings.price_comparison_procurement_methods.clone(),
             ),
             currency: settings.currency.clone(),
+            info_currency_mismatches: settings
+                .output
+                .as_ref()
+                .and_then(|o| o.info_currency_mismatches)
+                .unwrap_or(false),
         }
     }
 
@@ -106,6 +112,8 @@ impl Calculate for SecondLowestBidRatio {
                         lowest_non_winner = Some(tenderer_id);
                         lowest_non_winner_amount = Some(amount);
                     }
+                } else if self.info_currency_mismatches {
+                    info!("{} is not {:?}, skipping.", currency, item.currency);
                 } else {
                     warn!("{} is not {:?}, skipping.", currency, item.currency);
                 }
@@ -135,6 +143,8 @@ impl Calculate for SecondLowestBidRatio {
                 .extend(std::mem::take(&mut other.second_lowest_bid_ratios));
             item.winner_and_lowest_non_winner
                 .extend(std::mem::take(&mut other.winner_and_lowest_non_winner));
+        } else if self.info_currency_mismatches {
+            info!("{:?} is not {:?}, skipping.", other.currency, item.currency);
         } else {
             warn!("{:?} is not {:?}, skipping.", other.currency, item.currency);
         }

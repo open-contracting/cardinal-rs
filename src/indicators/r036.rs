@@ -1,4 +1,4 @@
-use log::warn;
+use log::{info, warn};
 use std::collections::HashSet;
 
 use serde_json::{Map, Value};
@@ -11,6 +11,7 @@ pub struct R036 {
     no_price_comparison_procurement_methods: HashSet<String>,
     price_comparison_procurement_methods: HashSet<String>,
     currency: Option<String>,
+    info_currency_mismatches: bool,
 }
 
 impl Calculate for R036 {
@@ -23,6 +24,11 @@ impl Calculate for R036 {
                 settings.price_comparison_procurement_methods.clone(),
             ),
             currency: settings.currency.clone(),
+            info_currency_mismatches: settings
+                .output
+                .as_ref()
+                .and_then(|o| o.info_currency_mismatches)
+                .unwrap_or(false),
         }
     }
 
@@ -67,6 +73,8 @@ impl Calculate for R036 {
                         if status == "valid" {
                             has_valid_bid_with_amount = true;
                         }
+                    } else if self.info_currency_mismatches {
+                        info!("{} is not {:?}, skipping.", currency, item.currency);
                     } else {
                         warn!("{} is not {:?}, skipping.", currency, item.currency);
                     }

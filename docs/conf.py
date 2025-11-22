@@ -15,7 +15,7 @@ project = "Cardinal"
 copyright = "2022, Open Contracting Partnership"
 author = "Open Contracting Partnership"
 
-version = "0.0.7"
+version = "0.0.8"
 release = version
 
 # -- General configuration ---------------------------------------------------

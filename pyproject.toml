@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "ocdscardinal"
-version = "0.0.7"
+version = "0.0.8"
 authors = [{name = "Open Contracting Partnership", email = "data@open-contracting.org"}]
 description = "Measure red flags and procurement indicators using OCDS data"
 readme = "README.md"

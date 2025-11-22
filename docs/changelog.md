@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.8 (2025-11-22)
+
+### Added
+
+- Add `[output]` section with `info_currency_mismatches` option to lower the log level of currency mismatches from WARN to INFO.
+
 ## 0.0.7 (2025-06-20)
 
 ### Added

@@ -21,6 +21,12 @@ use serde_json::{Map, Value};
 
 // Settings.
 
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Output {
+    pub info_currency_mismatches: Option<bool>,
+}
+
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all(deserialize = "snake_case"))]
 pub enum Codelist {
@@ -123,6 +129,7 @@ pub struct R048 {
 #[serde(deny_unknown_fields)]
 #[allow(non_snake_case)]
 pub struct Settings {
+    pub output: Option<Output>,
     // prepare command.
     pub codelists: Option<HashMap<Codelist, HashMap<String, String>>>,
     pub defaults: Option<Defaults>,

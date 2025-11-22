@@ -42,6 +42,9 @@ $ ocdscardinal init -
 ; no_price_comparison_procurement_methods = Random Selection
 ; price_comparison_procurement_methods = Reverse Auction
 
+[output]
+; info_currency_mismatches = true
+
 ; `prepare` command
 ;
 ; Read the documentation at:
