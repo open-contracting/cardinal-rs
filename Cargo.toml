@@ -40,7 +40,11 @@ statrs = "0.16"
 [build-dependencies]
 glob = "0.3"
 itertools = "0.12"
-pyo3-build-config = "0.25"
+pyo3-build-config = { version = "0.25", optional = true }
+
+[features]
+default = ["python"]
+python = ["pyo3-build-config"]
 
 [dev-dependencies]
 assert_cmd = "2.0"
