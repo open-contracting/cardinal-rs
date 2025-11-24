@@ -10,7 +10,9 @@ use std::path::PathBuf;
 use anyhow::Result;
 use indexmap::IndexMap;
 use log::warn;
+#[cfg(feature = "python")]
 use pyo3::prelude::*;
+#[cfg(feature = "python")]
 use pyo3::types::PyDict;
 use rayon::prelude::*;
 use serde_json::{Map, Value};
@@ -32,6 +34,7 @@ pub use crate::indicators::{Calculate, Codelist, Exclusions, Group, Indicator, I
 use crate::queue::Job;
 use crate::standard::{AWARD_STATUS, BID_STATUS};
 
+#[cfg(feature = "python")]
 #[pyfunction]
 /// Count the number of times each field is non-empty in a line-delimited JSON file
 ///
@@ -63,6 +66,7 @@ fn coverage(py: Python<'_>, file: &str) -> PyResult<PyObject> {
     }
 }
 
+#[cfg(feature = "python")]
 #[pymodule]
 fn ocdscardinal(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(coverage, m)?)?;
