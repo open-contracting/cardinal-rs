@@ -85,4 +85,4 @@ jobs:
           echo "path=$DIRECTORY.zip" >> $GITHUB_OUTPUT
       - env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload ${{ inputs.tag || github.ref_name }} ${{ steps.archive.outputs.path }}
+        run: gh release upload ${{ inputs.tag || github.ref_name }} ${{ steps.archive.outputs.path }} ${{ inputs.tag && '--clobber' || '' }}
