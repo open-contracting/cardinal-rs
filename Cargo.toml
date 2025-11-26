@@ -42,10 +42,6 @@ glob = "0.3"
 itertools = "0.12"
 pyo3-build-config = { version = "0.25", optional = true }
 
-[features]
-default = ["python"]
-python = ["pyo3", "pyo3-build-config"]
-
 [dev-dependencies]
 assert_cmd = "2.0"
 criterion = { version = "0.7" }
@@ -56,3 +52,7 @@ predicates = "3.0"
 rstest = "0.18"
 tempfile = "3.0"
 trycmd = { version = "0.14", features = ["color-auto", "diff"], default-features = false }
+
+[features]
+default = ["python"]
+python = ["pyo3", "pyo3-build-config"]
