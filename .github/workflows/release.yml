@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         # Aim for one option per major OS per 64-bit architecture, taking from "Tier 1 with Host Tools" targets and,
-        # if needed, "Tier 2 with Host Tools" targets. Note that *-pc-windows-msvc requires cross-toolchains.
+        # if needed, "Tier 2 with Host Tools" targets.
         # https://doc.rust-lang.org/rustc/platform-support.html
         # https://github.com/cross-rs/cross#supported-targets
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
@@ -45,10 +45,8 @@ jobs:
             target: x86_64-pc-windows-gnu
             command: cross
           # 64-bit (ARM)
-          - build: windows-64-bit
-            os: ubuntu-latest
-            target: aarch64-pc-windows-gnullvm
-            command: cross
+          # aarch64-pc-windows requires https://github.com/cross-rs/cross-toolchains#targets
+          # "`cross` does not provide a Docker image for target aarch64-pc-windows-gnullvm"
           - build: macos-arm
             os: macos-latest
             target: aarch64-apple-darwin
