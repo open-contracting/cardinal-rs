@@ -55,3 +55,6 @@ ignore-variadic-names = true
 
 [tool.uv]
 cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/*.rs"}]
+
+[tool.uv.pip]
+exclude-newer = "1 week"
