@@ -23,7 +23,7 @@ jobs:
             target: ppc64le
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: 3.x
       - uses: PyO3/maturin-action@v1
@@ -48,7 +48,7 @@ jobs:
             target: x86
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: 3.x
           architecture: ${{ matrix.platform.target }}
@@ -71,7 +71,7 @@ jobs:
             target: aarch64
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: 3.x
       - uses: PyO3/maturin-action@v1
