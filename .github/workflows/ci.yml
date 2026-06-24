@@ -13,7 +13,7 @@ jobs:
     steps:
       # Prevent Git from changing LF to CRLF, which affects test fixtures.
       - run: git config --global core.autocrlf false
-      - uses: actions/checkout@v6.0.3
+      - uses: actions/checkout@v7.0.0
       - uses: dtolnay/rust-toolchain@nightly
       - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4 # v2.9.1
         with:
