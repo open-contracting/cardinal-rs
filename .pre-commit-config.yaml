@@ -15,6 +15,7 @@ repos:
         language: rust
         types: [rust]
         args: ["--all", "--"]
+        pass_filenames: false
       - id: cargo-check
         name: cargo check
         entry: cargo check
