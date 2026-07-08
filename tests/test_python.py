@@ -8,7 +8,7 @@ BASEDIR = Path("tests") / "fixtures" / "coverage"
 
 
 @pytest.mark.parametrize(
-    ("infile", "outfile"), zip(sorted(BASEDIR.glob("*.jsonl")), sorted(BASEDIR.glob("*.expected")), strict=True)
+    ("infile", "outfile"), tuple(zip(sorted(BASEDIR.glob("*.jsonl")), sorted(BASEDIR.glob("*.expected")), strict=True))
 )
 def test_coverage(infile, outfile):
     with outfile.open() as f:
