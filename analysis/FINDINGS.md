@@ -184,6 +184,7 @@ recorded there.
 | `lot` | 1 / lot | ✅ **(added — see reversal)** | awards/bids attach here via `relatedLots` |
 | `organization` | 1 / (org, role) | ✅ **(added — homes the 3 org-grain indicators)** | grain mirrors Cardinal's `(Group, id)` results (roles expanded, no loss); resolved region/identifier + org-grain indicator scores; **not** a `parties[]` dump |
 | `field_coverage` | 1 / (dataset, field) | ✅ **(added — meta, not a fact table)** | per-dataset coverage catalog (KS `field_counts` analog) — drives precise graceful refusal; populated from Cardinal `coverage` |
+| `dataset_meta` | 1 / dataset | ✅ **(added — meta)** | dataset routing + **scope/threshold/exclusion/temporal/quality** metadata; the in-prompt catalog is generated from it; hand-curated from the registry (see below) |
 | `item` | 1 / item | ⛔ deferred | fan-out max ~200/process; classification captured via computed `main_class_*` instead |
 | `contract` (standalone) | 1 / contract | ⛔ merged, not standalone | contracts/awards ≤ 1 for the POC pair (Part 1) → merged onto `award`; promote only if a fan-out publisher (Dom Rep 1.22) is added |
 
@@ -238,6 +239,13 @@ recorded there.
   the dataset-level catalog can't disagree. Modelled on KS's first-class `field_counts` table
   (`collection_id, path, object_property, array_count, distinct_releases`); it lets graceful
   refusal be data-driven ("is `numberOfTenderers` present for dataset 63?") instead of guessed.
+- **dataset_meta** *(meta table, 1/dataset — the routing surface)*: `dataset_id` · `publisher` ·
+  `country` · `region` · `government_level` · `date_from` · `date_to` · `currency` · `license` ·
+  `n_processes` · `scope_summary` · `exclusions` · `threshold` · `methods` · `quality_notes`.
+  Hand-curated from the registry dataset page (JSON-LD `description`/`temporalCoverage`/`license`,
+  which carry the "show more" scope prose); the in-prompt **dataset catalog** is generated from
+  the human-readable subset. This is what catches **scope-mismatch** questions that `field_coverage`
+  can't (the field is present, but the dataset's *scope* excludes the ask — see selection note).
 
 ### Cardinal indicators — all 11, at two grains (measured from `set_result!` targets)
 
@@ -258,6 +266,14 @@ are **precomputed columns**. But they don't share a grain (`results: IndexMap<Gr
 All indicator columns are **nullable and inherit the status/coverage gate**: Cardinal only
 computes them over processes whose awards are all final, so `pending`/mixed-status and
 bid-poor processes yield null, never a misleading `0`.
+
+**Baseline caveat — most indicators are dataset-relative, so NOT comparable across datasets.**
+The fence-based flags (R024, R025, R030, R035, R036, R038, R048, R058) are computed against
+**their own dataset's** distribution (quartiles/fences, per `indicators` run — the `Meta`), so a
+flag means "outlier *within this dataset*." Comparing their scores or flag-rates across datasets
+is near-meaningless (the outlier tail is ~fixed by construction) and a confident-but-wrong answer
+waiting to happen. Only `single_bid` (a boolean share) and `r003` (fixed threshold) are
+cross-dataset comparable. See the cross-dataset rule below.
 
 ### Status is a load-bearing filter (not decoration)
 
@@ -299,6 +315,58 @@ by `dataset_id` (not `country`) unless a cross-dataset question is explicitly in
 scopes are known disjoint. Government level (national / subnational / agency) is **not** in
 registry metadata — like `country`, it can only be supplied as a build-time param per dataset if
 wanted; it is *not* inferrable from `publications.json`.
+
+### Cross-dataset / multi-country queries — breakdown, never a blended figure
+
+When a question spans countries/datasets, the data dictionary instructs the bot to resolve each
+country to its dataset(s), **filter/group by `dataset_id`, and return a row per dataset** — never
+`GROUP BY country` across heterogeneous scopes. Answerability is gated by question type:
+
+| question type | cross-dataset? | rule |
+|---|---|---|
+| rates / shares / counts (single-bid rate, % open, # processes) | ✅ per-dataset breakdown | comparable, but **caveat each dataset's coverage** (e.g. single-bid computable for Rwanda; only ~13% of Paraguay processes publish `numberOfTenderers`) so a thin denominator isn't read as a real rate |
+| monetary amounts / totals | ⛔ refuse (or counts-only) | different currencies, no FX — the designated graceful-refusal case until `amount_usd` |
+| fence-based indicators (R024/25/30/35/36/38/48/58) | ⛔ within-dataset only | dataset-relative baselines (see indicator baseline caveat) — cross-dataset comparison is meaningless |
+
+Only `single_bid` and `r003` are safe to compare across datasets. Guardrail should deny
+cross-currency `SUM`/comparison and cross-dataset aggregation of fence-based indicator columns.
+
+### Dataset selection & the scope-mismatch hallucination
+
+*How the bot picks the dataset(s) for a question.* It reads the in-prompt **dataset catalog**
+(generated from `dataset_meta`), matches the question's geography / time window / sector-scope /
+metric, then: one dataset fits → scope to it; several fit → per-dataset breakdown (above);
+question's scope/time/geography not covered → **refuse with the reason**; ambiguous (no geography
+named) → **ask a clarifying question**. Machine-checkable facts (`date_from/date_to`, `currency`)
+are verified against `dataset_meta` and enforced by the guardrail; the catalog scales in-prompt to
+~dozens of datasets, then moves to a retrieval / discovery-query step.
+
+**Why `dataset_meta`, not just `field_coverage`:** `field_coverage` catches "the field isn't
+populated." It does **not** catch "the field is populated but the dataset's *scope* excludes the
+ask" — which produces the most dangerous answers (a plausible number that is silently wrong). Only
+the scope/threshold/exclusion/temporal metadata lets the bot refuse these. Distinct failure mode ⇒
+distinct refusal ⇒ a distinct eval gold type (**scope-mismatch**).
+
+**Hand-curated `dataset_meta` (from the registry JSON-LD, 2026-07 snapshot):**
+
+| field | 63 Paraguay DNCP | 145 Rwanda RPPA |
+|---|---|---|
+| publisher | Dirección Nacional de Contrataciones Públicas (SICP) | Public Procurement Authority (RPPA), Umucyo portal |
+| country / region | Paraguay / LAC | Rwanda / MEA |
+| government_level | national — all bodies, national→local, all branches + SOEs | national — central + local agencies (**below-district entities not in system**) |
+| date_from / date_to | 2011-01-03 / 2026-06-18 | 2013-12-14 / 2026-04-30 |
+| currency | PYG | RWF |
+| license | CC-BY-4.0 | CC-BY-NC-SA-4.0 |
+| n_processes | ~246,320 | ~49,300 |
+| threshold | excludes purchases < 20× daily min wage (Art 35) ≈ **PYG 84,340 ≈ USD 250** (2020) | includes only processes **≥ 3,000,000 RWF** |
+| exclusions | works concessions/permits/licenses (Art 2.b); **multilateral-financed** (UNDP) & **treaty** procedures (Yacyretá, Itaipú) (Art 2.c) | **security organs procuring classified items**; **PPPs**; below-district (sectors, health centres, schools) |
+| methods | (not stated) | open, selective, direct |
+| quality_notes | threshold is 2020 value; excluded categories won't appear at all | tender+award per process; **contract data only "where available"** (cf. contracts/awards 0.87) |
+
+Rwanda's "**excludes security organs procuring classified items**" is the concrete scope-mismatch
+case for the eval: *"defence procurement in Rwanda"* must **refuse** (not return non-classified
+spend). Likewise a *"contracts under PYG 50,000 in Paraguay"* / *"under 1,000,000 RWF in Rwanda"*
+question is below the publication threshold ⇒ refuse, don't return a misleading `0`.
 
 ### Reversal: lots ARE in the POC
 
