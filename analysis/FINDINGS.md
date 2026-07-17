@@ -35,6 +35,38 @@ registered extensions (287).
 - The 107 non-schema arrays classify cleanly as ignorable: `/auctions[]` (not in OCDS 1.1 core;
   `prepare` already has `move_auctions`), `/award[]` (one publisher's singular-key bug), etc.
 
+### Contracts merge onto awards (the merge is correct regardless of per-award fan-out)
+
+Each OCDS contract carries exactly one `contracts[]/awardID` (contract→award is N:1). Coverage
+gives element counts, so we can compute the ratio `#contracts[] / #awards[]` — but that is only
+the **mean contracts per award**, *not the distribution*. It cannot tell 0-vs-multi apart: some
+awards have **0** contracts, others **several**, and an average hides both. Formally a mean `m`
+only upper-bounds the share of awards with ≥2 contracts at `m/2` — **tight corpus-wide** (0.21 ⇒
+≤~10% of awards can be multi-contract) but **weak for the POC pair** (~0.9 ⇒ up to ~45% *could*
+be), so coverage data **cannot establish the truncation rate** for Paraguay/Rwanda. The true
+per-award fan-out needs grouping `contracts[]` by `awardID` on the **bulk sample** — a build-time
+check, not derivable here.
+
+| scope | awards[] | contracts[] | mean/award | awardID present |
+|---|---|---|---|---|
+| **corpus** | 48.0 M | 10.1 M | **0.21** | **99.7%** of contracts |
+| Paraguay DNCP (63, POC) | 282,207 | 276,496 | 0.98 | 91% |
+| Rwanda RPPA (145, POC) | 52,923 | 46,028 | 0.87 | 98% |
+| Dominican Rep. DGCP (22) | 189,939 | 232,551 | 1.22 | 100% |
+| Poder Judicial (16) | 9,688 | 15,692 | 1.62 (max) | 100% |
+
+What the numbers *do* establish: contracts are far sparser than awards overall (mean 0.21), only
+**57/91** datasets publish any `contracts[]`, and `awardID` is near-universal (99.7%) so the merge
+key is reliable (minus ~9% of Paraguay contracts that lack it → unmerged, null `contract_*`).
+
+**Why the merge is sound anyway:** it is **correct-by-construction for 0 / 1 / N contracts per
+award** — 0 ⇒ null `contract_*`; 1 ⇒ merged; N ⇒ first kept + `contract_count` +
+`contract_truncated`. So the schema does **not** depend on "≤1 per award"; the cardinality
+question is only *how often `contract_truncated` fires* (a completeness stat to read off the
+built sample), not whether the merge is valid. Reuse of `prepare`'s `awardID → contract` map and
+`award_status_by_contract_status` correction (`src/lib.rs:802–872`) is available but **opt-in**
+(see next note).
+
 ## Part 2 — field coverage that changes the schema
 
 | field | datasets | processes | note |
@@ -130,38 +162,143 @@ Bulgaria): high R-flag support, low usability support, no `numberOfTenderers`.
    carries a per-row flag **and** a count, and the method is stated once in the data dictionary
    (see the ledger below). The bot must be able to see, per row, when a value was derived.
 
+### Prior art
+
+Two OCDS-to-tabular designs were cross-checked (full reasoning + a future-blog write-up in
+[`COMPARISONS.md`](COMPARISONS.md)): **Kingfisher Summarize** (OCP's OCDS→Postgres summary layer —
+same house style: compiled-release grain, child summary tables, precomputed `total_*`/`sum_*`, a
+first-class `field_counts` coverage table; but keeps full JSONB and ships *no* indicators) and
+**OpenTender** (a single denormalized bulk CSV with ~70 precomputed indicator scores + dual
+national/EUR amounts). Our schema is, in one line, **KS-style denormalization ∪ Cardinal
+indicators, narrowed for an LLM consumer** — the borrowings (`field_coverage`, first/last award
+date) and the rejections (JSONB escape hatch, cartesian fan-out, 70-column indicator wall) are
+recorded there.
+
 ### Tables
 
 | table | grain | in POC | note |
 |---|---|---|---|
-| `contracting_process` | 1 / ocid | ✅ | the spine; dims + measures + flags + coverage flags |
-| `award` | 1 / award | ✅ | money + supplier; suppliers collapsed in |
+| `contracting_process` | 1 / ocid | ✅ | the spine; dims + measures + status + 8 per-process indicators + coverage flags |
+| `award` | 1 / award | ✅ | money + supplier + **linked contract merged via `awardID`**; suppliers collapsed in |
 | `bid` | 1 / bid | ✅ (coverage-gated, 42/93 datasets) | tenderers collapsed in |
 | `lot` | 1 / lot | ✅ **(added — see reversal)** | awards/bids attach here via `relatedLots` |
+| `organization` | 1 / (org, role) | ✅ **(added — homes the 3 org-grain indicators)** | grain mirrors Cardinal's `(Group, id)` results (roles expanded, no loss); resolved region/identifier + org-grain indicator scores; **not** a `parties[]` dump |
+| `field_coverage` | 1 / (dataset, field) | ✅ **(added — meta, not a fact table)** | per-dataset coverage catalog (KS `field_counts` analog) — drives precise graceful refusal; populated from Cardinal `coverage` |
 | `item` | 1 / item | ⛔ deferred | fan-out max ~200/process; classification captured via computed `main_class_*` instead |
-| `parties` | — | ⛔ not a table | resolved into buyer/supplier rows (see Part 3 Q5) |
+| `contract` (standalone) | 1 / contract | ⛔ merged, not standalone | contracts/awards ≤ 1 for the POC pair (Part 1) → merged onto `award`; promote only if a fan-out publisher (Dom Rep 1.22) is added |
 
-### Column checklist (concrete, for the Rust exporter)
+### Column checklist (concrete, for the Rust exporter — the authoritative spec)
 
-- **contracting_process**: `ocid` PK · `country` · `year` · `buyer_id` · `buyer_name` ·
+> This checklist is the **single source of truth** for the exporter schema; issue #129 links
+> here rather than restating it.
+
+- **contracting_process**: `ocid` PK · `dataset_id` `publisher` `dataset_title`
+  *(registry identity — `country` alone is **not** a dataset key; see dataset-scope note)* ·
+  `country` · `year` · `buyer_id` · `buyer_name` ·
   `buyer_region` `buyer_identifier` *(resolved from parties)* · `procurement_method` ·
   `procurement_method_details` · `main_procurement_category` · `tender_title` ·
-  `tender_start_date` · `tender_end_date` · `award_date` · `tender_class_scheme`
-  `tender_class_id` *(from `/tender/classification`, tenderClassification extension)* ·
-  `main_class_scheme` `main_class_id` `main_class_source` *(computed fallback from items)* ·
-  `num_tenderers` · `num_bids` · `single_bid` (bool, nullable) · `single_bid_source` ·
-  `num_awards` · `award_amount_total` · `award_currency` (null if mixed) · `supplier_count` ·
-  `num_lots` · `amendment_count` · `has_amendment` · coverage flags `has_bids`
-  `has_tenderer_count` `has_amount` `has_amendments`.
-- **award**: `ocid` FK · `award_id` · `award_status` · `award_date` · `supplier_id` ·
-  `supplier_name` · `supplier_region` `supplier_identifier` *(resolved)* · `supplier_count` ·
-  `supplier_truncated` · `amount` · `currency` · `lot_id` · `lot_multi` · denormalized dims
-  `country` `year` `procurement_method` `main_procurement_category` `buyer_id` `buyer_name`.
+  `tender_status` *(filter dimension — see status note)* · `tender_start_date` ·
+  `tender_end_date` · `first_award_date` `last_award_date` *(min/max over awards — a process can
+  have several awards on different dates; single `award_date` would be lossy, cf. KS
+  `first_award_date`/`last_award_date`)* · `tender_class_scheme` `tender_class_id`
+  *(from `/tender/classification`, tenderClassification extension)* · `main_class_scheme`
+  `main_class_id` `main_class_source` *(computed fallback from items)* · `tender_value_amount`
+  `tender_value_currency` *(estimated value; nullable — 75/93 datasets, 38% of processes)* ·
+  `num_tenderers` · `num_bids` · `num_awards` · `award_amount_total` *(active awards only)* ·
+  `award_currency` (null if mixed) · `supplier_count` · `num_lots` · `amendment_count` ·
+  `has_amendment` · **per-process indicators** `single_bid` (=R018, bool nullable) ·
+  `single_bid_source` · `r003` `r024` `r028` `r030` `r035` `r036` `r058` *(nullable f64 —
+  see indicator note)* · coverage flags `has_bids` `has_tenderer_count` `has_amount`
+  `has_amendments` `has_tender_value`.
+- **award**: `ocid` FK · `award_id` · `award_status` *(filter dimension)* · `award_date` ·
+  `supplier_id` · `supplier_name` · `supplier_region` `supplier_identifier` *(resolved)* ·
+  `supplier_count` · `supplier_truncated` · `amount` · `currency` · **linked contract (merged
+  via `awardID`)** `contract_id` `contract_status` `contract_value_amount`
+  `contract_value_currency` `contract_date_signed` `contract_period_end` `contract_count`
+  `contract_truncated` · `lot_id` · `lot_multi` · denormalized dims `dataset_id` `country` `year`
+  `procurement_method` `main_procurement_category` `buyer_id` `buyer_name`.
 - **bid**: `ocid` FK · `bid_id` · `status` · `amount` · `currency` · `tenderer_id` ·
   `tenderer_name` · `tenderer_count` · `tenderer_truncated` · `lot_id` · denormalized dims
-  `country` `year` `procurement_method` `buyer_id`.
+  `dataset_id` `country` `year` `procurement_method` `buyer_id`.
 - **lot**: `ocid` FK · `lot_id` · `lot_title` · `lot_status` · `lot_amount` · `lot_currency` ·
-  denormalized `country` `year`.
+  denormalized `dataset_id` `country` `year`.
+- **organization** *(grain 1/(org, role) — one row per Cardinal `(Group, id)` result, roles
+  **expanded not reduced** so no loss)*: PK `(dataset_id, org_id, role)` ·
+  `role` (`buyer`|`procuringEntity`|`tenderer`|`supplier`) · `name` · `region` · `identifier` ·
+  `country` · **org-grain indicators** (nullable f64) `r025` `r048` `r038_buyer`
+  `r038_procuringentity` `r038_tenderer` + the tenderer aggregates of `r024` `r028` `r030` `r035`
+  `r058`. Indicator columns populate directly from Cardinal's `results[(Group, id)]` map; **there
+  is no `Supplier` group** (suppliers are the winning subset of tenderers), so `supplier` rows
+  carry null indicator scores — they exist for id→name/region resolution, not for flags.
+- **field_coverage** *(meta table — the bot queries it to decide answerability, it is not in
+  every query)*: `dataset_id` · `field_path` (OCDS pointer, e.g. `/tender/numberOfTenderers`) ·
+  `processes_present` · `coverage` (fraction of the dataset's processes) · `mean_cardinality`
+  *(nullable — array paths only)* · `covered` (bool at a threshold). Populated from Cardinal's
+  `coverage` output — the *same* source as the per-row `has_*` flags, so the row-level flag and
+  the dataset-level catalog can't disagree. Modelled on KS's first-class `field_counts` table
+  (`collection_id, path, object_property, array_count, distinct_releases`); it lets graceful
+  refusal be data-driven ("is `numberOfTenderers` present for dataset 63?") instead of guessed.
+
+### Cardinal indicators — all 11, at two grains (measured from `set_result!` targets)
+
+Cardinal implements 11 red flags (`src/indicators/r*.rs`). They are **not** re-derivable by the
+guarded text-to-SQL agent — they are `f64` outlier / percentile / concentration scores computed
+over the *whole corpus* (single-`SELECT`, `LIMIT 1000` queries cannot reproduce them) — so they
+are **precomputed columns**. But they don't share a grain (`results: IndexMap<Group, …>`,
+`src/indicators/mod.rs`):
+
+- **8 emit a per-process (`Group::OCID`) result** → columns on `contracting_process`: R003,
+  R018, R024, R028, R030, R035, R036, R058.
+- **3 are organization-only** (no per-process value) → `organization` table: R025 (tenderer),
+  R048 (tenderer), R038 (buyer/procuringEntity/tenderer).
+- 5 of the OCID flags **also** emit a tenderer aggregate (R024/R028/R030/R035/R058) → those
+  columns live in `organization` too; per-process↔flagged-org linkage is in the
+  `ocid_tenderer_r0NN` maps.
+
+All indicator columns are **nullable and inherit the status/coverage gate**: Cardinal only
+computes them over processes whose awards are all final, so `pending`/mixed-status and
+bid-poor processes yield null, never a misleading `0`.
+
+### Status is a load-bearing filter (not decoration)
+
+Cardinal itself only computes indicators over processes whose awards are *all final*
+(`src/lib.rs:382–388`): `active` counts, `cancelled`/`unsuccessful` are ignored, a single
+`pending` award drops the whole process. So `tender_status` / `award_status` / `contract_status`
+/ `lot_status` are exported as filter dimensions, the data dictionary instructs the bot to
+exclude pending/unsuccessful/cancelled rows, and process measures (`award_amount_total`,
+`single_bid`, `r0NN`) are computed on the active/final subset. *(Note: if the exporter reuses
+`prepare`'s opt-in `award_status_by_contract_status` correction, the exported `award_status`
+reflects that correction — a cancelled contract flips its award to `cancelled` — not the raw
+source value; state this in the data dictionary so numbers reconcile with raw OCDS.)*
+
+### `prepare` transforms are opt-in — configure per dataset, not one global build
+
+Every `prepare` transform is an **opt-in setting** (`Corrections`, `Modifications`, `Defaults`,
+`Redactions`, `Exclusions` in `src/indicators/mod.rs` — all `Option`), so **none run unless
+configured**: the `awardID → contract` map + status correction, party-role resolution, id
+prefixing (`prefix_tenderer_or_supplier_id`), currency / award-status / item-classification-scheme
+defaults, `move_auctions`, etc. In practice each dataset has its own data-quality quirks, so the
+export build carries a **per-dataset Cardinal settings file** (alongside the `country`/`publisher`
+build params), not a single global config. The exporter must therefore *not assume* any transform
+already ran — it either enables the needed settings per dataset or extracts the field itself.
+Consequence for the schema: resolved columns (`buyer_region`, `supplier_identifier`, merged
+`contract_*`, corrected `*_status`) are populated only when that dataset's config enables the
+corresponding transform; otherwise they fall back to raw-source or null (a coverage gap, flagged,
+never a wrong value).
+
+### Registry datasets are not all national — `country` is not a dataset key
+
+publications.json holds **134 datasets across 72 countries**; **26 countries have >1 dataset**
+(Mexico **18**, Nigeria **13**, UK 5, Italy/Honduras 4…), **88 datasets in multi-dataset
+countries**. Many are **subnational or single-agency** (Mexico's list is largely state
+transparency institutes, "Municipio de Guadalajara", state secretariats), with **overlapping or
+disjoint scopes** — so summing/grouping by `country` across datasets double-counts or blends
+incomparable scopes. Therefore every table carries a **`dataset_id`** (registry `id`) plus
+`publisher`/`dataset_title` on the spine, and the data dictionary instructs the bot to scope
+by `dataset_id` (not `country`) unless a cross-dataset question is explicitly intended and the
+scopes are known disjoint. Government level (national / subnational / agency) is **not** in
+registry metadata — like `country`, it can only be supplied as a build-time param per dataset if
+wanted; it is *not* inferrable from `publications.json`.
 
 ### Reversal: lots ARE in the POC
 
@@ -197,11 +334,48 @@ publishers (CPV ≠ UNSPSC ≠ national codes).
 |---|---|---|
 | award keeps first of N suppliers | `supplier_truncated`, `supplier_count` | "one `award` row per award; `supplier_id/name` is the first of `supplier_count`" |
 | bid keeps first tenderer | `tenderer_truncated`, `tenderer_count` | "bid is 1:1 with tenderer for ~97% of rows; else first of `tenderer_count`" |
-| main classification derived | `main_class_source` (`tender_classification`\|`items_modal`\|null) | "computed as value-weighted modal item classification when `/tender/classification` absent" |
-| amount summed across currencies | `award_currency` = null when mixed | "`award_amount_total` valid only when `award_currency` non-null; no FX in POC" |
+| award keeps first of N contracts | `contract_truncated`, `contract_count` | "contract merged via `awardID`; ≤1 per award for the POC pair (Part 1); else first of `contract_count`. Contracts lacking `awardID` (~9% Paraguay) stay unmerged ⇒ null `contract_*`" |
+| main classification derived | `main_class_source` (`tender_classification`\|`items_modal`\|null) | "computed as value-weighted modal item classification when `/tender/classification` absent" — **non-modal classes erased ⇒ audit only via sidecar** |
+| amount summed across currencies | `award_currency` / `contract_currency` = null when mixed | "`award_amount_total` valid only when `award_currency` non-null; no FX in POC (`amount_usd` future — pull live FX from another OCP project)" |
 | award→lot mapping multi | `lot_multi` | "`lot_id` is the first related lot when `lot_multi`" |
 | single-bid derivation source | `single_bid_source` | "R018-style; from numberOfTenderers, else bid/tenderer count; null ⇒ `has_tenderer_count=false`" |
+| indicator not computable | indicator column = null | "R0NN null when the process/org failed Cardinal's all-awards-final gate or lacked the required bid data — never `0`" |
 
 Principle: **column when the loss is row-specific and queryable; dictionary when it's a global
 method statement** — and always pair a truncation flag with a count so the loss is quantified,
 not just signalled.
+
+### Audit sidecar (the exporter records the *distribution* at every n→1 reduction)
+
+The `export` command emits a small per-dataset **audit sidecar** (e.g.
+`data/<dataset_id>/_audit.json`, or a tidy `_audit` table) alongside the five tables. For every
+point where it collapses n→1 it records the **cardinality distribution** — occurrences,
+share at 1, share >1 (the truncation rate), max, and a small histogram — plus, for the
+value-erasing reductions, what was dropped. Two reasons the exporter is the right place, not a
+post-hoc `GROUP BY`:
+
+1. **A mean hides the tail.** `field_coverage.mean_cardinality` gives the average; it cannot tell
+   "everything is 1" from "many 0, some many" (the exact trap behind the earlier contracts/awards
+   mean). The audit needs the *distribution*, which the exporter has for free during `fold`
+   (map-reduce-mergeable histograms).
+2. **Some reductions erase the source values**, so they are **not reconstructible from the output
+   Parquet at all** — only the exporter still sees the original array.
+
+Reduction points to record:
+
+| reduction point | reconstructible from Parquet? | what the sidecar adds |
+|---|---|---|
+| suppliers → first per award | yes (`supplier_count`) | ready-made per-dataset rate + histogram; cross-check the flag logic |
+| tenderers → first per bid | yes (`tenderer_count`) | " |
+| contracts → first per award | yes (`contract_count`) | the real per-award distribution (the mean can't settle it) |
+| related lots → first per award/bid | partly (`lot_multi` bool, **no count**) | how many lots were dropped, distribution |
+| party roles | **N/A — no reduction** (`organization` is 1/(org, role), roles expanded) | `roles_per_party` is a *confirming* census, not a loss audit |
+| **item classifications → modal** (`main_class`) | **no** | dispersion: distinct classes/process, modal share of line value |
+| any scalarized/dropped multi field (`submissionMethod`, `tender/tenderers`, `relatedProcesses`, …) | **no** | cardinality census so "scalarize/drop" is validated per dataset, not assumed |
+
+> **Resolved:** `organization` is keyed **1/(org_id, role)** — one row per Cardinal `(Group, id)`
+> result — so a party's roles are **expanded, not reduced**, and party roles are no longer a lossy
+> reduction (removed from the ledger above). Rationale: a party's role is *contextual* (buyer in
+> one process, supplier in another) and Cardinal already computes org indicators per `(Group, id)`,
+> so this grain mirrors Cardinal's output exactly. The sidecar keeps `roles_per_party` as a sanity
+> census (how many parties are multi-role) rather than a truncation audit.

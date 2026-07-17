@@ -42,4 +42,6 @@ is downloaded or generated and is git-ignored.
 - `data/indicator_support_by_dataset.csv` — each dataset with how many usability / red-flag
   indicators it well-supports (the comprehensive dataset-selection metric).
 
-See [FINDINGS.md](FINDINGS.md) for the interpretation and schema implications.
+See [FINDINGS.md](FINDINGS.md) for the interpretation and schema implications, and
+[COMPARISONS.md](COMPARISONS.md) for how the schema compares to OpenTender and Kingfisher
+Summarize (notes for a future blog post).
