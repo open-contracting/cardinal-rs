@@ -72,16 +72,25 @@ case); `eval/run_eval.py` scores it.
 - **reference mode** (default, no API key): proves the data + guardrail support each expectation —
   answerable SQL returns the expected result, unsafe queries are blocked, and scope/temporal
   refusals are grounded in `dataset_meta`. This is the "de-risk answer quality first" check.
-- **model mode** (next step): wire the Claude Sonnet text-to-SQL loop into `solve_with_model()` and
-  score its answers/refusals against the gold. Needs `ANTHROPIC_API_KEY`.
+- **model mode** (`--model`): runs the Claude Sonnet text-to-SQL agent (`agent.py`) on each gold
+  question and scores its answer/refusal/clarification against the gold. Needs `ANTHROPIC_API_KEY`.
 
-`uv run python chatbot/eval/run_eval.py` — currently 15/16 reference checks pass, 1 awaits the LLM.
+```bash
+uv run python chatbot/eval/run_eval.py            # reference mode — 15/16 pass, 1 awaits the LLM
+ANTHROPIC_API_KEY=... uv run python chatbot/eval/run_eval.py --model   # model mode
+```
 
-## Handoff / next step
+## Agent (`agent.py`)
 
-Wire the Claude Sonnet text-to-SQL loop (question → SQL via the system prompt → guardrail-execute →
-answer/refuse, retrying once on a guardrail error) as `solve_with_model()`, then run the eval in
-model mode.
+The Claude text-to-SQL loop: question → `claude-sonnet-5` (adaptive thinking) with the generated
+system prompt (prompt-cached) → the model answers in a small structured protocol
+(`sql` | `refuse` | `clarify`) → `sql` is executed through the guardrail, and a guardrail error is
+fed back once so the model can repair its query. `uv run python chatbot/agent.py` runs a smoke test.
+
+> **Status:** the agent and model-mode eval are wired and lint-clean, but the live run is currently
+> blocked by the Anthropic account's credit balance (`400 invalid_request_error`, "credit balance is
+> too low") — add credits, then run the `--model` command above. The request is well-formed and the
+> key authenticates; only billing blocks it.
 
 ## Stopgap caveats (things the real exporter will do better)
 

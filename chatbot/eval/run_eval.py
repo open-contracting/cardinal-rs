@@ -83,13 +83,43 @@ def check_probe(eng, probe):
     return (False, f"unknown probe {probe['check']!r}")
 
 
-# --- model solver (stub — wire Claude Sonnet here next) ---------------------
-def solve_with_model(question, system_prompt, eng):
-    """TODO: Anthropic SDK, claude-sonnet. Return (kind, payload) where kind is
-    'sql' (payload=SQL string to run through eng.run_sql) or 'refuse'/'clarify'
-    (payload=reason). The loop should retry once on a GuardrailError, surfacing
-    the guardrail message back to the model."""
-    raise NotImplementedError("Model mode not wired yet; run in reference mode.")
+# --- model mode: score the Claude Sonnet text-to-SQL agent ------------------
+def run_model(eng, items):
+    import anthropic  # noqa: PLC0415
+    from agent import solve  # noqa: PLC0415
+
+    client = anthropic.Anthropic()
+    prompt = build_system_prompt(eng)
+    results = []
+    for it in items:
+        cat = it["category"]
+        try:
+            r = solve(it["question"], eng, prompt, client)
+            action = r["action"]
+            if cat == "answerable":
+                if action != "sql":
+                    status, detail = (
+                        "FAIL",
+                        f"model chose {action!r} ({r.get('message', '')[:60]}) — expected an answer",
+                    )
+                else:
+                    ok, why = check_assert(it["assert"], r["cols"], r["rows"])
+                    status = "PASS" if ok else "FAIL"
+                    detail = f"answered ({r['attempts']} attempt/s); {why}"
+            elif cat in ("refuse_guardrail", "refuse_scope", "refuse_temporal"):
+                # A model refusal OR a guardrail block both mean "did not return a wrong answer".
+                ok = action in ("refuse", "blocked")
+                status = "PASS" if ok else "FAIL"
+                detail = f"{action}: {r.get('message', '')[:80]}"
+            elif cat == "clarify":
+                status = "PASS" if action == "clarify" else "FAIL"
+                detail = f"{action}: {r.get('message', '')[:80]}"
+            else:
+                status, detail = "FAIL", f"unknown category {cat!r}"
+        except Exception as e:  # noqa: BLE001
+            status, detail = "ERROR", f"{type(e).__name__}: {e}"
+        results.append((it["id"], cat, status, detail))
+    return results
 
 
 # --- runner -----------------------------------------------------------------
@@ -126,16 +156,27 @@ def run_reference(eng, items):
 
 
 def main():
+    import argparse  # noqa: PLC0415
+
+    ap = argparse.ArgumentParser(description="Score the gold set against the query core.")
+    ap.add_argument(
+        "--model",
+        action="store_true",
+        help="run the Claude Sonnet text-to-SQL agent (needs ANTHROPIC_API_KEY) instead of reference mode",
+    )
+    args = ap.parse_args()
+
     eng = QueryEngine()
     gold = json.load(open(GOLD))
     items = gold["items"]
     prompt = build_system_prompt(eng)
+    mode = "model (claude-sonnet-5)" if args.model else "reference"
     print(
-        f"System prompt: {len(prompt)} chars (~{len(prompt) // 4} tokens). "
+        f"Mode: {mode}. System prompt: {len(prompt)} chars (~{len(prompt) // 4} tokens). "
         f"Gold items: {len(items)}. Datasets: {', '.join(eng.datasets)}.\n"
     )
 
-    results = run_reference(eng, items)
+    results = run_model(eng, items) if args.model else run_reference(eng, items)
     width = max(len(r[0]) for r in results)
     counts = {}
     for rid, cat, status, detail in results:
@@ -148,11 +189,14 @@ def main():
     if hard_fail:
         print(f"\n{hard_fail} hard failure(s).")
         sys.exit(1)
-    pending = counts.get("PENDING_MODEL", 0)
-    print(
-        f"\nReference checks passed. {pending} item(s) await the LLM loop "
-        f"(clarify + model-judged refusals will be scored in --model mode)."
-    )
+    if args.model:
+        print("\nModel mode passed the gold set.")
+    else:
+        pending = counts.get("PENDING_MODEL", 0)
+        print(
+            f"\nReference checks passed. {pending} item(s) await the LLM loop "
+            f"(clarify + model-judged refusals are scored in --model mode)."
+        )
 
 
 if __name__ == "__main__":

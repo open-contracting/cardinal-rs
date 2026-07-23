@@ -12,3 +12,6 @@ settings.ini
 ??.ini
 ??.err
 ??.json
+
+# Local secret — never commit
+/ANTHROPIC_API_KEY
