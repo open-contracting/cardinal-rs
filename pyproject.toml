@@ -56,6 +56,9 @@ ignore-variadic-names = true
 "analysis/*" = [  # standalone corpus-analysis scripts, not library code
     "BLE001", "D", "E501", "PLR2004", "PLW2901", "PTH", "RUF059", "S310", "SIM115", "T201", "TRY003", "TRY300",
 ]
+"chatbot/*" = [  # standalone throwaway stopgap build script, not library code
+    "D", "E501", "PLR2004", "PTH", "S608", "SIM115", "T201",
+]
 
 [tool.uv]
 cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/*.rs"}]
