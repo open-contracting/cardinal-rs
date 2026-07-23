@@ -50,6 +50,39 @@ done
 uv run python build_stopgap.py
 ```
 
+## Query core (`query_core.py`)
+
+The deterministic layer beneath the (not-yet-wired) LLM:
+
+- `build_system_prompt()` generates "the model's whole world" from the Parquet — dataset catalog,
+  coverage highlights, a terse per-column data dictionary, and the FINDINGS Part 5 cross-dataset
+  rules (~2.1k tokens).
+- `QueryEngine` is a read-only DuckDB layer; each logical table is a view UNION-ing every dataset
+  that publishes it (`bid`/`lot` appear only where present). `run_sql()` enforces the safety rules:
+  read-only single SELECT, mandatory LIMIT, no cross-currency/cross-dataset monetary `SUM`, and no
+  cross-dataset aggregation of dataset-relative fence indicators.
+
+`uv run python chatbot/query_core.py` prints the prompt and runs a self-test.
+
+## Eval (`eval/`)
+
+`eval/gold.json` is the gold Q&A set (answerable + guardrail/scope/temporal refusals + a clarify
+case); `eval/run_eval.py` scores it.
+
+- **reference mode** (default, no API key): proves the data + guardrail support each expectation —
+  answerable SQL returns the expected result, unsafe queries are blocked, and scope/temporal
+  refusals are grounded in `dataset_meta`. This is the "de-risk answer quality first" check.
+- **model mode** (next step): wire the Claude Sonnet text-to-SQL loop into `solve_with_model()` and
+  score its answers/refusals against the gold. Needs `ANTHROPIC_API_KEY`.
+
+`uv run python chatbot/eval/run_eval.py` — currently 15/16 reference checks pass, 1 awaits the LLM.
+
+## Handoff / next step
+
+Wire the Claude Sonnet text-to-SQL loop (question → SQL via the system prompt → guardrail-execute →
+answer/refuse, retrying once on a guardrail error) as `solve_with_model()`, then run the eval in
+model mode.
+
 ## Stopgap caveats (things the real exporter will do better)
 
 - **2026 is a partial, in-progress year** — fewer processes and more `pending`/non-final awards

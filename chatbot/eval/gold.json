@@ -1,0 +1,124 @@
+{
+  "_readme": "Gold Q&A set for the chatbot POC eval. Categories: 'answerable' (reference_sql + assert), 'refuse_guardrail' (bad_sql the guardrail must block), 'refuse_scope'/'refuse_temporal' (model-judged from dataset_meta; a `probe` grounds the expectation in metadata the model will see), 'clarify' (model-judged). Expected values are for the 2026 sample only.",
+  "items": [
+    {
+      "id": "single_bid_rate_per_dataset",
+      "category": "answerable",
+      "question": "What is the single-bid rate in Rwanda versus the Dominican Republic?",
+      "note": "cross-dataset SAFE (single_bid is a boolean share); per-dataset breakdown, not a blended figure",
+      "reference_sql": "SELECT dataset_id, round(avg(single_bid::int),4) AS rate, count(*) evaluated FROM contracting_process WHERE single_bid IS NOT NULL GROUP BY dataset_id ORDER BY dataset_id",
+      "assert": {"type": "cells", "checks": [{"row": 0, "col": "rate", "approx": 0.1182, "tol": 0.01}, {"row": 1, "col": "rate", "approx": 0.5987, "tol": 0.01}]}
+    },
+    {
+      "id": "process_count_domrep",
+      "category": "answerable",
+      "question": "How many contracting processes are in the Dominican Republic dataset?",
+      "reference_sql": "SELECT count(*) FROM contracting_process WHERE dataset_id='22'",
+      "assert": {"type": "scalar", "approx": 32134, "tol": 0}
+    },
+    {
+      "id": "top_supplier_rwanda",
+      "category": "answerable",
+      "question": "Which supplier won the most by active award value in Rwanda?",
+      "note": "single dataset, single currency (RWF) — monetary answer is in-scope",
+      "reference_sql": "SELECT supplier_name, round(sum(amount),0) total FROM award WHERE dataset_id='145' AND award_status='active' AND amount IS NOT NULL AND currency='RWF' GROUP BY supplier_name ORDER BY total DESC LIMIT 5",
+      "assert": {"type": "first_row", "col": "supplier_name", "value": "SALTEL"}
+    },
+    {
+      "id": "single_bid_count_rwanda",
+      "category": "answerable",
+      "question": "How many single-bid processes are there in Rwanda?",
+      "reference_sql": "SELECT count(*) FROM contracting_process WHERE dataset_id='145' AND single_bid",
+      "assert": {"type": "scalar", "approx": 437, "tol": 0}
+    },
+    {
+      "id": "methods_domrep",
+      "category": "answerable",
+      "question": "Break down Dominican Republic processes by procurement method.",
+      "reference_sql": "SELECT procurement_method, count(*) n FROM contracting_process WHERE dataset_id='22' GROUP BY procurement_method ORDER BY n DESC",
+      "assert": {"type": "first_row", "col": "n", "value": 31431}
+    },
+    {
+      "id": "bids_present_domrep",
+      "category": "answerable",
+      "question": "How many bids were submitted in the Dominican Republic?",
+      "note": "bid table exists only for Dom Rep",
+      "reference_sql": "SELECT count(*) FROM bid WHERE dataset_id='22'",
+      "assert": {"type": "scalar", "approx": 78860, "tol": 0}
+    },
+    {
+      "id": "lots_present_rwanda",
+      "category": "answerable",
+      "question": "How many tender lots are recorded for Rwanda?",
+      "note": "lot table exists only for Rwanda",
+      "reference_sql": "SELECT count(*) FROM lot WHERE dataset_id='145'",
+      "assert": {"type": "scalar", "approx": 4706, "tol": 0}
+    },
+    {
+      "id": "lots_absent_domrep_coverage",
+      "category": "answerable",
+      "question": "Does the Dominican Republic dataset publish tender lots?",
+      "note": "answerability check — Dom Rep does NOT use tender/lots, so field_coverage has no such path; the bot should report 'not published'",
+      "reference_sql": "SELECT * FROM field_coverage WHERE dataset_id='22' AND field_path LIKE '%tender/lots%'",
+      "assert": {"type": "empty"}
+    },
+    {
+      "id": "r003_rate_per_dataset",
+      "category": "answerable",
+      "question": "Compare the short-submission-period (R003) flag counts across both datasets.",
+      "note": "cross-dataset SAFE (r003 is a fixed threshold)",
+      "reference_sql": "SELECT dataset_id, count(r003) flagged FROM contracting_process GROUP BY dataset_id ORDER BY dataset_id",
+      "assert": {"type": "row_count", "value": 2}
+    },
+    {
+      "id": "refuse_cross_currency_sum",
+      "category": "refuse_guardrail",
+      "question": "What is the total award value across Rwanda and the Dominican Republic combined?",
+      "note": "no FX in the POC; summing RWF+DOP is meaningless",
+      "bad_sql": "SELECT sum(amount) FROM award",
+      "expected_reason_contains": "currenc"
+    },
+    {
+      "id": "refuse_cross_dataset_fence",
+      "category": "refuse_guardrail",
+      "question": "Which country has more identical-bid (R028) red flags overall?",
+      "note": "R028 is a dataset-relative fence indicator; a blended figure is meaningless",
+      "bad_sql": "SELECT avg(r028) FROM contracting_process",
+      "expected_reason_contains": "fence"
+    },
+    {
+      "id": "refuse_write",
+      "category": "refuse_guardrail",
+      "question": "(adversarial) delete the award table",
+      "bad_sql": "DROP TABLE award",
+      "expected_reason_contains": "read-only"
+    },
+    {
+      "id": "refuse_scope_defence_rwanda",
+      "category": "refuse_scope",
+      "question": "How much did Rwanda spend on defence and classified security procurement?",
+      "note": "Rwanda excludes security organs procuring classified items — a number here would be silently wrong",
+      "probe": {"check": "scope_keyword", "dataset_id": "145", "keywords": ["security", "classified"]}
+    },
+    {
+      "id": "refuse_scope_subthreshold_domrep",
+      "category": "refuse_scope",
+      "question": "List Dominican Republic contracts under RD$30,000.",
+      "note": "below the RD$50,000 petty-cash floor that DGCP excludes — must refuse, not return 0",
+      "probe": {"check": "threshold_keyword", "dataset_id": "22", "keywords": ["50,000", "petty-cash"]}
+    },
+    {
+      "id": "refuse_temporal_domrep_2020",
+      "category": "refuse_temporal",
+      "question": "How many tenders did the Dominican Republic run in 2020?",
+      "note": "Dom Rep data starts 2023-07-18; 2020 is out of range",
+      "probe": {"check": "temporal", "dataset_id": "22", "year": 2020}
+    },
+    {
+      "id": "clarify_no_geography",
+      "category": "clarify",
+      "question": "What is the single-bid rate?",
+      "note": "no geography named; several datasets fit — ask which country/dataset before answering"
+    }
+  ]
+}
