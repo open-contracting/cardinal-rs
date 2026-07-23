@@ -35,36 +35,39 @@ registered extensions (287).
 - The 107 non-schema arrays classify cleanly as ignorable: `/auctions[]` (not in OCDS 1.1 core;
   `prepare` already has `move_auctions`), `/award[]` (one publisher's singular-key bug), etc.
 
-### Contracts merge onto awards (the merge is correct regardless of per-award fan-out)
+### Contracts get their own table (fan-out makes merging lossy)
 
 Each OCDS contract carries exactly one `contracts[]/awardID` (contract→award is N:1). Coverage
 gives element counts, so we can compute the ratio `#contracts[] / #awards[]` — but that is only
 the **mean contracts per award**, *not the distribution*. It cannot tell 0-vs-multi apart: some
 awards have **0** contracts, others **several**, and an average hides both. Formally a mean `m`
-only upper-bounds the share of awards with ≥2 contracts at `m/2` — **tight corpus-wide** (0.21 ⇒
-≤~10% of awards can be multi-contract) but **weak for the POC pair** (~0.9 ⇒ up to ~45% *could*
-be), so coverage data **cannot establish the truncation rate** for Paraguay/Rwanda. The true
-per-award fan-out needs grouping `contracts[]` by `awardID` on the **bulk sample** — a build-time
-check, not derivable here.
+only upper-bounds the share of awards with ≥2 contracts at `m/2`. The **POC pair straddles both
+regimes**: Rwanda's mean 0.87 is consistent with mostly ≤1-per-award, but **Dominican Republic's
+mean is 1.22 — a genuine fan-out** (mean >1 *guarantees* multi-contract awards: ≥~11% have ≥2,
+likely more). So for this pair coverage data confirms fan-out is real for Dom Rep and needs
+grouping `contracts[]` by `awardID` on the **bulk sample** to get the exact truncation rate.
 
 | scope | awards[] | contracts[] | mean/award | awardID present |
 |---|---|---|---|---|
 | **corpus** | 48.0 M | 10.1 M | **0.21** | **99.7%** of contracts |
-| Paraguay DNCP (63, POC) | 282,207 | 276,496 | 0.98 | 91% |
 | Rwanda RPPA (145, POC) | 52,923 | 46,028 | 0.87 | 98% |
-| Dominican Rep. DGCP (22) | 189,939 | 232,551 | 1.22 | 100% |
+| **Dominican Rep. DGCP (22, POC)** | 189,939 | 232,551 | **1.22** | **100%** |
+| Paraguay DNCP (63, ex-POC) | 282,207 | 276,496 | 0.98 | 91% |
 | Poder Judicial (16) | 9,688 | 15,692 | 1.62 (max) | 100% |
 
 What the numbers *do* establish: contracts are far sparser than awards overall (mean 0.21), only
-**57/91** datasets publish any `contracts[]`, and `awardID` is near-universal (99.7%) so the merge
-key is reliable (minus ~9% of Paraguay contracts that lack it → unmerged, null `contract_*`).
+**57/91** datasets publish any `contracts[]`, and `awardID` is near-universal (99.7%; 100% for Dom
+Rep, 98% for Rwanda) so the merge key is reliable.
 
-**Why the merge is sound anyway:** it is **correct-by-construction for 0 / 1 / N contracts per
-award** — 0 ⇒ null `contract_*`; 1 ⇒ merged; N ⇒ first kept + `contract_count` +
-`contract_truncated`. So the schema does **not** depend on "≤1 per award"; the cardinality
-question is only *how often `contract_truncated` fires* (a completeness stat to read off the
-built sample), not whether the merge is valid. Reuse of `prepare`'s `awardID → contract` map and
-`award_status_by_contract_status` correction (`src/lib.rs:802–872`) is available but **opt-in**
+**Decision (resolved): `contract` is a standalone table**, not merged onto `award`. Dom Rep is
+contract-rich (232 k contracts) and fans out at 1.22/award, so merging (keep-first + truncate)
+would drop the 2nd+ contract for a material share of Dom Rep awards — losing contract
+value/status/dates that price-deviation questions need. A standalone `contract` table (1/contract,
+FK `award_id`) is **lossless**; the cost is one extra join for contract-level questions and one
+more table in the prompt. This retires the earlier merge design (and its `contract_*`-on-award
+columns, `contract_count`/`contract_truncated`, and the contract-truncation ledger row). Contracts
+are joined to awards by `(ocid, award_id)`. `prepare`'s `awardID → contract` linkage +
+`award_status_by_contract_status` correction (`src/lib.rs:802–872`) are reused but **opt-in**
 (see next note).
 
 ## Part 2 — field coverage that changes the schema
@@ -135,11 +138,17 @@ viable.**
 | 55 | Greece (OpenTender) | Greek / EU | 71,116 | 28 | 20 | 48 | |
 | 44 | Bulgaria (OpenTender) | Bulgarian / EU | 259,766 | 28 | 19 | 47 | |
 
-**Recommended contrasting pair for the first build:** **Rwanda (145)** and **Paraguay (63)** —
-top of the ranking, different language (en / es) and region (MEA / LAC), both support ~100
-indicators including R018. **Ghana (85)** is a strong English alternative. For a bid-rich but
-usability-poor contrast (tests graceful refusal), add an **OpenTender** publisher (Greece,
-Bulgaria): high R-flag support, low usability support, no `numberOfTenderers`.
+**Recommended contrasting pair for the first build:** **Rwanda (145)** and **Dominican Republic
+(22)** — different language (en / es) and region (MEA / LAC), both high on the ranking (96 / 89
+well-supported indicators) and both publish `numberOfTenderers` at ~100% (single-bid fully
+computable). This pair also exercises **every coverage gate in opposite directions**, which makes
+it a better stress test than Paraguay would have been: `bids/details` present for Dom Rep, absent
+for Rwanda; `tender/lots` present for Rwanda (1.24/tender), **absent for Dom Rep** (0.00);
+contracts fan out for Dom Rep (1.22/award), ≤1 for Rwanda (0.87). **Paraguay (63)** (rank 1, 100
+indicators, 5.74 lots/tender) remains a strong alternative if a lot-heavy or longer-history
+(2011–) dataset is wanted. **Ghana (85)** is a strong English alternative. For a bid-rich but
+usability-poor contrast, add an **OpenTender** publisher (Greece, Bulgaria): high R-flag support,
+low usability support, no `numberOfTenderers`.
 
 ## Part 5 — proposed Parquet schema (POC)
 
@@ -179,14 +188,14 @@ recorded there.
 | table | grain | in POC | note |
 |---|---|---|---|
 | `contracting_process` | 1 / ocid | ✅ | the spine; dims + measures + status + 8 per-process indicators + coverage flags |
-| `award` | 1 / award | ✅ | money + supplier + **linked contract merged via `awardID`**; suppliers collapsed in |
+| `award` | 1 / award | ✅ | money + supplier; suppliers collapsed in; contracts are their *own* table (joined by `award_id`) |
+| `contract` | 1 / contract | ✅ **(standalone — promoted; see Part 1)** | value/status/dates; FK `award_id`; Dom Rep fan-out 1.22/award makes a table lossless where a merge would truncate |
 | `bid` | 1 / bid | ✅ (coverage-gated, 42/93 datasets) | tenderers collapsed in |
 | `lot` | 1 / lot | ✅ **(added — see reversal)** | awards/bids attach here via `relatedLots` |
 | `organization` | 1 / (org, role) | ✅ **(added — homes the 3 org-grain indicators)** | grain mirrors Cardinal's `(Group, id)` results (roles expanded, no loss); resolved region/identifier + org-grain indicator scores; **not** a `parties[]` dump |
 | `field_coverage` | 1 / (dataset, field) | ✅ **(added — meta, not a fact table)** | per-dataset coverage catalog (KS `field_counts` analog) — drives precise graceful refusal; populated from Cardinal `coverage` |
 | `dataset_meta` | 1 / dataset | ✅ **(added — meta)** | dataset routing + **scope/threshold/exclusion/temporal/quality** metadata; the in-prompt catalog is generated from it; hand-curated from the registry (see below) |
 | `item` | 1 / item | ⛔ deferred | fan-out max ~200/process; classification captured via computed `main_class_*` instead |
-| `contract` (standalone) | 1 / contract | ⛔ merged, not standalone | contracts/awards ≤ 1 for the POC pair (Part 1) → merged onto `award`; promote only if a fan-out publisher (Dom Rep 1.22) is added |
 
 ### Column checklist (concrete, for the Rust exporter — the authoritative spec)
 
@@ -213,11 +222,15 @@ recorded there.
   `has_amendments` `has_tender_value`.
 - **award**: `ocid` FK · `award_id` · `award_status` *(filter dimension)* · `award_date` ·
   `supplier_id` · `supplier_name` · `supplier_region` `supplier_identifier` *(resolved)* ·
-  `supplier_count` · `supplier_truncated` · `amount` · `currency` · **linked contract (merged
-  via `awardID`)** `contract_id` `contract_status` `contract_value_amount`
-  `contract_value_currency` `contract_date_signed` `contract_period_end` `contract_count`
-  `contract_truncated` · `lot_id` · `lot_multi` · denormalized dims `dataset_id` `country` `year`
-  `procurement_method` `main_procurement_category` `buyer_id` `buyer_name`.
+  `supplier_count` · `supplier_truncated` · `amount` · `currency` · `lot_id` · `lot_multi` ·
+  denormalized dims `dataset_id` `country` `year` `procurement_method` `main_procurement_category`
+  `buyer_id` `buyer_name`. *(Contracts are a separate table, joined by `(ocid, award_id)`.)*
+- **contract** *(standalone — 1/contract)*: `ocid` FK · `award_id` FK *(from `contracts[]/awardID`)* ·
+  `contract_id` · `contract_status` *(filter dimension)* · `contract_value_amount`
+  `contract_value_currency` *(null if the contract mixes currencies)* · `contract_date_signed` ·
+  `contract_period_end` · denormalized dims `dataset_id` `country` `year`. Lossless (all contracts
+  kept — no truncation); the price-deviation chain is `tender_value_amount` (est.) → award `amount`
+  → `contract_value_amount` (final), joined award↔contract on `(ocid, award_id)`.
 - **bid**: `ocid` FK · `bid_id` · `status` · `amount` · `currency` · `tenderer_id` ·
   `tenderer_name` · `tenderer_count` · `tenderer_truncated` · `lot_id` · denormalized dims
   `dataset_id` `country` `year` `procurement_method` `buyer_id`.
@@ -238,7 +251,7 @@ recorded there.
   `coverage` output — the *same* source as the per-row `has_*` flags, so the row-level flag and
   the dataset-level catalog can't disagree. Modelled on KS's first-class `field_counts` table
   (`collection_id, path, object_property, array_count, distinct_releases`); it lets graceful
-  refusal be data-driven ("is `numberOfTenderers` present for dataset 63?") instead of guessed.
+  refusal be data-driven ("is `numberOfTenderers` present for dataset 22?") instead of guessed.
 - **dataset_meta** *(meta table, 1/dataset — the routing surface)*: `dataset_id` · `publisher` ·
   `country` · `region` · `government_level` · `date_from` · `date_to` · `currency` · `license` ·
   `n_processes` · `scope_summary` · `exclusions` · `threshold` · `methods` · `quality_notes`.
@@ -297,8 +310,8 @@ defaults, `move_auctions`, etc. In practice each dataset has its own data-qualit
 export build carries a **per-dataset Cardinal settings file** (alongside the `country`/`publisher`
 build params), not a single global config. The exporter must therefore *not assume* any transform
 already ran — it either enables the needed settings per dataset or extracts the field itself.
-Consequence for the schema: resolved columns (`buyer_region`, `supplier_identifier`, merged
-`contract_*`, corrected `*_status`) are populated only when that dataset's config enables the
+Consequence for the schema: resolved columns (`buyer_region`, `supplier_identifier`, the
+`contract` table's linkage, corrected `*_status`) are populated only when that dataset's config enables the
 corresponding transform; otherwise they fall back to raw-source or null (a coverage gap, flagged,
 never a wrong value).
 
@@ -324,7 +337,7 @@ country to its dataset(s), **filter/group by `dataset_id`, and return a row per 
 
 | question type | cross-dataset? | rule |
 |---|---|---|
-| rates / shares / counts (single-bid rate, % open, # processes) | ✅ per-dataset breakdown | comparable, but **caveat each dataset's coverage** (e.g. single-bid computable for Rwanda; only ~13% of Paraguay processes publish `numberOfTenderers`) so a thin denominator isn't read as a real rate |
+| rates / shares / counts (single-bid rate, % open, # processes) | ✅ per-dataset breakdown | comparable, but **caveat each dataset's coverage** (from `field_coverage`) so a field sparse in one dataset isn't compared as if complete — e.g. single-bid is fully computable for *this* pair (Rwanda 99.4%, Dom Rep 100% publish `numberOfTenderers`), but `bids/details` exists only for Dom Rep and `tender/lots` only for Rwanda |
 | monetary amounts / totals | ⛔ refuse (or counts-only) | different currencies, no FX — the designated graceful-refusal case until `amount_usd` |
 | fence-based indicators (R024/25/30/35/36/38/48/58) | ⛔ within-dataset only | dataset-relative baselines (see indicator baseline caveat) — cross-dataset comparison is meaningless |
 
@@ -349,33 +362,37 @@ distinct refusal ⇒ a distinct eval gold type (**scope-mismatch**).
 
 **Hand-curated `dataset_meta` (from the registry JSON-LD, 2026-07 snapshot):**
 
-| field | 63 Paraguay DNCP | 145 Rwanda RPPA |
+| field | 145 Rwanda RPPA | 22 Dominican Rep. DGCP |
 |---|---|---|
-| publisher | Dirección Nacional de Contrataciones Públicas (SICP) | Public Procurement Authority (RPPA), Umucyo portal |
-| country / region | Paraguay / LAC | Rwanda / MEA |
-| government_level | national — all bodies, national→local, all branches + SOEs | national — central + local agencies (**below-district entities not in system**) |
-| date_from / date_to | 2011-01-03 / 2026-06-18 | 2013-12-14 / 2026-04-30 |
-| currency | PYG | RWF |
-| license | CC-BY-4.0 | CC-BY-NC-SA-4.0 |
-| n_processes | ~246,320 | ~49,300 |
-| threshold | excludes purchases < 20× daily min wage (Art 35) ≈ **PYG 84,340 ≈ USD 250** (2020) | includes only processes **≥ 3,000,000 RWF** |
-| exclusions | works concessions/permits/licenses (Art 2.b); **multilateral-financed** (UNDP) & **treaty** procedures (Yacyretá, Itaipú) (Art 2.c) | **security organs procuring classified items**; **PPPs**; below-district (sectors, health centres, schools) |
-| methods | (not stated) | open, selective, direct |
-| quality_notes | threshold is 2020 value; excluded categories won't appear at all | tender+award per process; **contract data only "where available"** (cf. contracts/awards 0.87) |
+| publisher | Public Procurement Authority (RPPA), Umucyo portal | Dirección General de Contrataciones Públicas (DGCP), Portal transaccional |
+| country / region | Rwanda / MEA | Dominican Republic / LAC |
+| government_level | national — central + local agencies (**below-district entities not in system**) | national — all central + local agencies on the Transactional Portal |
+| date_from / date_to | 2013-12-14 / 2026-04-30 | **2023-07-18** / 2026-06-19 *(short history — starts mid-2023)* |
+| currency | RWF | DOP (RD$) |
+| license | CC-BY-NC-SA-4.0 | ODbL (opendatacommons.org/licenses/odbl) |
+| n_processes | ~49,300 | ~195,100 |
+| threshold | includes only processes **≥ 3,000,000 RWF** | petty-cash purchases excluded (**≤ RD$50,000**, per-expense ≤ RD$5,000) (law 340-06) |
+| exclusions | **security organs procuring classified items**; **PPPs**; below-district (sectors, health centres, schools) | terminated contracts (termination ≤ 40% of total); **foreign-service office** construction/acquisition; **exclusive/single-supplier** goods & services (law 340-06) |
+| methods | open, selective, direct | (not stated) |
+| quality_notes | tender+award per process; **contract data only "where available"** (cf. contracts/awards 0.87); no `bids/details`; has `tender/lots` (1.24) | **contracts fan out (1.22/award)** — all captured in the standalone `contract` table; has `bids/details`; **no `tender/lots`** |
 
 Rwanda's "**excludes security organs procuring classified items**" is the concrete scope-mismatch
 case for the eval: *"defence procurement in Rwanda"* must **refuse** (not return non-classified
-spend). Likewise a *"contracts under PYG 50,000 in Paraguay"* / *"under 1,000,000 RWF in Rwanda"*
-question is below the publication threshold ⇒ refuse, don't return a misleading `0`.
+spend). Likewise sub-threshold questions — *"contracts under RD$30,000 in the Dominican Republic"*
+(below the RD$50,000 petty-cash floor) / *"under 1,000,000 RWF in Rwanda"* — must refuse, not
+return a misleading `0`. And Dom Rep's **2023 start** makes temporal refusal sharp: a *"2020"*
+question is out of range for Dom Rep but answerable for Rwanda (which starts 2013).
 
 ### Reversal: lots ARE in the POC
 
 Earlier I deferred lots as EU/OpenTender-specific — **the corpus disproves that.** Non-OpenTender
-publishers set n-ary lots heavily, including both recommended datasets: **Paraguay 5.74
-lots/tender, Rwanda 1.24**, plus Brazil 8.17 and Québec 7.39. In a multi-lot tender the tender
-is one row but awards/bids each concern a *specific* lot (via `relatedLots`); dropping lots
-would blur distinct lots together and make "value by lot" impossible. A `lot` table is cheap
-(card ~2–6, versus items ~200) and analytically central, so it's in.
+publishers set n-ary lots heavily: **Paraguay 5.74 lots/tender, Rwanda 1.24**, Brazil 8.17,
+Québec 7.39. In a multi-lot tender the tender is one row but awards/bids each concern a *specific*
+lot (via `relatedLots`); dropping lots would blur distinct lots and make "value by lot"
+impossible. A `lot` table is cheap (card ~2–6, versus items ~200) and analytically central, so
+it's in — but **coverage-gated like `bid`**: in the current POC pair it's populated for **Rwanda
+(1.24)** and **empty for Dominican Republic (0.00 — DGCP doesn't use `tender/lots`)**, so the
+`lot` table is effectively Rwanda-only here (the `has_*`/`field_coverage` gate handles it).
 
 ### relatedLots → how lots connect
 
@@ -402,7 +419,6 @@ publishers (CPV ≠ UNSPSC ≠ national codes).
 |---|---|---|
 | award keeps first of N suppliers | `supplier_truncated`, `supplier_count` | "one `award` row per award; `supplier_id/name` is the first of `supplier_count`" |
 | bid keeps first tenderer | `tenderer_truncated`, `tenderer_count` | "bid is 1:1 with tenderer for ~97% of rows; else first of `tenderer_count`" |
-| award keeps first of N contracts | `contract_truncated`, `contract_count` | "contract merged via `awardID`; ≤1 per award for the POC pair (Part 1); else first of `contract_count`. Contracts lacking `awardID` (~9% Paraguay) stay unmerged ⇒ null `contract_*`" |
 | main classification derived | `main_class_source` (`tender_classification`\|`items_modal`\|null) | "computed as value-weighted modal item classification when `/tender/classification` absent" — **non-modal classes erased ⇒ audit only via sidecar** |
 | amount summed across currencies | `award_currency` / `contract_currency` = null when mixed | "`award_amount_total` valid only when `award_currency` non-null; no FX in POC (`amount_usd` future — pull live FX from another OCP project)" |
 | award→lot mapping multi | `lot_multi` | "`lot_id` is the first related lot when `lot_multi`" |
@@ -435,7 +451,7 @@ Reduction points to record:
 |---|---|---|
 | suppliers → first per award | yes (`supplier_count`) | ready-made per-dataset rate + histogram; cross-check the flag logic |
 | tenderers → first per bid | yes (`tenderer_count`) | " |
-| contracts → first per award | yes (`contract_count`) | the real per-award distribution (the mean can't settle it) |
+| contracts per award | **N/A — no reduction** (`contract` is its own table) | `contracts_per_award` is a *confirming* census (esp. Dom Rep's fan-out), not a truncation audit |
 | related lots → first per award/bid | partly (`lot_multi` bool, **no count**) | how many lots were dropped, distribution |
 | party roles | **N/A — no reduction** (`organization` is 1/(org, role), roles expanded) | `roles_per_party` is a *confirming* census, not a loss audit |
 | **item classifications → modal** (`main_class`) | **no** | dispersion: distinct classes/process, modal share of line value |
