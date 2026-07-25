@@ -35,6 +35,10 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "furo"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
+# "Birds and nature in natural colors" (Chicago, 1913-1914).
+# Digitized by the Biodiversity Heritage Library (https://doi.org/10.5962/bhl.title.7915),
+# courtesy of American Museum of Natural History Library. Public domain. https://flic.kr/p/auUwNE
+html_logo = "_static/logo.jpg"
 
 # -- Options for internationalization ----------------------------------------
 
