@@ -76,9 +76,16 @@ case); `eval/run_eval.py` scores it.
   question and scores its answer/refusal/clarification against the gold. Needs `ANTHROPIC_API_KEY`.
 
 ```bash
-uv run python chatbot/eval/run_eval.py            # reference mode — 15/16 pass, 1 awaits the LLM
-ANTHROPIC_API_KEY=... uv run python chatbot/eval/run_eval.py --model   # model mode
+uv run python chatbot/eval/run_eval.py            # reference mode (no API key) — 15/16, clarify awaits the LLM
+ANTHROPIC_API_KEY=... uv run python chatbot/eval/run_eval.py --model   # model mode — 16/16
 ```
+
+Assertions are **value-based and column-name-agnostic** (the model writes free-form SQL and picks
+its own aliases), so they check the values/structure of the result, not exact column names. A few
+gold items accept more than one correct behavior: `lots_absent_domrep_coverage` accepts either an
+empty coverage query or a "not published" refusal; refusal items pass on a model refusal *or* a
+guardrail block. Note the agent is **not deterministic** (adaptive thinking, no temperature control),
+so run-to-run wording varies — the last full run scored **16/16**.
 
 ## Agent (`agent.py`)
 
@@ -87,10 +94,11 @@ system prompt (prompt-cached) → the model answers in a small structured protoc
 (`sql` | `refuse` | `clarify`) → `sql` is executed through the guardrail, and a guardrail error is
 fed back once so the model can repair its query. `uv run python chatbot/agent.py` runs a smoke test.
 
-> **Status:** the agent and model-mode eval are wired and lint-clean, but the live run is currently
-> blocked by the Anthropic account's credit balance (`400 invalid_request_error`, "credit balance is
-> too low") — add credits, then run the `--model` command above. The request is well-formed and the
-> key authenticates; only billing blocks it.
+**Eval-driven prompt tuning so far** (all general, matching FINDINGS Part 5 — not gold-specific):
+sharpened the threshold/exclusion refusal rule (a value range entirely below a dataset's petty-cash
+floor must refuse, not return a misleading near-empty result), and added a "name the dataset" rule
+(a question naming no country/dataset → clarify, even for cross-dataset-safe metrics; per-dataset
+breakdowns only when multiple places are explicitly named).
 
 ## Stopgap caveats (things the real exporter will do better)
 

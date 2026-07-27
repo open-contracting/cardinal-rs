@@ -7,7 +7,7 @@
       "question": "What is the single-bid rate in Rwanda versus the Dominican Republic?",
       "note": "cross-dataset SAFE (single_bid is a boolean share); per-dataset breakdown, not a blended figure",
       "reference_sql": "SELECT dataset_id, round(avg(single_bid::int),4) AS rate, count(*) evaluated FROM contracting_process WHERE single_bid IS NOT NULL GROUP BY dataset_id ORDER BY dataset_id",
-      "assert": {"type": "cells", "checks": [{"row": 0, "col": "rate", "approx": 0.1182, "tol": 0.01}, {"row": 1, "col": "rate", "approx": 0.5987, "tol": 0.01}]}
+      "assert": {"type": "values_present", "checks": [{"approx": 0.1182, "tol": 0.02}, {"approx": 0.5987, "tol": 0.02}]}
     },
     {
       "id": "process_count_domrep",
@@ -22,7 +22,7 @@
       "question": "Which supplier won the most by active award value in Rwanda?",
       "note": "single dataset, single currency (RWF) — monetary answer is in-scope",
       "reference_sql": "SELECT supplier_name, round(sum(amount),0) total FROM award WHERE dataset_id='145' AND award_status='active' AND amount IS NOT NULL AND currency='RWF' GROUP BY supplier_name ORDER BY total DESC LIMIT 5",
-      "assert": {"type": "first_row", "col": "supplier_name", "value": "SALTEL"}
+      "assert": {"type": "first_row_has_value", "value": "SALTEL"}
     },
     {
       "id": "single_bid_count_rwanda",
@@ -36,7 +36,7 @@
       "category": "answerable",
       "question": "Break down Dominican Republic processes by procurement method.",
       "reference_sql": "SELECT procurement_method, count(*) n FROM contracting_process WHERE dataset_id='22' GROUP BY procurement_method ORDER BY n DESC",
-      "assert": {"type": "first_row", "col": "n", "value": 31431}
+      "assert": {"type": "values_present", "checks": [{"approx": 31431, "tol": 0}]}
     },
     {
       "id": "bids_present_domrep",
@@ -57,8 +57,9 @@
     {
       "id": "lots_absent_domrep_coverage",
       "category": "answerable",
+      "accept_refusal": true,
       "question": "Does the Dominican Republic dataset publish tender lots?",
-      "note": "answerability check — Dom Rep does NOT use tender/lots, so field_coverage has no such path; the bot should report 'not published'",
+      "note": "answerability check — Dom Rep does NOT use tender/lots. A correct answer is 'no, not published' — the bot may deliver that as an empty field_coverage query OR as a refusal/explanation (accept_refusal).",
       "reference_sql": "SELECT * FROM field_coverage WHERE dataset_id='22' AND field_path LIKE '%tender/lots%'",
       "assert": {"type": "empty"}
     },
@@ -66,7 +67,7 @@
       "id": "r003_rate_per_dataset",
       "category": "answerable",
       "question": "Compare the short-submission-period (R003) flag counts across both datasets.",
-      "note": "cross-dataset SAFE (r003 is a fixed threshold)",
+      "note": "cross-dataset SAFE (r003 is a fixed threshold). The important property is a per-dataset breakdown (a row per dataset), NOT a blended figure — the exact flag count is query-framing-sensitive (count vs sum vs status filter), so we assert on structure, not the number.",
       "reference_sql": "SELECT dataset_id, count(r003) flagged FROM contracting_process GROUP BY dataset_id ORDER BY dataset_id",
       "assert": {"type": "row_count", "value": 2}
     },

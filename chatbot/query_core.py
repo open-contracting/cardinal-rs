@@ -176,8 +176,17 @@ RULES = f"""\
    Only {", ".join(CROSS_DATASET_SAFE)} are cross-dataset comparable.
 5. CHECK ANSWERABILITY FIRST. If a field may be absent, consult field_coverage; if the question's
    scope/time/geography is outside a dataset (dataset_meta.date_from/date_to, exclusions, threshold),
-   REFUSE with the reason rather than returning a misleading number.
+   REFUSE with the reason rather than returning a misleading number. In particular, if a question
+   restricts to a value range or category the dataset's threshold/exclusions place ENTIRELY out of
+   scope — e.g. amounts below a petty-cash/registration floor, or a sector the dataset excludes —
+   REFUSE. Such rows were never collected, so any query returns a misleadingly incomplete result (a
+   near-empty list or a low count), never a true answer. Do not run the query "to check"; the absence
+   is structural, stated in dataset_meta, not something the data can confirm.
 6. Read-only. Single SELECT (a leading WITH is fine). A LIMIT is applied automatically.
+7. NAME THE DATASET. If the question names no country or dataset at all, do NOT assume it spans every
+   dataset — even for a cross-dataset-safe metric like single_bid or r003. Ask which dataset(s) they
+   mean (clarify). Produce a per-dataset breakdown only when the question explicitly spans multiple
+   named places (e.g. "Rwanda vs the Dominican Republic", "across both countries").
 """
 
 

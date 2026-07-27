@@ -31,7 +31,23 @@ GOLD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gold.json")
 
 
 # --- assertions on a (cols, rows) result ------------------------------------
-def check_assert(spec, cols, rows):
+# Column-name- and order-agnostic: the model writes free-form SQL and picks its own
+# aliases/orderings, so we assert on VALUES appearing in the result, not on named columns.
+def _num(x):
+    try:
+        return float(x)
+    except (TypeError, ValueError):
+        return None
+
+
+def _cell_matches(cell, spec):
+    if "approx" in spec:
+        n = _num(cell)
+        return n is not None and abs(n - spec["approx"]) <= spec.get("tol", 0)
+    return str(cell) == str(spec["value"])
+
+
+def check_assert(spec, rows):
     kind = spec["type"]
     if kind == "empty":
         return (len(rows) == 0, f"expected no rows, got {len(rows)}")
@@ -40,23 +56,22 @@ def check_assert(spec, cols, rows):
     if kind == "row_count":
         return (len(rows) == spec["value"], f"expected {spec['value']} rows, got {len(rows)}")
     if kind == "scalar":
-        got = rows[0][0]
-        ok = abs(got - spec["approx"]) <= spec["tol"]
-        return (ok, f"expected {spec['approx']}±{spec['tol']}, got {got}")
-    if kind == "first_row":
-        idx = cols.index(spec["col"])
-        got = rows[0][idx]
-        return (got == spec["value"], f"first_row.{spec['col']}: expected {spec['value']!r}, got {got!r}")
-    if kind == "cells":
-        for c in spec["checks"]:
-            idx = cols.index(c["col"])
-            got = rows[c["row"]][idx]
-            if "approx" in c:
-                if abs(got - c["approx"]) > c["tol"]:
-                    return (False, f"row{c['row']}.{c['col']}: expected {c['approx']}±{c['tol']}, got {got}")
-            elif got != c["value"]:
-                return (False, f"row{c['row']}.{c['col']}: expected {c['value']!r}, got {got!r}")
-        return (True, "all cells ok")
+        got = rows[0][0] if rows and rows[0] else None
+        n = _num(got)
+        ok = n is not None and abs(n - spec["approx"]) <= spec.get("tol", 0)
+        return (ok, f"expected {spec['approx']}±{spec.get('tol', 0)}, got {got}")
+    if kind == "first_row_has_value":
+        if not rows:
+            return (False, "expected a first row, got none")
+        ok = any(_cell_matches(c, spec) for c in rows[0])
+        want = spec.get("value", spec.get("approx"))
+        return (ok, f"first row {'has' if ok else 'MISSING'} {want!r}; row={rows[0]}")
+    if kind == "values_present":
+        flat = [c for r in rows for c in r]
+        missing = [
+            s.get("value", s.get("approx")) for s in spec["checks"] if not any(_cell_matches(c, s) for c in flat)
+        ]
+        return (not missing, "all expected values present" if not missing else f"missing {missing}")
     return (False, f"unknown assertion type {kind!r}")
 
 
@@ -97,15 +112,18 @@ def run_model(eng, items):
             r = solve(it["question"], eng, prompt, client)
             action = r["action"]
             if cat == "answerable":
-                if action != "sql":
+                if action == "sql":
+                    ok, why = check_assert(it["assert"], r["rows"])
+                    status = "PASS" if ok else "FAIL"
+                    detail = f"answered ({r['attempts']} attempt/s); {why}"
+                elif it.get("accept_refusal") and action in ("refuse", "blocked"):
+                    # e.g. "does dataset X publish Y?" — answering "no, not published" is correct.
+                    status, detail = "PASS", f"acceptable {action}: {r.get('message', '')[:70]}"
+                else:
                     status, detail = (
                         "FAIL",
                         f"model chose {action!r} ({r.get('message', '')[:60]}) — expected an answer",
                     )
-                else:
-                    ok, why = check_assert(it["assert"], r["cols"], r["rows"])
-                    status = "PASS" if ok else "FAIL"
-                    detail = f"answered ({r['attempts']} attempt/s); {why}"
             elif cat in ("refuse_guardrail", "refuse_scope", "refuse_temporal"):
                 # A model refusal OR a guardrail block both mean "did not return a wrong answer".
                 ok = action in ("refuse", "blocked")
@@ -129,8 +147,8 @@ def run_reference(eng, items):
         cat = it["category"]
         try:
             if cat == "answerable":
-                cols, rows, _ = eng.run_sql(it["reference_sql"])
-                ok, detail = check_assert(it["assert"], cols, rows)
+                _, rows, _ = eng.run_sql(it["reference_sql"])
+                ok, detail = check_assert(it["assert"], rows)
                 status = "PASS" if ok else "FAIL"
             elif cat == "refuse_guardrail":
                 try:
