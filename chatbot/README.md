@@ -133,6 +133,7 @@ breakdowns only when multiple places are explicitly named).
 
 ## Not yet in the exporter (still follow-up)
 
-The per-dataset `prepare` transforms (opt-in corrections) and the fold-time `_audit.json` cardinality
-sidecar are not yet emitted by `ocdscardinal export`. Any `_audit.json` under `data/<id>/` is a stale
-artifact of the old `build_stopgap.py` and is not read by the chatbot.
+The per-dataset `prepare` transforms (opt-in corrections) are the only remaining stopgap capability
+not yet in `ocdscardinal export`; the indicator pass already applies whatever the `--settings` enable,
+but the structural columns still read raw source. (`ocdscardinal export` does now write the
+`_audit.json` cardinality sidecar itself; it is not read by the chatbot.)
