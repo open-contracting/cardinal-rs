@@ -10,6 +10,7 @@
 //! / `dataset_meta` tables, the per-dataset `prepare` transforms, and the fold-time `_audit.json`
 //! cardinality sidecar.
 
+use std::collections::HashMap;
 use std::fs::{self, File};
 use std::io::BufRead;
 use std::path::Path;
@@ -259,6 +260,52 @@ impl LotRow {
     }
 }
 
+/// One occurrence of a party in a role (a party recurs once per process); deduped to the
+/// `organization` grain of 1/`(org_id, role)` after the fold.
+struct OrgOcc {
+    org_id: String,
+    role: String,
+    name: Option<String>,
+    region: Option<String>,
+    identifier: Option<String>,
+}
+
+/// One deduped row of `organization` (grain: 1 / `(dataset_id, org_id, role)`).
+struct OrgRow {
+    org_id: String,
+    role: String,
+    name: Option<String>,
+    region: Option<String>,
+    identifier: Option<String>,
+}
+
+/// The `max` of two nullable strings, ignoring nulls (mirrors SQL `max()` used by the stopgap).
+fn max_opt(a: Option<String>, b: Option<String>) -> Option<String> {
+    match (a, b) {
+        (Some(x), Some(y)) => Some(x.max(y)),
+        (x, None) => x,
+        (None, y) => y,
+    }
+}
+
+/// Dedup party-role occurrences to 1/`(org_id, role)`, keeping the max non-null attribute.
+fn dedup_orgs(occurrences: Vec<OrgOcc>) -> Vec<OrgRow> {
+    let mut map: HashMap<(String, String), OrgRow> = HashMap::new();
+    for o in occurrences {
+        let row = map.entry((o.org_id.clone(), o.role.clone())).or_insert_with(|| OrgRow {
+            org_id: o.org_id.clone(),
+            role: o.role.clone(),
+            name: None,
+            region: None,
+            identifier: None,
+        });
+        row.name = max_opt(row.name.take(), o.name);
+        row.region = max_opt(row.region.take(), o.region);
+        row.identifier = max_opt(row.identifier.take(), o.identifier);
+    }
+    map.into_values().collect()
+}
+
 /// The accumulator folded over the release stream: one Vec per table. `saw_bids` / `saw_lots`
 /// record whether the source array was ever *present* (not merely non-empty), so a coverage-gated
 /// table is written when the dataset publishes the field even if every instance is empty, and
@@ -270,6 +317,7 @@ struct Tables {
     contracts: Vec<ContractRow>,
     bids: Vec<BidRow>,
     lots: Vec<LotRow>,
+    org_occurrences: Vec<OrgOcc>,
     saw_bids: bool,
     saw_lots: bool,
 }
@@ -294,6 +342,38 @@ impl Tables {
             self.saw_lots = true;
             self.lots.extend(lots.iter().map(|l| LotRow::from_lot(l, &dims)));
         }
+        if let Some(parties) = array(value, "/parties") {
+            for party in parties {
+                self.add_party(party);
+            }
+        }
+    }
+
+    /// Expand a party's roles into `organization` occurrences (one per role).
+    fn add_party(&mut self, party: &Value) {
+        let Some(org_id) = text(party, "/id") else { return };
+        let name = text(party, "/name");
+        let region = text(party, "/address/region");
+        let scheme = text(party, "/identifier/scheme");
+        let ident_id = text(party, "/identifier/id");
+        // scheme-prefixed identifier when both present, else the bare id (mirrors the stopgap).
+        let identifier = match (&scheme, &ident_id) {
+            (Some(s), Some(i)) => Some(format!("{s}-{i}")),
+            _ => ident_id,
+        };
+        let Some(roles) = array(party, "/roles") else { return };
+        for role in roles {
+            let Some(role) = role.as_str().map(str::trim).filter(|r| !r.is_empty()) else {
+                continue;
+            };
+            self.org_occurrences.push(OrgOcc {
+                org_id: org_id.clone(),
+                role: role.to_owned(),
+                name: name.clone(),
+                region: region.clone(),
+                identifier: identifier.clone(),
+            });
+        }
     }
 
     fn merge(&mut self, mut other: Self) {
@@ -302,6 +382,7 @@ impl Tables {
         self.contracts.append(&mut other.contracts);
         self.bids.append(&mut other.bids);
         self.lots.append(&mut other.lots);
+        self.org_occurrences.append(&mut other.org_occurrences);
         self.saw_bids |= other.saw_bids;
         self.saw_lots |= other.saw_lots;
     }
@@ -345,6 +426,10 @@ impl Export {
         if tables.saw_lots {
             write(&lot_columns(&tables.lots, meta), outdir, "lot")?;
         }
+        // organization: 1/(org_id, role), deduped from the party occurrences. (Org-grain indicator
+        // columns are added with the indicator-integration slice.)
+        let orgs = dedup_orgs(tables.org_occurrences);
+        write(&org_columns(&orgs, meta), outdir, "organization")?;
         Ok(())
     }
 }
@@ -512,6 +597,19 @@ fn lot_columns<'a>(rows: &'a [LotRow], meta: &'a ExportMeta) -> Vec<(&'a str, Ar
         ("dataset_id", col_const_str(&meta.dataset_id, n)),
         ("country", col_const_str(&meta.country, n)),
         ("year", col_const_i64(meta.year, n)),
+    ]
+}
+
+fn org_columns<'a>(rows: &'a [OrgRow], meta: &'a ExportMeta) -> Vec<(&'a str, ArrayRef)> {
+    let n = rows.len();
+    vec![
+        ("dataset_id", col_const_str(&meta.dataset_id, n)),
+        ("org_id", col_str(rows.iter().map(|r| Some(r.org_id.clone())))),
+        ("role", col_str(rows.iter().map(|r| Some(r.role.clone())))),
+        ("name", col_str(rows.iter().map(|r| r.name.clone()))),
+        ("region", col_str(rows.iter().map(|r| r.region.clone()))),
+        ("identifier", col_str(rows.iter().map(|r| r.identifier.clone()))),
+        ("country", col_const_str(&meta.country, n)),
     ]
 }
 
