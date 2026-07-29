@@ -201,12 +201,77 @@ impl ContractRow {
     }
 }
 
-/// The accumulator folded over the release stream: one Vec per table.
+/// One row of `bid` (grain: 1 / bid); the tenderer is collapsed in. Coverage-gated: only
+/// emitted for datasets that publish `bids/details`.
+struct BidRow {
+    ocid: Option<String>,
+    bid_id: Option<String>,
+    status: Option<String>,
+    amount: Option<f64>,
+    currency: Option<String>,
+    tenderer_id: Option<String>,
+    tenderer_name: Option<String>,
+    tenderer_count: i64,
+    procurement_method: Option<String>,
+    buyer_id: Option<String>,
+}
+
+impl BidRow {
+    fn from_bid(bid: &Value, dims: &Dims) -> Self {
+        let tenderers = array(bid, "/tenderers");
+        let first = tenderers.and_then(|t| t.first());
+        Self {
+            ocid: dims.ocid.clone(),
+            bid_id: text(bid, "/id"),
+            status: text(bid, "/status"),
+            amount: float(bid, "/value/amount"),
+            currency: text(bid, "/value/currency"),
+            tenderer_id: first.and_then(|t| text(t, "/id")),
+            tenderer_name: first.and_then(|t| text(t, "/name")),
+            tenderer_count: tenderers.map_or(0, |t| i64::try_from(t.len()).unwrap_or(i64::MAX)),
+            procurement_method: dims.procurement_method.clone(),
+            buyer_id: dims.buyer_id.clone(),
+        }
+    }
+}
+
+/// One row of `lot` (grain: 1 / lot). Coverage-gated: only emitted for datasets that use
+/// `tender/lots`.
+struct LotRow {
+    ocid: Option<String>,
+    lot_id: Option<String>,
+    lot_title: Option<String>,
+    lot_status: Option<String>,
+    lot_amount: Option<f64>,
+    lot_currency: Option<String>,
+}
+
+impl LotRow {
+    fn from_lot(lot: &Value, dims: &Dims) -> Self {
+        Self {
+            ocid: dims.ocid.clone(),
+            lot_id: text(lot, "/id"),
+            lot_title: text(lot, "/title"),
+            lot_status: text(lot, "/status"),
+            lot_amount: float(lot, "/value/amount"),
+            lot_currency: text(lot, "/value/currency"),
+        }
+    }
+}
+
+/// The accumulator folded over the release stream: one Vec per table. `saw_bids` / `saw_lots`
+/// record whether the source array was ever *present* (not merely non-empty), so a coverage-gated
+/// table is written when the dataset publishes the field even if every instance is empty, and
+/// skipped when the dataset does not publish it at all.
 #[derive(Default)]
 struct Tables {
     processes: Vec<ProcessRow>,
     awards: Vec<AwardRow>,
     contracts: Vec<ContractRow>,
+    bids: Vec<BidRow>,
+    lots: Vec<LotRow>,
+    saw_bids: bool,
+    saw_lots: bool,
 }
 
 impl Tables {
@@ -221,12 +286,24 @@ impl Tables {
             self.contracts
                 .extend(contracts.iter().map(|c| ContractRow::from_contract(c, &dims)));
         }
+        if let Some(bids) = array(value, "/bids/details") {
+            self.saw_bids = true;
+            self.bids.extend(bids.iter().map(|b| BidRow::from_bid(b, &dims)));
+        }
+        if let Some(lots) = array(value, "/tender/lots") {
+            self.saw_lots = true;
+            self.lots.extend(lots.iter().map(|l| LotRow::from_lot(l, &dims)));
+        }
     }
 
     fn merge(&mut self, mut other: Self) {
         self.processes.append(&mut other.processes);
         self.awards.append(&mut other.awards);
         self.contracts.append(&mut other.contracts);
+        self.bids.append(&mut other.bids);
+        self.lots.append(&mut other.lots);
+        self.saw_bids |= other.saw_bids;
+        self.saw_lots |= other.saw_lots;
     }
 }
 
@@ -261,6 +338,13 @@ impl Export {
         )?;
         write(&award_columns(&tables.awards, meta), outdir, "award")?;
         write(&contract_columns(&tables.contracts, meta), outdir, "contract")?;
+        // Coverage-gated: only emit these where the dataset publishes the source array.
+        if tables.saw_bids {
+            write(&bid_columns(&tables.bids, meta), outdir, "bid")?;
+        }
+        if tables.saw_lots {
+            write(&lot_columns(&tables.lots, meta), outdir, "lot")?;
+        }
         Ok(())
     }
 }
@@ -382,6 +466,49 @@ fn contract_columns<'a>(rows: &'a [ContractRow], meta: &'a ExportMeta) -> Vec<(&
             "contract_period_end",
             col_str(rows.iter().map(|r| r.period_end.clone())),
         ),
+        ("dataset_id", col_const_str(&meta.dataset_id, n)),
+        ("country", col_const_str(&meta.country, n)),
+        ("year", col_const_i64(meta.year, n)),
+    ]
+}
+
+fn bid_columns<'a>(rows: &'a [BidRow], meta: &'a ExportMeta) -> Vec<(&'a str, ArrayRef)> {
+    let n = rows.len();
+    vec![
+        ("ocid", col_str(rows.iter().map(|r| r.ocid.clone()))),
+        ("bid_id", col_str(rows.iter().map(|r| r.bid_id.clone()))),
+        ("status", col_str(rows.iter().map(|r| r.status.clone()))),
+        ("amount", col_f64(rows.iter().map(|r| r.amount))),
+        ("currency", col_str(rows.iter().map(|r| r.currency.clone()))),
+        ("tenderer_id", col_str(rows.iter().map(|r| r.tenderer_id.clone()))),
+        ("tenderer_name", col_str(rows.iter().map(|r| r.tenderer_name.clone()))),
+        ("tenderer_count", col_i64(rows.iter().map(|r| Some(r.tenderer_count)))),
+        (
+            "tenderer_truncated",
+            col_bool(rows.iter().map(|r| Some(r.tenderer_count > 1))),
+        ),
+        // relatedLots is absent from the source here, so lot_id is unresolved (as in the stopgap).
+        ("lot_id", col_str(rows.iter().map(|_| None::<String>))),
+        ("dataset_id", col_const_str(&meta.dataset_id, n)),
+        ("country", col_const_str(&meta.country, n)),
+        ("year", col_const_i64(meta.year, n)),
+        (
+            "procurement_method",
+            col_str(rows.iter().map(|r| r.procurement_method.clone())),
+        ),
+        ("buyer_id", col_str(rows.iter().map(|r| r.buyer_id.clone()))),
+    ]
+}
+
+fn lot_columns<'a>(rows: &'a [LotRow], meta: &'a ExportMeta) -> Vec<(&'a str, ArrayRef)> {
+    let n = rows.len();
+    vec![
+        ("ocid", col_str(rows.iter().map(|r| r.ocid.clone()))),
+        ("lot_id", col_str(rows.iter().map(|r| r.lot_id.clone()))),
+        ("lot_title", col_str(rows.iter().map(|r| r.lot_title.clone()))),
+        ("lot_status", col_str(rows.iter().map(|r| r.lot_status.clone()))),
+        ("lot_amount", col_f64(rows.iter().map(|r| r.lot_amount))),
+        ("lot_currency", col_str(rows.iter().map(|r| r.lot_currency.clone()))),
         ("dataset_id", col_const_str(&meta.dataset_id, n)),
         ("country", col_const_str(&meta.country, n)),
         ("year", col_const_i64(meta.year, n)),
