@@ -80,6 +80,33 @@ enum Commands {
         #[arg(long, default_value_t = false)]
         map: bool,
     },
+    /// Export OCDS compiled releases to the Parquet analysis schema
+    ///
+    /// Reads compiled releases (line-delimited JSON) and writes one Parquet file per fact table to
+    /// the output directory. First cut: emits the `contracting_process` spine; the indicator columns
+    /// and the other tables are follow-up work (see src/export/mod.rs).
+    ///
+    /// The dataset id, publisher and country are build-time parameters because they are not
+    /// derivable from the OCDS data (a country can have several datasets with disjoint scopes).
+    Export {
+        /// The path to the file (or "-" for standard input), in which each line is a contracting process as JSON text
+        file: PathBuf,
+        /// The output directory for the Parquet tables
+        #[arg(long, short)]
+        output: PathBuf,
+        /// The registry dataset id (e.g. 145)
+        #[arg(long)]
+        dataset_id: String,
+        /// The publisher name
+        #[arg(long)]
+        publisher: String,
+        /// The country name
+        #[arg(long)]
+        country: String,
+        /// The year of the data
+        #[arg(long)]
+        year: i64,
+    },
     /// Write a default settings file for configuration.
     Init {
         /// The path to the settings file to write
@@ -148,6 +175,25 @@ fn main() {
     pretty_env_logger::formatted_builder().filter_level(level).init();
 
     match &cli.command {
+        Commands::Export {
+            file,
+            output,
+            dataset_id,
+            publisher,
+            country,
+            year,
+        } => {
+            let meta = ocdscardinal::export::ExportMeta {
+                dataset_id: dataset_id.clone(),
+                publisher: publisher.clone(),
+                country: country.clone(),
+                year: *year,
+            };
+            match ocdscardinal::export::Export::run(reader(file), &meta, output) {
+                Ok(()) => println!("Wrote Parquet tables to {}", output.display()),
+                Err(e) => application_error(&e),
+            }
+        }
         Commands::Init { file, force } => match ocdscardinal::init(file, force) {
             Err(e) => eprintln!("Error writing to {}: {e}", file.display()),
             Ok(false) => println!("Settings written to {}.", file.display()),

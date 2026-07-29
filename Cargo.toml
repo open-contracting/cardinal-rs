@@ -18,7 +18,9 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 anyhow = "1.0"
+arrow = "54"
 chrono = "0.4"
+parquet = "54"
 clap = { version = "4.0", features = ["derive", "wrap_help"] }
 config = {version = "0.15", features = ["ini"], default-features = false }
 csv = "1.0"
