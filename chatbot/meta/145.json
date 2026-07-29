@@ -1,0 +1,11 @@
+{
+  "publisher": "Public Procurement Authority (RPPA), Umucyo portal",
+  "government_level": "national - central + local agencies (below-district entities not in system)",
+  "currency": "RWF",
+  "license": "CC-BY-NC-SA-4.0",
+  "scope_summary": "Tender + award per process; contract data only where available.",
+  "exclusions": "Security organs procuring classified items; PPPs; below-district entities (sectors, health centres, schools).",
+  "threshold": "Includes only processes >= 3,000,000 RWF.",
+  "methods": "open, selective, direct",
+  "quality_notes": "No bids/details; has tender/lots (~1.24/tender); contracts <=1/award (~0.87 corpus)."
+}

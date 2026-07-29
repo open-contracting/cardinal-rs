@@ -106,6 +106,14 @@ enum Commands {
         /// The year of the data
         #[arg(long)]
         year: i64,
+        /// Path to the registry publications.json; enables the dataset-meta table (publisher,
+        /// country, region, date range and process count are read from it for this dataset id)
+        #[arg(long)]
+        registry: Option<PathBuf>,
+        /// Path to a curated dataset-metadata JSON (license, currency, government level, and the
+        /// scope prose the registry doesn't carry); overlaid onto the registry fields
+        #[arg(long)]
+        meta: Option<PathBuf>,
     },
     /// Write a default settings file for configuration.
     Init {
@@ -182,14 +190,22 @@ fn main() {
             publisher,
             country,
             year,
+            registry,
+            meta,
         } => {
-            let meta = ocdscardinal::export::ExportMeta {
+            let export_meta = ocdscardinal::export::ExportMeta {
                 dataset_id: dataset_id.clone(),
                 publisher: publisher.clone(),
                 country: country.clone(),
                 year: *year,
             };
-            match ocdscardinal::export::Export::run(reader(file), &meta, output) {
+            match ocdscardinal::export::Export::run(
+                reader(file),
+                &export_meta,
+                output,
+                registry.as_deref(),
+                meta.as_deref(),
+            ) {
                 Ok(()) => println!("Wrote Parquet tables to {}", output.display()),
                 Err(e) => application_error(&e),
             }

@@ -4,15 +4,17 @@
 //! `analysis/FINDINGS.md` Part 5, the authoritative schema). It reads OCDS compiled releases
 //! (line-delimited JSON) and writes one Parquet file per fact table under an output directory.
 //!
-//! **Status: growing.** Emits the `contracting_process` spine and the `award` and `contract` child
-//! fact tables, all structural. Still to come (tracked as follow-up): the precomputed indicator
-//! columns (reuse the `Indicators` machinery), the `bid` / `lot` / `organization` / `field_coverage`
-//! / `dataset_meta` tables, the per-dataset `prepare` transforms, and the fold-time `_audit.json`
-//! cardinality sidecar.
+//! **Status: growing.** Emits all eight schema tables: the `contracting_process` spine, the
+//! `award` / `contract` child tables, the coverage-gated `bid` / `lot` tables, `organization`
+//! (from parties), `field_coverage` (coverage counts folded in the same pass), and `dataset_meta`
+//! (registry-derived machine fields from `publications.json` + a curated prose overlay). Still to
+//! come (tracked as follow-up): the precomputed indicator columns (reuse the `Indicators`
+//! machinery) on `contracting_process` and `organization`, the per-dataset `prepare` transforms,
+//! and the fold-time `_audit.json` cardinality sidecar.
 
 use std::collections::HashMap;
 use std::fs::{self, File};
-use std::io::BufRead;
+use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::sync::Arc;
 
@@ -20,7 +22,7 @@ use anyhow::{Context, Result};
 use arrow::array::{ArrayRef, BooleanArray, Float64Array, Int64Array, RecordBatch, StringArray};
 use indexmap::IndexMap;
 use parquet::arrow::ArrowWriter;
-use serde_json::Value;
+use serde_json::{Map, Value};
 
 use crate::{Coverage, fold_reduce};
 
@@ -443,8 +445,15 @@ impl Export {
     ///
     /// # Errors
     ///
-    /// Returns an error if the output directory cannot be created or a Parquet file cannot be written.
-    pub fn run(buffer: impl BufRead + Send, meta: &ExportMeta, outdir: &Path) -> Result<()> {
+    /// Returns an error if the output directory cannot be created, a Parquet file cannot be written,
+    /// or (when `registry` is given) the registry file cannot be read or lacks this dataset.
+    pub fn run(
+        buffer: impl BufRead + Send,
+        meta: &ExportMeta,
+        outdir: &Path,
+        registry: Option<&Path>,
+        curated: Option<&Path>,
+    ) -> Result<()> {
         let tables: Tables = fold_reduce(
             buffer,
             Tables::default,
@@ -481,6 +490,11 @@ impl Export {
         // field_coverage: derived from the coverage counts folded in the same pass.
         let coverage = field_coverage_rows(tables.coverage.results());
         write(&field_coverage_columns(&coverage, meta), outdir, "field_coverage")?;
+        // dataset_meta: registry-derived machine fields + curated prose overlay. Only when a
+        // registry file is supplied (it is the authoritative source for the whole-dataset fields).
+        if let Some(registry) = registry {
+            write_dataset_meta(&meta.dataset_id, registry, curated, outdir)?;
+        }
         Ok(())
     }
 }
@@ -677,6 +691,77 @@ fn field_coverage_columns<'a>(rows: &'a [FieldCoverageRow], meta: &'a ExportMeta
         ("mean_cardinality", col_f64(rows.iter().map(|r| r.mean_cardinality))),
         ("covered", col_bool(rows.iter().map(|r| Some(r.covered)))),
     ]
+}
+
+/// A single-value string column (the `dataset_meta` table has exactly one row).
+fn one_str(value: Option<String>) -> ArrayRef {
+    Arc::new(std::iter::once(value).collect::<StringArray>())
+}
+
+/// Build and write the one-row `dataset_meta` table: machine fields from the registry
+/// (`publications.json`), overlaid with the curated JSON (license, currency, scope prose, and an
+/// optional publisher override).
+fn write_dataset_meta(
+    dataset_id: &str,
+    registry_path: &Path,
+    curated_path: Option<&Path>,
+    outdir: &Path,
+) -> Result<()> {
+    let registry: Value = serde_json::from_reader(BufReader::new(
+        File::open(registry_path).with_context(|| format!("opening {}", registry_path.display()))?,
+    ))
+    .with_context(|| format!("parsing {}", registry_path.display()))?;
+    let entries = registry.as_array().context("publications.json is not a JSON array")?;
+    let entry = entries
+        .iter()
+        .find(|e| {
+            e.get("id")
+                .and_then(Value::as_i64)
+                .is_some_and(|n| n.to_string() == dataset_id)
+        })
+        .with_context(|| format!("dataset {dataset_id} not found in {}", registry_path.display()))?;
+
+    let curated: Map<String, Value> = match curated_path {
+        Some(path) => serde_json::from_reader(BufReader::new(
+            File::open(path).with_context(|| format!("opening {}", path.display()))?,
+        ))
+        .with_context(|| format!("parsing {}", path.display()))?,
+        None => Map::new(),
+    };
+    // A curated string field (present + non-empty), else None.
+    let curated_str = |key: &str| {
+        curated
+            .get(key)
+            .and_then(Value::as_str)
+            .filter(|s| !s.is_empty())
+            .map(String::from)
+    };
+    // A registry field, overridable by the curated file.
+    let with_registry = |key: &str, registry_ptr: &str| curated_str(key).or_else(|| text(entry, registry_ptr));
+
+    // JSON pointer "/coverage/" addresses coverage[""], the whole-dataset process count.
+    let n_processes = entry.pointer("/coverage/").and_then(Value::as_i64);
+    let columns: Vec<(&str, ArrayRef)> = vec![
+        ("dataset_id", one_str(Some(dataset_id.to_owned()))),
+        ("publisher", one_str(with_registry("publisher", "/title"))),
+        ("country", one_str(with_registry("country", "/country"))),
+        ("region", one_str(with_registry("region", "/region"))),
+        ("government_level", one_str(curated_str("government_level"))),
+        ("date_from", one_str(with_registry("date_from", "/date_from"))),
+        ("date_to", one_str(with_registry("date_to", "/date_to"))),
+        ("currency", one_str(curated_str("currency"))),
+        ("license", one_str(curated_str("license"))),
+        (
+            "n_processes",
+            Arc::new(std::iter::once(n_processes).collect::<Int64Array>()),
+        ),
+        ("scope_summary", one_str(curated_str("scope_summary"))),
+        ("exclusions", one_str(curated_str("exclusions"))),
+        ("threshold", one_str(curated_str("threshold"))),
+        ("methods", one_str(curated_str("methods"))),
+        ("quality_notes", one_str(curated_str("quality_notes"))),
+    ];
+    write(&columns, outdir, "dataset_meta")
 }
 
 /// Build a `RecordBatch` from the columns and write it to `<outdir>/<name>.parquet`.
