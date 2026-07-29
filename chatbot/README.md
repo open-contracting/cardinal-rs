@@ -1,11 +1,15 @@
-# chatbot — stopgap sample Parquet build
+# chatbot — sample Parquet build + query core
 
-**This is a throwaway stopgap.** It produces a schema-conformant *sample* Parquet dataset for two
-POC datasets so the Python query core + eval can be built and answer-quality de-risked **before**
-the native Rust `ocdscardinal export` command exists. It is superseded by that exporter (GitHub
-issue [#129](https://github.com/open-contracting/cardinal-rs/issues/129)); the authoritative schema
-lives in [`analysis/FINDINGS.md` Part 5](../analysis/FINDINGS.md). The next step is to build the
-Python query core over the Parquet files under `data/<id>/`.
+Produces a schema-conformant *sample* Parquet dataset for two POC datasets and a guarded
+text-to-SQL chatbot over it. The authoritative schema lives in
+[`analysis/FINDINGS.md` Part 5](../analysis/FINDINGS.md).
+
+**The data is now built by the native Rust `ocdscardinal export`** (see `build.sh`). The original
+DuckDB-over-flatterer-CSV prototype (`build_stopgap.py`) is superseded and kept only for reference —
+the native exporter emits the identical eight-table schema directly from the OCDS JSONL (the only
+value differences are two intentional improvements: `dataset_meta.n_processes` is the exact registry
+count, and the first supplier on consortium awards follows the "keep first of N" array order rather
+than the prototype's min-id).
 
 ## What it builds
 
@@ -14,41 +18,31 @@ pair that exercises every coverage gate in opposite directions (bids present for
 for Rwanda only; contracts fan out for Dom Rep).
 
 Per dataset, under `data/<id>/`: `contracting_process`, `award`, `contract`, `organization`,
-`field_coverage`, `dataset_meta` (all datasets) plus `bid` (Dom Rep only) and `lot` (Rwanda only),
-and an `_audit.json` cardinality-census sidecar.
+`field_coverage`, `dataset_meta` (all datasets) plus `bid` (Dom Rep only) and `lot` (Rwanda only).
 
-## Division of sources (not our own JSON flattener)
-
-- **Structural tables** ← the registry's **flatterer CSV** output (`*.csv.tar.gz`).
-- **Indicator columns** ← `ocdscardinal indicators --map --no-meta` on the JSONL.
-- **`field_coverage` + per-row `has_*` flags** ← `ocdscardinal coverage` on the JSONL.
-- **`dataset_meta`** ← hand-curated from the registry (FINDINGS.md Part 5).
-
-## Reproduce
+## Build the data (native exporter)
 
 ```bash
-cargo build --release                       # -> target/release/ocdscardinal
-uv pip install duckdb pyarrow
+cargo build --release      # -> target/release/ocdscardinal
 
-# 1. acquire (year 2026 for both; do NOT use full.* files)
+# Inputs under data/_raw/ (gitignored): the JSONL per dataset, and the registry index.
 for id in 145 22; do
-  base="https://data.open-contracting.org/en/publication/$id/download?name=2026"
-  curl -sSL -o data/_raw/$id/2026.jsonl.gz   "$base.jsonl.gz"
-  curl -sSL -o data/_raw/$id/2026.csv.tar.gz "$base.csv.tar.gz"
+  curl -sSL -o data/_raw/$id/2026.jsonl.gz \
+    "https://data.open-contracting.org/en/publication/$id/download?name=2026.jsonl.gz"
   gunzip -kf data/_raw/$id/2026.jsonl.gz
-  mkdir -p data/_raw/$id/csv && tar xzf data/_raw/$id/2026.csv.tar.gz -C data/_raw/$id/csv
 done
+curl -sSL -o data/_raw/publications.json "https://data.open-contracting.org/publications.json"
 
-# 2. indicators + 3. coverage (per-dataset settings enable R018 et al.)
-for id in 145 22; do
-  ocdscardinal indicators --map --no-meta --settings settings/$id.ini \
-    data/_raw/$id/2026.jsonl > data/_raw/$id/indicators.json
-  ocdscardinal coverage data/_raw/$id/2026.jsonl > data/_raw/$id/coverage.txt
-done
-
-# 4. transform -> Parquet
-uv run python build_stopgap.py
+# One command per dataset does the whole schema (see build.sh for the exact flags):
+#   ocdscardinal export data/_raw/<id>/2026.jsonl --output data/<id> --dataset-id <id> \
+#     --publisher ... --country ... --year 2026 \
+#     --registry data/_raw/publications.json --meta meta/<id>.json --settings settings/<id>.ini
+./build.sh
 ```
+
+`--registry` (the registry index) enables `dataset_meta`; `--settings` (per-dataset Cardinal config,
+enabling R018 et al.) enables the precomputed indicator columns; `--meta` supplies the curated scope
+prose the registry doesn't carry. The curated inputs live in `meta/` and `settings/`.
 
 ## Query core (`query_core.py`)
 
@@ -115,28 +109,30 @@ floor must refuse, not return a misleading near-empty result), and added a "name
 (a question naming no country/dataset → clarify, even for cross-dataset-safe metrics; per-dataset
 breakdowns only when multiple places are explicitly named).
 
-## Stopgap caveats (things the real exporter will do better)
+## Data caveats
 
 - **2026 is a partial, in-progress year** — fewer processes and more `pending`/non-final awards
   than a completed year, so indicator coverage is thinner. Fall back to 2024/2023 if the eval
   starves.
-- **`single_bid`** — TRUE is taken directly from Cardinal's R018 result; FALSE is reconstructed in
-  SQL (competitive method + `numberOfTenderers` present + no pending award + tender not cancelled).
-  This approximates, rather than exactly replicates, Cardinal's all-awards-final gate for the FALSE
-  set. `single_bid_source` is always `numberOfTenderers` for this pair.
-- **Dom Rep awards carry no value** in the flatterer CSV, so `award.amount` and process
-  `award_amount_total` are null for dataset 22 (its money lives in `contract`/`bid`). Rwanda award
-  amounts are present but **mixed-currency** (RWF + a little USD/EUR/GBP), so `award_amount_total`
-  is null where a process's active awards mix currencies (`award_currency` records the single
-  currency otherwise). No FX / `amount_usd` in this stopgap.
-- **`lot_id` on `award`/`bid` is null** — `relatedLots` is absent from the flatterer CSV, so
-  award↔lot / bid↔lot linkage can't be resolved here. The `lot` table joins to processes by `ocid`
-  only. (The native exporter reads `relatedLots` from JSON.)
-- **`buyer_*` for Dom Rep** falls back to `procuringEntity` (its `main` table has no `buyer` fields).
-- **`contract_date_signed` is null for Dom Rep** (no `dateSigned` column in its contracts CSV).
-- **`_audit.json`** is an approximation of the exporter's fold-time audit sidecar, computed from the
-  transform. Note Rwanda's high suppliers/award (framework agreements — genuine, not truncation)
-  and Dom Rep's contracts/award fan-out (~1.1 in this year slice; ~1.22 corpus).
+- **`single_bid`** — TRUE is taken directly from Cardinal's R018 result; FALSE is reconstructed from
+  the structural fields (competitive method + `numberOfTenderers` present + no pending award + tender
+  not cancelled), which approximates rather than exactly replicates Cardinal's all-awards-final gate.
+  `single_bid_source` is always `numberOfTenderers` for this pair.
+- **Dom Rep awards carry no value** in the source, so `award.amount` and process `award_amount_total`
+  are null for dataset 22 (its money lives in `contract`/`bid`). Rwanda award amounts are present but
+  **mixed-currency** (RWF + a little USD/EUR/GBP), so `award_amount_total` is null where a process's
+  active awards mix currencies (`award_currency` records the single currency otherwise). No FX /
+  `amount_usd` yet.
+- **`lot_id`/`lot_multi` on `award`/`bid` are null** — the exporter does not yet resolve `relatedLots`,
+  so award↔lot / bid↔lot linkage is unresolved; the `lot` table joins to processes by `ocid` only.
+- **`buyer_*` for Dom Rep** falls back to `procuringEntity` (its releases carry no `/buyer`).
+- **`contract_date_signed` is null for Dom Rep** (its contracts carry no `dateSigned`).
 - Indicator columns present in the data: `single_bid`(=R018), `r003` (both datasets); `r028`,
   `r030`, `r035`, `r036` (Dom Rep only); org-grain `r028`/`r030`/`r035` on Dom Rep tenderers.
   `r024`/`r025`/`r038`/`r048`/`r058` produced no results for this pair and are all-null.
+
+## Not yet in the exporter (still follow-up)
+
+The per-dataset `prepare` transforms (opt-in corrections) and the fold-time `_audit.json` cardinality
+sidecar are not yet emitted by `ocdscardinal export`. Any `_audit.json` under `data/<id>/` is a stale
+artifact of the old `build_stopgap.py` and is not read by the chatbot.
