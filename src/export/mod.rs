@@ -24,7 +24,7 @@ use indexmap::IndexMap;
 use parquet::arrow::ArrowWriter;
 use serde_json::{Map, Value};
 
-use crate::{Coverage, fold_reduce};
+use crate::{Coverage, Group, Indicator, Indicators, fold_reduce};
 
 /// Coverage fraction at or above which `field_coverage.covered` is true (matches the stopgap).
 const COV_THRESHOLD: f64 = 0.5;
@@ -92,6 +92,7 @@ impl Dims {
 }
 
 /// One row of `contracting_process` (grain: 1 / ocid).
+#[allow(clippy::struct_excessive_bools)] // distinct per-process coverage/status flags, not a state machine
 struct ProcessRow {
     ocid: Option<String>,
     buyer_id: Option<String>,
@@ -106,6 +107,7 @@ struct ProcessRow {
     num_bids: Option<i64>,
     num_lots: Option<i64>,
     supplier_count: i64,
+    has_pending_award: bool,
     has_bids: bool,
     has_tenderer_count: bool,
     has_tender_value: bool,
@@ -119,6 +121,8 @@ impl ProcessRow {
                 .map(|a| i64::try_from(array(a, "/suppliers").map_or(0, Vec::len)).unwrap_or(i64::MAX))
                 .sum()
         });
+        let has_pending_award = array(value, "/awards")
+            .is_some_and(|awards| awards.iter().any(|a| text(a, "/status").as_deref() == Some("pending")));
         let num_bids = array_len(value, "/bids/details");
         let num_tenderers = int(value, "/tender/numberOfTenderers");
         Self {
@@ -138,6 +142,7 @@ impl ProcessRow {
             num_bids,
             num_lots: array_len(value, "/tender/lots"),
             supplier_count,
+            has_pending_award,
         }
     }
 }
@@ -453,6 +458,7 @@ impl Export {
         outdir: &Path,
         registry: Option<&Path>,
         curated: Option<&Path>,
+        indicators: Option<&Indicators>,
     ) -> Result<()> {
         let tables: Tables = fold_reduce(
             buffer,
@@ -470,7 +476,7 @@ impl Export {
 
         fs::create_dir_all(outdir).with_context(|| format!("creating {}", outdir.display()))?;
         write(
-            &contracting_process_columns(&tables.processes, meta),
+            &contracting_process_columns(&tables.processes, meta, indicators),
             outdir,
             "contracting_process",
         )?;
@@ -486,7 +492,7 @@ impl Export {
         // organization: 1/(org_id, role), deduped from the party occurrences. (Org-grain indicator
         // columns are added with the indicator-integration slice.)
         let orgs = dedup_orgs(tables.org_occurrences);
-        write(&org_columns(&orgs, meta), outdir, "organization")?;
+        write(&org_columns(&orgs, meta, indicators), outdir, "organization")?;
         // field_coverage: derived from the coverage counts folded in the same pass.
         let coverage = field_coverage_rows(tables.coverage.results());
         write(&field_coverage_columns(&coverage, meta), outdir, "field_coverage")?;
@@ -520,8 +526,62 @@ fn col_const_i64(value: i64, n: usize) -> ArrayRef {
     Arc::new(std::iter::repeat_n(Some(value), n).collect::<Int64Array>())
 }
 
-fn contracting_process_columns<'a>(rows: &'a [ProcessRow], meta: &'a ExportMeta) -> Vec<(&'a str, ArrayRef)> {
+/// The `(Indicator -> f64)` map for one identifier in a group, if the indicators were computed.
+fn indicator_scores<'a>(
+    indicators: Option<&'a Indicators>,
+    group: &Group,
+    id: &str,
+) -> Option<&'a HashMap<Indicator, f64>> {
+    indicators.and_then(|i| i.results().get(group)).and_then(|m| m.get(id))
+}
+
+/// The org-grain `Group` a role maps to (suppliers have no indicator group).
+fn group_for_role(role: &str) -> Option<Group> {
+    match role {
+        "tenderer" => Some(Group::Tenderer),
+        "buyer" => Some(Group::Buyer),
+        "procuringEntity" => Some(Group::ProcuringEntity),
+        _ => None,
+    }
+}
+
+fn score(scores: Option<&HashMap<Indicator, f64>>, code: &Indicator) -> Option<f64> {
+    scores.and_then(|m| m.get(code)).copied()
+}
+
+fn contracting_process_columns<'a>(
+    rows: &'a [ProcessRow],
+    meta: &'a ExportMeta,
+    indicators: Option<&Indicators>,
+) -> Vec<(&'a str, ArrayRef)> {
     let n = rows.len();
+    // single_bid (=R018): TRUE where Cardinal flagged it; FALSE where the process was competitive
+    // and evaluable but not flagged; NULL otherwise (mirrors the stopgap's derivation).
+    let single_bid = |r: &ProcessRow| -> Option<bool> {
+        let scores = r
+            .ocid
+            .as_deref()
+            .and_then(|o| indicator_scores(indicators, &Group::OCID, o));
+        if scores.is_some_and(|m| m.contains_key(&Indicator::R018)) {
+            Some(true)
+        } else if matches!(r.procurement_method.as_deref(), Some("open" | "selective"))
+            && r.num_tenderers.is_some()
+            && !r.has_pending_award
+            && r.tender_status.as_deref() != Some("cancelled")
+        {
+            Some(false)
+        } else {
+            None
+        }
+    };
+    let ocid_score = |r: &'a ProcessRow, code: &Indicator| {
+        score(
+            r.ocid
+                .as_deref()
+                .and_then(|o| indicator_scores(indicators, &Group::OCID, o)),
+            code,
+        )
+    };
     vec![
         ("ocid", col_str(rows.iter().map(|r| r.ocid.clone()))),
         ("dataset_id", col_const_str(&meta.dataset_id, n)),
@@ -558,6 +618,21 @@ fn contracting_process_columns<'a>(rows: &'a [ProcessRow], meta: &'a ExportMeta)
             "has_tender_value",
             col_bool(rows.iter().map(|r| Some(r.has_tender_value))),
         ),
+        ("single_bid", col_bool(rows.iter().map(single_bid))),
+        (
+            "single_bid_source",
+            col_str(
+                rows.iter()
+                    .map(|r| single_bid(r).map(|_| "numberOfTenderers".to_owned())),
+            ),
+        ),
+        ("r003", col_f64(rows.iter().map(|r| ocid_score(r, &Indicator::R003)))),
+        ("r024", col_f64(rows.iter().map(|r| ocid_score(r, &Indicator::R024)))),
+        ("r028", col_f64(rows.iter().map(|r| ocid_score(r, &Indicator::R028)))),
+        ("r030", col_f64(rows.iter().map(|r| ocid_score(r, &Indicator::R030)))),
+        ("r035", col_f64(rows.iter().map(|r| ocid_score(r, &Indicator::R035)))),
+        ("r036", col_f64(rows.iter().map(|r| ocid_score(r, &Indicator::R036)))),
+        ("r058", col_f64(rows.iter().map(|r| ocid_score(r, &Indicator::R058)))),
     ]
 }
 
@@ -665,8 +740,17 @@ fn lot_columns<'a>(rows: &'a [LotRow], meta: &'a ExportMeta) -> Vec<(&'a str, Ar
     ]
 }
 
-fn org_columns<'a>(rows: &'a [OrgRow], meta: &'a ExportMeta) -> Vec<(&'a str, ArrayRef)> {
+fn org_columns<'a>(
+    rows: &'a [OrgRow],
+    meta: &'a ExportMeta,
+    indicators: Option<&Indicators>,
+) -> Vec<(&'a str, ArrayRef)> {
     let n = rows.len();
+    // The org-grain scores for a row: from the Tenderer/Buyer/ProcuringEntity group for its role.
+    let org_score = |r: &'a OrgRow, code: &Indicator| {
+        let scores = group_for_role(&r.role).and_then(|g| indicator_scores(indicators, &g, &r.org_id));
+        score(scores, code)
+    };
     vec![
         ("dataset_id", col_const_str(&meta.dataset_id, n)),
         ("org_id", col_str(rows.iter().map(|r| Some(r.org_id.clone())))),
@@ -675,6 +759,14 @@ fn org_columns<'a>(rows: &'a [OrgRow], meta: &'a ExportMeta) -> Vec<(&'a str, Ar
         ("region", col_str(rows.iter().map(|r| r.region.clone()))),
         ("identifier", col_str(rows.iter().map(|r| r.identifier.clone()))),
         ("country", col_const_str(&meta.country, n)),
+        ("r025", col_f64(rows.iter().map(|r| org_score(r, &Indicator::R025)))),
+        ("r048", col_f64(rows.iter().map(|r| org_score(r, &Indicator::R048)))),
+        ("r038", col_f64(rows.iter().map(|r| org_score(r, &Indicator::R038)))),
+        ("r024", col_f64(rows.iter().map(|r| org_score(r, &Indicator::R024)))),
+        ("r028", col_f64(rows.iter().map(|r| org_score(r, &Indicator::R028)))),
+        ("r030", col_f64(rows.iter().map(|r| org_score(r, &Indicator::R030)))),
+        ("r035", col_f64(rows.iter().map(|r| org_score(r, &Indicator::R035)))),
+        ("r058", col_f64(rows.iter().map(|r| org_score(r, &Indicator::R058)))),
     ]
 }
 

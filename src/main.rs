@@ -82,9 +82,10 @@ enum Commands {
     },
     /// Export OCDS compiled releases to the Parquet analysis schema
     ///
-    /// Reads compiled releases (line-delimited JSON) and writes one Parquet file per fact table to
-    /// the output directory. First cut: emits the `contracting_process` spine; the indicator columns
-    /// and the other tables are follow-up work (see src/export/mod.rs).
+    /// Reads compiled releases (line-delimited JSON) and writes the Parquet analysis schema (the
+    /// eight fact and meta tables in analysis/FINDINGS.md Part 5) to the output directory. --registry
+    /// adds the dataset-metadata table; --settings adds the precomputed indicator columns by running
+    /// the indicators over the same input.
     ///
     /// The dataset id, publisher and country are build-time parameters because they are not
     /// derivable from the OCDS data (a country can have several datasets with disjoint scopes).
@@ -114,6 +115,10 @@ enum Commands {
         /// scope prose the registry doesn't carry); overlaid onto the registry fields
         #[arg(long)]
         meta: Option<PathBuf>,
+        /// The path to the settings file; enables the precomputed indicator columns (single-bid,
+        /// R003, ...) by running the indicators over the same input
+        #[arg(long, value_parser = settings_parser)]
+        settings: Option<ocdscardinal::Settings>,
     },
     /// Write a default settings file for configuration.
     Init {
@@ -192,6 +197,7 @@ fn main() {
             year,
             registry,
             meta,
+            settings,
         } => {
             let export_meta = ocdscardinal::export::ExportMeta {
                 dataset_id: dataset_id.clone(),
@@ -199,12 +205,22 @@ fn main() {
                 country: country.clone(),
                 year: *year,
             };
+            // Indicators are computed in a separate pass over the same file (needs a real path,
+            // not stdin). Skipped when --settings is absent.
+            let indicators =
+                settings.as_ref().map(
+                    |s| match ocdscardinal::Indicators::run(reader(file), s.clone(), &false) {
+                        Ok(item) => item,
+                        Err(e) => application_error(&e),
+                    },
+                );
             match ocdscardinal::export::Export::run(
                 reader(file),
                 &export_meta,
                 output,
                 registry.as_deref(),
                 meta.as_deref(),
+                indicators.as_ref(),
             ) {
                 Ok(()) => println!("Wrote Parquet tables to {}", output.display()),
                 Err(e) => application_error(&e),
