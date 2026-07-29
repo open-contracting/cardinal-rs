@@ -4,14 +4,15 @@
 //! `analysis/FINDINGS.md` Part 5, the authoritative schema). It reads OCDS compiled releases
 //! (line-delimited JSON) and writes one Parquet file per fact table under an output directory.
 //!
-//! **Status: near-complete.** Emits all eight schema tables — the `contracting_process` spine, the
-//! `award` / `contract` child tables, the coverage-gated `bid` / `lot` tables, `organization`
-//! (from parties), `field_coverage` (coverage counts folded in the same pass), and `dataset_meta`
-//! (registry-derived machine fields from `publications.json` + a curated prose overlay) — plus the
-//! precomputed indicator columns (via `--settings`, reusing the `Indicators` machinery) on
-//! `contracting_process` and `organization`. Still to come (tracked as follow-up): the
-//! parties-resolved `buyer_region` / `buyer_identifier` columns, the per-dataset `prepare`
-//! transforms, and the fold-time `_audit.json` cardinality sidecar.
+//! **Status: schema-complete.** Emits all eight tables with every column of the stopgap schema —
+//! the `contracting_process` spine (including the parties-resolved `buyer_region`/`buyer_identifier`
+//! and the precomputed indicator columns), the `award` / `contract` child tables (award with its
+//! resolved `supplier_region`/`supplier_identifier`), the coverage-gated `bid` / `lot` tables,
+//! `organization` (from parties, with its org-grain indicators), `field_coverage` (coverage counts
+//! folded in the same pass), and `dataset_meta` (registry machine fields + curated overlay).
+//! Indicator columns require `--settings`; `dataset_meta` requires `--registry`. Still to come
+//! (tracked as follow-up): the per-dataset `prepare` transforms and the fold-time `_audit.json`
+//! cardinality sidecar.
 
 use std::collections::HashMap;
 use std::fs::{self, File};
@@ -75,17 +76,22 @@ struct Dims {
     ocid: Option<String>,
     buyer_id: Option<String>,
     buyer_name: Option<String>,
+    /// The organization role `buyer_id` refers to — "buyer" when /buyer is present, else the
+    /// procuring entity it falls back to. Used to resolve the buyer's region/identifier.
+    buyer_role: &'static str,
     procurement_method: Option<String>,
     main_procurement_category: Option<String>,
 }
 
 impl Dims {
     fn from_release(value: &Value) -> Self {
+        let has_buyer = text(value, "/buyer/id").is_some();
         Self {
             ocid: text(value, "/ocid"),
             // Buyer falls back to the procuring entity where absent (as in the stopgap).
             buyer_id: text(value, "/buyer/id").or_else(|| text(value, "/tender/procuringEntity/id")),
             buyer_name: text(value, "/buyer/name").or_else(|| text(value, "/tender/procuringEntity/name")),
+            buyer_role: if has_buyer { "buyer" } else { "procuringEntity" },
             procurement_method: text(value, "/tender/procurementMethod"),
             main_procurement_category: text(value, "/tender/mainProcurementCategory"),
         }
@@ -98,6 +104,7 @@ struct ProcessRow {
     ocid: Option<String>,
     buyer_id: Option<String>,
     buyer_name: Option<String>,
+    buyer_role: &'static str,
     procurement_method: Option<String>,
     procurement_method_details: Option<String>,
     main_procurement_category: Option<String>,
@@ -179,6 +186,7 @@ impl ProcessRow {
             ocid: dims.ocid.clone(),
             buyer_id: dims.buyer_id.clone(),
             buyer_name: dims.buyer_name.clone(),
+            buyer_role: dims.buyer_role,
             procurement_method: dims.procurement_method.clone(),
             procurement_method_details: text(value, "/tender/procurementMethodDetails"),
             main_procurement_category: dims.main_procurement_category.clone(),
@@ -535,12 +543,17 @@ impl Export {
         )?;
 
         fs::create_dir_all(outdir).with_context(|| format!("creating {}", outdir.display()))?;
+        // organization is deduped first so the spine can resolve buyer_region / buyer_identifier
+        // against it (a party's region/identifier by (org_id, role)).
+        let orgs = dedup_orgs(tables.org_occurrences);
+        let org_lookup: HashMap<(&str, &str), &OrgRow> =
+            orgs.iter().map(|o| ((o.org_id.as_str(), o.role.as_str()), o)).collect();
         write(
-            &contracting_process_columns(&tables.processes, meta, indicators),
+            &contracting_process_columns(&tables.processes, meta, indicators, &org_lookup),
             outdir,
             "contracting_process",
         )?;
-        write(&award_columns(&tables.awards, meta), outdir, "award")?;
+        write(&award_columns(&tables.awards, meta, &org_lookup), outdir, "award")?;
         write(&contract_columns(&tables.contracts, meta), outdir, "contract")?;
         // Coverage-gated: only emit these where the dataset publishes the source array.
         if tables.saw_bids {
@@ -549,9 +562,6 @@ impl Export {
         if tables.saw_lots {
             write(&lot_columns(&tables.lots, meta), outdir, "lot")?;
         }
-        // organization: 1/(org_id, role), deduped from the party occurrences. (Org-grain indicator
-        // columns are added with the indicator-integration slice.)
-        let orgs = dedup_orgs(tables.org_occurrences);
         write(&org_columns(&orgs, meta, indicators), outdir, "organization")?;
         // field_coverage: derived from the coverage counts folded in the same pass.
         let coverage = field_coverage_rows(tables.coverage.results());
@@ -614,8 +624,15 @@ fn contracting_process_columns<'a>(
     rows: &'a [ProcessRow],
     meta: &'a ExportMeta,
     indicators: Option<&Indicators>,
+    org_lookup: &'a HashMap<(&str, &str), &OrgRow>,
 ) -> Vec<(&'a str, ArrayRef)> {
     let n = rows.len();
+    // The buyer party's row in `organization`, resolved by (buyer_id, buyer_role).
+    let buyer_org = |r: &'a ProcessRow| {
+        r.buyer_id
+            .as_deref()
+            .and_then(|id| org_lookup.get(&(id, r.buyer_role)).copied())
+    };
     // single_bid (=R018): TRUE where Cardinal flagged it; FALSE where the process was competitive
     // and evaluable but not flagged; NULL otherwise (mirrors the stopgap's derivation).
     let single_bid = |r: &ProcessRow| -> Option<bool> {
@@ -651,6 +668,14 @@ fn contracting_process_columns<'a>(
         ("year", col_const_i64(meta.year, n)),
         ("buyer_id", col_str(rows.iter().map(|r| r.buyer_id.clone()))),
         ("buyer_name", col_str(rows.iter().map(|r| r.buyer_name.clone()))),
+        (
+            "buyer_region",
+            col_str(rows.iter().map(|r| buyer_org(r).and_then(|o| o.region.clone()))),
+        ),
+        (
+            "buyer_identifier",
+            col_str(rows.iter().map(|r| buyer_org(r).and_then(|o| o.identifier.clone()))),
+        ),
         (
             "procurement_method",
             col_str(rows.iter().map(|r| r.procurement_method.clone())),
@@ -725,8 +750,18 @@ fn contracting_process_columns<'a>(
     ]
 }
 
-fn award_columns<'a>(rows: &'a [AwardRow], meta: &'a ExportMeta) -> Vec<(&'a str, ArrayRef)> {
+fn award_columns<'a>(
+    rows: &'a [AwardRow],
+    meta: &'a ExportMeta,
+    org_lookup: &'a HashMap<(&str, &str), &OrgRow>,
+) -> Vec<(&'a str, ArrayRef)> {
     let n = rows.len();
+    // The supplier party's row in `organization`, resolved by (supplier_id, "supplier").
+    let supplier_org = |r: &'a AwardRow| {
+        r.supplier_id
+            .as_deref()
+            .and_then(|id| org_lookup.get(&(id, "supplier")).copied())
+    };
     vec![
         ("ocid", col_str(rows.iter().map(|r| r.ocid.clone()))),
         ("award_id", col_str(rows.iter().map(|r| r.award_id.clone()))),
@@ -734,6 +769,14 @@ fn award_columns<'a>(rows: &'a [AwardRow], meta: &'a ExportMeta) -> Vec<(&'a str
         ("award_date", col_str(rows.iter().map(|r| r.award_date.clone()))),
         ("supplier_id", col_str(rows.iter().map(|r| r.supplier_id.clone()))),
         ("supplier_name", col_str(rows.iter().map(|r| r.supplier_name.clone()))),
+        (
+            "supplier_region",
+            col_str(rows.iter().map(|r| supplier_org(r).and_then(|o| o.region.clone()))),
+        ),
+        (
+            "supplier_identifier",
+            col_str(rows.iter().map(|r| supplier_org(r).and_then(|o| o.identifier.clone()))),
+        ),
         ("supplier_count", col_i64(rows.iter().map(|r| Some(r.supplier_count)))),
         (
             "supplier_truncated",
@@ -741,6 +784,9 @@ fn award_columns<'a>(rows: &'a [AwardRow], meta: &'a ExportMeta) -> Vec<(&'a str
         ),
         ("amount", col_f64(rows.iter().map(|r| r.amount))),
         ("currency", col_str(rows.iter().map(|r| r.currency.clone()))),
+        // relatedLots is absent from the source here, so lot linkage is unresolved (as in the stopgap).
+        ("lot_id", col_str(rows.iter().map(|_| None::<String>))),
+        ("lot_multi", col_bool(rows.iter().map(|_| None::<bool>))),
         ("dataset_id", col_const_str(&meta.dataset_id, n)),
         ("country", col_const_str(&meta.country, n)),
         ("year", col_const_i64(meta.year, n)),
