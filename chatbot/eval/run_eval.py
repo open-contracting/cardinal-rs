@@ -95,6 +95,17 @@ def check_probe(eng, probe):
         hay = (m.get(field) or "").lower() + " " + (m.get("exclusions") or "").lower()
         hits = [k for k in probe["keywords"] if k.lower() in hay]
         return (bool(hits), f"dataset_meta.{field} grounds refusal via {hits or 'NO KEYWORDS FOUND'}")
+    if probe["check"] == "coverage_absent":
+        _, rows, _ = eng.run_sql(
+            f"SELECT field_path FROM field_coverage WHERE dataset_id='{probe['dataset_id']}' "
+            f"AND field_path LIKE '{probe['field_path_like']}'"
+        )
+        absent = len(rows) == 0
+        return (
+            absent,
+            f"field_coverage {probe['field_path_like']} in {probe['dataset_id']}: "
+            f"{'absent — refusal grounded' if absent else 'PRESENT — not grounded'}",
+        )
     return (False, f"unknown probe {probe['check']!r}")
 
 
