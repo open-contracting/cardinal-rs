@@ -18,10 +18,14 @@ use std::sync::Arc;
 
 use anyhow::{Context, Result};
 use arrow::array::{ArrayRef, BooleanArray, Float64Array, Int64Array, RecordBatch, StringArray};
+use indexmap::IndexMap;
 use parquet::arrow::ArrowWriter;
 use serde_json::Value;
 
-use crate::fold_reduce;
+use crate::{Coverage, fold_reduce};
+
+/// Coverage fraction at or above which `field_coverage.covered` is true (matches the stopgap).
+const COV_THRESHOLD: f64 = 0.5;
 
 /// Build parameters that are not derivable from the OCDS data itself and must be supplied per
 /// dataset (see the "country is not a dataset key" note in FINDINGS Part 5).
@@ -306,6 +310,46 @@ fn dedup_orgs(occurrences: Vec<OrgOcc>) -> Vec<OrgRow> {
     map.into_values().collect()
 }
 
+/// One row of `field_coverage` (grain: 1 / (dataset, `field_path`)).
+struct FieldCoverageRow {
+    field_path: String,
+    processes_present: i64,
+    coverage: Option<f64>,
+    mean_cardinality: Option<f64>,
+    covered: bool,
+}
+
+fn round_to(x: f64, decimals: i32) -> f64 {
+    let factor = 10f64.powi(decimals);
+    (x * factor).round() / factor
+}
+
+/// Derive the `field_coverage` rows from the raw coverage counts (mirrors the stopgap's parse of
+/// the `coverage` command output): skip the line marker (""), object markers (paths ending "/") and
+/// array-element counts (paths ending "[]"); the element counts feed `mean_cardinality`.
+fn field_coverage_rows(counts: &IndexMap<String, u32>) -> Vec<FieldCoverageRow> {
+    let n_proc = counts.get("").copied().unwrap_or(0);
+    let mut rows = Vec::new();
+    for (path, &count) in counts {
+        if path.is_empty() || path.ends_with('/') || path.ends_with("[]") {
+            continue;
+        }
+        let mean_cardinality = counts
+            .get(&format!("{path}[]"))
+            .filter(|_| count > 0)
+            .map(|&elements| round_to(f64::from(elements) / f64::from(count), 4));
+        let coverage = (n_proc > 0).then(|| round_to((f64::from(count) / f64::from(n_proc)).min(1.0), 6));
+        rows.push(FieldCoverageRow {
+            field_path: path.clone(),
+            processes_present: i64::from(count),
+            covered: coverage.is_some_and(|c| c >= COV_THRESHOLD),
+            coverage,
+            mean_cardinality,
+        });
+    }
+    rows
+}
+
 /// The accumulator folded over the release stream: one Vec per table. `saw_bids` / `saw_lots`
 /// record whether the source array was ever *present* (not merely non-empty), so a coverage-gated
 /// table is written when the dataset publishes the field even if every instance is empty, and
@@ -318,35 +362,38 @@ struct Tables {
     bids: Vec<BidRow>,
     lots: Vec<LotRow>,
     org_occurrences: Vec<OrgOcc>,
+    coverage: Coverage,
     saw_bids: bool,
     saw_lots: bool,
 }
 
 impl Tables {
-    fn add(&mut self, value: &Value) {
-        let dims = Dims::from_release(value);
-        self.processes.push(ProcessRow::from_release(value, &dims));
-        if let Some(awards) = array(value, "/awards") {
+    fn add(&mut self, value: Value) {
+        let dims = Dims::from_release(&value);
+        self.processes.push(ProcessRow::from_release(&value, &dims));
+        if let Some(awards) = array(&value, "/awards") {
             self.awards
                 .extend(awards.iter().map(|a| AwardRow::from_award(a, &dims)));
         }
-        if let Some(contracts) = array(value, "/contracts") {
+        if let Some(contracts) = array(&value, "/contracts") {
             self.contracts
                 .extend(contracts.iter().map(|c| ContractRow::from_contract(c, &dims)));
         }
-        if let Some(bids) = array(value, "/bids/details") {
+        if let Some(bids) = array(&value, "/bids/details") {
             self.saw_bids = true;
             self.bids.extend(bids.iter().map(|b| BidRow::from_bid(b, &dims)));
         }
-        if let Some(lots) = array(value, "/tender/lots") {
+        if let Some(lots) = array(&value, "/tender/lots") {
             self.saw_lots = true;
             self.lots.extend(lots.iter().map(|l| LotRow::from_lot(l, &dims)));
         }
-        if let Some(parties) = array(value, "/parties") {
+        if let Some(parties) = array(&value, "/parties") {
             for party in parties {
                 self.add_party(party);
             }
         }
+        // Coverage counts come from the same pass (consumes the release, no clone).
+        self.coverage.add_value(value);
     }
 
     /// Expand a party's roles into `organization` occurrences (one per role).
@@ -383,6 +430,7 @@ impl Tables {
         self.bids.append(&mut other.bids);
         self.lots.append(&mut other.lots);
         self.org_occurrences.append(&mut other.org_occurrences);
+        self.coverage.merge(other.coverage);
         self.saw_bids |= other.saw_bids;
         self.saw_lots |= other.saw_lots;
     }
@@ -401,7 +449,7 @@ impl Export {
             buffer,
             Tables::default,
             |mut tables, value| {
-                tables.add(&value);
+                tables.add(value);
                 tables
             },
             |mut a, b| {
@@ -430,6 +478,9 @@ impl Export {
         // columns are added with the indicator-integration slice.)
         let orgs = dedup_orgs(tables.org_occurrences);
         write(&org_columns(&orgs, meta), outdir, "organization")?;
+        // field_coverage: derived from the coverage counts folded in the same pass.
+        let coverage = field_coverage_rows(tables.coverage.results());
+        write(&field_coverage_columns(&coverage, meta), outdir, "field_coverage")?;
         Ok(())
     }
 }
@@ -610,6 +661,21 @@ fn org_columns<'a>(rows: &'a [OrgRow], meta: &'a ExportMeta) -> Vec<(&'a str, Ar
         ("region", col_str(rows.iter().map(|r| r.region.clone()))),
         ("identifier", col_str(rows.iter().map(|r| r.identifier.clone()))),
         ("country", col_const_str(&meta.country, n)),
+    ]
+}
+
+fn field_coverage_columns<'a>(rows: &'a [FieldCoverageRow], meta: &'a ExportMeta) -> Vec<(&'a str, ArrayRef)> {
+    let n = rows.len();
+    vec![
+        ("dataset_id", col_const_str(&meta.dataset_id, n)),
+        ("field_path", col_str(rows.iter().map(|r| Some(r.field_path.clone())))),
+        (
+            "processes_present",
+            col_i64(rows.iter().map(|r| Some(r.processes_present))),
+        ),
+        ("coverage", col_f64(rows.iter().map(|r| r.coverage))),
+        ("mean_cardinality", col_f64(rows.iter().map(|r| r.mean_cardinality))),
+        ("covered", col_bool(rows.iter().map(|r| Some(r.covered)))),
     ]
 }
 

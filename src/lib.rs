@@ -919,6 +919,21 @@ impl Coverage {
         &self.counts
     }
 
+    /// Count the non-empty fields in one compiled release, merging into this instance.
+    ///
+    /// Lets another command (e.g. `export`) accumulate coverage in its own fold without re-reading
+    /// the input, producing exactly the counts the standalone `coverage` command would.
+    pub fn add_value(&mut self, value: Value) {
+        self.add(value, &mut Vec::with_capacity(16));
+    }
+
+    /// Merge another instance's counts into this one (for the reduce step of a parallel fold).
+    pub fn merge(&mut self, other: Self) {
+        for (k, v) in other.counts {
+            self.increment(k, v);
+        }
+    }
+
     ///
     /// # Errors
     ///
