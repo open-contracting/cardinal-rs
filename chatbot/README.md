@@ -58,11 +58,26 @@ The deterministic layer beneath the (not-yet-wired) LLM:
   coverage highlights, a terse per-column data dictionary, and the FINDINGS Part 5 cross-dataset
   rules (~2.1k tokens).
 - `QueryEngine` is a read-only DuckDB layer; each logical table is a view UNION-ing every dataset
-  that publishes it (`bid`/`lot` appear only where present). `run_sql()` enforces the safety rules:
-  read-only single SELECT, mandatory LIMIT, no cross-currency/cross-dataset monetary `SUM`, and no
-  cross-dataset aggregation of dataset-relative fence indicators.
+  that publishes it (`bid`/`lot` appear only where present). `run_sql()` enforces the safety rules
+  via an **AST-based guardrail** (`sqlglot`, DuckDB dialect) — it parses the query and reasons over
+  nodes rather than matching text: read-only single query (no write/DDL node anywhere), mandatory
+  `LIMIT` (injected on the AST), no cross-currency/cross-dataset monetary `SUM`, and no cross-dataset
+  aggregation of dataset-relative fence indicators. Parsing removes the regex holes — `SUM(a.amount)`
+  with a table alias is caught, and a title filter like `LIKE '%create%'` is no longer a false block.
 
 `uv run python chatbot/query_core.py` prints the prompt and runs a self-test.
+
+## CLI (`cli.py`)
+
+A tiny natural-language front-end over the agent. Needs `ANTHROPIC_API_KEY`.
+
+```bash
+uv run python chatbot/cli.py                                   # interactive REPL
+uv run python chatbot/cli.py "single-bid rate in Rwanda vs the Dominican Republic"   # one-shot
+```
+
+It renders the generated SQL + a result table for answers, `⚠️` for refusals, `❓` for clarifying
+questions, and `⛔` when the guardrail blocks a query.
 
 ## Eval (`eval/`)
 
