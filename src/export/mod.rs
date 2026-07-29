@@ -4,13 +4,14 @@
 //! `analysis/FINDINGS.md` Part 5, the authoritative schema). It reads OCDS compiled releases
 //! (line-delimited JSON) and writes one Parquet file per fact table under an output directory.
 //!
-//! **Status: growing.** Emits all eight schema tables: the `contracting_process` spine, the
+//! **Status: near-complete.** Emits all eight schema tables — the `contracting_process` spine, the
 //! `award` / `contract` child tables, the coverage-gated `bid` / `lot` tables, `organization`
 //! (from parties), `field_coverage` (coverage counts folded in the same pass), and `dataset_meta`
-//! (registry-derived machine fields from `publications.json` + a curated prose overlay). Still to
-//! come (tracked as follow-up): the precomputed indicator columns (reuse the `Indicators`
-//! machinery) on `contracting_process` and `organization`, the per-dataset `prepare` transforms,
-//! and the fold-time `_audit.json` cardinality sidecar.
+//! (registry-derived machine fields from `publications.json` + a curated prose overlay) — plus the
+//! precomputed indicator columns (via `--settings`, reusing the `Indicators` machinery) on
+//! `contracting_process` and `organization`. Still to come (tracked as follow-up): the
+//! parties-resolved `buyer_region` / `buyer_identifier` columns, the per-dataset `prepare`
+//! transforms, and the fold-time `_audit.json` cardinality sidecar.
 
 use std::collections::HashMap;
 use std::fs::{self, File};
@@ -102,29 +103,78 @@ struct ProcessRow {
     main_procurement_category: Option<String>,
     tender_title: Option<String>,
     tender_status: Option<String>,
+    tender_start_date: Option<String>,
+    tender_end_date: Option<String>,
+    first_award_date: Option<String>,
+    last_award_date: Option<String>,
+    tender_value_amount: Option<f64>,
+    tender_value_currency: Option<String>,
     num_tenderers: Option<i64>,
     num_awards: i64,
     num_bids: Option<i64>,
     num_lots: Option<i64>,
+    award_amount_total: Option<f64>,
+    award_currency: Option<String>,
     supplier_count: i64,
     has_pending_award: bool,
     has_bids: bool,
     has_tenderer_count: bool,
+    has_amount: bool,
+    has_amendments: bool,
     has_tender_value: bool,
 }
 
 impl ProcessRow {
+    #[allow(clippy::too_many_lines)] // one flat builder: an awards pass plus the field assignments
     fn from_release(value: &Value, dims: &Dims) -> Self {
-        let supplier_count: i64 = array(value, "/awards").map_or(0, |awards| {
-            awards
-                .iter()
-                .map(|a| i64::try_from(array(a, "/suppliers").map_or(0, Vec::len)).unwrap_or(i64::MAX))
-                .sum()
-        });
-        let has_pending_award = array(value, "/awards")
-            .is_some_and(|awards| awards.iter().any(|a| text(a, "/status").as_deref() == Some("pending")));
+        let awards = array(value, "/awards");
+        // Single pass over the awards for the counts, dates, and active-award money aggregate.
+        let mut supplier_count = 0i64;
+        let mut has_pending_award = false;
+        let mut first_award_date: Option<String> = None;
+        let mut last_award_date: Option<String> = None;
+        let mut active_amount: Option<f64> = None;
+        let mut active_currency: Option<String> = None;
+        let mut active_mixed = false;
+        if let Some(awards) = awards {
+            for award in awards {
+                supplier_count += i64::try_from(array(award, "/suppliers").map_or(0, Vec::len)).unwrap_or(i64::MAX);
+                let status = text(award, "/status");
+                if status.as_deref() == Some("pending") {
+                    has_pending_award = true;
+                }
+                if let Some(date) = text(award, "/date") {
+                    if first_award_date.as_ref().is_none_or(|m| &date < m) {
+                        first_award_date = Some(date.clone());
+                    }
+                    if last_award_date.as_ref().is_none_or(|m| &date > m) {
+                        last_award_date = Some(date);
+                    }
+                }
+                if status.as_deref() == Some("active") {
+                    if let Some(amount) = float(award, "/value/amount") {
+                        active_amount = Some(active_amount.unwrap_or(0.0) + amount);
+                    }
+                    if let Some(currency) = text(award, "/value/currency") {
+                        match &active_currency {
+                            None => active_currency = Some(currency),
+                            Some(existing) if *existing != currency => active_mixed = true,
+                            _ => {}
+                        }
+                    }
+                }
+            }
+        }
+        // award_amount_total is valid only when the active awards share one currency (no FX in POC).
+        let single_currency = active_currency.is_some() && !active_mixed;
         let num_bids = array_len(value, "/bids/details");
         let num_tenderers = int(value, "/tender/numberOfTenderers");
+        let tender_value_amount = float(value, "/tender/value/amount");
+        let has_amendments = array(value, "/contracts").is_some_and(|contracts| {
+            contracts
+                .iter()
+                .any(|c| array(c, "/amendments").is_some_and(|a| !a.is_empty()))
+        });
         Self {
             ocid: dims.ocid.clone(),
             buyer_id: dims.buyer_id.clone(),
@@ -134,15 +184,25 @@ impl ProcessRow {
             main_procurement_category: dims.main_procurement_category.clone(),
             tender_title: text(value, "/tender/title"),
             tender_status: text(value, "/tender/status"),
-            has_bids: num_bids.is_some_and(|n| n > 0),
-            has_tenderer_count: num_tenderers.is_some(),
-            has_tender_value: value.pointer("/tender/value/amount").is_some(),
+            tender_start_date: text(value, "/tender/tenderPeriod/startDate"),
+            tender_end_date: text(value, "/tender/tenderPeriod/endDate"),
+            first_award_date,
+            last_award_date,
+            tender_value_currency: text(value, "/tender/value/currency"),
             num_tenderers,
-            num_awards: array_len(value, "/awards").unwrap_or(0),
+            num_awards: awards.map_or(0, |a| i64::try_from(a.len()).unwrap_or(i64::MAX)),
             num_bids,
             num_lots: array_len(value, "/tender/lots"),
+            award_amount_total: if single_currency { active_amount } else { None },
+            award_currency: if single_currency { active_currency } else { None },
             supplier_count,
             has_pending_award,
+            has_bids: num_bids.is_some_and(|n| n > 0),
+            has_tenderer_count: num_tenderers.is_some(),
+            has_amount: active_amount.is_some(),
+            has_amendments,
+            has_tender_value: tender_value_amount.is_some(),
+            tender_value_amount,
         }
     }
 }
@@ -549,6 +609,7 @@ fn score(scores: Option<&HashMap<Indicator, f64>>, code: &Indicator) -> Option<f
     scores.and_then(|m| m.get(code)).copied()
 }
 
+#[allow(clippy::too_many_lines)] // a flat (name, column) list — one entry per schema column
 fn contracting_process_columns<'a>(
     rows: &'a [ProcessRow],
     meta: &'a ExportMeta,
@@ -618,6 +679,34 @@ fn contracting_process_columns<'a>(
             "has_tender_value",
             col_bool(rows.iter().map(|r| Some(r.has_tender_value))),
         ),
+        (
+            "tender_start_date",
+            col_str(rows.iter().map(|r| r.tender_start_date.clone())),
+        ),
+        (
+            "tender_end_date",
+            col_str(rows.iter().map(|r| r.tender_end_date.clone())),
+        ),
+        (
+            "first_award_date",
+            col_str(rows.iter().map(|r| r.first_award_date.clone())),
+        ),
+        (
+            "last_award_date",
+            col_str(rows.iter().map(|r| r.last_award_date.clone())),
+        ),
+        (
+            "tender_value_amount",
+            col_f64(rows.iter().map(|r| r.tender_value_amount)),
+        ),
+        (
+            "tender_value_currency",
+            col_str(rows.iter().map(|r| r.tender_value_currency.clone())),
+        ),
+        ("award_amount_total", col_f64(rows.iter().map(|r| r.award_amount_total))),
+        ("award_currency", col_str(rows.iter().map(|r| r.award_currency.clone()))),
+        ("has_amount", col_bool(rows.iter().map(|r| Some(r.has_amount)))),
+        ("has_amendments", col_bool(rows.iter().map(|r| Some(r.has_amendments)))),
         ("single_bid", col_bool(rows.iter().map(single_bid))),
         (
             "single_bid_source",
