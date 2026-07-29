@@ -9,12 +9,12 @@
 //! and the precomputed indicator columns), the `award` / `contract` child tables (award with its
 //! resolved `supplier_region`/`supplier_identifier`), the coverage-gated `bid` / `lot` tables,
 //! `organization` (from parties, with its org-grain indicators), `field_coverage` (coverage counts
-//! folded in the same pass), and `dataset_meta` (registry machine fields + curated overlay).
-//! Indicator columns require `--settings`; `dataset_meta` requires `--registry`. Still to come
-//! (tracked as follow-up): the per-dataset `prepare` transforms and the fold-time `_audit.json`
-//! cardinality sidecar.
+//! folded in the same pass), and `dataset_meta` (registry machine fields + curated overlay). It also
+//! writes the `_audit.json` cardinality sidecar (the distribution at each n->1 reduction, as
+//! mergeable histograms). Indicator columns require `--settings`; `dataset_meta` requires
+//! `--registry`. Still to come (tracked as follow-up): the per-dataset `prepare` transforms.
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader};
 use std::path::Path;
@@ -24,7 +24,7 @@ use anyhow::{Context, Result};
 use arrow::array::{ArrayRef, BooleanArray, Float64Array, Int64Array, RecordBatch, StringArray};
 use indexmap::IndexMap;
 use parquet::arrow::ArrowWriter;
-use serde_json::{Map, Value};
+use serde_json::{Map, Value, json};
 
 use crate::{Coverage, Group, Indicator, Indicators, fold_reduce};
 
@@ -67,6 +67,117 @@ fn array<'a>(value: &'a Value, pointer: &str) -> Option<&'a Vec<Value>> {
 /// "not published" from "published but empty").
 fn array_len(value: &Value, pointer: &str) -> Option<i64> {
     array(value, pointer).map(|a| i64::try_from(a.len()).unwrap_or(i64::MAX))
+}
+
+// ---- audit sidecar --------------------------------------------------------
+
+/// A mergeable cardinality distribution for one n->1 reduction point (e.g. suppliers per award).
+/// Counts are bucketed 0..=4 with everything >=5 folded into a "5+" bucket at output.
+#[derive(Default)]
+struct Dist {
+    n: u64,
+    sum: u64,
+    zero: u64,
+    one: u64,
+    gt1: u64,
+    max: u64,
+    buckets: BTreeMap<u64, u64>,
+}
+
+impl Dist {
+    fn add(&mut self, count: u64) {
+        self.n += 1;
+        self.sum += count;
+        match count {
+            0 => self.zero += 1,
+            1 => self.one += 1,
+            _ => self.gt1 += 1,
+        }
+        self.max = self.max.max(count);
+        *self.buckets.entry(count.min(5)).or_default() += 1;
+    }
+
+    fn merge(&mut self, other: &Self) {
+        self.n += other.n;
+        self.sum += other.sum;
+        self.zero += other.zero;
+        self.one += other.one;
+        self.gt1 += other.gt1;
+        self.max = self.max.max(other.max);
+        for (bucket, count) in &other.buckets {
+            *self.buckets.entry(*bucket).or_default() += count;
+        }
+    }
+
+    fn share(&self, part: u64) -> f64 {
+        if self.n == 0 {
+            0.0
+        } else {
+            round_to(part as f64 / self.n as f64, 4)
+        }
+    }
+
+    fn to_json(&self) -> Value {
+        let histogram: Map<String, Value> = self
+            .buckets
+            .iter()
+            .map(|(bucket, count)| {
+                let key = if *bucket == 5 {
+                    "5+".to_owned()
+                } else {
+                    bucket.to_string()
+                };
+                (key, json!(count))
+            })
+            .collect();
+        json!({
+            "occurrences": self.n,
+            "share_0": self.share(self.zero),
+            "share_1": self.share(self.one),
+            "share_gt1": self.share(self.gt1),
+            "mean": if self.n == 0 { 0.0 } else { round_to(self.sum as f64 / self.n as f64, 4) },
+            "max": self.max,
+            "histogram": histogram,
+        })
+    }
+}
+
+/// The cardinality census recorded during the fold, one `Dist` per n->1 reduction point.
+#[derive(Default)]
+struct Audit {
+    suppliers_per_award: Dist,
+    contracts_per_award: Dist,
+    tenderers_per_bid: Dist,
+    roles_per_party: Dist,
+}
+
+impl Audit {
+    fn merge(&mut self, other: &Self) {
+        self.suppliers_per_award.merge(&other.suppliers_per_award);
+        self.contracts_per_award.merge(&other.contracts_per_award);
+        self.tenderers_per_bid.merge(&other.tenderers_per_bid);
+        self.roles_per_party.merge(&other.roles_per_party);
+    }
+
+    fn to_json(&self, dataset_id: &str, year: i64, saw_bids: bool) -> Value {
+        let mut obj = json!({
+            "dataset_id": dataset_id,
+            "year": year,
+            "note": "cardinality census recorded during the export fold",
+            "suppliers_per_award": self.suppliers_per_award.to_json(),
+            "contracts_per_award": self.contracts_per_award.to_json(),
+            "roles_per_party": self.roles_per_party.to_json(),
+            "supplier_truncated_rate": self.suppliers_per_award.share(self.suppliers_per_award.gt1),
+        });
+        if saw_bids {
+            obj["tenderers_per_bid"] = self.tenderers_per_bid.to_json();
+        }
+        obj
+    }
+}
+
+fn len_u64(array: Option<&Vec<Value>>) -> u64 {
+    array.map_or(0, |a| u64::try_from(a.len()).unwrap_or(u64::MAX))
 }
 
 // ---- rows -----------------------------------------------------------------
@@ -438,6 +549,7 @@ struct Tables {
     lots: Vec<LotRow>,
     org_occurrences: Vec<OrgOcc>,
     coverage: Coverage,
+    audit: Audit,
     saw_bids: bool,
     saw_lots: bool,
 }
@@ -446,17 +558,36 @@ impl Tables {
     fn add(&mut self, value: Value) {
         let dims = Dims::from_release(&value);
         self.processes.push(ProcessRow::from_release(&value, &dims));
-        if let Some(awards) = array(&value, "/awards") {
-            self.awards
-                .extend(awards.iter().map(|a| AwardRow::from_award(a, &dims)));
-        }
-        if let Some(contracts) = array(&value, "/contracts") {
+        let contracts = array(&value, "/contracts");
+        if let Some(contracts) = contracts {
             self.contracts
                 .extend(contracts.iter().map(|c| ContractRow::from_contract(c, &dims)));
         }
+        if let Some(awards) = array(&value, "/awards") {
+            // contracts-per-award census: count contracts by awardID within this release.
+            let mut contracts_by_award: HashMap<&str, u64> = HashMap::new();
+            for contract in contracts.into_iter().flatten() {
+                if let Some(award_id) = contract.pointer("/awardID").and_then(Value::as_str) {
+                    *contracts_by_award.entry(award_id).or_default() += 1;
+                }
+            }
+            for award in awards {
+                self.awards.push(AwardRow::from_award(award, &dims));
+                self.audit.suppliers_per_award.add(len_u64(array(award, "/suppliers")));
+                let contracts = award
+                    .pointer("/id")
+                    .and_then(Value::as_str)
+                    .and_then(|id| contracts_by_award.get(id).copied())
+                    .unwrap_or(0);
+                self.audit.contracts_per_award.add(contracts);
+            }
+        }
         if let Some(bids) = array(&value, "/bids/details") {
             self.saw_bids = true;
-            self.bids.extend(bids.iter().map(|b| BidRow::from_bid(b, &dims)));
+            for bid in bids {
+                self.bids.push(BidRow::from_bid(bid, &dims));
+                self.audit.tenderers_per_bid.add(len_u64(array(bid, "/tenderers")));
+            }
         }
         if let Some(lots) = array(&value, "/tender/lots") {
             self.saw_lots = true;
@@ -484,10 +615,12 @@ impl Tables {
             _ => ident_id,
         };
         let Some(roles) = array(party, "/roles") else { return };
+        let mut role_count = 0u64;
         for role in roles {
             let Some(role) = role.as_str().map(str::trim).filter(|r| !r.is_empty()) else {
                 continue;
             };
+            role_count += 1;
             self.org_occurrences.push(OrgOcc {
                 org_id: org_id.clone(),
                 role: role.to_owned(),
@@ -495,6 +628,9 @@ impl Tables {
                 region: region.clone(),
                 identifier: identifier.clone(),
             });
+        }
+        if role_count > 0 {
+            self.audit.roles_per_party.add(role_count);
         }
     }
 
@@ -506,6 +642,7 @@ impl Tables {
         self.lots.append(&mut other.lots);
         self.org_occurrences.append(&mut other.org_occurrences);
         self.coverage.merge(other.coverage);
+        self.audit.merge(&other.audit);
         self.saw_bids |= other.saw_bids;
         self.saw_lots |= other.saw_lots;
     }
@@ -571,6 +708,14 @@ impl Export {
         if let Some(registry) = registry {
             write_dataset_meta(&meta.dataset_id, registry, curated, outdir)?;
         }
+        // _audit.json: the fold-time cardinality census (distribution at each n->1 reduction).
+        let audit = tables.audit.to_json(&meta.dataset_id, meta.year, tables.saw_bids);
+        let audit_path = outdir.join("_audit.json");
+        serde_json::to_writer_pretty(
+            File::create(&audit_path).with_context(|| format!("creating {}", audit_path.display()))?,
+            &audit,
+        )
+        .with_context(|| format!("writing {}", audit_path.display()))?;
         Ok(())
     }
 }
