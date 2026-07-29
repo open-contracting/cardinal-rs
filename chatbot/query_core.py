@@ -23,9 +23,10 @@ runs sample queries, demonstrates a refusal).
 from __future__ import annotations
 
 import os
-import re
 
 import duckdb
+import sqlglot
+from sqlglot import exp
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DATA = os.path.join(ROOT, "data")
@@ -158,6 +159,56 @@ OPTIONAL = ["bid", "lot"]
 FENCE_INDICATORS = ["r024", "r025", "r028", "r030", "r035", "r036", "r038", "r048", "r058"]
 CROSS_DATASET_SAFE = ["single_bid", "r003"]
 
+# The guardrail parses SQL to an AST (sqlglot) rather than pattern-matching text.
+# Allowed root node types (a read-only query); anything else is rejected.
+_QUERY_NODES = tuple(
+    getattr(exp, n) for n in ("Select", "Union", "Intersect", "Except", "Subquery", "With", "Query") if hasattr(exp, n)
+)
+# Write / DDL / command node types — rejected as root or anywhere in the tree.
+_WRITE_NODES = tuple(
+    getattr(exp, n)
+    for n in (
+        "Insert",
+        "Update",
+        "Delete",
+        "Drop",
+        "Create",
+        "Alter",
+        "Command",
+        "Copy",
+        "Set",
+        "Merge",
+        "Pragma",
+        "Attach",
+        "TruncateTable",
+    )
+    if hasattr(exp, n)
+)
+
+
+def _agg_cols(node):
+    return {c.name.lower() for c in node.find_all(exp.Column)}
+
+
+def _dataset_scoped(stmt):
+    """True if the query is confined to one dataset (WHERE dataset_id = ... / IN ..., or GROUP BY dataset_id)."""
+    for eq in stmt.find_all(exp.EQ):
+        for side in (eq.this, eq.expression):
+            if isinstance(side, exp.Column) and side.name.lower() == "dataset_id":
+                return True
+    for isin in stmt.find_all(exp.In):
+        if isinstance(isin.this, exp.Column) and isin.this.name.lower() == "dataset_id":
+            return True
+    for grp in stmt.find_all(exp.Group):
+        if any(c.name.lower() == "dataset_id" for c in grp.find_all(exp.Column)):
+            return True
+    return False
+
+
+def _currency_scoped(stmt):
+    return any("currency" in c.name.lower() for c in stmt.find_all(exp.Column))
+
+
 RULES = f"""\
 ## Rules (enforced by the query guardrail — write SQL that respects them)
 
@@ -212,44 +263,40 @@ class QueryEngine:
             )
             self.con.execute(f"CREATE VIEW {table} AS {union}")
 
-    # ---- guardrail -------------------------------------------------------
+    # ---- guardrail (AST-based, sqlglot) ---------------------------------
     def _check(self, sql: str) -> str:
-        stripped = sql.strip().rstrip(";").strip()
-        low = stripped.lower()
-        if not re.match(r"^(with|select)\b", low):
-            raise GuardrailError("Only read-only SELECT queries are allowed.")
-        forbidden = r"\b(insert|update|delete|drop|create|alter|attach|copy|pragma|call|export|install|load)\b"
-        if re.search(forbidden, low):
-            raise GuardrailError("Statement contains a non-read-only keyword.")
-        if ";" in stripped:
-            raise GuardrailError("Only a single statement is allowed.")
+        try:
+            statements = [s for s in sqlglot.parse(sql, dialect="duckdb") if s is not None]
+        except sqlglot.errors.SqlglotError as e:
+            raise GuardrailError(f"Could not parse the SQL as valid DuckDB: {e}") from e
+        if len(statements) != 1:
+            raise GuardrailError("Only a single read-only statement is allowed.")
+        stmt = statements[0]
 
-        groups_by_dataset = bool(re.search(r"group\s+by[^;]*\bdataset_id\b", low)) or bool(
-            re.search(r"\bdataset_id\b\s*=", low)
-        )
-        # Rule 4: cross-dataset aggregation of a dataset-relative fence indicator.
-        for ind in FENCE_INDICATORS:
-            if (
-                re.search(rf"\b(avg|sum|min|max|count|median|quantile\w*)\s*\(\s*{ind}\b", low)
-                and not groups_by_dataset
-            ):
+        # Read-only: root must be a query, and no write/DDL node may appear anywhere in the tree.
+        if not isinstance(stmt, _QUERY_NODES) or (_WRITE_NODES and stmt.find(*_WRITE_NODES) is not None):
+            raise GuardrailError("Only read-only SELECT queries are allowed.")
+
+        dataset_scoped = _dataset_scoped(stmt)
+        # Rule 4: fence indicators are dataset-relative — block aggregating them across datasets.
+        for agg in stmt.find_all(exp.AggFunc):
+            hit = _agg_cols(agg) & set(FENCE_INDICATORS)
+            if hit and not dataset_scoped:
                 raise GuardrailError(
-                    f"{ind.upper()} is a dataset-relative fence indicator; aggregating it without scoping to a single "
-                    "dataset_id compares incomparable baselines. Filter or GROUP BY dataset_id."
+                    f"{min(hit).upper()} is a dataset-relative fence indicator; aggregating it without scoping "
+                    "to a single dataset_id compares incomparable baselines. Filter or GROUP BY dataset_id."
                 )
-        # Rule 3: monetary SUM without a currency or single-dataset scope.
-        money = r"(amount|value_amount|award_amount_total|lot_amount|contract_value_amount)"
-        if re.search(rf"\bsum\s*\(\s*\w*{money}\w*\s*\)", low):
-            scoped_currency = "currency" in low or groups_by_dataset
-            if not scoped_currency:
+        # Rule 3: no cross-currency / cross-dataset monetary SUM.
+        for total in stmt.find_all(exp.Sum):
+            if any("amount" in c for c in _agg_cols(total)) and not (dataset_scoped or _currency_scoped(stmt)):
                 raise GuardrailError(
                     "Summing a monetary column without scoping to a single dataset_id/currency risks mixing "
                     "currencies (no FX in this POC). Add WHERE dataset_id=... and filter/GROUP BY currency."
                 )
-        # Rule 6: enforce a LIMIT.
-        if not re.search(r"\blimit\s+\d+\b", low):
-            stripped = f"{stripped}\nLIMIT {DEFAULT_LIMIT}"
-        return stripped
+        # Rule 6: enforce a LIMIT on the outer query.
+        if stmt.args.get("limit") is None:
+            stmt = stmt.limit(DEFAULT_LIMIT)
+        return stmt.sql(dialect="duckdb")
 
     def run_sql(self, sql: str):
         safe = self._check(sql)
