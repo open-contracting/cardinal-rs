@@ -238,6 +238,12 @@ RULES = f"""\
    dataset — even for a cross-dataset-safe metric like single_bid or r003. Ask which dataset(s) they
    mean (clarify). Produce a per-dataset breakdown only when the question explicitly spans multiple
    named places (e.g. "Rwanda vs the Dominican Republic", "across both countries").
+8. DON'T QUOTE A BARE MEAN FOR SKEWED COUNTS. Fan-out counts — suppliers per award, bids per tender,
+   contracts per award, roles per party — are often heavily right-skewed: e.g. framework agreements
+   list many suppliers on one award, so suppliers/award averages ~4 while the median and mode are 1.
+   For a "typical / how many X per Y" question, lead with the median (or the distribution). If you
+   also show the mean, pair it with the median and say the mean is inflated by the tail — never quote
+   the average alone as "typical".
 """
 
 

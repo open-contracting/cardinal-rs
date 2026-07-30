@@ -229,6 +229,14 @@
       "category": "clarify",
       "question": "Who are the biggest suppliers?",
       "note": "no country/dataset named, and 'biggest' by what measure — clarify"
+    },
+    {
+      "id": "rwanda_typical_suppliers_per_award",
+      "category": "answerable",
+      "question": "How many suppliers does a typical award in Rwanda have?",
+      "note": "GUARD against quoting the skewed mean (~4.28 suppliers/award). The distribution is heavily right-skewed: 60% of awards have exactly one supplier (median and mode = 1), but framework agreements list many awarded suppliers (up to 32, ~80% of the 10+-supplier awards are hasFrameworkAgreement), inflating the average. The meaningful answer surfaces the median/mode of 1 (ideally noting the framework tail), not the bare average.",
+      "reference_sql": "SELECT median(supplier_count) AS typical FROM award WHERE dataset_id='145'",
+      "assert": {"type": "values_present", "checks": [{"approx": 1, "tol": 0}]}
     }
   ]
 }
