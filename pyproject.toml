@@ -52,6 +52,9 @@ ignore-variadic-names = true
 "tests/*" = [
     "ARG001", "D", "FBT003", "INP001", "PLR2004", "S", "TRY003",
 ]
+"analysis/*" = [  # standalone corpus-analysis scripts, not library code
+    "BLE001", "D", "E501", "PLR2004", "PLW2901", "PTH", "RUF059", "S310", "SIM115", "T201", "TRY003", "TRY300",
+]
 
 [tool.uv]
 cache-keys = [{file = "pyproject.toml"}, {file = "Cargo.toml"}, {file = "src/**/*.rs"}]
