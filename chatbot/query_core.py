@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Query core for the OCDS chatbot POC — the deterministic spine under the LLM.
 
 Two responsibilities, both independent of any particular LLM:

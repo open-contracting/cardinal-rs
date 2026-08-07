@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Tiny CLI for the OCDS chatbot POC.
 
 Ask procurement questions in natural language; the Claude Sonnet agent writes

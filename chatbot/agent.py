@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Claude text-to-SQL agent for the OCDS chatbot POC.
 
 Turns a natural-language question into either DuckDB SQL (run through the query

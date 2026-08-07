@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Stopgap sample Parquet build for the OCDS chatbot POC.
 
 Builds schema-conformant sample Parquet for two datasets (Rwanda RPPA 145,

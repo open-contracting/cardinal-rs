@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Eval harness for the OCDS chatbot POC.
 
 Scores the gold set (gold.json) against the query core. Runs in two modes:
