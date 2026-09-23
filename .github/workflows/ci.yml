@@ -25,7 +25,7 @@ jobs:
           RUSTFLAGS: -Zon-broken-pipe=kill
         run: cargo llvm-cov --lcov --output-path coverage.lcov --no-cfg-coverage-nightly
       - if: matrix.os != 'windows-latest'
-        uses: codecov/codecov-action@0b35c9ecc4f0529d0eb674914510c22f85b196b4 # v7.1.0
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         with:
           fail_ci_if_error: true
       - uses: actions/setup-python@v7.0.0
