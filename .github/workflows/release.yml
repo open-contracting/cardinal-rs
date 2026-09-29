@@ -9,11 +9,11 @@ on:
         description: 'Tag name (like 0.0.1)'
         required: true
         type: string
-permissions:
-  contents: write
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v7.0.1
       - if: github.event_name == 'push'
@@ -23,6 +23,8 @@ jobs:
   assets:
     needs: release
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
     strategy:
       matrix:
         # Aim for one option per major OS per 64-bit architecture, taking from "Tier 1 with Host Tools" targets and,
