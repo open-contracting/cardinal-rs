@@ -7,6 +7,9 @@ designs. Two source artifacts sit beside this file: [`../opentender.md`](../open
 (OpenTender's bulk CSV schema) and Kingfisher Summarize's
 [database docs](https://kingfisher-summarize.readthedocs.io/en/latest/database.html).
 
+The schema is implemented by `ocdscardinal export` and exercised by the chatbot POC in
+[`../chatbot/`](../chatbot/README.md) (Rwanda RPPA + Dominican Republic DGCP, 2026 data).
+
 ## Thesis
 
 > The right shape for an OCDS analytical dataset is decided by **who queries it**. Three
@@ -30,7 +33,7 @@ layer, then narrowed for an LLM.**
 | dimension | OpenTender CSV | Kingfisher Summarize | Cardinal Parquet (ours) | why we chose ours |
 |---|---|---|---|---|
 | **consumer** | bulk interchange / spreadsheet | analyst SQL (Postgres) | LLM text-to-SQL (local) | the prompt is "the model's whole world" |
-| **grain** | 1 row / buyer×lot×bid×bidder (cartesian) | 1 / compiled release + child tables | 5 fact tables at clean grains (process/award/bid/lot/org) | cartesian ⇒ `COUNT(*)` double-count minefield for an LLM |
+| **grain** | 1 row / buyer×lot×bid×bidder (cartesian) | 1 / compiled release + child tables | 6 fact tables at clean grains (process/award/contract/bid/lot/org) + 2 meta tables | cartesian ⇒ `COUNT(*)` double-count minefield for an LLM |
 | **arrays** | fully exploded into one row | child summary tables + `total_*` counts + JSONB freq maps | child tables for genuinely-multi; 1:1 arrays flattened; counts on the spine | join fan-out is the #1 LLM-SQL hazard |
 | **indicators** | ~70, as opaque 0–100 scores | none | Cardinal's 11, as interpretable bool/score, at 2 grains | precompute the un-SQL-able; stay narrow; interpretable for the zero-hallucination veto |
 | **currency** | national **+ EUR** always | summed, currency **ignored** (documented caveat) | null-on-mixed + FX (`amount_usd`) later | correctness over convenience; cross-currency = refusal until FX |
@@ -38,6 +41,8 @@ layer, then narrowed for an LLM.**
 | **raw-data escape hatch** | — | full **JSONB** (never lose a field) | **excluded** | raw nested JSON is prompt poison; narrow beats complete |
 | **status filtering** | some `is*` flags | not emphasized | `*_status` first-class (indicator stability forces it) | Cardinal only scores all-awards-final processes |
 | **scope key** | `tender_country` | collection id | `dataset_id` (datasets aren't national) | 26 countries have >1 dataset; grouping by country double-counts |
+| **dataset scope metadata** | — | — | `dataset_meta`: exclusions, thresholds, temporal range, currency | a populated field can still be out of scope; the bot must refuse on scope, not only on coverage |
+| **answer checking** | n/a (no consumer-side logic) | n/a | deterministic checks (number-grounding, SQL lint); reflection only if an eval shows a win | the model's numbers are checked mechanically, not by the model |
 
 ## Decision-by-decision reasoning (blog body material)
 
@@ -75,7 +80,7 @@ problem — we're refusing to hide the one KS documents.
 All three treat coverage as first-class, three ways: OpenTender as `*_MISSING` indicators, KS as
 a `field_counts` table + per-row `field_list`, us as per-row `has_*` flags **plus** (borrowed
 from KS) a per-dataset `field_coverage` catalog. The dataset-level table is what lets refusal be
-*data-driven* ("can you answer X for dataset 63?") rather than guessed. Both of ours derive from
+*data-driven* ("can you answer X for dataset 22?") rather than guessed. Both of ours derive from
 Cardinal's `coverage` output, so row flag and catalog can't disagree.
 
 ### 5. Raw-data escape hatch — the thing we consciously give up
@@ -100,10 +105,44 @@ country-centric CSV would double-count here.
 
 ### 8. Lossiness discipline — a small idea neither formalizes
 We pair every truncating aggregation with a **per-row flag + a count** (`supplier_truncated` +
-`supplier_count`, `contract_truncated` + `contract_count`, `main_class_source`, `lot_multi`, …)
-and state the method once in the data dictionary. KS's JSONB makes this unnecessary (nothing is
-lost); OpenTender doesn't do it. For a *narrowed* dataset it's essential — the model must see, per
-row, when a value was derived.
+`supplier_count`, `main_class_source`, `lot_multi`, …) and state the method once in the data
+dictionary. KS's JSONB makes this unnecessary (nothing is lost); OpenTender doesn't do it. For a
+*narrowed* dataset it's essential — the model must see, per row, when a value was derived. The
+exporter also writes an `_audit.json` sidecar with the *distribution* at each reduction, because
+some reductions (non-modal item classes, scalarized multi-valued fields) erase values that no
+output column can reconstruct.
+
+### 9. Merge or split? A mean can't tell you
+Contracts started out merged onto awards ("keep the first, flag the rest"), justified by a
+contracts-per-award ratio just under 1. That ratio is a **mean**, and a mean can't distinguish
+"every award has one contract" from "many have none, some have several". When the Dominican
+Republic joined the POC pair at **1.22 contracts per award**, a merge would have dropped the second
+and later contracts for a real share of awards, so `contract` became its own table — a decision
+we had pre-registered ("promote only if a fan-out publisher is added"). Lesson for the post: the
+right grain can depend on the dataset, and deciding it needs the distribution, not the average.
+
+### 10. Refuse on scope, not only on coverage
+Coverage answers "is this field populated?". It doesn't answer "does this dataset's *scope*
+include what was asked?". Rwanda's data excludes classified security procurement and PPPs and
+only covers processes from 3,000,000 RWF; the Dominican Republic's excludes petty-cash purchases
+and starts in 2023. Ask either about those and the fields are present, so a coverage check passes
+and the query returns a **plausible, wrong number**. The fix is a `dataset_meta` table of
+exclusions, thresholds and temporal range (curated from the Data Registry's dataset pages) that
+the bot routes on and refuses against. Neither comparator models dataset scope — for a human
+analyst it lives in their head; for an LLM it has to be data.
+
+### 11. Check answers mechanically; test reflection before trusting it
+A reviewer suggested reflection agents: the model critiques its own answer, grounded in external
+sources such as the OCDS documentation, before replying. We split the idea:
+- **Deterministic checks, always on:** every number in the answer must appear in a returned result
+  row (the mechanical form of the zero-hallucination rule), and the SQL is linted for the known traps
+  (`COUNT(DISTINCT ocid)` over child tables, active awards for money, `dataset_id` scoping). A set
+  check is exact; a model verifying its own numbers is not.
+- **Reflection, off until an eval shows a net win:** a single, bounded self-critique against the
+  results and data dictionary already in context. It costs the *user* tokens (they bring the key),
+  so matching the baseline isn't enough.
+- **No runtime retrieval of standard docs:** the data dictionary already carries the OCDS semantics
+  the model needs; enrich it at build time instead.
 
 ## Borrowed vs. rejected (quick ledger)
 
@@ -118,6 +157,8 @@ row, when a value was derived.
   (a good negative control confirming our coverage-driven pruning).
 - **From OpenTender — reconsidered & adopted independently:** estimated `tender_value_*` (their
   estimated-vs-final enables price-deviation) and `*_status` importance.
+- **From review (reflection agents) — adopted:** deterministic answer checks. **Deferred to the
+  eval:** reflection. **Rejected:** runtime retrieval of standard documentation.
 
 ## Candidate blog angles / titles
 
@@ -126,6 +167,9 @@ row, when a value was derived.
 - "Precompute what SQL can't: shipping corruption-risk indicators as columns."
 - "Coverage is data: designing for graceful refusal."
 - "What we deliberately threw away (and why the JSONB escape hatch had to go)."
+- "The field was there, the answer was wrong: refusing on dataset scope."
+- "A mean can't tell you whether to merge a table."
+- "Check the numbers mechanically; make reflection earn its tokens."
 
 ## Sources
 
