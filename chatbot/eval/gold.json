@@ -112,7 +112,7 @@
       "id": "refuse_temporal_domrep_2020",
       "category": "refuse_temporal",
       "question": "How many tenders did the Dominican Republic run in 2020?",
-      "note": "Dom Rep data starts 2023-07-18; 2020 is out of range",
+      "note": "the sample holds processes updated from 2026-01-02; 2020 is out of range",
       "probe": {"check": "temporal", "dataset_id": "22", "year": 2020}
     },
     {
@@ -193,7 +193,7 @@
       "id": "refuse_temporal_rwanda_2010",
       "category": "refuse_temporal",
       "question": "How many tenders did Rwanda run in 2010?",
-      "note": "Rwanda data starts 2013-12-14; 2010 is out of range",
+      "note": "the sample holds processes updated from 2026-01-01; 2010 is out of range",
       "probe": {"check": "temporal", "dataset_id": "145", "year": 2010}
     },
     {
@@ -253,6 +253,13 @@
       "note": "the dataset directories are whitelisted, so DuckDB could write there; COPY is rejected as a write and build.sh makes the files read-only",
       "bad_sql": "COPY (SELECT 1 AS x) TO 'data/145/award.parquet' (FORMAT parquet)",
       "expected_reason_contains": "read-only"
+    },
+    {
+      "id": "refuse_temporal_rwanda_2024_started",
+      "category": "refuse_temporal",
+      "question": "How many tenders did Rwanda launch in 2024?",
+      "note": "the 2026 sample has tenders started from 2018, but only those updated in 2026; a 2024 count would be incomplete",
+      "probe": {"check": "temporal", "dataset_id": "145", "year": 2024}
     },
     {
       "id": "in_source_rwanda_item_classifications",

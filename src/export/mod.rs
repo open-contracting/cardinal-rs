@@ -9,7 +9,7 @@
 //! and the precomputed indicator columns), the `award` / `contract` child tables (award with its
 //! resolved `supplier_region`/`supplier_identifier`), the coverage-gated `bid` / `lot` tables,
 //! `organization` (from parties, with its org-grain indicators), `field_coverage` (coverage counts
-//! folded in the same pass), and `dataset_meta` (registry machine fields + curated overlay). It also
+//! folded in the same pass), and `dataset_meta` (registry identity, size and release-date range of the data, curated overlay). It also
 //! writes the `_audit.json` cardinality sidecar (the distribution at each n->1 reduction, as
 //! mergeable histograms). Indicator columns require `--settings`; `dataset_meta` requires
 //! `--registry`. Still to come (tracked as follow-up): the per-dataset `prepare` transforms.
@@ -58,7 +58,8 @@ fn int(value: &Value, pointer: &str) -> Option<i64> {
     value.pointer(pointer).and_then(Value::as_i64)
 }
 
-/// The RFC 3339 date-time at `pointer` as UTC microseconds since the epoch; `None` if absent or unparseable.
+/// The RFC 3339 date-time at `pointer` as UTC microseconds since the epoch; `None` if absent or invalid
+/// (an impossible date, or no time or offset). `Audit::add_invalid_dates` counts the invalid ones.
 fn timestamp(value: &Value, pointer: &str) -> Option<i64> {
     value
         .pointer(pointer)
@@ -161,10 +162,56 @@ struct Audit {
     contracts_per_award: Dist,
     tenderers_per_bid: Dist,
     roles_per_party: Dist,
+    /// Date-time values that aren't valid RFC 3339 and are exported as null: count and first example, by path.
+    invalid_dates: BTreeMap<String, (u64, String)>,
 }
 
+/// The exported date fields, as (array pointer, or "" for the release; pointer within it).
+const DATE_FIELDS: [(&str, &str); 6] = [
+    ("", "/date"),
+    ("", "/tender/tenderPeriod/startDate"),
+    ("", "/tender/tenderPeriod/endDate"),
+    ("/awards", "/date"),
+    ("/contracts", "/dateSigned"),
+    ("/contracts", "/period/endDate"),
+];
+
 impl Audit {
+    fn add_invalid_dates(&mut self, value: &Value) {
+        for (array_pointer, pointer) in DATE_FIELDS {
+            let elements: Vec<&Value> = if array_pointer.is_empty() {
+                vec![value]
+            } else {
+                array(value, array_pointer)
+                    .map(|a| a.iter().collect())
+                    .unwrap_or_default()
+            };
+            for element in elements {
+                let invalid = match element.pointer(pointer) {
+                    None | Some(Value::Null) => None,
+                    Some(Value::String(s)) if s.is_empty() || DateTime::parse_from_rfc3339(s).is_ok() => None,
+                    Some(Value::String(s)) => Some(s.clone()),
+                    Some(other) => Some(other.to_string()),
+                };
+                if let Some(example) = invalid {
+                    let path = if array_pointer.is_empty() {
+                        pointer.to_owned()
+                    } else {
+                        format!("{array_pointer}[]{pointer}")
+                    };
+                    self.invalid_dates.entry(path).or_insert((0, example)).0 += 1;
+                }
+            }
+        }
+    }
+
     fn merge(&mut self, other: &Self) {
+        for (path, (count, example)) in &other.invalid_dates {
+            self.invalid_dates
+                .entry(path.clone())
+                .or_insert_with(|| (0, example.clone()))
+                .0 += count;
+        }
         self.suppliers_per_award.merge(&other.suppliers_per_award);
         self.contracts_per_award.merge(&other.contracts_per_award);
         self.tenderers_per_bid.merge(&other.tenderers_per_bid);
@@ -180,6 +227,11 @@ impl Audit {
             "contracts_per_award": self.contracts_per_award.to_json(),
             "roles_per_party": self.roles_per_party.to_json(),
             "supplier_truncated_rate": self.suppliers_per_award.share(self.suppliers_per_award.gt1),
+            "invalid_dates": self
+                .invalid_dates
+                .iter()
+                .map(|(path, (count, example))| (path.clone(), json!({"count": count, "example": example})))
+                .collect::<Map<String, Value>>(),
         });
         if saw_bids {
             obj["tenderers_per_bid"] = self.tenderers_per_bid.to_json();
@@ -560,10 +612,22 @@ struct Tables {
     audit: Audit,
     saw_bids: bool,
     saw_lots: bool,
+    /// The earliest and latest release `/date`, in UTC microseconds.
+    release_dates: Option<(i64, i64)>,
+}
+
+/// The wider of two optional `(min, max)` ranges.
+fn widen(a: Option<(i64, i64)>, b: Option<(i64, i64)>) -> Option<(i64, i64)> {
+    match (a, b) {
+        (Some((a0, a1)), Some((b0, b1))) => Some((a0.min(b0), a1.max(b1))),
+        (a, b) => a.or(b),
+    }
 }
 
 impl Tables {
     fn add(&mut self, value: Value) {
+        self.release_dates = widen(self.release_dates, timestamp(&value, "/date").map(|d| (d, d)));
+        self.audit.add_invalid_dates(&value);
         let dims = Dims::from_release(&value);
         self.processes.push(ProcessRow::from_release(&value, &dims));
         let contracts = array(&value, "/contracts");
@@ -653,6 +717,7 @@ impl Tables {
         self.audit.merge(&other.audit);
         self.saw_bids |= other.saw_bids;
         self.saw_lots |= other.saw_lots;
+        self.release_dates = widen(self.release_dates, other.release_dates);
     }
 }
 
@@ -711,10 +776,18 @@ impl Export {
         // field_coverage: derived from the coverage counts folded in the same pass.
         let coverage = field_coverage_rows(tables.coverage.results());
         write(&field_coverage_columns(&coverage, meta), outdir, "field_coverage")?;
-        // dataset_meta: registry-derived machine fields + curated prose overlay. Only when a
-        // registry file is supplied (it is the authoritative source for the whole-dataset fields).
+        // dataset_meta: identity from the registry, size and date range from the data, curated prose
+        // overlay. Only when a registry file is supplied.
         if let Some(registry) = registry {
-            write_dataset_meta(&meta.dataset_id, registry, curated, outdir)?;
+            let n_processes = i64::try_from(tables.processes.len()).unwrap_or(i64::MAX);
+            write_dataset_meta(
+                &meta.dataset_id,
+                registry,
+                curated,
+                n_processes,
+                tables.release_dates,
+                outdir,
+            )?;
         }
         // _audit.json: the fold-time cardinality census (distribution at each n->1 reduction).
         let audit = tables.audit.to_json(&meta.dataset_id, meta.year, tables.saw_bids);
@@ -1071,6 +1144,8 @@ fn write_dataset_meta(
     dataset_id: &str,
     registry_path: &Path,
     curated_path: Option<&Path>,
+    n_processes: i64,
+    release_dates: Option<(i64, i64)>,
     outdir: &Path,
 ) -> Result<()> {
     let registry: Value = serde_json::from_reader(BufReader::new(
@@ -1105,21 +1180,26 @@ fn write_dataset_meta(
     // A registry field, overridable by the curated file.
     let with_registry = |key: &str, registry_ptr: &str| curated_str(key).or_else(|| text(entry, registry_ptr));
 
-    // JSON pointer "/coverage/" addresses coverage[""], the whole-dataset process count.
-    let n_processes = entry.pointer("/coverage/").and_then(Value::as_i64);
+    // The release-date range of the data read, falling back to the registry's (the whole publication's).
+    let day = |micros: i64| DateTime::from_timestamp_micros(micros).map(|d| d.format("%Y-%m-%d").to_string());
+    let date = |key: &str, micros: Option<i64>| {
+        curated_str(key)
+            .or_else(|| micros.and_then(day))
+            .or_else(|| text(entry, &format!("/{key}")))
+    };
     let columns: Vec<(&str, ArrayRef)> = vec![
         ("dataset_id", one_str(Some(dataset_id.to_owned()))),
         ("publisher", one_str(with_registry("publisher", "/title"))),
         ("country", one_str(with_registry("country", "/country"))),
         ("region", one_str(with_registry("region", "/region"))),
         ("government_level", one_str(curated_str("government_level"))),
-        ("date_from", one_str(with_registry("date_from", "/date_from"))),
-        ("date_to", one_str(with_registry("date_to", "/date_to"))),
+        ("date_from", one_str(date("date_from", release_dates.map(|r| r.0)))),
+        ("date_to", one_str(date("date_to", release_dates.map(|r| r.1)))),
         ("currency", one_str(curated_str("currency"))),
         ("license", one_str(curated_str("license"))),
         (
             "n_processes",
-            Arc::new(std::iter::once(n_processes).collect::<Int64Array>()),
+            Arc::new(std::iter::once(Some(n_processes)).collect::<Int64Array>()),
         ),
         ("scope_summary", one_str(curated_str("scope_summary"))),
         ("exclusions", one_str(curated_str("exclusions"))),

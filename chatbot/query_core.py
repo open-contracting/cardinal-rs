@@ -146,9 +146,9 @@ TABLE_DOCS = {
         "Catches scope-mismatch that field_coverage cannot.",
         {
             "dataset_id/publisher/country/region/government_level": "identity",
-            "date_from/date_to": "temporal coverage — refuse out-of-range questions",
+            "date_from/date_to": "range of release dates (when processes were last updated) in these tables",
             "currency": "the dataset's currency (no FX across datasets)",
-            "license/n_processes": "license and size",
+            "license/n_processes": "license and number of processes in these tables",
             "scope_summary/exclusions/threshold/methods/quality_notes": "scope prose for refusal decisions",
         },
     ),
@@ -257,8 +257,11 @@ RULES = f"""\
    outliers WITHIN their own dataset; comparing their scores/rates across datasets is meaningless.
    Only {", ".join(CROSS_DATASET_SAFE)} are cross-dataset comparable.
 5. CHECK ANSWERABILITY FIRST. If a field may be absent, consult field_coverage; if the question's
-   scope/time/geography is outside a dataset (dataset_meta.date_from/date_to, exclusions, threshold),
-   REFUSE with the reason rather than returning a misleading number. In particular, if a question
+   scope/time/geography is outside a dataset (dates, exclusions, threshold), REFUSE with the reason
+   rather than returning a misleading number. Dates: the tables hold only processes last updated
+   between dataset_meta.date_from and date_to, so a process that started earlier appears only if it
+   was updated in that range. A question about any period before date_from would get an incomplete
+   count: REFUSE, giving the range. In particular, if a question
    restricts to a value range or category the dataset's threshold/exclusions place ENTIRELY out of
    scope — e.g. amounts below a petty-cash/registration floor, or a sector the dataset excludes —
    REFUSE. Such rows were never collected, so any query returns a misleadingly incomplete result (a

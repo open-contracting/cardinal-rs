@@ -7,8 +7,8 @@ text-to-SQL chatbot over it. The authoritative schema lives in
 **The data is now built by the native Rust `ocdscardinal export`** (see `build.sh`). The original
 DuckDB-over-flatterer-CSV prototype (`build_stopgap.py`) is superseded and kept only for reference —
 the native exporter emits the identical eight-table schema directly from the OCDS JSONL (the only
-value differences are two intentional improvements: `dataset_meta.n_processes` is the exact registry
-count, and the first supplier on consortium awards follows the "keep first of N" array order rather
+value differences are intentional: dates are timestamps, `dataset_meta.n_processes` and
+`date_from`/`date_to` describe the exported data, and the first supplier on consortium awards follows the "keep first of N" array order rather
 than the prototype's min-id).
 
 ## What it builds
@@ -40,7 +40,9 @@ curl -sSL -o data/_raw/publications.json "https://data.open-contracting.org/publ
 ./build.sh
 ```
 
-`--registry` (the registry index) enables `dataset_meta`; `--settings` (per-dataset Cardinal config,
+`--registry` (the registry index) enables `dataset_meta`, whose identity fields come from it; its size
+and date range come from the data read (`date_from`/`date_to` are the earliest and latest release
+`date`, i.e. last update, so a yearly sample also holds processes that started years earlier); `--settings` (per-dataset Cardinal config,
 enabling R018 et al.) enables the precomputed indicator columns; `--meta` supplies the curated scope
 prose the registry doesn't carry. The curated inputs live in `meta/` and `settings/`.
 
@@ -122,6 +124,10 @@ floor must refuse, not return a misleading near-empty result), and added a "name
 breakdowns only when multiple places are explicitly named).
 
 ## Data caveats
+
+- **Dates** are `TIMESTAMP` holding UTC. A value that isn't a valid RFC 3339 date-time (an impossible
+  date like 29 February 2026, or a missing time or offset) is exported as null and counted, with an
+  example, under `invalid_dates` in `_audit.json`. None in this sample.
 
 - **2026 is a partial, in-progress year** — fewer processes and more `pending`/non-final awards
   than a completed year, so indicator coverage is thinner. Fall back to 2024/2023 if the eval
