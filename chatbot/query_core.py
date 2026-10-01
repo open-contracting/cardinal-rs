@@ -258,6 +258,13 @@ class QueryEngine:
             d for d in os.listdir(data_dir) if os.path.isdir(os.path.join(data_dir, d)) and not d.startswith("_")
         )
         self.con = duckdb.connect()
+        # Only the dataset directories are reachable: no other file reads/writes, no extensions, and
+        # the settings can't be changed back. The whitelist is writable, so build.sh makes the files
+        # read-only and _check rejects write statements.
+        allowed = ", ".join(f"'{os.path.join(os.path.abspath(data_dir), d)}/'" for d in self.datasets)
+        self.con.execute(f"SET allowed_directories = [{allowed}]")
+        self.con.execute("SET enable_external_access = false")
+        self.con.execute("SET lock_configuration = true")
         self.table_datasets: dict[str, list[str]] = {}
         for table in SHARED + OPTIONAL:
             present = [d for d in self.datasets if os.path.exists(os.path.join(data_dir, d, f"{table}.parquet"))]
@@ -306,7 +313,10 @@ class QueryEngine:
 
     def run_sql(self, sql: str):
         safe = self._check(sql)
-        cur = self.con.execute(safe)
+        try:
+            cur = self.con.execute(safe)
+        except duckdb.PermissionException as e:
+            raise GuardrailError("Queries may only read the procurement tables, not other files.") from e
         cols = [c[0] for c in cur.description]
         return cols, cur.fetchall(), safe
 

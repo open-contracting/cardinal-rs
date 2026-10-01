@@ -58,6 +58,13 @@ The deterministic layer beneath the (not-yet-wired) LLM:
   `LIMIT` (injected on the AST), no cross-currency/cross-dataset monetary `SUM`, and no cross-dataset
   aggregation of dataset-relative fence indicators. Parsing removes the regex holes — `SUM(a.amount)`
   with a table alias is caught, and a title filter like `LIKE '%create%'` is no longer a false block.
+- The DuckDB connection is also locked down: `allowed_directories` is limited to the dataset
+  directories (`data/<id>/`), then `enable_external_access=false` and `lock_configuration=true`.
+  This stops a read-only `SELECT` from reading other files (e.g. `read_csv('/etc/hosts')`) or
+  installing extensions; DuckDB permission errors surface as guardrail refusals. The whitelisted
+  directories are still writable to DuckDB, so `build.sh` leaves the exported files read-only and
+  the guardrail rejects `COPY`. Opening a `.duckdb` file with `read_only=True` would protect the
+  data at the engine level instead, at the cost of a second copy on disk.
 
 `uv run python chatbot/query_core.py` prints the prompt and runs a self-test.
 

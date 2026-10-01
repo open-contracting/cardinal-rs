@@ -30,6 +30,9 @@ for id in 145 22; do
     22)  publisher="Direccion General de Contrataciones Publicas (DGCP), Portal transaccional"; country="Dominican Republic" ;;
   esac
   echo "== exporting dataset $id =="
+  # The chatbot's DuckDB can write inside its whitelisted directories, so the outputs are left
+  # read-only; unlock them first so the export can overwrite them.
+  [ -d "chatbot/data/$id" ] && chmod -R u+w "chatbot/data/$id"
   "$BIN" export "$RAW/$id/2026.jsonl" \
     --output "chatbot/data/$id" \
     --dataset-id "$id" \
@@ -39,6 +42,8 @@ for id in 145 22; do
     --registry "$REGISTRY" \
     --meta "chatbot/meta/$id.json" \
     --settings "chatbot/settings/$id.ini"
+  chmod 444 "chatbot/data/$id"/*
+  chmod 555 "chatbot/data/$id"
 done
 
 echo "Done. Native Parquet under chatbot/data/<id>/"
