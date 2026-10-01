@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import time
 
 import anthropic
 
@@ -63,6 +64,10 @@ Reply in the structured format. Choose exactly one action:
 If a query you propose is rejected by the guardrail, you'll get the error and one chance to fix it."""
 
 
+# Token counts summed over the loop's model calls; output_tokens includes thinking.
+USAGE_FIELDS = ("input_tokens", "output_tokens", "cache_read_input_tokens", "cache_creation_input_tokens")
+
+
 def _system_blocks(system_prompt: str):
     # One cached block — identical across every question, so it is a stable cache prefix.
     return [{"type": "text", "text": system_prompt + PROTOCOL, "cache_control": {"type": "ephemeral"}}]
@@ -78,12 +83,22 @@ def _parse(response):
 
 
 def solve(question: str, engine: QueryEngine, system_prompt: str, client: anthropic.Anthropic | None = None):
-    """Return a dict: {action, message, sql?, cols?, rows?, attempts, blocked_reason?}."""
-    client = client or anthropic.Anthropic()
+    """Return a dict: {action, message, sql?, cols?, rows?, attempts, blocked_reason?, timing, usage}."""
+    timing = {"model_s": 0.0, "sql_s": 0.0}
+    usage = dict.fromkeys(USAGE_FIELDS, 0)
+    start = time.perf_counter()
+    result = _solve(question, engine, system_prompt, client or anthropic.Anthropic(), timing, usage)
+    timing["total_s"] = time.perf_counter() - start
+    return {**result, "timing": timing, "usage": usage}
+
+
+def _solve(question, engine, system_prompt, client, timing, usage):
+    """Run the question-to-SQL loop, accumulating wall-clock time and token usage across model calls."""
     system = _system_blocks(system_prompt)
     messages = [{"role": "user", "content": question}]
 
     for attempt in range(1, MAX_ATTEMPTS + 1):
+        t0 = time.perf_counter()
         response = client.messages.create(
             model=MODEL,
             max_tokens=MAX_TOKENS,
@@ -92,12 +107,17 @@ def solve(question: str, engine: QueryEngine, system_prompt: str, client: anthro
             system=system,
             messages=messages,
         )
+        timing["model_s"] += time.perf_counter() - t0
+        for field in USAGE_FIELDS:
+            usage[field] += getattr(response.usage, field, None) or 0
         out = _parse(response)
         if out["action"] != "sql":
             return {**out, "attempts": attempt}
 
+        t0 = time.perf_counter()
         try:
             cols, rows, safe = engine.run_sql(out["sql"])
+            timing["sql_s"] += time.perf_counter() - t0
             return {
                 "action": "sql",
                 "message": out.get("message", ""),
@@ -107,6 +127,7 @@ def solve(question: str, engine: QueryEngine, system_prompt: str, client: anthro
                 "attempts": attempt,
             }
         except GuardrailError as e:
+            timing["sql_s"] += time.perf_counter() - t0
             if attempt == MAX_ATTEMPTS:
                 return {
                     "action": "blocked",

@@ -55,14 +55,30 @@ def render(result):
         note = result.get("message", "")
         if note:
             print(f"\n{note}")
-        if result.get("attempts", 1) > 1:
-            print(f"\033[2m(repaired after {result['attempts']} attempts)\033[0m")
     elif action == "clarify":
         print(f"\n❓ {result['message']}")
     elif action == "blocked":
         print(f"\n⛔ Guardrail blocked the query: {result['message']}")
     else:  # refuse
         print(f"\n⚠️  {result['message']}")
+    if timing := result.get("timing"):
+        attempts = result.get("attempts", 1)
+        print(
+            f"\033[2m({timing['total_s']:.1f} s: model {timing['model_s']:.1f} s, SQL {timing['sql_s']:.2f} s; "
+            f"{attempts} attempt{'s' if attempts > 1 else ''})\033[0m"
+        )
+    if usage := result.get("usage"):
+        print(
+            f"\033[2m(tokens: {usage['input_tokens']:,} in, {usage['output_tokens']:,} out incl. thinking, "
+            f"{usage['cache_read_input_tokens']:,} cache read, {usage['cache_creation_input_tokens']:,} cache write)\033[0m"
+        )
+
+
+def ask(question, eng, prompt, client):
+    try:
+        render(solve(question, eng, prompt, client))
+    except anthropic.APIStatusError as e:  # surface API/billing errors without a traceback
+        print(f"\n[API error {e.status_code}] {e.message}")
 
 
 def main():
@@ -74,7 +90,7 @@ def main():
 
     oneshot = " ".join(sys.argv[1:]).strip()
     if oneshot:
-        render(solve(oneshot, eng, prompt, client))
+        ask(oneshot, eng, prompt, client)
         return
 
     print(f"OCDS procurement chatbot (stopgap POC) — datasets: {', '.join(eng.datasets)}.")
@@ -89,10 +105,7 @@ def main():
             break
         if not q:
             continue
-        try:
-            render(solve(q, eng, prompt, client))
-        except anthropic.APIStatusError as e:  # surface API/billing errors without a traceback
-            print(f"\n[API error {e.status_code}] {e.message}")
+        ask(q, eng, prompt, client)
         print()
 
 
