@@ -82,17 +82,23 @@ def _parse(response):
     return json.loads(text)
 
 
-def solve(question: str, engine: QueryEngine, system_prompt: str, client: anthropic.Anthropic | None = None):
+def solve(
+    question: str,
+    engine: QueryEngine,
+    system_prompt: str,
+    client: anthropic.Anthropic | None = None,
+    model: str = MODEL,
+):
     """Return a dict: {action, message, sql?, cols?, rows?, attempts, blocked_reason?, timing, usage}."""
     timing = {"model_s": 0.0, "sql_s": 0.0}
     usage = dict.fromkeys(USAGE_FIELDS, 0)
     start = time.perf_counter()
-    result = _solve(question, engine, system_prompt, client or anthropic.Anthropic(), timing, usage)
+    result = _solve(question, engine, system_prompt, client or anthropic.Anthropic(), model, timing, usage)
     timing["total_s"] = time.perf_counter() - start
     return {**result, "timing": timing, "usage": usage}
 
 
-def _solve(question, engine, system_prompt, client, timing, usage):
+def _solve(question, engine, system_prompt, client, model, timing, usage):
     """Run the question-to-SQL loop, accumulating wall-clock time and token usage across model calls."""
     system = _system_blocks(system_prompt)
     messages = [{"role": "user", "content": question}]
@@ -100,7 +106,7 @@ def _solve(question, engine, system_prompt, client, timing, usage):
     for attempt in range(1, MAX_ATTEMPTS + 1):
         t0 = time.perf_counter()
         response = client.messages.create(
-            model=MODEL,
+            model=model,
             max_tokens=MAX_TOKENS,
             thinking={"type": "adaptive"},
             output_config={"effort": "medium", "format": {"type": "json_schema", "schema": RESPONSE_SCHEMA}},

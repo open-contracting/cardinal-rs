@@ -19,6 +19,7 @@ Run: uv run python chatbot/eval/run_eval.py
 
 from __future__ import annotations
 
+import datetime
 import json
 import os
 import sys
@@ -28,6 +29,34 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from query_core import GuardrailError, QueryEngine, build_system_prompt
 
 GOLD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gold.json")
+RUN_LOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "runs.jsonl")
+
+# List prices in USD per million tokens, from platform.claude.com/docs/en/about-claude/pricing (2026-10-01).
+PRICES_PER_MTOK = {
+    "claude-sonnet-5": {
+        "input_tokens": 2.00,
+        "output_tokens": 10.00,
+        "cache_read_input_tokens": 0.20,
+        "cache_creation_input_tokens": 2.50,
+    },
+    "claude-sonnet-5-5": {
+        "input_tokens": 2.00,
+        "output_tokens": 10.00,
+        "cache_read_input_tokens": 0.20,
+        "cache_creation_input_tokens": 2.50,
+    },
+}
+USAGE_FIELDS = tuple(PRICES_PER_MTOK["claude-sonnet-5"])
+
+
+def cost_usd(usage, model):
+    """Return the list-price cost, or None for a model without a price entry."""
+    prices = PRICES_PER_MTOK.get(model)
+    return None if prices is None else sum(usage.get(field, 0) * price for field, price in prices.items()) / 1e6
+
+
+def fmt_cost(cost):
+    return "$?" if cost is None else f"${cost:.4f}"
 
 
 # --- assertions on a (cols, rows) result ------------------------------------
@@ -110,7 +139,8 @@ def check_probe(eng, probe):
 
 
 # --- model mode: score the Claude Sonnet text-to-SQL agent ------------------
-def run_model(eng, items):
+def run_model(eng, items, stats, model):
+    """Score each item with the agent, appending its timing and token usage to ``stats``."""
     import anthropic  # noqa: PLC0415
     from agent import solve  # noqa: PLC0415
 
@@ -120,7 +150,8 @@ def run_model(eng, items):
     for it in items:
         cat = it["category"]
         try:
-            r = solve(it["question"], eng, prompt, client)
+            r = solve(it["question"], eng, prompt, client, model=model)
+            stats[it["id"]] = {"timing": r["timing"], "usage": r["usage"]}
             action = r["action"]
             if cat == "answerable":
                 if action == "sql":
@@ -184,6 +215,46 @@ def run_reference(eng, items):
     return results
 
 
+def report_cost(stats, counts, failed, model):
+    """Print run totals for time, tokens and cost, and append them to RUN_LOG."""
+    usage = {field: sum(s["usage"][field] for s in stats.values()) for field in USAGE_FIELDS}
+    total_s = sum(s["timing"]["total_s"] for s in stats.values())
+    model_s = sum(s["timing"]["model_s"] for s in stats.values())
+    cost = cost_usd(usage, model)
+    print(f"time: {total_s:.0f}s total ({model_s:.0f}s in the model), {total_s / len(stats):.1f}s per question")
+    print(
+        f"tokens: {usage['input_tokens']:,} in, {usage['output_tokens']:,} out incl. thinking, "
+        f"{usage['cache_read_input_tokens']:,} cache read, {usage['cache_creation_input_tokens']:,} cache write"
+    )
+    if cost is None:
+        print(f"cost: no price entry for {model}")
+    else:
+        print(f"cost: ${cost:.3f} total, ${cost / len(stats):.4f} per question ({model} list prices)")
+    with open(RUN_LOG, "a") as f:
+        f.write(
+            json.dumps(
+                {
+                    "at": datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds"),
+                    "items": len(stats),
+                    "counts": counts,
+                    "failed": failed,
+                    "total_s": round(total_s, 1),
+                    "usage": usage,
+                    "model": model,
+                    "cost_usd": None if cost is None else round(cost, 4),
+                }
+            )
+            + "\n"
+        )
+    print(f"(appended to {os.path.relpath(RUN_LOG)})")
+
+
+def agent_model_default():
+    from agent import MODEL  # noqa: PLC0415
+
+    return MODEL
+
+
 def main():
     import argparse  # noqa: PLC0415
 
@@ -193,27 +264,37 @@ def main():
         action="store_true",
         help="run the Claude Sonnet text-to-SQL agent (needs ANTHROPIC_API_KEY) instead of reference mode",
     )
+    ap.add_argument("--agent-model", default=agent_model_default(), help="model for --model (default: %(default)s)")
     args = ap.parse_args()
 
     eng = QueryEngine()
     gold = json.load(open(GOLD))
     items = gold["items"]
     prompt = build_system_prompt(eng)
-    mode = "model (claude-sonnet-5)" if args.model else "reference"
+    mode = f"model ({args.agent_model})" if args.model else "reference"
     print(
         f"Mode: {mode}. System prompt: {len(prompt)} chars (~{len(prompt) // 4} tokens). "
         f"Gold items: {len(items)}. Datasets: {', '.join(eng.datasets)}.\n"
     )
 
-    results = run_model(eng, items) if args.model else run_reference(eng, items)
+    stats = {}
+    results = run_model(eng, items, stats, args.agent_model) if args.model else run_reference(eng, items)
     width = max(len(r[0]) for r in results)
     counts = {}
     for rid, cat, status, detail in results:
         counts[status] = counts.get(status, 0) + 1
         mark = {"PASS": "✓", "FAIL": "✗", "ERROR": "✗", "PENDING_MODEL": "·"}.get(status, "?")
-        print(f"  {mark} {rid:<{width}}  [{cat:<16}] {status:<13} {detail}")
+        cost = ""
+        if rid in stats:
+            s = stats[rid]
+            cost = f"{s['timing']['total_s']:5.1f}s {fmt_cost(cost_usd(s['usage'], args.agent_model))}  "
+        print(f"  {mark} {rid:<{width}}  [{cat:<16}] {status:<13} {cost}{detail}")
 
     print("\nsummary:", ", ".join(f"{k}={v}" for k, v in sorted(counts.items())))
+    if stats:
+        report_cost(
+            stats, counts, [rid for rid, _, status, _ in results if status in ("FAIL", "ERROR")], args.agent_model
+        )
     hard_fail = counts.get("FAIL", 0) + counts.get("ERROR", 0)
     if hard_fail:
         print(f"\n{hard_fail} hard failure(s).")

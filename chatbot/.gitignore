@@ -5,3 +5,6 @@ data/
 # patterns would otherwise silently drop (settings/22.ini, meta/22.json).
 !settings/*.ini
 !meta/*.json
+
+# Local eval cost/timing history.
+eval/runs.jsonl
