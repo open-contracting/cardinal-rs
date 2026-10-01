@@ -50,7 +50,12 @@ The deterministic layer beneath the (not-yet-wired) LLM:
 
 - `build_system_prompt()` generates "the model's whole world" from the Parquet — dataset catalog,
   coverage highlights, a terse per-column data dictionary, and the FINDINGS Part 5 cross-dataset
-  rules (~2.1k tokens).
+  rules (~3.3k tokens).
+- The prompt also lists what each publication contains that the tables omit (line items, documents,
+  budgets, amendment details, related processes…), generated from `field_coverage` against the
+  curated `OMITTED_FAMILIES`. Rule 9 tells the model to refuse those questions by pointing to the
+  source publication's link, rather than saying the data doesn't exist. Add a family there when the
+  exporter drops a new part of the OCDS schema.
 - `QueryEngine` is a read-only DuckDB layer; each logical table is a view UNION-ing every dataset
   that publishes it (`bid`/`lot` appear only where present). `run_sql()` enforces the safety rules
   via an **AST-based guardrail** (`sqlglot`, DuckDB dialect) — it parses the query and reasons over

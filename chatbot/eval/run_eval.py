@@ -135,6 +135,17 @@ def check_probe(eng, probe):
             f"field_coverage {probe['field_path_like']} in {probe['dataset_id']}: "
             f"{'absent — refusal grounded' if absent else 'PRESENT — not grounded'}",
         )
+    if probe["check"] == "coverage_present":
+        _, rows, _ = eng.run_sql(
+            f"SELECT coverage FROM field_coverage WHERE dataset_id='{probe['dataset_id']}' "
+            f"AND field_path = '{probe['field_path']}'"
+        )
+        present = len(rows) > 0
+        return (
+            present,
+            f"field_coverage {probe['field_path']} in {probe['dataset_id']}: "
+            f"{'present — not in the tables' if present else 'ABSENT — nothing to point to'}",
+        )
     return (False, f"unknown probe {probe['check']!r}")
 
 
@@ -171,6 +182,13 @@ def run_model(eng, items, stats, model):
                 ok = action in ("refuse", "blocked")
                 status = "PASS" if ok else "FAIL"
                 detail = f"{action}: {r.get('message', '')[:80]}"
+            elif cat == "refuse_in_source":
+                # The refusal must also point to the source publication.
+                message = r.get("message") or ""
+                missing = [w for w in it["expected_message_contains"] if w.lower() not in message.lower()]
+                ok = action == "refuse" and not missing
+                status = "PASS" if ok else "FAIL"
+                detail = f"{action}{f' (missing {missing})' if missing else ''}: {message[:80]}"
             elif cat == "clarify":
                 status = "PASS" if action == "clarify" else "FAIL"
                 detail = f"{action}: {r.get('message', '')[:80]}"
@@ -201,7 +219,7 @@ def run_reference(eng, items):
                     ok = want.lower() in str(e).lower()
                     status = "PASS" if ok else "FAIL"
                     detail = f"blocked; reason {'matches' if ok else 'MISMATCH (want ' + want + ')'}"
-            elif cat in ("refuse_scope", "refuse_temporal"):
+            elif cat in ("refuse_scope", "refuse_temporal", "refuse_in_source"):
                 ok, detail = check_probe(eng, it["probe"])
                 status = "PASS" if ok else "FAIL"
                 detail = "grounded: " + detail

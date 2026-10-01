@@ -159,6 +159,37 @@ OPTIONAL = ["bid", "lot"]
 FENCE_INDICATORS = ["r024", "r025", "r028", "r030", "r035", "r036", "r038", "r048", "r058"]
 CROSS_DATASET_SAFE = ["single_bid", "r003"]
 
+PUBLICATION_URL = "https://data.open-contracting.org/en/publication/{}"
+
+# OCDS field families the tables omit, with the source paths whose coverage shows a dataset publishes them.
+OMITTED_FAMILIES = [
+    (
+        "line items (description, classification, quantity, unit)",
+        ["/tender/items", "/awards[]/items", "/contracts[]/items"],
+    ),
+    ("documents (titles, types, URLs)", ["/planning/documents", "/tender/documents", "/contracts[]/documents"]),
+    ("budget (amount, description, project id)", ["/planning/budget"]),
+    ("planning rationale", ["/planning/rationale"]),
+    (
+        "contract amendments (date, description, rationale; the tables have only has_amendments)",
+        ["/contracts[]/amendments"],
+    ),
+    ("related processes (e.g. framework agreements and their call-offs)", ["/relatedProcesses"]),
+    ("framework-agreement flag", ["/tender/techniques/hasFrameworkAgreement"]),
+    ("sustainability criteria", ["/tender/sustainability"]),
+    ("submission terms", ["/tender/submissionTerms"]),
+    ("party details (classifications, gender, scale)", ["/parties[]/details"]),
+    (
+        "party contact points and full addresses (the tables have only region)",
+        ["/parties[]/contactPoint", "/parties[]/address"],
+    ),
+    ("free-text descriptions", ["/tender/description", "/awards[]/description", "/contracts[]/description"]),
+    (
+        "other periods (contract start, award period, contract duration)",
+        ["/contracts[]/period/startDate", "/tender/awardPeriod", "/tender/contractPeriod"],
+    ),
+]
+
 # The guardrail parses SQL to an AST (sqlglot) rather than pattern-matching text.
 # Allowed root node types (a read-only query); anything else is rejected.
 _QUERY_NODES = tuple(
@@ -244,6 +275,11 @@ RULES = f"""\
    For a "typical / how many X per Y" question, lead with the median (or the distribution). If you
    also show the mean, pair it with the median and say the mean is inflated by the tail — never quote
    the average alone as "typical".
+9. THE PUBLICATION IS BIGGER THAN THESE TABLES. "In the source publication, not in these tables" lists
+   data each dataset publishes that the tables omit. Never say a dataset lacks data listed there. If a
+   question needs it, REFUSE, but say the source publication contains it (name the field and how often
+   it appears) and give that dataset's publication link. If the tables answer part of the question
+   (e.g. has_amendments), answer that part with SQL and mention the rest in the explanation.
 """
 
 
@@ -340,6 +376,31 @@ class QueryEngine:
             out[did] = dict(rows)
         return out
 
+    def omitted_families(self):
+        """Per dataset, the omitted field families it publishes, as (label, [(path, present, coverage)])."""
+        paths = [p for _, ps in OMITTED_FAMILIES for p in ps]
+        out = {}
+        for did in self.datasets:
+            rows = self.con.execute(
+                f"SELECT field_path, processes_present, coverage FROM field_coverage WHERE dataset_id='{did}' "
+                f"AND field_path IN ({','.join(repr(p) for p in paths)})"
+            ).fetchall()
+            found = {path: (present, cov) for path, present, cov in rows}
+            out[did] = [
+                (label, [(p, *found[p]) for p in ps if p in found])
+                for label, ps in OMITTED_FAMILIES
+                if any(p in found for p in ps)
+            ]
+        return out
+
+
+def _presence(path, present, coverage):
+    """Describe how often a path appears: a share of processes, or a count of its parent array's elements."""
+    if "[]" in path:
+        parent = path.split("[]")[0].rsplit("/", 1)[-1]
+        return f"{path} on {present:,} {parent}"
+    return f"{path} in {coverage:.0%} of processes"
+
 
 def build_system_prompt(engine: QueryEngine | None = None) -> str:
     engine = engine or QueryEngine()
@@ -362,6 +423,15 @@ def build_system_prompt(engine: QueryEngine | None = None) -> str:
     for did, c in cov.items():
         parts = ", ".join(f"{k.split('/')[-1] or k}={v:.2f}" for k, v in sorted(c.items()))
         lines.append(f"- {did}: {parts}")
+
+    lines += [
+        "",
+        "## In the source publication, not in these tables (unqueryable here; see rule 9)",
+        "Coverage is for the sample year. Each dataset's full publication: " + PUBLICATION_URL.format("<dataset_id>"),
+    ]
+    for did, families in engine.omitted_families().items():
+        lines.append(f"- {did}:")
+        lines += [f"    {label}: {'; '.join(_presence(*f) for f in found)}" for label, found in families]
 
     lines += ["", "## Tables & columns"]
     for table, (desc, cols) in TABLE_DOCS.items():

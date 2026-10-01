@@ -253,6 +253,22 @@
       "note": "the dataset directories are whitelisted, so DuckDB could write there; COPY is rejected as a write and build.sh makes the files read-only",
       "bad_sql": "COPY (SELECT 1 AS x) TO 'data/145/award.parquet' (FORMAT parquet)",
       "expected_reason_contains": "read-only"
+    },
+    {
+      "id": "in_source_rwanda_item_classifications",
+      "category": "refuse_in_source",
+      "question": "Which item classifications appear most often in Rwanda tenders?",
+      "note": "line items aren't in the tables, but Rwanda publishes /tender/items for 40% of processes; the refusal should say so and link the publication",
+      "probe": {"check": "coverage_present", "dataset_id": "145", "field_path": "/tender/items[]/classification"},
+      "expected_message_contains": ["item", "data.open-contracting.org/en/publication/145"]
+    },
+    {
+      "id": "in_source_domrep_sustainability",
+      "category": "refuse_in_source",
+      "question": "How many Dominican Republic tenders include sustainability criteria?",
+      "note": "sustainability isn't in the tables, but the Dominican Republic publishes /tender/sustainability for 17% of processes",
+      "probe": {"check": "coverage_present", "dataset_id": "22", "field_path": "/tender/sustainability"},
+      "expected_message_contains": ["sustainab", "data.open-contracting.org/en/publication/22"]
     }
   ]
 }
