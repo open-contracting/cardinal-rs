@@ -50,7 +50,7 @@ TABLE_DOCS = {
             "main_procurement_category": "goods|works|services",
             "tender_title": "free text",
             "tender_status": "FILTER: exclude cancelled for measures",
-            "tender_start_date/tender_end_date": "tenderPeriod",
+            "tender_start_date/tender_end_date": "tenderPeriod (TIMESTAMP, UTC, like all *_date columns)",
             "first_award_date/last_award_date": "min/max over the process's awards",
             "tender_value_amount/tender_value_currency": "estimated value (nullable, sparse)",
             "num_tenderers": "from tender/numberOfTenderers",

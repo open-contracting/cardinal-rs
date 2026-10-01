@@ -59,6 +59,8 @@ def render(result):
         print(f"\n❓ {result['message']}")
     elif action == "blocked":
         print(f"\n⛔ Guardrail blocked the query: {result['message']}")
+    elif action == "error":
+        print(f"\n\033[2m{result['sql']}\033[0m\n💥 The query failed: {result['message']}")
     else:  # refuse
         print(f"\n⚠️  {result['message']}")
     if timing := result.get("timing"):

@@ -21,7 +21,10 @@ use std::path::Path;
 use std::sync::Arc;
 
 use anyhow::{Context, Result};
-use arrow::array::{ArrayRef, BooleanArray, Float64Array, Int64Array, RecordBatch, StringArray};
+use arrow::array::{
+    ArrayRef, BooleanArray, Float64Array, Int64Array, RecordBatch, StringArray, TimestampMicrosecondArray,
+};
+use chrono::DateTime;
 use indexmap::IndexMap;
 use parquet::arrow::ArrowWriter;
 use serde_json::{Map, Value, json};
@@ -53,6 +56,15 @@ fn text(value: &Value, pointer: &str) -> Option<String> {
 
 fn int(value: &Value, pointer: &str) -> Option<i64> {
     value.pointer(pointer).and_then(Value::as_i64)
+}
+
+/// The RFC 3339 date-time at `pointer` as UTC microseconds since the epoch; `None` if absent or unparseable.
+fn timestamp(value: &Value, pointer: &str) -> Option<i64> {
+    value
+        .pointer(pointer)
+        .and_then(Value::as_str)
+        .and_then(|s| DateTime::parse_from_rfc3339(s).ok())
+        .map(|d| d.timestamp_micros())
 }
 
 fn float(value: &Value, pointer: &str) -> Option<f64> {
@@ -221,10 +233,10 @@ struct ProcessRow {
     main_procurement_category: Option<String>,
     tender_title: Option<String>,
     tender_status: Option<String>,
-    tender_start_date: Option<String>,
-    tender_end_date: Option<String>,
-    first_award_date: Option<String>,
-    last_award_date: Option<String>,
+    tender_start_date: Option<i64>,
+    tender_end_date: Option<i64>,
+    first_award_date: Option<i64>,
+    last_award_date: Option<i64>,
     tender_value_amount: Option<f64>,
     tender_value_currency: Option<String>,
     num_tenderers: Option<i64>,
@@ -249,8 +261,8 @@ impl ProcessRow {
         // Single pass over the awards for the counts, dates, and active-award money aggregate.
         let mut supplier_count = 0i64;
         let mut has_pending_award = false;
-        let mut first_award_date: Option<String> = None;
-        let mut last_award_date: Option<String> = None;
+        let mut first_award_date: Option<i64> = None;
+        let mut last_award_date: Option<i64> = None;
         let mut active_amount: Option<f64> = None;
         let mut active_currency: Option<String> = None;
         let mut active_mixed = false;
@@ -261,13 +273,9 @@ impl ProcessRow {
                 if status.as_deref() == Some("pending") {
                     has_pending_award = true;
                 }
-                if let Some(date) = text(award, "/date") {
-                    if first_award_date.as_ref().is_none_or(|m| &date < m) {
-                        first_award_date = Some(date.clone());
-                    }
-                    if last_award_date.as_ref().is_none_or(|m| &date > m) {
-                        last_award_date = Some(date);
-                    }
+                if let Some(date) = timestamp(award, "/date") {
+                    first_award_date = Some(first_award_date.map_or(date, |m| m.min(date)));
+                    last_award_date = Some(last_award_date.map_or(date, |m| m.max(date)));
                 }
                 if status.as_deref() == Some("active") {
                     if let Some(amount) = float(award, "/value/amount") {
@@ -303,8 +311,8 @@ impl ProcessRow {
             main_procurement_category: dims.main_procurement_category.clone(),
             tender_title: text(value, "/tender/title"),
             tender_status: text(value, "/tender/status"),
-            tender_start_date: text(value, "/tender/tenderPeriod/startDate"),
-            tender_end_date: text(value, "/tender/tenderPeriod/endDate"),
+            tender_start_date: timestamp(value, "/tender/tenderPeriod/startDate"),
+            tender_end_date: timestamp(value, "/tender/tenderPeriod/endDate"),
             first_award_date,
             last_award_date,
             tender_value_currency: text(value, "/tender/value/currency"),
@@ -331,7 +339,7 @@ struct AwardRow {
     ocid: Option<String>,
     award_id: Option<String>,
     award_status: Option<String>,
-    award_date: Option<String>,
+    award_date: Option<i64>,
     supplier_id: Option<String>,
     supplier_name: Option<String>,
     supplier_count: i64,
@@ -351,7 +359,7 @@ impl AwardRow {
             ocid: dims.ocid.clone(),
             award_id: text(award, "/id"),
             award_status: text(award, "/status"),
-            award_date: text(award, "/date"),
+            award_date: timestamp(award, "/date"),
             supplier_id: first.and_then(|s| text(s, "/id")),
             supplier_name: first.and_then(|s| text(s, "/name")),
             supplier_count: suppliers.map_or(0, |s| i64::try_from(s.len()).unwrap_or(i64::MAX)),
@@ -373,8 +381,8 @@ struct ContractRow {
     contract_status: Option<String>,
     value_amount: Option<f64>,
     value_currency: Option<String>,
-    date_signed: Option<String>,
-    period_end: Option<String>,
+    date_signed: Option<i64>,
+    period_end: Option<i64>,
 }
 
 impl ContractRow {
@@ -386,8 +394,8 @@ impl ContractRow {
             contract_status: text(contract, "/status"),
             value_amount: float(contract, "/value/amount"),
             value_currency: text(contract, "/value/currency"),
-            date_signed: text(contract, "/dateSigned"),
-            period_end: text(contract, "/period/endDate"),
+            date_signed: timestamp(contract, "/dateSigned"),
+            period_end: timestamp(contract, "/period/endDate"),
         }
     }
 }
@@ -731,6 +739,10 @@ fn col_i64(values: impl Iterator<Item = Option<i64>>) -> ArrayRef {
 fn col_f64(values: impl Iterator<Item = Option<f64>>) -> ArrayRef {
     Arc::new(values.collect::<Float64Array>())
 }
+/// Timestamps without a time zone, holding UTC, so that date functions don't depend on the reader's zone.
+fn col_ts(values: impl Iterator<Item = Option<i64>>) -> ArrayRef {
+    Arc::new(values.collect::<TimestampMicrosecondArray>())
+}
 fn col_bool(values: impl Iterator<Item = Option<bool>>) -> ArrayRef {
     Arc::new(values.collect::<BooleanArray>())
 }
@@ -849,22 +861,10 @@ fn contracting_process_columns<'a>(
             "has_tender_value",
             col_bool(rows.iter().map(|r| Some(r.has_tender_value))),
         ),
-        (
-            "tender_start_date",
-            col_str(rows.iter().map(|r| r.tender_start_date.clone())),
-        ),
-        (
-            "tender_end_date",
-            col_str(rows.iter().map(|r| r.tender_end_date.clone())),
-        ),
-        (
-            "first_award_date",
-            col_str(rows.iter().map(|r| r.first_award_date.clone())),
-        ),
-        (
-            "last_award_date",
-            col_str(rows.iter().map(|r| r.last_award_date.clone())),
-        ),
+        ("tender_start_date", col_ts(rows.iter().map(|r| r.tender_start_date))),
+        ("tender_end_date", col_ts(rows.iter().map(|r| r.tender_end_date))),
+        ("first_award_date", col_ts(rows.iter().map(|r| r.first_award_date))),
+        ("last_award_date", col_ts(rows.iter().map(|r| r.last_award_date))),
         (
             "tender_value_amount",
             col_f64(rows.iter().map(|r| r.tender_value_amount)),
@@ -911,7 +911,7 @@ fn award_columns<'a>(
         ("ocid", col_str(rows.iter().map(|r| r.ocid.clone()))),
         ("award_id", col_str(rows.iter().map(|r| r.award_id.clone()))),
         ("award_status", col_str(rows.iter().map(|r| r.award_status.clone()))),
-        ("award_date", col_str(rows.iter().map(|r| r.award_date.clone()))),
+        ("award_date", col_ts(rows.iter().map(|r| r.award_date))),
         ("supplier_id", col_str(rows.iter().map(|r| r.supplier_id.clone()))),
         ("supplier_name", col_str(rows.iter().map(|r| r.supplier_name.clone()))),
         (
@@ -963,14 +963,8 @@ fn contract_columns<'a>(rows: &'a [ContractRow], meta: &'a ExportMeta) -> Vec<(&
             "contract_value_currency",
             col_str(rows.iter().map(|r| r.value_currency.clone())),
         ),
-        (
-            "contract_date_signed",
-            col_str(rows.iter().map(|r| r.date_signed.clone())),
-        ),
-        (
-            "contract_period_end",
-            col_str(rows.iter().map(|r| r.period_end.clone())),
-        ),
+        ("contract_date_signed", col_ts(rows.iter().map(|r| r.date_signed))),
+        ("contract_period_end", col_ts(rows.iter().map(|r| r.period_end))),
         ("dataset_id", col_const_str(&meta.dataset_id, n)),
         ("country", col_const_str(&meta.country, n)),
         ("year", col_const_i64(meta.year, n)),

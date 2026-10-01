@@ -20,6 +20,7 @@ import sys
 import time
 
 import anthropic
+import duckdb
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -27,7 +28,7 @@ from query_core import GuardrailError, QueryEngine, build_system_prompt
 
 MODEL = "claude-sonnet-5"
 MAX_TOKENS = 2048
-MAX_ATTEMPTS = 2  # one initial try + one guardrail-repair retry
+MAX_ATTEMPTS = 2  # one initial try + one repair retry after a guardrail or SQL error
 
 # The model answers ONLY in this shape (structured outputs guarantees valid JSON).
 RESPONSE_SCHEMA = {
@@ -132,24 +133,18 @@ def _solve(question, engine, system_prompt, client, model, timing, usage):
                 "rows": rows,
                 "attempts": attempt,
             }
-        except GuardrailError as e:
+        except (GuardrailError, duckdb.Error) as e:
             timing["sql_s"] += time.perf_counter() - t0
+            blocked = isinstance(e, GuardrailError)
             if attempt == MAX_ATTEMPTS:
-                return {
-                    "action": "blocked",
-                    "message": str(e),
-                    "sql": out["sql"],
-                    "blocked_reason": str(e),
-                    "attempts": attempt,
-                }
-            # Feed the guardrail error back and let the model repair once.
+                result = {"action": "blocked" if blocked else "error", "message": str(e), "sql": out["sql"]}
+                if blocked:
+                    result["blocked_reason"] = str(e)
+                return {**result, "attempts": attempt}
+            # Feed the error back and let the model repair once.
+            failure = "The guardrail rejected that SQL" if blocked else "DuckDB couldn't run that SQL"
             messages.append({"role": "assistant", "content": response.content})
-            messages.append(
-                {
-                    "role": "user",
-                    "content": f"The guardrail rejected that SQL: {e}\nFix it or switch to refuse/clarify.",
-                }
-            )
+            messages.append({"role": "user", "content": f"{failure}: {e}\nFix it or switch to refuse/clarify."})
     return {"action": "refuse", "message": "exhausted attempts", "attempts": MAX_ATTEMPTS}
 
 
