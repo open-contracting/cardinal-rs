@@ -48,7 +48,7 @@ prose the registry doesn't carry. The curated inputs live in `meta/` and `settin
 
 ## Query core (`query_core.py`)
 
-The deterministic layer beneath the (not-yet-wired) LLM:
+The deterministic layer beneath the LLM agent:
 
 - `build_system_prompt()` generates "the model's whole world" from the Parquet — dataset catalog,
   coverage highlights, a terse per-column data dictionary, and the FINDINGS Part 5 cross-dataset
@@ -99,8 +99,9 @@ case); `eval/run_eval.py` scores it.
   question and scores its answer/refusal/clarification against the gold. Needs `ANTHROPIC_API_KEY`.
 
 ```bash
-uv run python chatbot/eval/run_eval.py            # reference mode (no API key) — 15/16, clarify awaits the LLM
-ANTHROPIC_API_KEY=... uv run python chatbot/eval/run_eval.py --model   # model mode — 16/16
+uv run python chatbot/eval/run_eval.py            # reference mode (no API key); clarify items await the LLM
+ANTHROPIC_API_KEY=... uv run python chatbot/eval/run_eval.py --model   # model mode
+ANTHROPIC_API_KEY=... uv run python chatbot/eval/run_eval.py --model --agent-model claude-sonnet-5-5   # compare a model
 ```
 
 Assertions are **value-based and column-name-agnostic** (the model writes free-form SQL and picks
@@ -108,14 +109,20 @@ its own aliases), so they check the values/structure of the result, not exact co
 gold items accept more than one correct behavior: `lots_absent_domrep_coverage` accepts either an
 empty coverage query or a "not published" refusal; refusal items pass on a model refusal *or* a
 guardrail block. Note the agent is **not deterministic** (adaptive thinking, no temperature control),
-so run-to-run wording varies — the last full run scored **16/16**.
+so run-to-run wording varies — the last full run scored **37/37**.
+
+Model mode prints each item's time and cost, then the run's time, tokens and cost at list prices
+(`PRICES_PER_MTOK` in `run_eval.py`; a model without a price shows no cost), and appends a summary
+with the failed item ids to `eval/runs.jsonl` (gitignored), to track cost and flakiness over runs.
+`refuse_in_source` items also check that the refusal names the source data and links the publication.
 
 ## Agent (`agent.py`)
 
 The Claude text-to-SQL loop: question → `claude-sonnet-5` (adaptive thinking) with the generated
 system prompt (prompt-cached) → the model answers in a small structured protocol
-(`sql` | `refuse` | `clarify`) → `sql` is executed through the guardrail, and a guardrail error is
-fed back once so the model can repair its query. `uv run python chatbot/agent.py` runs a smoke test.
+(`sql` | `refuse` | `clarify`) → `sql` is executed through the guardrail, and a guardrail or DuckDB
+error is fed back once so the model can repair its query. The CLI shows each answer's time and token
+usage. `uv run python chatbot/agent.py` runs a smoke test.
 
 **Eval-driven prompt tuning so far** (all general, matching FINDINGS Part 5 — not gold-specific):
 sharpened the threshold/exclusion refusal rule (a value range entirely below a dataset's petty-cash

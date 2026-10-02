@@ -360,7 +360,9 @@ ask" — which produces the most dangerous answers (a plausible number that is s
 the scope/threshold/exclusion/temporal metadata lets the bot refuse these. Distinct failure mode ⇒
 distinct refusal ⇒ a distinct eval gold type (**scope-mismatch**).
 
-**Hand-curated `dataset_meta` (from the registry JSON-LD, 2026-07 snapshot):**
+**Hand-curated `dataset_meta` (from the registry JSON-LD, 2026-07 snapshot):** `date_from`/`date_to`
+and `n_processes` below are the registry's whole-publication values; the exporter instead writes the
+release-date range and process count of the data it reads, which match these only for a full build.
 
 | field | 145 Rwanda RPPA | 22 Dominican Rep. DGCP |
 |---|---|---|

@@ -13,8 +13,7 @@ Two responsibilities, both independent of any particular LLM:
    (read-only, mandatory LIMIT, no cross-currency SUM, no cross-dataset
    aggregation of dataset-relative fence indicators).
 
-The LLM loop that turns a question into SQL is deliberately NOT here yet — see
-the handoff note in chatbot/README.md.
+The LLM loop that turns a question into SQL is in agent.py.
 
 Run `uv run python chatbot/query_core.py` for a self-test (prints the prompt,
 runs sample queries, demonstrates a refusal).
@@ -79,7 +78,7 @@ TABLE_DOCS = {
             "supplier_count": "number of suppliers on the award",
             "supplier_truncated": "true when supplier_count>1 (only the first is shown here)",
             "amount/currency": "award value (null for datasets whose awards carry no value)",
-            "lot_id/lot_multi": "related lot (null in this stopgap — relatedLots absent from CSV)",
+            "lot_id/lot_multi": "related lot (always null: relatedLots is not resolved yet)",
             "dataset_id/country/year/procurement_method/main_procurement_category/buyer_id/buyer_name": "denormalized dims",
         },
     ),
@@ -106,7 +105,7 @@ TABLE_DOCS = {
             "amount/currency": "bid value",
             "tenderer_id/tenderer_name": "the tenderer (1:1 with the bid here)",
             "tenderer_count/tenderer_truncated": "tenderers per bid (=1 in this sample)",
-            "lot_id": "related lot (null in this stopgap)",
+            "lot_id": "related lot (always null: relatedLots is not resolved yet)",
             "dataset_id/country/year/procurement_method/buyer_id": "denormalized dims",
         },
     ),
