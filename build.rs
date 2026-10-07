@@ -31,7 +31,7 @@ fn main() {
             r#"
 #[test]
 fn coverage_{name}() {{
-    check_coverage("coverage/{name}")
+    check_coverage("coverage/{name}");
 }}
 "#
         )
@@ -47,7 +47,7 @@ fn coverage_{name}() {{
             r#"
 #[test]
 fn prepare_{name}() {{
-    check_prepare("prepare/{name}")
+    check_prepare("prepare/{name}");
 }}
 "#
         )
@@ -88,13 +88,14 @@ fn prepare_{name}() {{
             file,
             r#"
 #[test]
+#[allow(clippy::default_trait_access)]
 fn {function}() {{
     check_indicators("indicators/{name}", Settings {{
         {ident}: Some({setting}),
         no_price_comparison_procurement_methods: Some(String::from("NPC")),
         exclusions: Some(Exclusions {{ procurement_method_details: Some(String::from("EXC")) }}),
         ..Default::default()
-    }})
+    }});
 }}
 "#
         )

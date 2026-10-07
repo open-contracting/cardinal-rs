@@ -1007,6 +1007,8 @@ mod tests {
     use rstest::rstest;
     use serde_json::json;
 
+    use crate::indicators::Empty;
+
     #[cfg(test)]
     #[ctor::ctor]
     fn setup() {
@@ -1112,7 +1114,7 @@ mod tests {
         let settings = Settings {
             price_comparison_procurement_methods: if include { Some(String::from("Y")) } else { None },
             no_price_comparison_procurement_methods: if exclude { Some(String::from("N")) } else { None },
-            R036: Some(Default::default()),
+            R036: Some(Empty::default()),
             ..Default::default()
         };
 

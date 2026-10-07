@@ -9,6 +9,7 @@ use std::time::Duration;
 use criterion::Criterion;
 use criterion_macro::criterion;
 
+use ocdscardinal::indicators::{Empty, FloatThreshold, IntegerThreshold, R003, R025, R038, R048};
 use ocdscardinal::{Indicators, Settings};
 
 #[criterion]
@@ -25,21 +26,21 @@ fn bench(c: &mut Criterion) {
             let _ = Indicators::run(
                 black_box(BufReader::new(file)),
                 Settings {
-                    R003: Some(Default::default()),
-                    R024: Some(Default::default()),
-                    R025: Some(Default::default()),
-                    R028: Some(Default::default()),
-                    R030: Some(Default::default()),
-                    R035: Some(Default::default()),
-                    R036: Some(Default::default()),
-                    R038: Some(Default::default()),
-                    R048: Some(Default::default()),
-                    R058: Some(Default::default()),
+                    R003: Some(R003::default()),
+                    R024: Some(FloatThreshold::default()),
+                    R025: Some(R025::default()),
+                    R028: Some(Empty::default()),
+                    R030: Some(Empty::default()),
+                    R035: Some(IntegerThreshold::default()),
+                    R036: Some(Empty::default()),
+                    R038: Some(R038::default()),
+                    R048: Some(R048::default()),
+                    R058: Some(FloatThreshold::default()),
                     ..Default::default()
                 },
                 &false,
             );
-        })
+        });
     });
 
     group.finish();
