@@ -1,17 +1,12 @@
-use assert_cmd::Command;
 use assert_cmd::assert::Assert;
+use assert_cmd::cargo::cargo_bin_cmd;
 use predicates::prelude::*;
 use rstest::rstest;
 #[cfg(unix)]
 use tempfile::NamedTempFile;
-use trycmd;
 
 fn coverage(args: &[&str]) -> Assert {
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))
-        .unwrap()
-        .arg("coverage")
-        .args(args)
-        .assert()
+    cargo_bin_cmd!().arg("coverage").args(args).assert()
 }
 
 #[test]
@@ -23,9 +18,8 @@ fn documentation() {
 fn success_stdin() {
     let alt1 = predicate::eq("{\"\":1,\"[]\":1}\n");
     let alt2 = predicate::eq("{\"[]\":1,\"\":1}\n");
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))
-        .unwrap()
-        .args(&["coverage", "-"])
+    cargo_bin_cmd!()
+        .args(["coverage", "-"])
         .write_stdin("[0]") // coverage/base_array.jsonl
         .assert()
         .success()
@@ -43,9 +37,8 @@ fn success_file() {
 
 #[test]
 fn success_json_escape() {
-    Command::cargo_bin(env!("CARGO_PKG_NAME"))
-        .unwrap()
-        .args(&["coverage", "-"])
+    cargo_bin_cmd!()
+        .args(["coverage", "-"])
         .write_stdin("{\"a\u{a0}b\u{7f}\": 1}")
         .assert()
         .success()
