@@ -895,7 +895,7 @@ impl Prepare {
                     }
                 }
 
-                writeln!(output.new_task(), "{}", &serde_json::to_string(&release)?)?;
+                writeln!(output.new_task(), "{}", serde_json::to_string(&release)?)?;
 
                 Ok(())
             });

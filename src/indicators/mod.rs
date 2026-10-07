@@ -72,9 +72,14 @@ pub struct Exclusions {
     pub procurement_method_details: Option<String>,
 }
 
-#[derive(Clone, Debug, Default, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Empty {}
+pub use empty::Empty;
+
+#[allow(clippy::empty_enums)] // serde's derive generates an enum with no variants
+mod empty {
+    #[derive(Clone, Debug, Default, serde::Deserialize)]
+    #[serde(deny_unknown_fields)]
+    pub struct Empty {}
+}
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
