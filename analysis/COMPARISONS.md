@@ -42,7 +42,8 @@ layer, then narrowed for an LLM.**
 | **status filtering** | some `is*` flags | not emphasized | `*_status` first-class (indicator stability forces it) | Cardinal only scores all-awards-final processes |
 | **scope key** | `tender_country` | collection id | `dataset_id` (datasets aren't national) | 26 countries have >1 dataset; grouping by country double-counts |
 | **dataset scope metadata** | — | — | `dataset_meta`: exclusions, thresholds, temporal range, currency | a populated field can still be out of scope; the bot must refuse on scope, not only on coverage |
-| **answer checking** | n/a (no consumer-side logic) | n/a | deterministic checks (number-grounding, SQL lint); reflection only if an eval shows a win | the model's numbers are checked mechanically, not by the model |
+| **known data-quality issues** | — | — | `data_quality` table (planned), checked inline like coverage | a "clean" number can still be biased (e.g. many zero values); the answer needs a caveat or a better query |
+| **answer checking** | n/a (no consumer-side logic) | n/a | deterministic checks (number-grounding, SQL lint); a reflexion agent only as an experiment | the model's numbers are checked mechanically, not by the model |
 
 ## Decision-by-decision reasoning (blog body material)
 
@@ -121,28 +122,54 @@ and later contracts for a real share of awards, so `contract` became its own tab
 we had pre-registered ("promote only if a fan-out publisher is added"). Lesson for the post: the
 right grain can depend on the dataset, and deciding it needs the distribution, not the average.
 
-### 10. Refuse on scope, not only on coverage
+### 10. Refuse on scope, not only on coverage — and read scope statements carefully
 Coverage answers "is this field populated?". It doesn't answer "does this dataset's *scope*
-include what was asked?". Rwanda's data excludes classified security procurement and PPPs and
-only covers processes from 3,000,000 RWF; the Dominican Republic's excludes petty-cash purchases
-and starts in 2023. Ask either about those and the fields are present, so a coverage check passes
-and the query returns a **plausible, wrong number**. The fix is a `dataset_meta` table of
-exclusions, thresholds and temporal range (curated from the Data Registry's dataset pages) that
-the bot routes on and refuses against. Neither comparator models dataset scope — for a human
-analyst it lives in their head; for an LLM it has to be data.
+include what was asked?". Rwanda's data excludes security organs procuring classified items, and
+PPPs. Ask about those and the fields are present, so a coverage check passes and the query returns
+a **plausible, wrong number**. The fix is a `dataset_meta` table of exclusions, thresholds and
+temporal range (curated from the Data Registry's dataset pages) that the bot routes on. Neither
+comparator models dataset scope — for a human analyst it lives in their head; for an LLM it has
+to be data.
 
-### 11. Check answers mechanically; test reflection before trusting it
-A reviewer suggested reflection agents: the model critiques its own answer, grounded in external
-sources such as the OCDS documentation, before replying. We split the idea:
+The trap we fell into: scope statements aren't all exclusions, and each kind needs different
+behaviour. We first curated two thresholds as value floors, and the data said otherwise:
+- **Exclusion → refuse.** "Excluding security organs procuring classified items."
+- **Completeness guarantee → answer with a caveat.** "All procurement processes with values
+  starting from 3,000,000 RWF are included" promises completeness at or above 3M; it doesn't
+  exclude what's below. 27% of Rwanda's 2026 RWF award amounts are under 3M.
+- **Excluded mechanism → answer.** The Dominican Republic excludes purchases *paid from petty-cash
+  funds* (a fund of at most RD$50,000), not small purchases: 14% of its 2026 contracts are under
+  RD$30,000, mostly through a "below the threshold" procurement method.
+
+Read as floors, both thresholds made the bot refuse questions the data could answer — and the eval
+rewarded it, because the gold item had been written from the same curation. Check curated metadata
+against the data before turning it into a refusal rule.
+
+### 11. Data quality as data; a reflexion agent as an experiment
+A reviewer suggested reflexion agents: before replying, the model critiques its answer against
+external sources — above all the publisher's Pelican data-quality report. The example: "average
+contract value for publisher X last year" returns a clean number, but Pelican shows contract values
+of 0 in a large share of X's contracts, so the average is biased low; the answer should carry that
+caveat, or the query should exclude the zeros. Pelican reports are per publisher and too large to
+put them all in context, hence fetching the relevant one on demand.
+
+We agreed with the problem and chose a cheaper first answer:
+- **Known quality issues as a table**, checked inline like coverage (`data_quality`): the model
+  caveats or adjusts its query without a second agent's time and tokens. Hand-curated at first,
+  because running Pelican on every crawl is computationally demanding and quality issues change
+  infrequently. At scale, hand-curation gets heavy; then Pelican could run periodically, with
+  reports stored and pulled in on demand.
 - **Deterministic checks, always on:** every number in the answer must appear in a returned result
   row (the mechanical form of the zero-hallucination rule), and the SQL is linted for the known traps
   (`COUNT(DISTINCT ocid)` over child tables, active awards for money, `dataset_id` scoping). A set
   check is exact; a model verifying its own numbers is not.
-- **Reflection, off until an eval shows a net win:** a single, bounded self-critique against the
-  results and data dictionary already in context. It costs the *user* tokens (they bring the key),
-  so matching the baseline isn't enough.
-- **No runtime retrieval of standard docs:** the data dictionary already carries the OCDS semantics
-  the model needs; enrich it at build time instead.
+- **Improve the prompt before adding a loop.** The OCDS data dictionary is small enough to live in
+  the system prompt.
+- **The reflexion agent as an experiment:** once the eval has examples of incorrect answers,
+  compare the inline table with a reflexion agent grounded on the Pelican report — on cost (time,
+  tokens), which quality issues each catches, and answer quality. The user brings the key, so the
+  agent has to be a real improvement, not parity. A possible side benefit: an agent that reads
+  Pelican reports might help draft data quality and usability reports for publishers.
 
 ## Borrowed vs. rejected (quick ledger)
 
@@ -157,8 +184,9 @@ sources such as the OCDS documentation, before replying. We split the idea:
   (a good negative control confirming our coverage-driven pruning).
 - **From OpenTender — reconsidered & adopted independently:** estimated `tender_value_*` (their
   estimated-vs-final enables price-deviation) and `*_status` importance.
-- **From review (reflection agents) — adopted:** deterministic answer checks. **Deferred to the
-  eval:** reflection. **Rejected:** runtime retrieval of standard documentation.
+- **From review (reflexion agents grounded on Pelican reports) — adopted:** known quality issues
+  as an inline-checked table; deterministic answer checks. **Deferred to an experiment:** the
+  reflexion agent, and on-demand Pelican reports in place of hand-curation.
 
 ## Candidate blog angles / titles
 
@@ -170,6 +198,8 @@ sources such as the OCDS documentation, before replying. We split the idea:
 - "The field was there, the answer was wrong: refusing on dataset scope."
 - "A mean can't tell you whether to merge a table."
 - "Check the numbers mechanically; make reflection earn its tokens."
+- "Coverage, scope, quality: three things a populated field doesn't tell you."
+- "A completeness guarantee isn't a floor: checking curated metadata against the data."
 
 ## Sources
 
