@@ -109,7 +109,7 @@ its own aliases), so they check the values/structure of the result, not exact co
 gold items accept more than one correct behavior: `lots_absent_domrep_coverage` accepts either an
 empty coverage query or a "not published" refusal; refusal items pass on a model refusal *or* a
 guardrail block. Note the agent is **not deterministic** (adaptive thinking, no temperature control),
-so run-to-run wording varies — the last full run scored **37/37**.
+so run-to-run wording varies — the last full run scored **38/38**.
 
 Model mode prints each item's time and cost, then the run's time, tokens and cost at list prices
 (`PRICES_PER_MTOK` in `run_eval.py`; a model without a price shows no cost), and appends a summary
@@ -125,8 +125,9 @@ error is fed back once so the model can repair its query. The CLI shows each ans
 usage. `uv run python chatbot/agent.py` runs a smoke test.
 
 **Eval-driven prompt tuning so far** (all general, matching FINDINGS Part 5 — not gold-specific):
-sharpened the threshold/exclusion refusal rule (a value range entirely below a dataset's petty-cash
-floor must refuse, not return a misleading near-empty result), and added a "name the dataset" rule
+split the scope rule by kind of statement (an exclusion → refuse; a completeness guarantee such as
+Rwanda's 3,000,000 RWF → answer, noting it may undercount below; an excluded funding mechanism such as
+Dom Rep's petty cash → answer), and added a "name the dataset" rule
 (a question naming no country/dataset → clarify, even for cross-dataset-safe metrics; per-dataset
 breakdowns only when multiple places are explicitly named).
 

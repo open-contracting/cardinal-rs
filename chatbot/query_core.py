@@ -256,16 +256,19 @@ RULES = f"""\
    outliers WITHIN their own dataset; comparing their scores/rates across datasets is meaningless.
    Only {", ".join(CROSS_DATASET_SAFE)} are cross-dataset comparable.
 5. CHECK ANSWERABILITY FIRST. If a field may be absent, consult field_coverage; if the question's
-   scope/time/geography is outside a dataset (dates, exclusions, threshold), REFUSE with the reason
-   rather than returning a misleading number. Dates: the tables hold only processes last updated
-   between dataset_meta.date_from and date_to, so a process that started earlier appears only if it
-   was updated in that range. A question about any period before date_from would get an incomplete
-   count: REFUSE, giving the range. In particular, if a question
-   restricts to a value range or category the dataset's threshold/exclusions place ENTIRELY out of
-   scope — e.g. amounts below a petty-cash/registration floor, or a sector the dataset excludes —
-   REFUSE. Such rows were never collected, so any query returns a misleadingly incomplete result (a
-   near-empty list or a low count), never a true answer. Do not run the query "to check"; the absence
-   is structural, stated in dataset_meta, not something the data can confirm.
+   scope/time/geography is outside a dataset, REFUSE with the reason rather than returning a
+   misleading number. Dates: the tables hold only processes last updated between
+   dataset_meta.date_from and date_to, so a process that started earlier appears only if it was
+   updated in that range. A question about any period before date_from would get an incomplete
+   count: REFUSE, giving the range. Read dataset_meta's scope statements by kind:
+   - exclusions name categories the publisher leaves out (e.g. classified security procurement,
+     PPPs). If a question restricts to an excluded category, REFUSE: those rows were never collected,
+     so any query returns a misleadingly incomplete result. Do not run the query "to check". An
+     excluded funding mechanism (e.g. purchases paid from petty cash) is not a value floor: a
+     question about small amounts is still answerable.
+   - threshold states a completeness guarantee, if any (e.g. all processes from X are included).
+     Values below X are published but may be incomplete: ANSWER with SQL, and say in your message
+     that the result may undercount below X.
 6. Read-only. Single SELECT (a leading WITH is fine). A LIMIT is applied automatically.
 7. NAME THE DATASET. If the question names no country or dataset at all, do NOT assume it spans every
    dataset — even for a cross-dataset-safe metric like single_bid or r003. Ask which dataset(s) they

@@ -1,5 +1,5 @@
 {
-  "_readme": "Gold Q&A set for the chatbot POC eval. Categories: 'answerable' (reference_sql + assert), 'refuse_guardrail' (bad_sql the guardrail must block), 'refuse_scope'/'refuse_temporal' (model-judged from dataset_meta; a `probe` grounds the expectation in metadata the model will see), 'clarify' (model-judged). Expected values are for the 2026 sample only.",
+  "_readme": "Gold Q&A set for the chatbot POC eval. Categories: 'answerable' (reference_sql + assert), 'refuse_guardrail' (bad_sql the guardrail must block), 'refuse_scope'/'refuse_temporal' (model-judged from dataset_meta; a `probe` grounds the expectation in metadata the model will see), 'clarify' (model-judged). An answerable item with `expected_message_any` also needs its message to contain one of those terms (e.g. a caveat). Expected values are for the 2026 sample only.",
   "items": [
     {
       "id": "single_bid_rate_per_dataset",
@@ -102,11 +102,21 @@
       "probe": {"check": "scope_keyword", "dataset_id": "145", "keywords": ["security", "classified"]}
     },
     {
-      "id": "refuse_scope_subthreshold_domrep",
-      "category": "refuse_scope",
-      "question": "List Dominican Republic contracts under RD$30,000.",
-      "note": "below the RD$50,000 petty-cash floor that DGCP excludes — must refuse, not return 0",
-      "probe": {"check": "threshold_keyword", "dataset_id": "22", "keywords": ["50,000", "petty-cash"]}
+      "id": "domrep_contracts_under_30k",
+      "category": "answerable",
+      "question": "How many Dominican Republic contracts are worth less than RD$30,000?",
+      "note": "answer, don't refuse: DGCP excludes purchases paid from petty-cash funds (a mechanism), not small purchases; most of these are 'Compras por Debajo del Umbral'. Filter to DOP (27 contracts are in USD).",
+      "reference_sql": "SELECT count(*) FROM contract WHERE dataset_id='22' AND contract_value_currency='DOP' AND contract_value_amount < 30000",
+      "assert": {"type": "scalar", "approx": 4628, "tol": 0}
+    },
+    {
+      "id": "rwanda_contracts_under_3m_caveat",
+      "category": "answerable",
+      "question": "How many Rwanda contracts were worth less than 3,000,000 RWF?",
+      "note": "answer with a caveat: 3,000,000 RWF is a completeness guarantee (all processes from it are included), not a floor, so smaller ones are published but may be incomplete",
+      "reference_sql": "SELECT count(*) FROM contract WHERE dataset_id='145' AND contract_value_currency='RWF' AND contract_value_amount < 3000000",
+      "assert": {"type": "scalar", "approx": 1962, "tol": 0},
+      "expected_message_any": ["complete", "undercount", "partial", "guarantee"]
     },
     {
       "id": "refuse_temporal_domrep_2020",

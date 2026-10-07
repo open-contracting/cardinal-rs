@@ -3,9 +3,9 @@
   "government_level": "national - all central + local agencies on the Transactional Portal",
   "currency": "DOP",
   "license": "ODbL (opendatacommons.org/licenses/odbl)",
-  "scope_summary": "Central + local agencies; short history, starts mid-2023.",
-  "exclusions": "Terminated contracts (termination <= 40% of total); foreign-service office construction/acquisition; exclusive/single-supplier goods & services (law 340-06).",
-  "threshold": "Petty-cash purchases excluded (<= RD$50,000; per-expense <= RD$5,000) (law 340-06).",
+  "scope_summary": "Central + local agencies that use the Transactional Portal.",
+  "exclusions": "Purchases paid from petty-cash funds (a fund of at most RD$50,000; each expense at most RD$5,000) - a funding mechanism, not a value floor; terminated contracts (termination <= 40% of total); foreign-service office construction/acquisition; exclusive/single-supplier goods & services (law 340-06).",
+  "threshold": "None: no value floor. Small purchases are published (e.g. 'Compras por Debajo del Umbral', 'Contratacion Menor').",
   "methods": "(not stated)",
   "quality_notes": "Contracts fan out (~1.22/award) - standalone contract table; has bids/details; no tender/lots; awards carry no value (money in contracts/bids)."
 }

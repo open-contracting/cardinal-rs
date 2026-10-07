@@ -357,33 +357,47 @@ are verified against `dataset_meta` and enforced by the guardrail; the catalog s
 **Why `dataset_meta`, not just `field_coverage`:** `field_coverage` catches "the field isn't
 populated." It does **not** catch "the field is populated but the dataset's *scope* excludes the
 ask" — which produces the most dangerous answers (a plausible number that is silently wrong). Only
-the scope/threshold/exclusion/temporal metadata lets the bot refuse these. Distinct failure mode ⇒
+the scope/exclusion/temporal metadata lets the bot refuse these. Distinct failure mode ⇒
 distinct refusal ⇒ a distinct eval gold type (**scope-mismatch**).
 
-**Hand-curated `dataset_meta` (from the registry JSON-LD, 2026-07 snapshot):** `date_from`/`date_to`
+**Hand-curated `dataset_meta` (from the registry JSON-LD; dates rechecked 2026-10):** `date_from`/`date_to`
 and `n_processes` below are the registry's whole-publication values; the exporter instead writes the
 release-date range and process count of the data it reads, which match these only for a full build.
+`threshold` and `exclusions` were checked against the 2026 data, which ruled out reading either
+threshold as a value floor (see below).
 
 | field | 145 Rwanda RPPA | 22 Dominican Rep. DGCP |
 |---|---|---|
 | publisher | Public Procurement Authority (RPPA), Umucyo portal | Dirección General de Contrataciones Públicas (DGCP), Portal transaccional |
 | country / region | Rwanda / MEA | Dominican Republic / LAC |
 | government_level | national — central + local agencies (**below-district entities not in system**) | national — all central + local agencies on the Transactional Portal |
-| date_from / date_to | 2013-12-14 / 2026-04-30 | **2023-07-18** / 2026-06-19 *(short history — starts mid-2023)* |
+| date_from / date_to | 2013-12-14 / 2026-04-30 | 2015-03-27 / 2026-09-23 *(was 2023-07-18 → 2026-06-19 before a 2026 recrawl)* |
 | currency | RWF | DOP (RD$) |
 | license | CC-BY-NC-SA-4.0 | ODbL (opendatacommons.org/licenses/odbl) |
 | n_processes | ~49,300 | ~195,100 |
-| threshold | includes only processes **≥ 3,000,000 RWF** | petty-cash purchases excluded (**≤ RD$50,000**, per-expense ≤ RD$5,000) (law 340-06) |
-| exclusions | **security organs procuring classified items**; **PPPs**; below-district (sectors, health centres, schools) | terminated contracts (termination ≤ 40% of total); **foreign-service office** construction/acquisition; **exclusive/single-supplier** goods & services (law 340-06) |
+| threshold | **completeness guarantee, not a floor:** all processes from 3,000,000 RWF are included; smaller ones are published but may be incomplete | **none** — no value floor; small purchases are published |
+| exclusions | **security organs procuring classified items**; **PPPs**; below-district (sectors, health centres, schools) | purchases **paid from petty-cash funds** (fund ≤ RD$50,000; each expense ≤ RD$5,000 — a funding mechanism, not a value floor); terminated contracts (termination ≤ 40% of total); **foreign-service office** construction/acquisition; **exclusive/single-supplier** goods & services (law 340-06) |
 | methods | open, selective, direct | (not stated) |
 | quality_notes | tender+award per process; **contract data only "where available"** (cf. contracts/awards 0.87); no `bids/details`; has `tender/lots` (1.24) | **contracts fan out (1.22/award)** — all captured in the standalone `contract` table; has `bids/details`; **no `tender/lots`** |
 
 Rwanda's "**excludes security organs procuring classified items**" is the concrete scope-mismatch
 case for the eval: *"defence procurement in Rwanda"* must **refuse** (not return non-classified
-spend). Likewise sub-threshold questions — *"contracts under RD$30,000 in the Dominican Republic"*
-(below the RD$50,000 petty-cash floor) / *"under 1,000,000 RWF in Rwanda"* — must refuse, not
-return a misleading `0`. And Dom Rep's **2023 start** makes temporal refusal sharp: a *"2020"*
-question is out of range for Dom Rep but answerable for Rwanda (which starts 2013).
+spend).
+
+**Read scope statements by kind — they call for different behaviour.** Both thresholds were first
+curated as value floors ("refuse below"); the 2026 data contradicts that, so:
+
+- **Exclusion → refuse** (classified security procurement, PPPs, foreign-service offices).
+- **Completeness guarantee → answer with a caveat.** Rwanda's "processes with values starting from
+  3,000,000 RWF are included" guarantees completeness at or above 3M: 27% of 2026 RWF award amounts
+  and 46% of contract values are below it. A question below 3M gets an answer that says it may
+  undercount.
+- **Excluded mechanism → answer.** Dom Rep excludes purchases *paid from petty-cash funds*, not small
+  purchases: 4,628 of its 2026 contracts (14%) are under RD$30,000, mostly "Compras por Debajo del
+  Umbral".
+
+Temporal refusals are relative to the loaded sample (`dataset_meta.date_from`/`date_to` describe the
+data read), not the registry's whole-publication range.
 
 ### Reversal: lots ARE in the POC
 

@@ -119,11 +119,10 @@ def check_probe(eng, probe):
         hi = int(m["date_to"][:4])
         outside = year < lo or year > hi
         return (outside, f"year {year} vs range {lo}..{hi} -> {'out of range' if outside else 'IN range'}")
-    if probe["check"] in ("scope_keyword", "threshold_keyword"):
-        field = "exclusions" if probe["check"] == "scope_keyword" else "threshold"
-        hay = (m.get(field) or "").lower() + " " + (m.get("exclusions") or "").lower()
+    if probe["check"] == "scope_keyword":
+        hay = (m.get("exclusions") or "").lower()
         hits = [k for k in probe["keywords"] if k.lower() in hay]
-        return (bool(hits), f"dataset_meta.{field} grounds refusal via {hits or 'NO KEYWORDS FOUND'}")
+        return (bool(hits), f"dataset_meta.exclusions grounds refusal via {hits or 'NO KEYWORDS FOUND'}")
     if probe["check"] == "coverage_absent":
         _, rows, _ = eng.run_sql(
             f"SELECT field_path FROM field_coverage WHERE dataset_id='{probe['dataset_id']}' "
@@ -167,6 +166,11 @@ def run_model(eng, items, stats, model):
             if cat == "answerable":
                 if action == "sql":
                     ok, why = check_assert(it["assert"], r["rows"])
+                    # An answer that needs a caveat must mention at least one of these terms.
+                    if terms := it.get("expected_message_any"):
+                        message = (r.get("message") or "").lower()
+                        if not any(t.lower() in message for t in terms):
+                            ok, why = False, f"{why}; message lacks any of {terms}"
                     status = "PASS" if ok else "FAIL"
                     detail = f"answered ({r['attempts']} attempt/s); {why}"
                 elif it.get("accept_refusal") and action in ("refuse", "blocked"):
