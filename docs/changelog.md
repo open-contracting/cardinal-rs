@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- {doc}`cli/coverage` command: Output valid JSON for keys containing characters like non-breaking spaces or control characters. The output no longer has spaces after colons and commas.
+
 ## 0.0.8 (2025-11-22)
 
 ### Added

@@ -21,8 +21,8 @@ fn documentation() {
 
 #[test]
 fn success_stdin() {
-    let alt1 = predicate::eq("{\"\": 1, \"[]\": 1}\n");
-    let alt2 = predicate::eq("{\"[]\": 1, \"\": 1}\n");
+    let alt1 = predicate::eq("{\"\":1,\"[]\":1}\n");
+    let alt2 = predicate::eq("{\"[]\":1,\"\":1}\n");
     Command::cargo_bin(env!("CARGO_PKG_NAME"))
         .unwrap()
         .args(&["coverage", "-"])
@@ -34,11 +34,22 @@ fn success_stdin() {
 
 #[test]
 fn success_file() {
-    let alt1 = predicate::eq("{\"\": 1, \"[]\": 1}\n");
-    let alt2 = predicate::eq("{\"[]\": 1, \"\": 1}\n");
+    let alt1 = predicate::eq("{\"\":1,\"[]\":1}\n");
+    let alt2 = predicate::eq("{\"[]\":1,\"\":1}\n");
     coverage(&["tests/fixtures/coverage/base_array.jsonl"])
         .success()
         .stdout(alt1.or(alt2));
+}
+
+#[test]
+fn success_json_escape() {
+    Command::cargo_bin(env!("CARGO_PKG_NAME"))
+        .unwrap()
+        .args(&["coverage", "-"])
+        .write_stdin("{\"a\u{a0}b\u{7f}\": 1}")
+        .assert()
+        .success()
+        .stdout("{\"/a\u{a0}b\u{7f}\":1,\"/\":1,\"\":1}\n");
 }
 
 #[test]

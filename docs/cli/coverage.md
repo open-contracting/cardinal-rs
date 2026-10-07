@@ -43,7 +43,7 @@ The `coverage` command outputs:
 
 ```console
 $ ocdscardinal coverage docs/examples/coverage.jsonl
-{"/phoneNumbers[]/type": 2, "/phoneNumbers[]/number": 2, "/phoneNumbers[]/": 2, "/phoneNumbers[]": 2, "/phoneNumbers": 1, "/": 1, "": 1}
+{"/phoneNumbers[]/type":2,"/phoneNumbers[]/number":2,"/phoneNumbers[]/":2,"/phoneNumbers[]":2,"/phoneNumbers":1,"/":1,"":1}
 
 ```
 
@@ -93,7 +93,7 @@ If a member name is empty, its path is the same as its parent object's path:
 :padding: 1
 ```console
 $ ocdscardinal coverage docs/examples/coverage-empty.jsonl
-{"/": 2, "": 1}
+{"/":2,"":1}
 
 ```
 :::
@@ -116,7 +116,7 @@ If a member name ends with `[]`, its path can be the same as a matching sibling'
 :padding: 1
 ```console
 $ ocdscardinal coverage docs/examples/coverage-bracket.jsonl
-{"/a[]": 2, "/a": 1, "/": 1, "": 1}
+{"/a[]":2,"/a":1,"/":1,"":1}
 
 ```
 :::

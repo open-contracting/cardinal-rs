@@ -154,7 +154,7 @@ fn main() {
             Ok(true) => {} // written to standard output
         },
         Commands::Coverage { file } => match ocdscardinal::Coverage::run(reader(file)) {
-            Ok(item) => println!("{:?}", item.results()),
+            Ok(item) => println!("{}", serde_json::to_string(item.results()).unwrap()),
             Err(e) => application_error(&e),
         },
         Commands::Prepare {
