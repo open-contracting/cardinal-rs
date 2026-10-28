@@ -10,7 +10,7 @@ build = "build.rs"
 categories = ["command-line-utilities"]
 keywords = ["cli", "json"]
 
-# https://pyo3.rs/v0.25.1/#using-rust-from-python
+# https://pyo3.rs/v0.30.0/#using-rust-from-python
 [lib]
 name = "ocdscardinal"
 crate-type = ["cdylib", "rlib"]
@@ -27,7 +27,7 @@ itertools = "0.12"
 log = "0.4"
 ordered-float = "4.0"
 pretty_env_logger = "0.5"
-pyo3 = { version = "0.25", features = ["extension-module"], optional = true }
+pyo3 = { version = "0.30", features = ["extension-module"], optional = true }
 rayon = "1.0"
 readonly = "0.2"
 serde = { version ="1.0", features = ["derive"] }
@@ -38,7 +38,7 @@ statrs = "0.16"
 [build-dependencies]
 glob = "0.3"
 itertools = "0.12"
-pyo3-build-config = { version = "0.25", optional = true }
+pyo3-build-config = { version = "0.30", optional = true }
 
 [dev-dependencies]
 assert_cmd = "2.0"

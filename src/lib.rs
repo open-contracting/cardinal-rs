@@ -51,7 +51,7 @@ use crate::standard::{AWARD_STATUS, BID_STATUS};
 ///
 /// Returns:
 ///     dict: A dictionary mapping paths to counts
-fn coverage(py: Python<'_>, file: &str) -> PyResult<PyObject> {
+fn coverage(py: Python<'_>, file: &str) -> PyResult<Py<PyAny>> {
     let file = File::open(file).map_err(|e| pyo3::exceptions::PyRuntimeError::new_err(format!("{e:#}")))?;
 
     match Coverage::run(BufReader::new(file)) {

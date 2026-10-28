@@ -12,7 +12,7 @@ use itertools::Itertools;
 // See https://github.com/la10736/rstest/issues/163
 // https://stackoverflow.com/a/49056967/244258
 fn main() {
-    // https://pyo3.rs/v0.25.1/building-and-distribution.html#macos
+    // https://pyo3.rs/v0.30.0/building-and-distribution.html#macos
     // Only configure PyO3 when the "python" feature is enabled.
     #[cfg(feature = "python")]
     {
