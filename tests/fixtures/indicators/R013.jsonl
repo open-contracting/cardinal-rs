@@ -1,0 +1,4 @@
+{"ocid":"direct process","buyer":{"id":"B"},"tender":{"procuringEntity":{"id":"P"},"procurementMethod":"direct"}}
+{"ocid":"open process","buyer":{"id":"B"},"tender":{"procuringEntity":{"id":"P"},"procurementMethod":"open"}}
+{"ocid":"too few processes","buyer":{"id":"X"},"tender":{"procuringEntity":{"id":"X"},"procurementMethod":"direct"}}
+{"ocid":"no procurement method","buyer":{"id":"B"},"tender":{"procuringEntity":{"id":"P"}}}
