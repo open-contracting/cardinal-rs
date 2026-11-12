@@ -8,6 +8,7 @@ pub mod r035;
 pub mod r036;
 pub mod r038;
 pub mod r048;
+pub mod r055;
 pub mod r058;
 pub mod util;
 
@@ -132,6 +133,14 @@ pub struct R048 {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct R055 {
+    pub threshold: Option<f64>, // amount
+    pub procurement_methods: Option<String>,
+    pub main_procurement_category: Option<HashMap<String, f64>>, // amount
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 #[allow(non_snake_case)]
 pub struct Settings {
     pub output: Option<Output>,
@@ -156,6 +165,7 @@ pub struct Settings {
     pub R036: Option<Empty>,
     pub R038: Option<R038>,
     pub R048: Option<R048>,
+    pub R055: Option<R055>,
     pub R058: Option<FloatThreshold>, // ratio
 }
 
@@ -181,6 +191,7 @@ pub enum Indicator {
     R036,
     R038,
     R048,
+    R055,
     R058,
 }
 
@@ -198,6 +209,18 @@ pub struct Maps {
     pub ocid_tenderer_r030: HashMap<String, HashSet<String>>,
     pub ocid_tenderer_r035: HashMap<String, HashSet<String>>,
     pub ocid_tenderer_r058: HashMap<String, HashSet<String>>,
+    /// The flagged buyer, procuring entity and tenderer for each `ocid` in a flagged total.
+    pub ocid_buyer_r055: HashMap<String, String>,
+    pub ocid_procuringentity_r055: HashMap<String, String>,
+    pub ocid_tenderer_r055: HashMap<String, HashSet<String>>,
+}
+
+#[derive(Debug, Default)]
+pub struct Total {
+    count: usize,
+    amount: f64,
+    /// The contracting processes that contribute to the total, if mapping.
+    ocids: Vec<String>,
 }
 
 #[derive(Debug, Default)]
@@ -228,6 +251,12 @@ pub struct Indicators {
     pub r038_tenderer: HashMap<String, Fraction>,
     /// The item classifications for each `bids/details/tenderers/id`.
     pub r048_classifications: HashMap<String, (usize, HashSet<String>)>,
+    /// The number and total amount of active awards for each `buyer/id`, `awards/suppliers/id` and
+    /// `tender/mainProcurementCategory`.
+    pub r055_buyer: HashMap<(String, String, String), Total>,
+    /// The number and total amount of active awards for each `tender/procuringEntity/id`, `awards/suppliers/id` and
+    /// `tender/mainProcurementCategory`.
+    pub r055_procuring_entity: HashMap<(String, String, String), Total>,
     /// Whether to map contracting processes to organizations.
     pub map: bool,
 }
@@ -267,6 +296,14 @@ impl AddAssign for Fraction {
     fn add_assign(&mut self, other: Self) {
         self.numerator += other.numerator;
         self.denominator += other.denominator;
+    }
+}
+
+impl AddAssign for Total {
+    fn add_assign(&mut self, other: Self) {
+        self.count += other.count;
+        self.amount += other.amount;
+        self.ocids.extend(other.ocids);
     }
 }
 

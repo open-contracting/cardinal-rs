@@ -1,0 +1,3 @@
+{"ocid":"1","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"F"}],"value":{"amount":40000,"currency":"USD"}}]}
+{"ocid":"2","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"F"}],"value":{"amount":40000,"currency":"USD"}}]}
+{"ocid":"3","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"F"}],"value":{"amount":40000,"currency":"USD"}}]}

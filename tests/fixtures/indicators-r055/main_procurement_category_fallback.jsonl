@@ -1,0 +1,10 @@
+{"ocid":"goods 1","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","mainProcurementCategory":"goods"},"awards":[{"status":"active","suppliers":[{"id":"S"}],"value":{"amount":60,"currency":"USD"}}]}
+{"ocid":"goods 2","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","mainProcurementCategory":"goods"},"awards":[{"status":"active","suppliers":[{"id":"S"}],"value":{"amount":50,"currency":"USD"}}]}
+{"ocid":"works 1","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","mainProcurementCategory":"works"},"awards":[{"status":"active","suppliers":[{"id":"W"}],"value":{"amount":120,"currency":"USD"}}]}
+{"ocid":"works 2","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","mainProcurementCategory":"works"},"awards":[{"status":"active","suppliers":[{"id":"W"}],"value":{"amount":60,"currency":"USD"}}]}
+{"ocid":"works 3","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","mainProcurementCategory":"works"},"awards":[{"status":"active","suppliers":[{"id":"V"}],"value":{"amount":150,"currency":"USD"}}]}
+{"ocid":"works 4","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","mainProcurementCategory":"works"},"awards":[{"status":"active","suppliers":[{"id":"V"}],"value":{"amount":100,"currency":"USD"}}]}
+{"ocid":"goods to T","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","mainProcurementCategory":"goods"},"awards":[{"status":"active","suppliers":[{"id":"T"}],"value":{"amount":90,"currency":"USD"}}]}
+{"ocid":"works to T","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","mainProcurementCategory":"works"},"awards":[{"status":"active","suppliers":[{"id":"T"}],"value":{"amount":90,"currency":"USD"}}]}
+{"ocid":"services 1","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","mainProcurementCategory":"services"},"awards":[{"status":"active","suppliers":[{"id":"N"}],"value":{"amount":500,"currency":"USD"}}]}
+{"ocid":"services 2","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","mainProcurementCategory":"services"},"awards":[{"status":"active","suppliers":[{"id":"N"}],"value":{"amount":500,"currency":"USD"}}]}

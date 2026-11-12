@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- {doc}`cli/indicators/index` command:
+  - [R055](cli/indicators/R/055) (*Multiple direct awards above or just below competitive threshold*).
+
 ## 0.0.9 (2026-10-29)
 
 ### Added
