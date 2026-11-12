@@ -13,14 +13,15 @@ directory = Path(__file__).resolve().parent
 def json_to_csv(args):
     fieldnames = ["ocid", "subject", "code", "result", "buyer_id", "procuring_entity_id", "tenderer_id", "created_at"]
     subject_code_to_map_id = {
-        "Buyer": {"R038": "ocid_buyer_r038"},
-        "ProcuringEntity": {"R038": "ocid_procuringentity_r038"},
+        "Buyer": {"R038": "ocid_buyer_r038", "R055": "ocid_buyer_r055"},
+        "ProcuringEntity": {"R038": "ocid_procuringentity_r038", "R055": "ocid_procuringentity_r055"},
         "Tenderer": defaultdict(
             lambda: "ocid_tenderer",  # R025 R038 R048
             R024="ocid_tenderer_r024",
             R028="ocid_tenderer_r028",
             R030="ocid_tenderer_r030",
             R035="ocid_tenderer_r035",
+            R055="ocid_tenderer_r055",
             R058="ocid_tenderer_r058",
         ),
     }
