@@ -28,6 +28,7 @@ use crate::indicators::r035::R035;
 use crate::indicators::r036::R036;
 use crate::indicators::r038::R038;
 use crate::indicators::r048::R048;
+use crate::indicators::r055::R055;
 use crate::indicators::r058::R058;
 use crate::indicators::util::{SecondLowestBidRatio, Tenderers};
 pub use crate::indicators::{Calculate, Codelist, Exclusions, Group, Indicator, Indicators, Modifications, Settings};
@@ -187,6 +188,14 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ; threshold = 10
 ; minimum_contracting_processes = 20
 
+[R055]
+; threshold = 100000
+; procurement_methods = direct
+
+[R055.main_procurement_category]
+; goods = 50000
+; works = 150000
+
 [R058]
 ; threshold = 0.5
 ";
@@ -298,6 +307,7 @@ impl Indicators {
             R036,
             R038,
             R048,
+            R055,
             R058,
         );
 
@@ -1137,4 +1147,30 @@ mod tests {
     }
 
     include!(concat!(env!("OUT_DIR"), "/lib.include"));
+
+    // The tests generated from file names only support integer settings, and R055's thresholds are amounts.
+    #[rstest]
+    #[case("threshold", Some(100.0), None, None)]
+    #[case("procurement_methods", Some(100.0), Some("direct|limited"), None)]
+    #[case("main_procurement_category", None, None, Some(vec![("goods", 100.0), ("works", 200.0)]))]
+    #[case("main_procurement_category_fallback", Some(1000.0), None, Some(vec![("goods", 100.0), ("works", 200.0)]))]
+    fn r055_settings(
+        #[case] name: &str,
+        #[case] threshold: Option<f64>,
+        #[case] procurement_methods: Option<&str>,
+        #[case] main_procurement_category: Option<Vec<(&str, f64)>>,
+    ) {
+        check_indicators(
+            &format!("indicators-r055/{name}"),
+            Settings {
+                R055: Some(indicators::R055 {
+                    threshold,
+                    procurement_methods: procurement_methods.map(String::from),
+                    main_procurement_category: main_procurement_category
+                        .map(|pairs| pairs.into_iter().map(|(k, v)| (String::from(k), v)).collect()),
+                }),
+                ..Default::default()
+            },
+        );
+    }
 }

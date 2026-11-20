@@ -121,6 +121,14 @@ $ ocdscardinal init -
 ; threshold = 10
 ; minimum_contracting_processes = 20
 
+[R055]
+; threshold = 100000
+; procurement_methods = direct
+
+[R055.main_procurement_category]
+; goods = 50000
+; works = 150000
+
 [R058]
 ; threshold = 0.5
 

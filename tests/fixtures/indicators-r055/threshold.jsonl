@@ -1,0 +1,14 @@
+{"ocid":"S1","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","procuringEntity":{"id":"P"}},"awards":[{"status":"active","suppliers":[{"id":"S"}],"value":{"amount":60,"currency":"USD"}}]}
+{"ocid":"S2","buyer":{"id":"B"},"tender":{"procurementMethod":"direct","procuringEntity":{"id":"P"}},"awards":[{"status":"active","suppliers":[{"id":"S"}],"value":{"amount":50,"currency":"USD"}}]}
+{"ocid":"single award above threshold","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"X"}],"value":{"amount":500,"currency":"USD"}}]}
+{"ocid":"below threshold 1","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"Y"}],"value":{"amount":30,"currency":"USD"}}]}
+{"ocid":"below threshold 2","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"Y"}],"value":{"amount":30,"currency":"USD"}}]}
+{"ocid":"open 1","buyer":{"id":"B"},"tender":{"procurementMethod":"open"},"awards":[{"status":"active","suppliers":[{"id":"O"}],"value":{"amount":80,"currency":"USD"}}]}
+{"ocid":"open 2","buyer":{"id":"B"},"tender":{"procurementMethod":"open"},"awards":[{"status":"active","suppliers":[{"id":"O"}],"value":{"amount":80,"currency":"USD"}}]}
+{"ocid":"limited","buyer":{"id":"B"},"tender":{"procurementMethod":"limited"},"awards":[{"status":"active","suppliers":[{"id":"L"}],"value":{"amount":80,"currency":"USD"}}]}
+{"ocid":"direct to L","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"L"}],"value":{"amount":80,"currency":"USD"}}]}
+{"ocid":"active","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"C"}],"value":{"amount":70,"currency":"USD"}}]}
+{"ocid":"cancelled","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"cancelled","suppliers":[{"id":"C"}],"value":{"amount":70,"currency":"USD"}}]}
+{"ocid":"multiple suppliers 1","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"M"},{"id":"N"}],"value":{"amount":70,"currency":"USD"}}]}
+{"ocid":"multiple suppliers 2","buyer":{"id":"B"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"M"},{"id":"N"}],"value":{"amount":70,"currency":"USD"}}]}
+{"ocid":"other buyer","buyer":{"id":"A"},"tender":{"procurementMethod":"direct"},"awards":[{"status":"active","suppliers":[{"id":"S"}],"value":{"amount":20,"currency":"USD"}}]}

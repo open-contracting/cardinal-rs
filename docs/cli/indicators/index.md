@@ -323,6 +323,9 @@ R/index
 * - [R048](R/048)
   - [Heterogeneous supplier](R/048)
   - The variety of items supplied by a tenderer is a high outlier.
+* - [R055](R/055)
+  - [Multiple direct awards above or just below competitive threshold](R/055)
+  - The total amount directly awarded by a buyer to a supplier is above the competitive threshold.
 * - [R058](R/058)
   - [Heavily discounted bid](R/058)
   - The percentage difference between the winning bid and the second-lowest valid bid is a high outlier.
