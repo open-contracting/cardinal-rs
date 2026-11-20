@@ -263,6 +263,20 @@ InTreatment = pending
 Need to re-map other values? [Create an issue on GitHub](https://github.com/open-contracting/cardinal-rs/issues), or [email James McKinney](mailto:jmckinney@open-contracting.org), OCP's Head of Technology.
 :::
 
+(count-tenderers-from-bids)=
+### Count tenderers from bids
+
+Publishers that convert from other formats frequently omit `/tender/numberOfTenderers` while publishing `/bids/details`. Without that field, {doc}`indicators/R/018` can never be calculated, even though the submitted bids are known.
+
+To fill in `/tender/numberOfTenderers` with the number of distinct organizations at `/bids/details[]/tenderers[]/id` across [submitted bids](https://standard.open-contracting.org/latest/en/schema/codelists/#bid-status), add a `[modifications]` section with a `count_tenderers_from_bids` property to your {doc}`../topics/settings`. For example:
+
+```ini
+[modifications]
+count_tenderers_from_bids = true
+```
+
+The field isn't filled in if the publisher already sets it, so a publisher's own count always wins. Bids with a status of 'invited' or 'withdrawn' aren't counted, and an organization that submitted more than one bid is counted once.
+
 ### Move auction bids
 
 Reverse auctions are under [discussion](https://github.com/open-contracting/standard/issues/904) for inclusion in OCDS. Some publishers model auction bids at the non-standard `/auctions[]/stages[]/bids[]` instead of at the standard `/bids/details[]`.

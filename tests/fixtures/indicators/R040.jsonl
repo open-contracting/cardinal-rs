@@ -1,0 +1,8 @@
+{"ocid":"0","buyer":{"id":"B"},"awards":[{"status":"active","value":{"amount":100,"currency":"USD"},"suppliers":[{"id":"S"}]}]}
+{"ocid":"1","buyer":{"id":"B"},"awards":[{"status":"active","value":{"amount":100,"currency":"USD"},"suppliers":[{"id":"S"}]}]}
+{"ocid":"2","buyer":{"id":"B"},"awards":[{"status":"active","value":{"amount":100,"currency":"USD"},"suppliers":[{"id":"S"}]}]}
+{"ocid":"3","buyer":{"id":"B"},"awards":[{"status":"active","value":{"amount":100,"currency":"USD"},"suppliers":[{"id":"S"}]}]}
+{"ocid":"4","buyer":{"id":"B"},"awards":[{"status":"active","value":{"amount":100,"currency":"USD"},"suppliers":[{"id":"S"}]}]}
+{"ocid":"cancelled award is ignored","buyer":{"id":"B"},"awards":[{"status":"cancelled","value":{"amount":9999,"currency":"USD"},"suppliers":[{"id":"C"}]}]}
+{"ocid":"award without value is ignored","buyer":{"id":"B"},"awards":[{"status":"active","suppliers":[{"id":"N"}]}]}
+{"ocid":"buyer with too few awards","buyer":{"id":"X"},"awards":[{"status":"active","value":{"amount":100,"currency":"USD"},"suppliers":[{"id":"Y"}]}]}

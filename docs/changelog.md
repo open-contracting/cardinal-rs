@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- {doc}`cli/indicators/index` command: Add {doc}`cli/indicators/R/013` (High use of non-competitive methods).
+- {doc}`cli/indicators/index` command: Add {doc}`cli/indicators/R/040` (High share of buyer's contracts).
+- {doc}`cli/prepare` command: Add `[modifications]` option `count_tenderers_from_bids`, to fill in `/tender/numberOfTenderers` from `/bids/details`, so that {doc}`cli/indicators/R/018` can be calculated for publishers that omit the field.
+
 ## 0.0.9 (2026-10-29)
 
 ### Added

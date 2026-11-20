@@ -1,4 +1,5 @@
 pub mod r003;
+pub mod r013;
 pub mod r018;
 pub mod r024;
 pub mod r025;
@@ -7,6 +8,7 @@ pub mod r030;
 pub mod r035;
 pub mod r036;
 pub mod r038;
+pub mod r040;
 pub mod r048;
 pub mod r058;
 pub mod util;
@@ -60,6 +62,7 @@ pub struct Corrections {
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Modifications {
+    pub count_tenderers_from_bids: Option<bool>,
     pub move_auctions: Option<bool>,
     pub prefix_buyer_or_procuring_entity_id: Option<String>,
     pub prefix_tenderer_or_supplier_id: Option<String>,
@@ -103,6 +106,14 @@ pub struct R003 {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct R013 {
+    pub threshold: Option<f64>, // ratio
+    pub procurement_methods: Option<String>,
+    pub minimum_contracting_processes: Option<usize>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct R018 {
     pub procurement_methods: Option<String>,
 }
@@ -120,6 +131,13 @@ pub struct R038 {
     threshold: Option<f64>, // ratio
     minimum_submitted_bids: Option<usize>,
     minimum_contracting_processes: Option<usize>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct R040 {
+    pub threshold: Option<f64>, // ratio
+    pub minimum_contracting_processes: Option<usize>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -147,6 +165,7 @@ pub struct Settings {
     pub price_comparison_procurement_methods: Option<String>,
     pub exclusions: Option<Exclusions>,
     pub R003: Option<R003>,
+    pub R013: Option<R013>,
     pub R018: Option<R018>,
     pub R024: Option<FloatThreshold>, // ratio
     pub R025: Option<R025>,
@@ -155,6 +174,7 @@ pub struct Settings {
     pub R035: Option<IntegerThreshold>, // count
     pub R036: Option<Empty>,
     pub R038: Option<R038>,
+    pub R040: Option<R040>,
     pub R048: Option<R048>,
     pub R058: Option<FloatThreshold>, // ratio
 }
@@ -172,6 +192,7 @@ pub enum Group {
 #[derive(Clone, Debug, Eq, Hash, PartialEq, Deserialize, Serialize)]
 pub enum Indicator {
     R003,
+    R013,
     R018,
     R024,
     R025,
@@ -180,6 +201,7 @@ pub enum Indicator {
     R035,
     R036,
     R038,
+    R040,
     R048,
     R058,
 }
@@ -226,6 +248,14 @@ pub struct Indicators {
     pub r038_procuring_entity: HashMap<String, Fraction>,
     /// The ratio of disqualified bids to submitted bids for each `bids/details/tenderers/id`.
     pub r038_tenderer: HashMap<String, Fraction>,
+    /// The ratio of non-competitive contracting processes for each `buyer/id`.
+    pub r013_buyer: HashMap<String, Fraction>,
+    /// The ratio of non-competitive contracting processes for each `tender/procuringEntity/id`.
+    pub r013_procuring_entity: HashMap<String, Fraction>,
+    /// The total value and number of active awards for each `buyer/id`, per currency.
+    pub r040_buyer: HashMap<(String, String), (f64, usize)>,
+    /// The value awarded to each `awards/suppliers/id` by each `buyer/id`, per currency.
+    pub r040_buyer_supplier: HashMap<(String, String, String), f64>,
     /// The item classifications for each `bids/details/tenderers/id`.
     pub r048_classifications: HashMap<String, (usize, HashSet<String>)>,
     /// Whether to map contracting processes to organizations.

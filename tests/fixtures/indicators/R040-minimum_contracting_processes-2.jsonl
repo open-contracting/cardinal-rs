@@ -1,0 +1,2 @@
+{"ocid":"0","buyer":{"id":"B"},"awards":[{"status":"active","value":{"amount":100,"currency":"USD"},"suppliers":[{"id":"S"}]}]}
+{"ocid":"1","buyer":{"id":"B"},"awards":[{"status":"active","value":{"amount":100,"currency":"USD"},"suppliers":[{"id":"S"}]}]}

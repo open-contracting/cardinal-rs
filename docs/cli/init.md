@@ -65,6 +65,7 @@ $ ocdscardinal init -
 ; award_status_by_contract_status = true
 
 [modifications]
+; count_tenderers_from_bids = true
 ; move_auctions = true
 ; prefix_buyer_or_procuring_entity_id = DO-UC-
 ; prefix_tenderer_or_supplier_id = DO-RPE-
@@ -92,6 +93,11 @@ $ ocdscardinal init -
 ; emergency = 10
 ; international = 25
 
+[R013]
+; threshold = 0.3
+; procurement_methods = direct|limited
+; minimum_contracting_processes = 2
+
 [R018]
 ; procurement_methods = open|selective
 
@@ -115,6 +121,10 @@ $ ocdscardinal init -
 ; threshold = 0.5
 ; minimum_submitted_bids = 2
 ; minimum_contracting_processes = 2
+
+[R040]
+; threshold = 0.4
+; minimum_contracting_processes = 5
 
 [R048]
 ; digits = 2

@@ -1,0 +1,5 @@
+{"tender":{"procurementMethod":"open","numberOfTenderers":2},"bids":{"details":[{"status":"valid","tenderers":[{"id":"A"}]},{"status":"valid","tenderers":[{"id":"B"}]}]}}
+{"tender":{"procurementMethod":"open","numberOfTenderers":9},"bids":{"details":[{"status":"valid","tenderers":[{"id":"A"}]}]}}
+{"tender":{"procurementMethod":"open","numberOfTenderers":1},"bids":{"details":[{"status":"valid","tenderers":[{"id":"A"}]},{"status":"valid","tenderers":[{"id":"A"}]}]}}
+{"tender":{"procurementMethod":"open"},"bids":{"details":[{"status":"invited","tenderers":[{"id":"A"}]}]}}
+{"bids":{"details":[{"status":"valid","tenderers":[{"id":"A"}]}]}}

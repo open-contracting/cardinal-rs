@@ -19,6 +19,7 @@ use serde_json::{Map, Value};
 
 use crate::indicators::is_status;
 use crate::indicators::r003::R003;
+use crate::indicators::r013::R013;
 use crate::indicators::r018::R018;
 use crate::indicators::r024::R024;
 use crate::indicators::r025::R025;
@@ -27,6 +28,7 @@ use crate::indicators::r030::R030;
 use crate::indicators::r035::R035;
 use crate::indicators::r036::R036;
 use crate::indicators::r038::R038;
+use crate::indicators::r040::R040;
 use crate::indicators::r048::R048;
 use crate::indicators::r058::R058;
 use crate::indicators::util::{SecondLowestBidRatio, Tenderers};
@@ -131,6 +133,7 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ; award_status_by_contract_status = true
 
 [modifications]
+; count_tenderers_from_bids = true
 ; move_auctions = true
 ; prefix_buyer_or_procuring_entity_id = DO-UC-
 ; prefix_tenderer_or_supplier_id = DO-RPE-
@@ -158,6 +161,11 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ; emergency = 10
 ; international = 25
 
+[R013]
+; threshold = 0.3
+; procurement_methods = direct|limited
+; minimum_contracting_processes = 2
+
 [R018]
 ; procurement_methods = open|selective
 
@@ -181,6 +189,10 @@ pub fn init(path: &PathBuf, force: &bool) -> std::io::Result<bool> {
 ; threshold = 0.5
 ; minimum_submitted_bids = 2
 ; minimum_contracting_processes = 2
+
+[R040]
+; threshold = 0.4
+; minimum_contracting_processes = 5
 
 [R048]
 ; digits = 2
@@ -289,6 +301,7 @@ impl Indicators {
             indicators,
             settings,
             R003,
+            R013,
             R018,
             R024,
             R025,
@@ -297,6 +310,7 @@ impl Indicators {
             R035,
             R036,
             R038,
+            R040,
             R048,
             R058,
         );
@@ -598,6 +612,7 @@ impl Prepare {
         let binding = modifications.prefix_tenderer_or_supplier_id.unwrap_or_default();
         let prefix_tenderer_or_supplier_id = binding.as_str();
         let split_procurement_method_details = modifications.split_procurement_method_details;
+        let count_tenderers_from_bids = modifications.count_tenderers_from_bids.unwrap_or_default();
 
         // [codelists.*]
         let codelists = settings.codelists.unwrap_or_default();
@@ -795,6 +810,40 @@ impl Prepare {
                             party_roles_lookup,
                             "tenderer"
                         );
+                    }
+                }
+
+                // /tender/numberOfTenderers
+                //
+                // Publishers that convert from other formats frequently omit
+                // /tender/numberOfTenderers while publishing /bids/details. Without that field,
+                // R018 can never be calculated, even though the submitted bids are known. Count
+                // the distinct organizations that submitted bids, and only fill in the field if it
+                // is not already set, so that a publisher's own count always wins.
+                if count_tenderers_from_bids {
+                    let tenderers: HashSet<String> = Indicators::get_submitted_bids(release)
+                        .iter()
+                        .filter_map(|bid| bid.get("tenderers"))
+                        .filter_map(Value::as_array)
+                        .flatten()
+                        .filter_map(|tenderer| tenderer.get("id"))
+                        .filter_map(Value::as_str)
+                        .map(ToOwned::to_owned)
+                        .collect();
+
+                    if !tenderers.is_empty()
+                        && let Some(Value::Object(tender)) = release.get_mut("tender")
+                        && !tender.contains_key("numberOfTenderers")
+                    {
+                        tender.insert("numberOfTenderers".into(), Value::from(tenderers.len()));
+                        rows.serialize((
+                            i + 1,
+                            &ocid,
+                            "/tender/numberOfTenderers",
+                            "",
+                            "",
+                            "not set, counted from /bids/details",
+                        ))?;
                     }
                 }
 

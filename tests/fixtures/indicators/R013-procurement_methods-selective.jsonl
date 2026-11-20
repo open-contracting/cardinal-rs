@@ -1,0 +1,2 @@
+{"ocid":"selective process","buyer":{"id":"B"},"tender":{"procuringEntity":{"id":"P"},"procurementMethod":"selective"}}
+{"ocid":"direct process is competitive here","buyer":{"id":"B"},"tender":{"procuringEntity":{"id":"P"},"procurementMethod":"direct"}}
